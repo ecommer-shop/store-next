@@ -1,48 +1,50 @@
 'use client';
 
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Key, ListBox, Select } from "@heroui/react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import { useState } from "react";
 
 const sortOptions = [
-    {value: 'name-asc', label: 'Name: A to Z'},
-    {value: 'name-desc', label: 'Name: Z to A'},
-    {value: 'price-asc', label: 'Price: Low to High'},
-    {value: 'price-desc', label: 'Price: High to Low'},
+  { key: 'name-asc', label: 'Name: A to Z' },
+  { key: 'name-desc', label: 'Name: Z to A' },
+  { key: 'price-asc', label: 'Price: Low to High' },
+  { key: 'price-desc', label: 'Price: High to Low' },
 ];
 
 export function SortDropdown() {
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const currentSort = (searchParams.get('sort') ?? 'name-asc') as Key;
 
-    const currentSort = searchParams.get('sort') || 'name-asc';
+  const handleSortChange = (key: Key | null) => {
+  if (!key) return;
 
-    const handleSortChange = (value: string) => {
-        const params = new URLSearchParams(searchParams);
-        params.set('sort', value);
-        params.delete('page'); // Reset to page 1 when sort changes
-        router.push(`${pathname}?${params.toString()}`);
-    };
+  const params = new URLSearchParams(searchParams);
+  params.set('sort', String(key));
+  params.delete('page');
+  router.push(`${pathname}?${params.toString()}`);
+  };
 
     return (
-        <Select value={currentSort} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by"/>
-            </SelectTrigger>
-            <SelectContent>
-                {sortOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+        <Select 
+            selectionMode="single"
+            value={currentSort} 
+            placeholder="Sort by"
+            onChange={(value) => {handleSortChange(value);}}>
+            <Select.Trigger className="w-[180px]">
+                <Select.Value defaultValue="Name: A to Z" />
+            </Select.Trigger>
+            <Select.Popover className="rounded-sm">
+                <ListBox>
+                    {sortOptions.map((option) => (
+                    <ListBox.Item key={option.key} id={option.key} textValue={option.label}>
                         {option.label}
-                    </SelectItem>
+                        <ListBox.ItemIndicator />
+                    </ListBox.Item>
                 ))}
-            </SelectContent>
+                </ListBox>
+            </Select.Popover>
         </Select>
     );
 }
