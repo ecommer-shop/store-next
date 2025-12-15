@@ -12,6 +12,7 @@ export const buttonVariants = tv({
     },
     variant: {
       quaternary: 'bg-purple-500 hover:bg-purple-600 text-white',
+      
     }
   },
   defaultVariants: {
@@ -23,7 +24,7 @@ export const buttonVariants = tv({
 type CustomButtonVariants = VariantProps<typeof buttonVariants>;
 
 interface CustomButtonProps
-  extends Omit<ButtonProps, 'className' | 'size'>,
+  extends Omit<ButtonProps, 'className' | 'size' | 'variant'>,
   CustomButtonVariants {
   className?: string;
 }

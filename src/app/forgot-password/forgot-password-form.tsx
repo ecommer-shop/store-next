@@ -63,7 +63,7 @@ export function ForgotPasswordForm() {
                 </CardHeader>
                 <CardFooter>
                     <Link href="/sign-in">
-                        <Button variant="outline" className="w-full">
+                        <Button variant="ghost" className="w-full">
                             Back to Sign In
                         </Button>
                     </Link>
@@ -109,7 +109,7 @@ export function ForgotPasswordForm() {
                         )}
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4 mt-4">
-                        <Button type="submit" className="w-full" disabled={isPending}>
+                        <Button type="submit" className="w-full" isDisabled={isPending}>
                             {isPending ? 'Sending...' : 'Send reset link'}
                         </Button>
                         <Link

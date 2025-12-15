@@ -52,10 +52,10 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
     return (
         <nav className="flex items-center justify-center gap-2">
             <Button
-                variant="outline"
-                size="icon"
+                variant="ghost"
+                size="medium"
                 asChild
-                disabled={currentPage === 1}
+                isDisabled={currentPage === 1}
             >
                 {currentPage === 1 ? (
                     <span className="cursor-not-allowed">
@@ -83,10 +83,10 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                 return (
                     <Button
                         key={pageNum}
-                        variant={isActive ? 'default' : 'outline'}
-                        size="icon"
+                        variant={isActive ? 'primary' : 'ghost'}
+                        size="medium"
                         asChild={!isActive}
-                        disabled={isActive}
+                        isDisabled={isActive}
                     >
                         {isActive ? (
                             <span>{pageNum}</span>
@@ -98,10 +98,10 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
             })}
 
             <Button
-                variant="outline"
-                size="icon"
+                variant="ghost"
+                size="medium"
                 asChild
-                disabled={currentPage === totalPages}
+                isDisabled={currentPage === totalPages}
             >
                 {currentPage === totalPages ? (
                     <span className="cursor-not-allowed">

@@ -50,7 +50,7 @@ export function VerifyResult({resultPromise}: VerifyResultProps) {
                         </div>
                         <div className="flex flex-col gap-2">
                             <Link href="/register" className="block">
-                                <Button variant="outline" className="w-full">
+                                <Button variant="ghost" className="w-full">
                                     Create New Account
                                 </Button>
                             </Link>

@@ -89,7 +89,7 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
 
       <Button
         onClick={handleContinue}
-        disabled={!selectedMethodId || submitting}
+        isDisabled={!selectedMethodId || submitting}
         className="w-full"
       >
         {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

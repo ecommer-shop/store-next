@@ -54,7 +54,7 @@ export default function PaymentStep({ onComplete }: PaymentStepProps) {
 
       <Button
         onClick={handleContinue}
-        disabled={!selectedPaymentMethodCode}
+        isDisabled={!selectedPaymentMethodCode}
         className="w-full"
       >
         Continue to review

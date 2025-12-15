@@ -76,7 +76,7 @@ export function EditEmailForm({ currentEmail }: EditEmailFormProps) {
                             Verification email sent! Please check your inbox and click the link to confirm your new email address.
                         </div>
                     )}
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" isDisabled={isPending}>
                         {isPending ? 'Sending...' : 'Update Email'}
                     </Button>
                 </CardContent>

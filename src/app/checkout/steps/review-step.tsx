@@ -37,7 +37,8 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      <div className="space-y-6">
       <h3 className="font-semibold text-lg">Review your order</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -62,7 +63,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 <p className="text-muted-foreground">{order.shippingAddress.phoneNumber}</p>
               </div>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('shipping')}
               >
@@ -92,7 +93,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 </p>
               </div>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('delivery')}
               >
@@ -122,7 +123,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 )}
               </div>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('payment')}
               >
@@ -138,7 +139,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
 
       <Button
         onClick={handlePlaceOrder}
-        disabled={loading || !order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode}
+        isDisabled={loading || !order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode}
         size="lg"
         className="w-full"
       >
@@ -152,5 +153,6 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
         </p>
       )}
     </div>
+    </>
   );
 }
