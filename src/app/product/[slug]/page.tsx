@@ -136,14 +136,14 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
             <section className="py-16 bg-muted/30">
                 <div className="container mx-auto px-4 max-w-3xl">
                     <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-                    <Accordion lang="single" collapsible className="w-full">
-                        <AccordionItem value="shipping">
+                    <Accordion lang="single" className="w-full">
+                        <AccordionItem key="shipping">
                             <AccordionTrigger>What are your shipping options?</AccordionTrigger>
                             <AccordionContent>
                                 We offer standard shipping (5-7 business days), express shipping (2-3 business days), and next-day delivery for select areas. Free standard shipping is available on orders over $50.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="returns">
+                        <AccordionItem key="returns">
                             <AccordionTrigger>What is your return policy?</AccordionTrigger>
                             <AccordionContent>
                                 We accept returns within 30 days of purchase. Items must be unused and in their original packaging. Simply contact our support team to initiate a return and receive a prepaid shipping label.
@@ -155,7 +155,7 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 Once your order ships, you&apos;ll receive an email with a tracking number. You can also view your order status anytime by logging into your account and visiting the order history section.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="international">
+                        <AccordionItem key="international">
                             <AccordionTrigger>Do you offer international shipping?</AccordionTrigger>
                             <AccordionContent>
                                 Yes! We ship to over 50 countries worldwide. International shipping rates and delivery times vary by location. You can see the exact cost at checkout before completing your purchase.

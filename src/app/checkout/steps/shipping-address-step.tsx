@@ -141,12 +141,12 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
               </div>
             ))}
           </RadioGroup>
-
+          {}
           <div className="flex items-center space-x-2">
             <Checkbox
               id="same-billing"
-              checked={useSameForBilling}
-              onCheckedChange={(checked) => setUseSameForBilling(checked === true)}
+              /*checked={useSameForBilling}*/ 
+              onChange={(checked) => setUseSameForBilling(checked === true)}
             />
             <label
               htmlFor="same-billing"
@@ -159,7 +159,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
           <div className="flex gap-3">
             <Button
               onClick={handleSelectExistingAddress}
-              disabled={!selectedAddressId || loading}
+              isDisabled={!selectedAddressId || loading}
               className="flex-1"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -168,7 +168,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="ghost">
                   Add new address
                 </Button>
               </DialogTrigger>
@@ -269,10 +269,10 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                   </FieldGroup>
 
                   <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>
+                    <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} isDisabled={saving}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={saving}>
+                    <Button type="submit" isDisabled={saving}>
                       {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Save address
                     </Button>
@@ -383,7 +383,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
               </FieldGroup>
 
               <DialogFooter>
-                <Button type="submit" disabled={saving} className="w-full">
+                <Button type="submit" isDisabled={saving} className="w-full">
                   {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Save address
                 </Button>

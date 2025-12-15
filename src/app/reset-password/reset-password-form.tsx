@@ -29,7 +29,7 @@ export function ResetPasswordForm({ searchParams }: ResetPasswordFormProps) {
                 </CardHeader>
                 <CardFooter>
                     <Link href="/forgot-password">
-                        <Button variant="outline" className="w-full">
+                        <Button variant="ghost" className="w-full">
                             Request a new reset link
                         </Button>
                     </Link>
@@ -78,7 +78,7 @@ export function ResetPasswordForm({ searchParams }: ResetPasswordFormProps) {
                     )}
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">
-                    <Button type="submit" className="w-full" disabled={isPending}>
+                    <Button type="submit" className="w-full" isDisabled={isPending}>
                         {isPending ? 'Resetting password...' : 'Reset password'}
                     </Button>
                     <Link

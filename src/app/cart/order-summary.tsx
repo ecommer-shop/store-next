@@ -61,7 +61,7 @@ export async function OrderSummary({activeOrder}: { activeOrder: ActiveOrder }) 
                 <Link href="/checkout">Proceed to Checkout</Link>
             </Button>
 
-            <Button variant="outline" className="w-full mt-2" asChild>
+            <Button variant="ghost" className="w-full mt-2" asChild>
                 <Link href="/">Continue Shopping</Link>
             </Button>
         </div>

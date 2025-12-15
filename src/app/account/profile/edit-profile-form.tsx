@@ -68,7 +68,7 @@ export function EditProfileForm({ customer }: EditProfileFormProps) {
                             Profile updated successfully!
                         </div>
                     )}
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" isDisabled={isPending}>
                         {isPending ? 'Updating...' : 'Update Profile'}
                     </Button>
                 </CardContent>

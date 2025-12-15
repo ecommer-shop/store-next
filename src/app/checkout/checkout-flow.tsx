@@ -61,17 +61,16 @@ export default function CheckoutFlow() {
     <div className="grid lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
         <Accordion
-          type="single"
-          collapsible
-          value={currentStep}
-          onValueChange={(value) => {
+          
+          /*
+          onExpandedChange={(value) => {
             if (value && canAccessStep(value as CheckoutStep)) {
               setCurrentStep(value as CheckoutStep);
             }
-          }}
+          }}*/
           className="space-y-4"
         >
-          <AccordionItem value="shipping" className="border rounded-lg px-6">
+          <AccordionItem key="shipping" className="border rounded-lg px-6">
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
@@ -94,13 +93,13 @@ export default function CheckoutFlow() {
           </AccordionItem>
 
           <AccordionItem
-            value="delivery"
+            key="delivery"
             className="border rounded-lg px-6"
-            disabled={!canAccessStep('delivery')}
+            isDisabled={!canAccessStep('delivery')}
           >
             <AccordionTrigger
               className="hover:no-underline"
-              disabled={!canAccessStep('delivery')}
+              isDisabled={!canAccessStep('delivery')}
             >
               <div className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
@@ -123,13 +122,13 @@ export default function CheckoutFlow() {
           </AccordionItem>
 
           <AccordionItem
-            value="payment"
+            key="payment"
             className="border rounded-lg px-6"
-            disabled={!canAccessStep('payment')}
+            isDisabled={!canAccessStep('payment')}
           >
             <AccordionTrigger
               className="hover:no-underline"
-              disabled={!canAccessStep('payment')}
+              isDisabled={!canAccessStep('payment')}
             >
               <div className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
@@ -152,13 +151,13 @@ export default function CheckoutFlow() {
           </AccordionItem>
 
           <AccordionItem
-            value="review"
+            key="review"
             className="border rounded-lg px-6"
-            disabled={!canAccessStep('review')}
+            isDisabled={!canAccessStep('review')}
           >
             <AccordionTrigger
               className="hover:no-underline"
-              disabled={!canAccessStep('review')}
+              isDisabled={!canAccessStep('review')}
             >
               <div className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${

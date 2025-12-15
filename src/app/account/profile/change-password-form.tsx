@@ -70,7 +70,7 @@ export function ChangePasswordForm() {
                             Password updated successfully!
                         </div>
                     )}
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" isDisabled={isPending}>
                         {isPending ? 'Updating...' : 'Update Password'}
                     </Button>
                 </CardContent>

@@ -35,20 +35,20 @@ export function CountrySelect({ countries, value, onValueChange, disabled }: Cou
   const selectedCountry = countries.find((country) => country.code === value);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <Popover isOpen={open} onOpenChange={setOpen}>
+      <PopoverTrigger >
         <Button
-          variant="outline"
-          role="combobox"
+          variant="ghost"
+          //role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
-          disabled={disabled}
+          isDisabled={disabled}
         >
           {selectedCountry ? selectedCountry.name : 'Select country...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0" align="start">
+      <PopoverContent className="w-full p-0 align-baseline">
         <Command>
           <CommandInput placeholder="Search country..." />
           <CommandList>
