@@ -1,4 +1,4 @@
-import {Button} from "@/components/ui/button";
+import {Button} from "@heroui/react";
 import Link from "next/link";
 
 export function HeroSection() {

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 
 interface ProductImageCarouselProps {
     images: Array<{
@@ -50,7 +50,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                     <>
                         <Button
                             variant="ghost"
-                            size="medium"
+                            size="md"
                             className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={goToPrevious}
                         >
@@ -58,7 +58,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                         </Button>
                         <Button
                             variant="ghost"
-                            size="medium"
+                            size="md"
                             className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={goToNext}
                         >

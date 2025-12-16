@@ -1,7 +1,7 @@
 'use client';
 
 import {ShoppingCart} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@heroui/react";
 import Link from "next/link";
 
 
@@ -11,7 +11,7 @@ interface CartIconProps {
 
 export function CartIcon({cartItemCount}: CartIconProps) {
     return (
-        <Button variant="quaternary" size="large" asChild className="relative">
+        <Button variant="quaternary" size="lg" asChild className="relative">
             <Link href="/cart">
                 <ShoppingCart className="h-5 w-5"/>
                 {cartItemCount > 0 && (

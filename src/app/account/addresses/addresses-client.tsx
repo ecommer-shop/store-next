@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
     AlertDialog,
@@ -183,7 +183,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                                         <DropdownMenuTrigger asChild>
                                             <Button
                                                 variant="ghost"
-                                                size="medium"
+                                                size="md"
                                                 aria-label="Address actions"
                                             >
                                                 <MoreVertical className="h-4 w-4" />

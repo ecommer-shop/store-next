@@ -4,7 +4,7 @@ import { use } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import {SearchProductsQuery} from "@/lib/vendure/queries";
 import { Accordion, Checkbox } from '@heroui/react';
 import { Icon } from "@iconify/react";

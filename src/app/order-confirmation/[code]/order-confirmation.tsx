@@ -1,7 +1,7 @@
 import {connection} from 'next/server';
 import {query} from '@/lib/vendure/api';
 import {graphql} from '@/graphql';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {CheckCircle2} from 'lucide-react';
 import Link from 'next/link';

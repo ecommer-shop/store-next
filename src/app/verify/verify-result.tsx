@@ -2,7 +2,7 @@
 
 import {use} from 'react';
 import {Card, CardContent} from '@/components/ui/card';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import Link from 'next/link';
 import {CheckCircle, XCircle} from 'lucide-react';
 
