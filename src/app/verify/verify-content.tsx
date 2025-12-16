@@ -4,7 +4,7 @@ import {use} from 'react';
 import {VerifyResult} from './verify-result';
 import {verifyAccountAction} from './actions';
 import {Card, CardContent} from '@/components/ui/card';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import Link from 'next/link';
 import {XCircle} from 'lucide-react';
 

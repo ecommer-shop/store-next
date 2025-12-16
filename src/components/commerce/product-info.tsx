@@ -2,7 +2,7 @@
 
 import {useState, useMemo, useTransition} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import {Label} from '@/components/ui/label';
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';

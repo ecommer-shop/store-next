@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import {Price} from '@/components/commerce/price';
 
 type ActiveOrder = {

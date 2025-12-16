@@ -1,5 +1,5 @@
 import {User} from 'lucide-react';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import {
     DropdownMenu,
     DropdownMenuContent,

@@ -5,6 +5,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  font-size: 16px;
+  zoom: 90%;
+  transform: none;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

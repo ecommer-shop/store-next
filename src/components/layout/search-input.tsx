@@ -31,7 +31,7 @@ export function SearchInput() {
         className="
           pl-9
           w-[120px]
-          sm:w-[160px]
+          sm:w-[250px]
           md:w-[220px]
           lg:w-64
           transition-all

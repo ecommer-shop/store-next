@@ -4,7 +4,7 @@ import * as React from "react"
 import { AlertDialog as AlertDialogPrimitive} from "@heroui/react"
 
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@heroui/react"
 
 function AlertDialog({
   ...props

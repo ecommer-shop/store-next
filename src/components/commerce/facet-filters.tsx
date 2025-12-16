@@ -3,11 +3,10 @@
 import { use } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import {SearchProductsQuery} from "@/lib/vendure/queries";
-import { Accordion } from '@heroui/react';
+import { Accordion, Checkbox } from '@heroui/react';
 import { Icon } from "@iconify/react";
 
 interface FacetFiltersProps {
@@ -91,9 +90,9 @@ export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
                 )}
             </div>
 
-            <Accordion allowsMultipleExpanded className="space-y-5">
+            <Accordion allowsMultipleExpanded className="space-y-1">
                 {Object.entries(facetGroups).map(([facetName, facet]) => (
-                <Accordion.Item key={facet.id} className="space-y-3">
+                <Accordion.Item key={facet.id} className="space-y-1">
                     <Accordion.Heading>
                         <Accordion.Trigger>
                             {facet.name}
@@ -113,16 +112,22 @@ export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
                                         id={value.id}
                                         isSelected={isChecked}
                                         onChange={() => toggleFacet(value.id)}
-                                    />
-                                    <Label
-                                        htmlFor={value.id}
-                                        className="text-sm font-normal cursor-pointer flex items-center gap-2"
                                     >
-                                        {value.name}
-                                        <span className="text-xs text-muted-foreground">
-                                            ({value.count})
-                                        </span>
-                                    </Label>
+                                        <Checkbox.Control>
+                                            <Checkbox.Indicator/>
+                                        </Checkbox.Control>
+                                        <Checkbox.Content>
+                                            <Label
+                                                htmlFor={value.id}
+                                                className="text-sm font-normal cursor-pointer flex items-center gap-2"
+                                            >
+                                                {value.name}
+                                                <span className="text-xs text-muted-foreground">
+                                                    ({value.count})
+                                                </span>
+                                            </Label>
+                                        </Checkbox.Content>
+                                    </Checkbox>
                                 </Accordion.Body>
                             );
                         })}

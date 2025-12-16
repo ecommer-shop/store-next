@@ -26,10 +26,10 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
 
       <Card
         className="
-          p-0 relative w-full
+          p-0 relative w-full rounded-sm
           h-[150px]
           min-[400px]:h-[170px]
-          sm:h-[200px]
+          sm:h-[300px]
           md:h-[240px]
           lg:h-[280px]
           xl:h-[320px]

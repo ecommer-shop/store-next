@@ -2,7 +2,7 @@
 
 import {usePathname, useSearchParams} from 'next/navigation';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
-import {Button} from '@/components/ui/button';
+import {Button} from '@heroui/react';
 import Link from "next/link";
 
 interface PaginationProps {
@@ -53,7 +53,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
         <nav className="flex items-center justify-center gap-2">
             <Button
                 variant="ghost"
-                size="medium"
+                size="md"
                 asChild
                 isDisabled={currentPage === 1}
             >
@@ -84,7 +84,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                     <Button
                         key={pageNum}
                         variant={isActive ? 'primary' : 'ghost'}
-                        size="medium"
+                        size="md"
                         asChild={!isActive}
                         isDisabled={isActive}
                     >
@@ -99,7 +99,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
 
             <Button
                 variant="ghost"
-                size="medium"
+                size="md"
                 asChild
                 isDisabled={currentPage === totalPages}
             >
