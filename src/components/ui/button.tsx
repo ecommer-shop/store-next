@@ -10,10 +10,6 @@ export const buttonVariants = tv({
       medium: 'text-base px-4 py-2',
       large: 'text-lg px-6 py-3',
     },
-    variant: {
-      quaternary: 'bg-purple-500 hover:bg-purple-600 text-white',
-      
-    }
   },
   defaultVariants: {
     intent: 'primary',

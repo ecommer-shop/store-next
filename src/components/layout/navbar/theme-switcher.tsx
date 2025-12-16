@@ -15,7 +15,7 @@ export function ThemeSwitcher() {
 
     if (!mounted) {
         return (
-            <Button variant="quaternary" size="sm" isDisabled={mounted}>
+            <Button variant="ghost" size="sm" isDisabled={mounted}>
                 <Sun className="size-5" />
                 <span className="sr-only">Toggle theme</span>
             </Button>
