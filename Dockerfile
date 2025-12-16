@@ -4,7 +4,7 @@
 FROM oven/bun:1 AS builder
 WORKDIR /app
 
-# ---- Build-time args (Railway NO los inyecta solos) ----
+# Build-time args
 ARG VENDURE_SHOP_API_URL
 ARG NEXT_PUBLIC_VENDURE_SHOP_API_URL
 ARG VENDURE_CHANNEL_TOKEN
@@ -18,7 +18,7 @@ ARG AUTH0_CLIENT_SECRET
 ARG AUTH0_API_ID
 ARG AUTH0_API_IDENTIFIER
 
-# ---- Pasarlos a envs para next build ----
+# Pasar args a envs para next build
 ENV VENDURE_SHOP_API_URL=$VENDURE_SHOP_API_URL
 ENV NEXT_PUBLIC_VENDURE_SHOP_API_URL=$NEXT_PUBLIC_VENDURE_SHOP_API_URL
 ENV VENDURE_CHANNEL_TOKEN=$VENDURE_CHANNEL_TOKEN
@@ -35,14 +35,14 @@ ENV AUTH0_API_IDENTIFIER=$AUTH0_API_IDENTIFIER
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# ---- Install deps ----
+# Instalar deps
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
-# ---- Copy source ----
+# Copiar código
 COPY . .
 
-# ---- Build Next ----
+# Build Next
 RUN bun run next build
 
 # =========================
@@ -52,13 +52,11 @@ FROM oven/bun:1 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+# Railway inyecta PORT (normalmente 8080), no lo sobreescribimos
+EXPOSE 8080
 
-# ---- Copy standalone output ----
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+# Copiamos todo el proyecto ya construido
+COPY --from=builder /app ./
 
-EXPOSE 3000
-
-CMD ["bun", "server.js"]
+# Arrancamos Next usando bun, escuchando en el PORT de Railway
+CMD ["bun", "run", "next", "start", "-p", "0.0.0.0:${PORT}"]
