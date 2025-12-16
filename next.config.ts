@@ -2,6 +2,7 @@ import {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
     cacheComponents: true,
+    output: 'standalone',
     images: {
         // This is necessary to display images from your local Vendure instance
         

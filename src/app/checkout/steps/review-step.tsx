@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import { Loader2, MapPin, Truck, CreditCard, Edit } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { placeOrder as placeOrderAction } from '../actions';

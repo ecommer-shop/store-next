@@ -16,7 +16,7 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination';
 import {ArrowRightIcon} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@heroui/react";
 import {Price} from '@/components/commerce/price';
 import {OrderStatusBadge} from '@/components/commerce/order-status-badge';
 import {formatDate} from '@/lib/format';

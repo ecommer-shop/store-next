@@ -1,4 +1,4 @@
-import {Button} from "@/components/ui/button";
+import {Button} from "@heroui/react";
 import Link from "next/link";
 
 export function HeroSection() {
@@ -13,7 +13,7 @@ export function HeroSection() {
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis maiores 
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-                        <Button asChild size="lg" className="min-w-[200px]">
+                        <Button asChild size="lg" className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8] ">
                             <Link href="/search">
                                 Shop Now
                             </Link>

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { mutate } from '@/lib/vendure/api';
 import { UpdateCustomerEmailAddressMutation } from '@/lib/vendure/mutations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import Link from 'next/link';
 
 async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<string, string | string[] | undefined>>}) {
