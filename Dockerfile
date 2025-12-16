@@ -52,11 +52,15 @@ FROM oven/bun:1 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Railway inyecta PORT (normalmente 8080), no lo sobreescribimos
+
+# Railway inyecta PORT; no lo fijamos nosotros
+# Expose solo para documentación (puede ser cualquiera, usa $PORT en runtime)
 EXPOSE 8080
 
-# Copiamos todo el proyecto ya construido
-COPY --from=builder /app ./
+# Copiamos solo el standalone y estáticos
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
-# Arrancamos Next usando bun, escuchando en el PORT de Railway
-CMD ["bun", "run", "next", "start", "-p", "0.0.0.0:${PORT}"]
+# Importante: usar node sobre el standalone server
+CMD ["node", "server.js"]
