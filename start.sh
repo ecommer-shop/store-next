@@ -1,43 +1,45 @@
 #!/bin/sh
-set -e  # Salir si hay algún error
+# =========================
+# Start script for Next.js Standalone on Railway
+# =========================
 
-# Script de inicio para Next.js en Railway
-# Asegura que PORT esté definido y que Next.js escuche correctamente
+set -e
 
-# Railway inyecta PORT automáticamente, pero usamos 8080 como fallback
+# Railway inyecta PORT automáticamente
 export PORT=${PORT:-8080}
 
-# Log para diagnóstico
+# Forzar escucha externa
+export HOST=0.0.0.0
+
 echo "=========================================="
-echo "Starting Next.js server on port $PORT"
+echo "Starting Next.js server"
 echo "NODE_ENV=$NODE_ENV"
-echo "Working directory: $(pwd)"
+echo "HOST=$HOST"
 echo "PORT=$PORT"
+echo "Working directory: $(pwd)"
 echo "=========================================="
 
-# Verificar que server.js existe
+# Verificar server.js
 if [ ! -f "server.js" ]; then
-    echo "ERROR: server.js not found!"
-    ls -la
-    exit 1
+  echo "ERROR: server.js not found"
+  ls -la
+  exit 1
 fi
 
-# Verificar que .next existe
+# Verificar .next
 if [ ! -d ".next" ]; then
-    echo "ERROR: .next directory not found!"
-    ls -la
-    exit 1
+  echo "ERROR: .next directory not found"
+  ls -la
+  exit 1
 fi
 
-# Ejecutar el servidor Next.js standalone
-# Next.js standalone escucha en 0.0.0.0 por defecto cuando PORT está definido
-# Usamos exec para que el proceso principal sea node, no sh
-# Esto asegura que Railway vea node como el proceso principal
 echo "Executing: node server.js"
-echo "Server should be listening on 0.0.0.0:$PORT"
+echo "Server should be listening on http://$HOST:$PORT"
+echo "Node version: $(node --version)"
 echo "=========================================="
 
-# Ejecutar node y mantener el proceso vivo
-# Si el proceso termina, el contenedor se detendrá
-exec node server.js
+# Manejo de señales 
+trap 'echo "Received termination signal. Shutting down..."; exit 0' TERM INT
 
+# Reemplazar shell por node (PID 1)
+exec node server.js

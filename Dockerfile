@@ -1,5 +1,5 @@
 # =========================
-# Builder
+# Builder (Bun solo para build)
 # =========================
 FROM oven/bun:1 AS builder
 WORKDIR /app
@@ -42,23 +42,24 @@ COPY . .
 RUN bun run next build
 
 # =========================
-# Runner
+# Runner 
 # =========================
-FROM oven/bun:1 AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-
+# Railway inyecta PORT en runtime
 EXPOSE 8080
 
+# Copiar salida standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-
+# Script de arranque
 COPY start.sh ./
 RUN chmod +x start.sh
 
-
+# Comando final
 CMD ["./start.sh"]
