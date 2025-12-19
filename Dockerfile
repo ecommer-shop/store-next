@@ -48,12 +48,13 @@ FROM oven/bun:1 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=8080
 
+ENV PORT=8080
 EXPOSE 8080
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-CMD ["node", "server.js", "--port", "8080"]
+# Next.js standalone lee PORT y HOSTNAME de las variables de entorno
+CMD ["node", "server.js"]
