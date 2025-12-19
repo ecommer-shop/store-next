@@ -56,4 +56,9 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-CMD ["node", "server.js"]
+
+COPY start.sh ./
+RUN chmod +x start.sh
+
+
+CMD ["./start.sh"]
