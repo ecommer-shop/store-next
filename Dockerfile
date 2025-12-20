@@ -1,24 +1,65 @@
+# =========================
+# Builder (Bun solo para build)
+# =========================
 FROM oven/bun:1 AS builder
 WORKDIR /app
+
+# ---- Build-time args ----
+ARG VENDURE_SHOP_API_URL
+ARG NEXT_PUBLIC_VENDURE_SHOP_API_URL
+ARG VENDURE_CHANNEL_TOKEN
+ARG NEXT_PUBLIC_SITE_URL
+ARG REVALIDATION_SECRET
+ARG NEXT_PUBLIC_SITE_NAME
+ARG APP_BASE_URL
+ARG AUTH0_DOMAIN
+ARG AUTH0_CLIENT_ID
+ARG AUTH0_CLIENT_SECRET
+ARG AUTH0_API_ID
+ARG AUTH0_API_IDENTIFIER
+
+# ---- Pasar args a envs ----
+ENV VENDURE_SHOP_API_URL=$VENDURE_SHOP_API_URL
+ENV NEXT_PUBLIC_VENDURE_SHOP_API_URL=$NEXT_PUBLIC_VENDURE_SHOP_API_URL
+ENV VENDURE_CHANNEL_TOKEN=$VENDURE_CHANNEL_TOKEN
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV REVALIDATION_SECRET=$REVALIDATION_SECRET
+ENV NEXT_PUBLIC_SITE_NAME=$NEXT_PUBLIC_SITE_NAME
+ENV APP_BASE_URL=$APP_BASE_URL
+ENV AUTH0_DOMAIN=$AUTH0_DOMAIN
+ENV AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID
+ENV AUTH0_CLIENT_SECRET=$AUTH0_CLIENT_SECRET
+ENV AUTH0_API_ID=$AUTH0_API_ID
+ENV AUTH0_API_IDENTIFIER=$AUTH0_API_IDENTIFIER
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
 COPY . .
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
 RUN bun run next build
 
-FROM oven/bun:1 AS runner
+# =========================
+# Runner 
+# =========================
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
 
+# Railway inyecta PORT en runtime
+EXPOSE 8080
+
+# Copiar salida standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-EXPOSE 3000
-CMD ["bun","server.js"]
+# Script de arranque
+COPY start.sh ./
+RUN chmod +x start.sh
+
+# Comando final
+CMD ["./start.sh"]
