@@ -1,10 +1,10 @@
 # =========================
-# Builder
+# Builder (Bun solo para build)
 # =========================
 FROM oven/bun:1 AS builder
 WORKDIR /app
 
-# ---- Build-time args (Railway NO los inyecta solos) ----
+# ---- Build-time args ----
 ARG VENDURE_SHOP_API_URL
 ARG NEXT_PUBLIC_VENDURE_SHOP_API_URL
 ARG VENDURE_CHANNEL_TOKEN
@@ -18,7 +18,7 @@ ARG AUTH0_CLIENT_SECRET
 ARG AUTH0_API_ID
 ARG AUTH0_API_IDENTIFIER
 
-# ---- Pasarlos a envs para next build ----
+# ---- Pasar args a envs ----
 ENV VENDURE_SHOP_API_URL=$VENDURE_SHOP_API_URL
 ENV NEXT_PUBLIC_VENDURE_SHOP_API_URL=$NEXT_PUBLIC_VENDURE_SHOP_API_URL
 ENV VENDURE_CHANNEL_TOKEN=$VENDURE_CHANNEL_TOKEN
@@ -35,30 +35,31 @@ ENV AUTH0_API_IDENTIFIER=$AUTH0_API_IDENTIFIER
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# ---- Install deps ----
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
-# ---- Copy source ----
 COPY . .
-
-# ---- Build Next ----
 RUN bun run next build
 
 # =========================
-# Runner
+# Runner 
 # =========================
-FROM oven/bun:1 AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
 
-# ---- Copy standalone output ----
+# Railway inyecta PORT en runtime
+EXPOSE 8080
+
+# Copiar salida standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-EXPOSE 3000
+# Script de arranque
+COPY start.sh ./
+RUN chmod +x start.sh
 
-CMD ["bun", "server.js"]
+# Comando final
+CMD ["./start.sh"]

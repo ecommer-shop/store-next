@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { mutate } from '@/lib/vendure/api';
-import { UpdateCustomerEmailAddressMutation } from '@/lib/vendure/mutations';
+import { UpdateCustomerEmailAddressMutation, VerifyCustomerAccountMutation } from '@/lib/vendure/mutations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@heroui/react';
 import Link from 'next/link';
@@ -25,7 +25,7 @@ async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<
                         Please check your email for the correct verification link, or request a new one from your profile page.
                     </p>
                     <Button asChild>
-                        <Link href="/account/profile">Go to Profile</Link>
+                        <Link href="/register">Register an account</Link>
                     </Button>
                 </CardContent>
             </Card>
@@ -33,10 +33,10 @@ async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<
     }
 
     try {
-        const result = await mutate(UpdateCustomerEmailAddressMutation, { token: token! }, { useAuthToken: true });
-        const updateResult = result.data.updateCustomerEmailAddress;
+        const result = await mutate(VerifyCustomerAccountMutation, { token: token });
+        const verifyResult = result.data.verifyCustomerAccount;
 
-        if (updateResult.__typename === 'Success') {
+        if (verifyResult.__typename === 'CurrentUser') {
             return (
                 <Card className="max-w-md mx-auto">
                     <CardHeader>
@@ -50,7 +50,7 @@ async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<
                             Your email address has been changed. You can now use your new email address to sign in.
                         </p>
                         <Button asChild>
-                            <Link href="/account/profile">Go to Profile</Link>
+                            <Link href="/sign-in">Sign in</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -62,7 +62,7 @@ async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<
                 <CardHeader>
                     <CardTitle>Verification Failed</CardTitle>
                     <CardDescription>
-                        {updateResult.message || 'Unable to verify your email address.'}
+                        {verifyResult.message || 'Unable to verify your email address.'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -70,7 +70,7 @@ async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<
                         The verification link may have expired or already been used. Please request a new verification email from your profile page.
                     </p>
                     <Button asChild>
-                        <Link href="/account/profile">Go to Profile</Link>
+                        <Link href="/register">Register an account</Link>
                     </Button>
                 </CardContent>
             </Card>
@@ -89,7 +89,7 @@ async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<
                         Please try again later or contact support if the problem persists.
                     </p>
                     <Button asChild>
-                        <Link href="/account/profile">Go to Profile</Link>
+                        <Link href="/register">Register an account</Link>
                     </Button>
                 </CardContent>
             </Card>
