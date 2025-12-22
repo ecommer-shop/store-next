@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default async function Home(_props: PageProps<'/'>) {
     return (
-        <div className="min-h-screen">
+        <div className="">
             <HeroSection/>
             <FeaturedProducts/>
 
@@ -71,6 +71,12 @@ export default async function Home(_props: PageProps<'/'>) {
                     </div>
                 </div>
             </section>
+
+
+
+
+
+
         </div>
     );
 }

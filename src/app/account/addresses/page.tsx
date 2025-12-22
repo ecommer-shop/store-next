@@ -6,8 +6,18 @@ export const metadata: Metadata = {
 };
 import { GetCustomerAddressesQuery, GetAvailableCountriesQuery } from '@/lib/vendure/queries';
 import { AddressesClient } from './addresses-client';
+import { auth } from '@clerk/nextjs/server';
+import { RedirectToSignIn, SignedOut } from '@clerk/nextjs';
 
 export default async function AddressesPage(_props: PageProps<'/account/addresses'>) {
+    const user = auth();
+
+    if((await user).isAuthenticated) {
+        return (
+            <SignedOut>
+                <RedirectToSignIn />
+            </SignedOut>)
+    }
     const [addressesResult, countriesResult] = await Promise.all([
         query(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
         query(GetAvailableCountriesQuery, {}),

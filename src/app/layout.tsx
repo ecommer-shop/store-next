@@ -6,6 +6,14 @@ import {Navbar} from "@/components/layout/navbar";
 import {Footer} from "@/components/layout/footer";
 import {ThemeProvider} from "@/components/providers/theme-provider";
 import {SITE_NAME, SITE_URL} from "@/lib/metadata";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -56,21 +64,23 @@ export const viewport: Viewport = {
     ],
 };
 
-export default function RootLayout({children}: LayoutProps<'/'>) {
-    return (
-        <html lang="en" suppressHydrationWarning className="theme-transition">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen max-w-full`}
-            >
-                <ThemeProvider>
-                    <Navbar />
-                    <main className="flex-1">
-                        {children}
-                    </main>
-                    <Footer />
-                    <Toaster />
-                </ThemeProvider>
-            </body>
-        </html>
-    );
+export default function RootLayout({ children }: LayoutProps<'/'>) {
+  return (
+    <ClerkProvider dynamic afterSignOutUrl="/">
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ThemeProvider>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
+  );
 }

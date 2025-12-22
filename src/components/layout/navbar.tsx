@@ -8,6 +8,7 @@ import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
 import {SearchInputSkeleton} from '@/components/shared/skeletons/search-input-skeleton';
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 export function Navbar() {
     return (
@@ -57,6 +58,7 @@ export function Navbar() {
 
                     <Suspense fallback={<NavbarUserSkeleton />}>
                     <NavbarUser />
+                    
                     </Suspense>
                 </div>
                 </div>
