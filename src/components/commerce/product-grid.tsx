@@ -1,9 +1,9 @@
 import {ResultOf} from '@/graphql';
 import {ProductCard} from './product-card';
 import {Pagination} from '@/components/shared/pagination';
-import {SortDropdown} from './sort-dropdown';
 import {SearchProductsQuery} from "@/lib/vendure/queries";
 import {getActiveChannel} from '@/lib/vendure/actions';
+import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
 
 interface ProductGridProps {
     productDataPromise: Promise<{
@@ -37,7 +37,7 @@ export async function ProductGrid({productDataPromise, currentPage, take}: Produ
                 <p className="text-sm text-muted-foreground">
                     {searchResult.totalItems} {searchResult.totalItems === 1 ? 'product' : 'products'}
                 </p>
-                <SortDropdown/>
+                <SortDropdownEntry/>
             </div>
 
             <div className="grid gap-4
