@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
-import { Button } from "@heroui/react"
+import { useEffect, useState } from "react";
+import { Button } from "@heroui/react";
 import {
   SignedIn,
   SignedOut,
@@ -8,15 +9,24 @@ import {
   SignUpButton,
   UserButton,
   useClerk,
-  SignOutButton
-} from "@clerk/nextjs"
-import { useTheme } from "next-themes"
-
-import { dark } from "@clerk/themes"
+} from "@clerk/nextjs";
+import { useTheme } from "next-themes";
+import { dark } from "@clerk/themes";
 
 export function NavbarUser() {
   const { theme } = useTheme();
   const { signOut } = useClerk();
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <>
       {/* NO autenticado */}
@@ -36,20 +46,19 @@ export function NavbarUser() {
 
       {/* Autenticado */}
       <SignedIn>
-        <UserButton appearance={{
-          baseTheme: theme === "dark" ? dark : undefined,
-          elements: {
-            userButtonPopoverActionButton__manageAccount: "hidden!",
-            userButtonPopoverActionButton__signOut: "hidden!",
-          },
-          captcha: {
-            language: "es-ES",
-            size: "compact"
-          },
-          variables: {
-            borderRadius: "2px",
-          }
-        }} showName >
+        <UserButton
+          appearance={{
+            baseTheme: theme === "dark" ? dark : undefined,
+            elements: {
+              userButtonPopoverActionButton__manageAccount: "hidden!",
+              userButtonPopoverActionButton__signOut: "hidden!",
+            },
+            variables: {
+              borderRadius: "2px",
+            },
+          }}
+          showName
+        >
           <UserButton.MenuItems>
             <UserButton.Link
               label="Mi perfil"
@@ -94,5 +103,5 @@ export function NavbarUser() {
         </UserButton>
       </SignedIn>
     </>
-  )
+  );
 }

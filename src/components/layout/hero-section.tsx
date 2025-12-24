@@ -1,22 +1,27 @@
 import {Button} from "@heroui/react";
+import Image from "next/image";
 import Link from "next/link";
 export function HeroSection() {
     return (
         <section className="relative bg-muted overflow-hidden mt-10 ">
             {/* Fondo LIGHT */}
-            <img
+            <Image
                 src="/bg-light.webp"
                 className="absolute inset-0 w-full h-full object-cover block dark:hidden"
                 alt=""
                 aria-hidden
+                width={500}
+                height={500}
             />
 
             {/* Fondo DARK */}
-            <img
+            <Image
                 src="/bg-dark2.webp"
                 className="absolute inset-0 w-full h-full object-cover hidden dark:block"
                 alt=""
                 aria-hidden
+                width={500}
+                height={500}
             />
 
             {/* Capa liquid blur */}
@@ -47,7 +52,7 @@ export function HeroSection() {
                     size="lg"
                     className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8]"
                     >
-                    <Link href="/search">Shop Now</Link>
+                    <Link href="/search"></Link>
                     </Button>
                 </div>
                 </div>

@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { query } from '@/lib/vendure/api';
 import { GetProductDetailQuery } from '@/lib/vendure/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
-import { ProductInfo } from '@/components/commerce/product-info';
 import { RelatedProducts } from '@/components/commerce/related-products';
 import {
     Accordion,
@@ -18,6 +17,8 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/metadata';
+import { ProductInfo } from '@/components/commerce/product-info';
+import { Suspense } from 'react';
 
 async function getProductData(slug: string) {
     'use cache';
@@ -91,7 +92,23 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
 
                     {/* Right Column: Product Info */}
                     <div>
-                        <ProductInfo product={product} searchParams={searchParamsResolved} />
+                        <Suspense fallback={
+                            <div className="h-40 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <circle cx="18" cy="12" r="0" fill="#12123f">
+                                        <animate attributeName="r" begin=".67" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
+                                    </circle>
+                                    <circle cx="12" cy="12" r="0" fill="#12123f">
+                                        <animate attributeName="r" begin=".33" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
+                                    </circle>
+                                    <circle cx="6" cy="12" r="0" fill="#12123f">
+                                        <animate attributeName="r" begin="0" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
+                                    </circle>
+                                </svg>
+                            </div>
+                        }>
+                            <ProductInfo product={product} searchParams={searchParamsResolved} />
+                        </Suspense>
                     </div>
                 </div>
             </div>
