@@ -14,7 +14,7 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
   return (
     <div className="relative group">
       
-      {/* Link full-card SOLO mobile / tablet */}
+      {/* Link full-card */}
       <Link
         href={`/product/${product.slug}`}
         className="absolute inset-0 z-10"

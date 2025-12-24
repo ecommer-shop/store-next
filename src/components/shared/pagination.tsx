@@ -58,41 +58,44 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                 isDisabled={currentPage === 1}
             >
                 {currentPage === 1 ? (
-                    <span className="cursor-not-allowed">
-                        <ChevronLeft className="h-4 w-4"/>
+                    <span className="flex h-9 w-9 items-center justify-center cursor-not-allowed text-muted-foreground">
+                        <ChevronLeft className="h-4 w-4" />
                     </span>
-                ) : (
-                    <Link href={createPageUrl(currentPage - 1)}>
-                        <ChevronLeft className="h-4 w-4"/>
-                    </Link>
+                    ) : (
+                    <Button variant="ghost" size="md" asChild>
+                        <Link href={createPageUrl(currentPage - 1)}>
+                        <ChevronLeft className="h-4 w-4" />
+                        </Link>
+                    </Button>
                 )}
             </Button>
 
             {pages.map((page, index) => {
                 if (page === '...') {
                     return (
-                        <span key={`dots-${index}`} className="px-2 text-muted-foreground">
-                            ...
-                        </span>
+                    <span key={`dots-${index}`} className="px-2 text-muted-foreground">
+                        ...
+                    </span>
                     );
                 }
 
                 const pageNum = page as number;
                 const isActive = pageNum === currentPage;
 
-                return (
-                    <Button
+                if (isActive) {
+                    return (
+                    <span
                         key={pageNum}
-                        variant={isActive ? 'primary' : 'ghost'}
-                        size="md"
-                        asChild={!isActive}
-                        isDisabled={isActive}
+                        className="flex h-9 min-w-9 items-center justify-center rounded-md bg-primary text-primary-foreground"
                     >
-                        {isActive ? (
-                            <span>{pageNum}</span>
-                        ) : (
-                            <Link href={createPageUrl(pageNum)}>{pageNum}</Link>
-                        )}
+                        {pageNum}
+                    </span>
+                    );
+                }
+
+                return (
+                    <Button key={pageNum} variant="ghost" size="md" asChild>
+                    <Link href={createPageUrl(pageNum)}>{pageNum}</Link>
                     </Button>
                 );
             })}
@@ -104,13 +107,15 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                 isDisabled={currentPage === totalPages}
             >
                 {currentPage === totalPages ? (
-                    <span className="cursor-not-allowed">
-                        <ChevronRight className="h-4 w-4"/>
+                    <span className="flex h-9 w-9 items-center justify-center cursor-not-allowed text-muted-foreground">
+                        <ChevronRight className="h-4 w-4" />
                     </span>
-                ) : (
-                    <Link href={createPageUrl(currentPage + 1)}>
-                        <ChevronRight className="h-4 w-4"/>
-                    </Link>
+                    ) : (
+                    <Button variant="ghost" size="md" asChild>
+                        <Link href={createPageUrl(currentPage + 1)}>
+                        <ChevronRight className="h-4 w-4" />
+                        </Link>
+                    </Button>
                 )}
             </Button>
         </nav>
