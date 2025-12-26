@@ -14,13 +14,10 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
   return (
     <div className="relative group">
       
-      {/* Link full-card SOLO mobile / tablet */}
+      {/* Link full-card */}
       <Link
         href={`/product/${product.slug}`}
-        className="
-          absolute inset-0 z-10
-          lg:hidden
-        "
+        className="absolute inset-0 z-10"
         aria-label={`Ver ${product.productName}`}
       />
 
@@ -35,11 +32,12 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
           xl:h-[320px]
         "
       >
-        {/* Imagen */}
-        <img
+        <Image
           alt={product.productName}
           className="absolute inset-0 h-full w-full object-cover"
-          src={product.productAsset?.preview}
+          src={product.productAsset?.preview!}
+          width={500}
+          height={500}
         />
 
         <Card.Footer
@@ -67,17 +65,17 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
 
           {/* Botón SOLO desktop */}
           <Button
+            asChild
             className="
               hidden lg:flex
+              relative z-30
               mb-2 bg-white/95 text-black shadow-lg
               min-w-[90px] h-10
             "
           >
-            <Link
-              href={`/product/${product.slug}`}
-              className="font-semibold text-sm"
-            >
-              Comprar
+            
+            <Link href={`/product/${product.slug}`}>
+            Comprar
             </Link>
           </Button>
         </Card.Footer>

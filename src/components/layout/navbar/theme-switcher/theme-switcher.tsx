@@ -29,7 +29,8 @@ export function ThemeSwitcher() {
 
   return (
     <Dropdown trigger="press" isOpen={open} onOpenChange={setOpen}>
-      <Dropdown.Trigger className="
+      <Button variant="ghost">
+        <Dropdown.Trigger className="
             relative
             inline-flex
             items-center
@@ -37,7 +38,6 @@ export function ThemeSwitcher() {
             w-9
             h-9
             rounded-md
-            hover:bg-muted
             transition-colors
         ">
             <Sun
@@ -64,7 +64,8 @@ export function ThemeSwitcher() {
                 "
             />
           <span className="sr-only">Cambiar tema</span>
-      </Dropdown.Trigger>
+        </Dropdown.Trigger>
+      </Button>
 
       <Dropdown.Popover className="rounded-sm">
         <Dropdown.Menu>

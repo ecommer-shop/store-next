@@ -1,14 +1,12 @@
 'use client';
-
 import {useState, useMemo, useTransition} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {Button} from '@heroui/react';
-import {Label} from '@/components/ui/label';
-import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
+import {RadioGroup, Label, Button, Radio} from '@heroui/react';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
 import {addToCart} from '@/app/product/[slug]/actions';
 import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
+import clsx from "clsx";
 
 interface ProductInfoProps {
     product: {
@@ -155,35 +153,56 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
             {/* Option Groups */}
             {product.optionGroups.length > 0 && (
-                <div className="space-y-4">
+                <div className="flex w-full flex-col items-start gap-10"
+                    style={{
+                        // @ts-expect-error - Overrides default variables
+                        "--accent": "#6BB8FF",
+                        "--accent-foreground": "#fff",
+                        "--accent-hover": "#F1F1F1",
+                        "--border-width": "2px",
+                        "--border-width-field": "2px",
+                        "--focus": "#6BB8FF",
+                }}>
                     {product.optionGroups.map((group) => (
-                        <div key={group.id} className="space-y-3">
-                            <Label className="text-base font-semibold">
-                                {group.name}
-                            </Label>
+                        <section key={group.id} className="flex w-full max-w-lg flex-col gap-4">
                             <RadioGroup
+                                isOnSurface
                                 value={selectedOptions[group.id] || ''}
-                                onValueChange={(value) => handleOptionChange(group.id, value)}
-                            >
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                onChange={(value) => handleOptionChange(group.id, value)}
+                            >   
+                                <div className="flex flex-wrap items-center justify-between gap-4">
+                                    <Label className="text-base font-semibold">
+                                        {group.name}
+                                    </Label>
+                                </div>
+                                <div className="grid gap-x-4 md:grid-cols-2">
                                     {group.options.map((option) => (
                                         <div key={option.id}>
-                                            <RadioGroupItem
+                                            <Radio
                                                 value={option.id}
                                                 id={option.id}
-                                                className="peer sr-only"
-                                            />
-                                            <Label
-                                                htmlFor={option.id}
-                                                className="flex items-center justify-center rounded-md border-2 border-muted bg-background-quaternary px-4 py-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer transition-colors"
+                                                className={clsx(
+                                                    "group relative flex-col gap-4 rounded-xl border border-transparent bg-surface px-5 py-4 transition-all",
+                                                    "data-[selected=true]:border-accent data-[selected=true]:bg-accent/10")}
                                             >
-                                                {option.name}
-                                            </Label>
+                                                <Radio.Control className="absolute top-3 right-4 size-5">
+                                                    <Radio.Indicator />
+                                                </Radio.Control>
+                                                <Radio.Content className="flex flex-row items-start justify-start gap-4">
+                                                    <div className="flex flex-col gap-1">
+                                                        <Label
+                                                        htmlFor={option.id}
+                                                        >
+                                                            {option.name}
+                                                        </Label>
+                                                    </div>
+                                                </Radio.Content>
+                                            </Radio>
                                         </div>
                                     ))}
                                 </div>
                             </RadioGroup>
-                        </div>
+                        </section>
                     ))}
                 </div>
             )}
@@ -203,7 +222,8 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             <div className="pt-4">
                 <Button
                     size="lg"
-                    className="w-full"
+                    variant='ghost'
+                    className="w-full hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
                     isDisabled={!canAddToCart || isPending}
                     onClick={handleAddToCart}
                 >
@@ -229,7 +249,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
             {/* SKU */}
             {selectedVariant && (
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-foreground">
                     SKU: {selectedVariant.sku}
                 </div>
             )}

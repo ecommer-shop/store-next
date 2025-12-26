@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Accordion } from '@heroui/react';
 import ShippingAddressStep from './steps/shipping-address-step';
 import DeliveryStep from './steps/delivery-step';
 import PaymentStep from './steps/payment-step';
@@ -70,8 +70,8 @@ export default function CheckoutFlow() {
           }}*/
           className="space-y-4"
         >
-          <AccordionItem key="shipping" className="border rounded-lg px-6">
-            <AccordionTrigger className="hover:no-underline">
+          <Accordion.Item key="shipping" className="border rounded-lg px-6">
+            <Accordion.Trigger className="hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
                   completedSteps.has('shipping')
@@ -84,20 +84,20 @@ export default function CheckoutFlow() {
                 </div>
                 <span className="text-lg font-semibold">Shipping Address</span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-4">
+            </Accordion.Trigger>
+            <Accordion.Body className="pt-4">
               <ShippingAddressStep
                 onComplete={() => handleStepComplete('shipping')}
               />
-            </AccordionContent>
-          </AccordionItem>
+            </Accordion.Body>
+          </Accordion.Item>
 
-          <AccordionItem
+          <Accordion.Item
             key="delivery"
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('delivery')}
           >
-            <AccordionTrigger
+            <Accordion.Trigger
               className="hover:no-underline"
               isDisabled={!canAccessStep('delivery')}
             >
@@ -113,20 +113,20 @@ export default function CheckoutFlow() {
                 </div>
                 <span className="text-lg font-semibold">Delivery Method</span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-4">
+            </Accordion.Trigger>
+            <Accordion.Body className="pt-4">
               <DeliveryStep
                 onComplete={() => handleStepComplete('delivery')}
               />
-            </AccordionContent>
-          </AccordionItem>
+            </Accordion.Body>
+          </Accordion.Item>
 
-          <AccordionItem
+          <Accordion.Item
             key="payment"
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('payment')}
           >
-            <AccordionTrigger
+            <Accordion.Trigger
               className="hover:no-underline"
               isDisabled={!canAccessStep('payment')}
             >
@@ -142,20 +142,20 @@ export default function CheckoutFlow() {
                 </div>
                 <span className="text-lg font-semibold">Payment Method</span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-4">
+            </Accordion.Trigger>
+            <Accordion.Body className="pt-4">
               <PaymentStep
                 onComplete={() => handleStepComplete('payment')}
               />
-            </AccordionContent>
-          </AccordionItem>
+            </Accordion.Body>
+          </Accordion.Item>
 
-          <AccordionItem
+          <Accordion.Item
             key="review"
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('review')}
           >
-            <AccordionTrigger
+            <Accordion.Trigger
               className="hover:no-underline"
               isDisabled={!canAccessStep('review')}
             >
@@ -169,13 +169,13 @@ export default function CheckoutFlow() {
                 </div>
                 <span className="text-lg font-semibold">Review & Place Order</span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-4">
+            </Accordion.Trigger>
+            <Accordion.Body className="pt-4">
               <ReviewStep
                 onEditStep={setCurrentStep}
               />
-            </AccordionContent>
-          </AccordionItem>
+            </Accordion.Body>
+          </Accordion.Item>
         </Accordion>
       </div>
 

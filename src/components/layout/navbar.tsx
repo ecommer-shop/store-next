@@ -3,7 +3,7 @@ import Link from "next/link";
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
-import {ThemeSwitcher} from '@/components/layout/navbar/theme-switcher';
+import {ThemeSwitcherEntry} from '@/components/layout/navbar/theme-switcher/theme-switcher-entry';
 import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
@@ -49,7 +49,7 @@ export function Navbar() {
 
                     {/* Theme solo tablet+ */}
                     <div className="hidden md:flex">
-                    <ThemeSwitcher />
+                    <ThemeSwitcherEntry />
                     </div>
 
                     <Suspense>

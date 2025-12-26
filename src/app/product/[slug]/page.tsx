@@ -2,14 +2,11 @@ import type { Metadata } from 'next';
 import { query } from '@/lib/vendure/api';
 import { GetProductDetailQuery } from '@/lib/vendure/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
-import { ProductInfo } from '@/components/commerce/product-info';
 import { RelatedProducts } from '@/components/commerce/related-products';
 import {
     Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@/components/ui/accordion';
+    Separator,
+} from '@heroui/react';
 import { notFound } from 'next/navigation';
 import { cacheLife, cacheTag } from 'next/cache';
 import {
@@ -18,6 +15,8 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/metadata';
+import { ProductInfo } from '@/components/commerce/product-info';
+import { Suspense } from 'react';
 
 async function getProductData(slug: string) {
     'use cache';
@@ -91,7 +90,23 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
 
                     {/* Right Column: Product Info */}
                     <div>
-                        <ProductInfo product={product} searchParams={searchParamsResolved} />
+                        <Suspense fallback={
+                            <div className="h-40 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <circle cx="18" cy="12" r="0" fill="#12123f">
+                                        <animate attributeName="r" begin=".67" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
+                                    </circle>
+                                    <circle cx="12" cy="12" r="0" fill="#12123f">
+                                        <animate attributeName="r" begin=".33" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
+                                    </circle>
+                                    <circle cx="6" cy="12" r="0" fill="#12123f">
+                                        <animate attributeName="r" begin="0" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
+                                    </circle>
+                                </svg>
+                            </div>
+                        }>
+                            <ProductInfo product={product} searchParams={searchParamsResolved} />
+                        </Suspense>
                     </div>
                 </div>
             </div>
@@ -137,30 +152,49 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                 <div className="container mx-auto px-4 max-w-3xl">
                     <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
                     <Accordion lang="single" className="w-full">
-                        <AccordionItem key="shipping">
-                            <AccordionTrigger>What are your shipping options?</AccordionTrigger>
-                            <AccordionContent>
-                                We offer standard shipping (5-7 business days), express shipping (2-3 business days), and next-day delivery for select areas. Free standard shipping is available on orders over $50.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem key="returns">
-                            <AccordionTrigger>What is your return policy?</AccordionTrigger>
-                            <AccordionContent>
-                                We accept returns within 30 days of purchase. Items must be unused and in their original packaging. Simply contact our support team to initiate a return and receive a prepaid shipping label.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem key="tracking">
-                            <AccordionTrigger>How can I track my order?</AccordionTrigger>
-                            <AccordionContent>
-                                Once your order ships, you&apos;ll receive an email with a tracking number. You can also view your order status anytime by logging into your account and visiting the order history section.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem key="international">
-                            <AccordionTrigger>Do you offer international shipping?</AccordionTrigger>
-                            <AccordionContent>
-                                Yes! We ship to over 50 countries worldwide. International shipping rates and delivery times vary by location. You can see the exact cost at checkout before completing your purchase.
-                            </AccordionContent>
-                        </AccordionItem>
+                        
+                        <Accordion.Item key="returns">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    What is your return policy?
+                                     <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    We accept returns within 30 days of purchase. Items must be unused and in their original packaging. Simply contact our support team to initiate a return and receive a prepaid shipping label.
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Accordion.Item key="tracking">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    How can I track my order?
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    Once your order ships, you&apos;ll receive an email with a tracking number. You can also view your order status anytime by logging into your account and visiting the order history section.
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Accordion.Item key="international">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    Do you offer international shipping?
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    Yes! We ship to over 50 countries worldwide. International shipping rates and delivery times vary by location. You can see the exact cost at checkout before completing your purchase.
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
                     </Accordion>
                 </div>
             </section>
