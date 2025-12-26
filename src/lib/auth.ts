@@ -1,5 +1,5 @@
 import {cookies} from 'next/headers';
-
+import {Token} from '@clerk/nextjs/server';
 const AUTH_TOKEN_COOKIE = process.env.VENDURE_AUTH_TOKEN_COOKIE || 'vendure-auth-token';
 
 export async function setAuthToken(token: string) {

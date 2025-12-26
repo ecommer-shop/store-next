@@ -29,7 +29,7 @@ export function ProductCarousel({title, products}: ProductCarouselClientProps) {
   }, [api]);
 
     return (
-        <section className="py-12 md:py-16">
+        <section className="mt-15 py-12 md:py-16">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl md:text-4xl font-bold mb-8">{title}</h2>
                 <Carousel

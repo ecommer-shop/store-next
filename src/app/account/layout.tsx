@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import Link from 'next/link';
 import {Package, User, MapPin} from 'lucide-react';
 import {noIndexRobots} from '@/lib/metadata';
+import { Button } from '@heroui/react';
 
 export const metadata: Metadata = {
     robots: noIndexRobots(),
@@ -20,14 +21,15 @@ export default async function AccountLayout({children}: LayoutProps<'/account'>)
                 <aside className="w-64 shrink-0">
                     <nav className="space-y-1">
                         {navItems.map((item) => (
-                            <Link
-                                key={item.href}
+                            <Button key={item.href}>
+                                <Link
                                 href={item.href}
-                                className="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 transition-colors"
+                                className="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-md transition-colors"
                             >
                                 <item.icon className="h-5 w-5"/>
                                 {item.label}
-                            </Link>
+                            </Link> 
+                            </Button>
                         ))}
                     </nav>
                 </aside>
