@@ -65,17 +65,17 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
 
           {/* Botón SOLO desktop */}
           <Button
+            asChild
             className="
               hidden lg:flex
+              relative z-30
               mb-2 bg-white/95 text-black shadow-lg
               min-w-[90px] h-10
             "
           >
-            <Link
-              href={`/product/${product.slug}`}
-              className="font-semibold text-sm"
-            >
-              Comprar
+            
+            <Link href={`/product/${product.slug}`}>
+            Comprar
             </Link>
           </Button>
         </Card.Footer>

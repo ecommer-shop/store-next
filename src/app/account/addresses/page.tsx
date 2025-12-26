@@ -8,16 +8,11 @@ import { GetCustomerAddressesQuery, GetAvailableCountriesQuery } from '@/lib/ven
 import { AddressesClient } from './addresses-client';
 import { auth } from '@clerk/nextjs/server';
 import { RedirectToSignIn, SignedOut } from '@clerk/nextjs';
+import { useAuth } from '@/components/shared/useAuth';
 
 export default async function AddressesPage(_props: PageProps<'/account/addresses'>) {
-    const user = auth();
-
-    if((await user).isAuthenticated) {
-        return (
-            <SignedOut>
-                <RedirectToSignIn />
-            </SignedOut>)
-    }
+    
+    useAuth();
     const [addressesResult, countriesResult] = await Promise.all([
         query(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
         query(GetAvailableCountriesQuery, {}),

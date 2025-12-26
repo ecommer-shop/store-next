@@ -20,6 +20,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import { Protect, RedirectToSignIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
+import { useAuth } from '@/components/shared/useAuth';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -29,15 +30,8 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
     const currentPage = parseInt(Array.isArray(pageParam) ? pageParam[0] : pageParam || '1', 10);
     const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
-    const user = auth();
-    if (!(await user).isAuthenticated) {
-        return (
-            <SignedOut>
-                <RedirectToSignIn />
-            </SignedOut>
-        )
-    }
-
+    useAuth();
+    
     const {data} = await query(
         GetCustomerOrdersQuery,
         {

@@ -43,7 +43,9 @@ export function HeroSection() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis maiores
+                    Compra lo nuestro
+                    <br />
+                    Descubre y apoya el producto nacional, en un solo lugar.
                 </p>
 
                 <div className="flex justify-center pt-4">
@@ -52,7 +54,7 @@ export function HeroSection() {
                     size="lg"
                     className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8]"
                     >
-                    <Link href="/search"></Link>
+                    <Link href="/search">Shop now</Link>
                     </Button>
                 </div>
                 </div>
