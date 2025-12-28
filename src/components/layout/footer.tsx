@@ -1,23 +1,15 @@
-import {cacheLife, unstable_cache} from 'next/cache';
 import {getTopCollections} from '@/lib/vendure/cached';
 import Image from "next/image";
 import Link from "next/link";
 
 
-const Copyright = () => 
-    unstable_cache(
-        async () => {
-            return (
-                <div>
-                    © {new Date().getFullYear()} Vendure Store. All rights reserved.
-                </div>
-            )
-        },
-        [],
-        {
-            revalidate: 72 * 3600
-        }
-)()
+const Copyright = () => {
+    return (
+        <div>
+            © {new Date().getFullYear()} Vendure Store. All rights reserved.
+        </div>
+    )    
+}
     
 export async function Footer() {
     /*'use cache'

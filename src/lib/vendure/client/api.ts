@@ -6,16 +6,26 @@ import {
   VendureRequestOptions,
 } from '../core';
 
-export async function query<TResult, TVariables>(
-  document: TadaDocumentNode<TResult, TVariables>,
-  variables?: TVariables,
-  options?: VendureRequestOptions
+const VENDURE_URL =
+  process.env.VENDURE_SHOP_API_URL || '';
+
+export async function query<T>(
+  document: TadaDocumentNode<T, any>,
+  variables?: any,
+  options?: { authToken?: string }
 ) {
-  return executeVendureRequest(
-    document,
-    variables,
-    options || {}
-  );
+  const headers: HeadersInit = {};
+
+  if (options?.authToken) {
+    headers.Authorization = `Bearer ${options.authToken}`;
+  }
+
+  return fetch(VENDURE_URL, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ query: document, variables }),
+  }).then(res => res.json());
 }
+
 
 export const mutate = query;

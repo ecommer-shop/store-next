@@ -31,18 +31,22 @@ const getCollectionProducts = (slug: string, searchParams: { [key: string]: stri
 )()    
 
 
-const getCollectionMetadata = (slug: string) => 
-    unstable_cache(
-        async () => {
-            return query(GetCollectionProductsQuery, {
-            slug,
-            input: { take: 0, collectionSlug: slug, groupByProduct: true },
-        });},
-        [`collection-meta-${slug}`],
-        {
-            revalidate: 60 * 120
-        }
-)
+const getCollectionMetadata = (slug: string) =>
+  unstable_cache(
+    async () => {
+      return query(GetCollectionProductsQuery, {
+        slug,
+        input: {
+          take: 0,
+          collectionSlug: slug,
+          groupByProduct: true,
+        },
+      });
+    },
+    [`collection-meta-${slug}`],
+    { revalidate: 60 * 120 }
+  );
+
     
 export async function generateMetadata({
     params,
