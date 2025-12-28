@@ -3,15 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import UserProfileClient from '../user-profile';
 import { Suspense } from 'react';
 
-export default async function ProfilePage() { 
-
-    const user = auth();
-
-    if (!(await user).isAuthenticated){
-        return (<SignedOut>
-                    <RedirectToSignIn />
-                </SignedOut>)
-    }
+export default function ProfilePage() { 
 
     return(
         <Suspense fallback={<div className='p-6'>Cargando Perfil...</div>}>

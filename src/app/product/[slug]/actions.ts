@@ -1,9 +1,9 @@
 'use server';
 
-import { mutate } from '@/lib/vendure/api';
-import { AddToCartMutation } from '@/lib/vendure/mutations';
+import { mutate } from '@/lib/vendure/server/api';
+import { AddToCartMutation } from '@/lib/vendure/shared/mutations';
 import { updateTag } from 'next/cache';
-import { setAuthToken, getAuthToken } from '@/lib/auth';
+import { setAuthToken, getAuthToken } from '@/lib/vendure/server/auth';
 
 export async function addToCart(variantId: string, quantity: number = 1) {
   try {

@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { OrderLine } from './types';
 import { useCheckout } from './checkout-provider';
 import { Price } from '@/components/commerce/price';
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react';
 
 export default function OrderSummary() {
   const { order } = useCheckout();
@@ -61,7 +62,7 @@ export default function OrderSummary() {
 
           {order.discounts && order.discounts.length > 0 && (
             <>
-              {order.discounts.map((discount, index: number) => (
+              {order.discounts.map((discount: { description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; amountWithTax: number; }, index: number) => (
                 <div key={index} className="flex justify-between text-sm text-green-600">
                   <span>{discount.description}</span>
                   <span>

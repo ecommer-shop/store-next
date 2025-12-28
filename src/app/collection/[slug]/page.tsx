@@ -1,48 +1,54 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { query } from '@/lib/vendure/api';
-import { SearchProductsQuery, GetCollectionProductsQuery } from '@/lib/vendure/queries';
+import { query } from '@/lib/vendure/server/api';
+import { SearchProductsQuery, GetCollectionProductsQuery } from '@/lib/vendure/shared/queries';
 import { ProductGrid } from '@/components/commerce/product-grid';
 import { FacetFilters } from '@/components/commerce/facet-filters';
 import { ProductGridSkeleton } from '@/components/shared/product-grid-skeleton';
-import { buildSearchInput, getCurrentPage } from '@/lib/search-helpers';
-import { cacheLife, cacheTag } from 'next/cache';
+import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
+import { cacheLife, cacheTag, unstable_cache } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
-} from '@/lib/metadata';
+} from '@/lib/vendure/shared/metadata';
 
-async function getCollectionProducts(slug: string, searchParams: { [key: string]: string | string[] | undefined }) {
-    'use cache';
-    cacheLife('hours');
-    cacheTag(`collection-${slug}`);
-
-    return query(SearchProductsQuery, {
+const getCollectionProducts = (slug: string, searchParams: { [key: string]: string | string[] | undefined }) => 
+    unstable_cache(
+    async () => {
+        return query(SearchProductsQuery, {
         input: buildSearchInput({
             searchParams,
             collectionSlug: slug
         })
     });
-}
+    },
+    [`collection-${slug}`],
+    {
+        revalidate: 60 * 120
+    } 
+)()    
 
-async function getCollectionMetadata(slug: string) {
-    'use cache';
-    cacheLife('hours');
-    cacheTag(`collection-meta-${slug}`);
 
-    return query(GetCollectionProductsQuery, {
-        slug,
-        input: { take: 0, collectionSlug: slug, groupByProduct: true },
-    });
-}
-
+const getCollectionMetadata = (slug: string) => 
+    unstable_cache(
+        async () => {
+            return query(GetCollectionProductsQuery, {
+            slug,
+            input: { take: 0, collectionSlug: slug, groupByProduct: true },
+        });},
+        [`collection-meta-${slug}`],
+        {
+            revalidate: 60 * 120
+        }
+)
+    
 export async function generateMetadata({
     params,
 }: PageProps<'/collection/[slug]'>): Promise<Metadata> {
     const { slug } = await params;
-    const result = await getCollectionMetadata(slug);
+    const result = await getCollectionMetadata(slug)();
     const collection = result.data.collection;
 
     if (!collection) {
@@ -87,22 +93,28 @@ export default async function CollectionPage({params, searchParams}: PageProps<'
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved);
 
     return (
-        <div className="container mx-auto px-4 py-8 mt-16">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Filters Sidebar */}
-                <aside className="lg:col-span-1">
-                    <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-                        <FacetFilters productDataPromise={productDataPromise} />
-                    </Suspense>
-                </aside>
+        <Suspense fallback={
 
-                {/* Product Grid */}
-                <div className="lg:col-span-3">
-                    <Suspense fallback={<ProductGridSkeleton />}>
-                        <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
-                    </Suspense>
+            
+            <p>Cargando...</p>
+        }>
+            <div className="container mx-auto px-4 py-8 mt-16">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    {/* Filters Sidebar */}
+                    <aside className="lg:col-span-1">
+                        <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                            <FacetFilters productDataPromise={productDataPromise} />
+                        </Suspense>
+                    </aside>
+
+                    {/* Product Grid */}
+                    <div className="lg:col-span-3">
+                        <Suspense fallback={<ProductGridSkeleton />}>
+                            <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
+                        </Suspense>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Suspense>
     );
 }

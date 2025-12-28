@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { query } from '@/lib/vendure/api';
-import { GetProductDetailQuery } from '@/lib/vendure/queries';
+import { query } from '@/lib/vendure/server/api';
+import { GetProductDetailQuery } from '@/lib/vendure/shared/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
 import { RelatedProducts } from '@/components/commerce/related-products';
 import {
@@ -8,23 +8,27 @@ import {
     Separator,
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
-import { cacheLife, cacheTag } from 'next/cache';
+import { cacheLife, cacheTag, unstable_cache } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
-} from '@/lib/metadata';
+} from '@/lib/vendure/shared/metadata';
 import { ProductInfo } from '@/components/commerce/product-info';
 import { Suspense } from 'react';
 
-async function getProductData(slug: string) {
-    'use cache';
-    cacheLife('hours');
-    cacheTag(`product-${slug}`);
+const getProductData = (slug: string) =>
+  unstable_cache(
+    async () => {
+      return query(GetProductDetailQuery, { slug });
+    },
+    [`product-${slug}`],
+    {
+      revalidate: 300
+    }
+  )();
 
-    return await query(GetProductDetailQuery, { slug });
-}
 
 export async function generateMetadata({
     params,
@@ -80,7 +84,9 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
 
     return (
-        <>
+        <Suspense fallback={
+            <p>Cargando...</p>
+        }>
             <div className="container mx-auto px-4 py-8 mt-16">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                     {/* Left Column: Image Carousel */}
@@ -205,6 +211,6 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                     currentProductId={product.id}
                 />
             )}
-        </>
+        </Suspense>
     );
 }

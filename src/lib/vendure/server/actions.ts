@@ -1,10 +1,10 @@
 import {query} from './api';
-import {GetActiveCustomerQuery} from './queries';
-import {getActiveChannelCached} from './cached';
+import {GetActiveCustomerQuery} from '../shared/queries';
+import {getActiveChannelCached} from '../cached';
 import {cache} from "react";
 import {readFragment} from "@/graphql";
-import {ActiveCustomerFragment} from "@/lib/vendure/fragments";
-import {getAuthToken} from "@/lib/auth";
+import {ActiveCustomerFragment} from "@/lib/vendure/shared/fragments";
+import {getAuthToken} from "@/lib/vendure/server/auth";
 
 
 export const getActiveCustomer = cache(async () => {

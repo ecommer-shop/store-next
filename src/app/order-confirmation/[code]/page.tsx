@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {OrderConfirmation} from './order-confirmation';
-import {noIndexRobots} from '@/lib/metadata';
+import {noIndexRobots} from '@/lib/vendure/shared/metadata';
 import { useAuth } from '@/components/shared/useAuth';
 
 export const metadata: Metadata = {
