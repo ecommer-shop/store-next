@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -53,7 +53,7 @@ interface AddressesClientProps {
     countries: Country[];
 }
 
-export function AddressesClient({ addresses, countries }: AddressesClientProps) {
+export function AddressesClient({ addresses, countries } : AddressesClientProps) {
     const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState<CustomerAddress | null>(null);

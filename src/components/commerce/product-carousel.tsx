@@ -3,7 +3,7 @@
 import {ProductCard} from "@/components/commerce/product-card";
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "@/components/ui/carousel";
 import {FragmentOf} from "@/graphql";
-import {ProductCardFragment} from "@/lib/vendure/fragments";
+import {ProductCardFragment} from "@/lib/vendure/shared/fragments";
 import {useEffect, useId, useState} from "react";
 import type { CarouselApi } from "@/components/ui/carousel";
 interface ProductCarouselClientProps {

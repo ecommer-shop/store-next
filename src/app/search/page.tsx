@@ -3,7 +3,7 @@ import {Suspense} from 'react';
 import {SearchResults} from "@/app/search/search-results";
 import {SearchTerm, SearchTermSkeleton} from "@/app/search/search-term";
 import {SearchResultsSkeleton} from "@/components/shared/skeletons/search-results-skeleton";
-import {SITE_NAME, noIndexRobots} from '@/lib/metadata';
+import {SITE_NAME, noIndexRobots} from '@/lib/vendure/shared/metadata';
 
 export async function generateMetadata({
     searchParams,

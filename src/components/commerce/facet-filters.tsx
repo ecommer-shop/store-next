@@ -5,7 +5,7 @@ import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
 import { Label } from '@/components/ui/label';
 import { Button } from '@heroui/react';
-import {SearchProductsQuery} from "@/lib/vendure/queries";
+import {SearchProductsQuery} from "@/lib/vendure/shared/queries";
 import { Accordion, Checkbox } from '@heroui/react';
 import { Icon,  } from "@iconify/react";
 

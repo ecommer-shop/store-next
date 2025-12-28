@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {Package, User, MapPin} from 'lucide-react';
-import {noIndexRobots} from '@/lib/metadata';
+import {noIndexRobots} from '@/lib/vendure/shared/metadata';
 import { Button } from '@heroui/react';
 
 export const metadata: Metadata = {

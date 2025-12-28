@@ -1,4 +1,4 @@
-import {cacheLife} from 'next/cache';
+import {cacheLife, unstable_cache} from 'next/cache';
 import {getTopCollections} from '@/lib/vendure/cached';
 import {
     NavigationMenu,
@@ -7,23 +7,30 @@ import {
 } from '@/components/ui/navigation-menu';
 import {NavbarLink} from '@/components/layout/navbar/navbar-link';
 
-export async function NavbarCollections() {
-    "use cache";
-    cacheLife('days');
+export const NavbarCollections = () => 
+    unstable_cache(
+        async () => {
+            /*"use cache";
+            cacheLife('days');*/
 
-    const collections = await getTopCollections();
+            const collections = await getTopCollections();
 
-    return (
-        <NavigationMenu>
-            <NavigationMenuList>
-                {collections.map((collection) => (
-                    <NavigationMenuItem key={collection.slug}>
-                        <NavbarLink href={`/collection/${collection.slug}`}>
-                            {collection.name}
-                        </NavbarLink>
-                    </NavigationMenuItem>
-                ))}
-            </NavigationMenuList>
-        </NavigationMenu>
-    );
-}
+            return (
+                <NavigationMenu>
+                    <NavigationMenuList>
+                        {collections.map((collection) => (
+                            <NavigationMenuItem key={collection.slug}>
+                                <NavbarLink href={`/collection/${collection.slug}`}>
+                                    {collection.name}
+                                </NavbarLink>
+                            </NavigationMenuItem>
+                        ))}
+                    </NavigationMenuList>
+                </NavigationMenu>
+            );
+        },
+        [],
+        {
+            revalidate: 72 * 3600
+        }
+)()

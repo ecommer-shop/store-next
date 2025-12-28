@@ -1,23 +1,27 @@
-import {cacheLife} from 'next/cache';
+import {cacheLife, unstable_cache} from 'next/cache';
 import {getTopCollections} from '@/lib/vendure/cached';
 import Image from "next/image";
 import Link from "next/link";
 
 
-async function Copyright() {
-    'use cache'
-    cacheLife('days');
-
-    return (
-        <div>
-            © {new Date().getFullYear()} Vendure Store. All rights reserved.
-        </div>
-    )
-}
-
+const Copyright = () => 
+    unstable_cache(
+        async () => {
+            return (
+                <div>
+                    © {new Date().getFullYear()} Vendure Store. All rights reserved.
+                </div>
+            )
+        },
+        [],
+        {
+            revalidate: 72 * 3600
+        }
+)()
+    
 export async function Footer() {
-    'use cache'
-    cacheLife('days');
+    /*'use cache'
+    cacheLife('days');*/
 
     const collections = await getTopCollections();
 

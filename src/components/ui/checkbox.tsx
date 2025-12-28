@@ -4,7 +4,7 @@ import * as React from "react"
 import {Checkbox as CheckboxPrimitive} from "@heroui/react"
 import { CheckIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/vendure/shared/utils"
 
 function Checkbox({
   className,
