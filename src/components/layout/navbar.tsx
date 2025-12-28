@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import {NavbarCollections} from '@/components/layout/navbar/navbar-collections';
+import {NavbarCollections} from '@/components/layout/navbar/navbar-collections/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
 import {ThemeSwitcherEntry} from '@/components/layout/navbar/theme-switcher/theme-switcher-entry';

@@ -3,7 +3,6 @@ import {HeroSection} from "@/components/layout/hero-section";
 import {FeaturedProducts} from "@/components/commerce/featured-products";
 import {SITE_NAME, SITE_URL, buildCanonicalUrl} from "@/lib/vendure/shared/metadata";
 import { Suspense } from "react";
-//import {auth0} from "@/lib/auth0"
 
 export const metadata: Metadata = {
     title: {

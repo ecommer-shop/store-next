@@ -1,19 +1,17 @@
 import 'server-only';
-import {cookies} from 'next/headers';
-import {Token} from '@clerk/nextjs/server';
-const AUTH_TOKEN_COOKIE = process.env.VENDURE_AUTH_TOKEN_COOKIE || 'vendure-auth-token';
+import { cookies } from 'next/headers';
 
-export async function setAuthToken(token: string) {
-    const cookieStore = await cookies();
-    cookieStore.set(AUTH_TOKEN_COOKIE, token);
+const AUTH_TOKEN_COOKIE =
+  process.env.VENDURE_AUTH_TOKEN_COOKIE || 'vendure-auth-token';
+
+export async function getAuthToken() {
+  return (await cookies()).get(AUTH_TOKEN_COOKIE)?.value;
 }
 
-export async function getAuthToken(): Promise<string | undefined> {
-    const cookieStore = await cookies();
-    return cookieStore.get(AUTH_TOKEN_COOKIE)?.value;
+export async function setAuthToken(token: string) {
+  (await cookies()).set(AUTH_TOKEN_COOKIE, token);
 }
 
 export async function removeAuthToken() {
-    const cookieStore = await cookies();
-    cookieStore.delete(AUTH_TOKEN_COOKIE);
+  (await cookies()).delete(AUTH_TOKEN_COOKIE);
 }
