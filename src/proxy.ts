@@ -10,6 +10,8 @@ export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req)) {
     auth.protect()
   }
+}, {
+  authorizedParties: ["https://ecommer.shop/", "https://clerk.ecommer.shop/"]
 })
 
 export const config = {
