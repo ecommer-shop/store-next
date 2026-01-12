@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     },
 };
 
-export default async function Home(_props: PageProps<'/'>) {
+export default async function Home(_props: PageProps<'/[locale]'>) {
     return (
         <Suspense>
             <div className="">

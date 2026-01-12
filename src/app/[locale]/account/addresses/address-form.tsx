@@ -6,6 +6,8 @@ import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field
 import { useForm, Controller } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { CountrySelect } from '@/components/shared/country-select';
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
 
 interface Country {
   id: string;
@@ -68,77 +70,78 @@ export function AddressForm({ countries, address, onSubmit, onCancel, isSubmitti
   const handleFormSubmit = async (data: AddressFormData) => {
     await onSubmit(address ? { ...data, id: address.id } : data);
   };
-
+  const t = useTranslations('AccountAddresses');  
+  const b = useTranslations('ButtonLabels');
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <FieldGroup className="my-6">
         <div className="grid grid-cols-2 gap-4">
           <Field className="col-span-2">
-            <FieldLabel htmlFor="fullName">Full Name *</FieldLabel>
+            <FieldLabel htmlFor="fullName">{I18N.Account.addresses.form.fields.fullName.label} *</FieldLabel>
             <Input
               id="fullName"
-              {...register('fullName', { required: 'Full name is required' })}
+              {...register('fullName', { required: I18N.Account.addresses.form.fields.fullName.requiredError })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.fullName?.message}</FieldError>
           </Field>
 
           <Field className="col-span-2">
-            <FieldLabel htmlFor="company">Company</FieldLabel>
+            <FieldLabel htmlFor="company">{I18N.Account.addresses.form.fields.company.label}</FieldLabel>
             <Input id="company" {...register('company')} disabled={isSubmitting} />
           </Field>
 
           <Field className="col-span-2">
-            <FieldLabel htmlFor="streetLine1">Street Address *</FieldLabel>
+            <FieldLabel htmlFor="streetLine1">{I18N.Account.addresses.form.fields.streetLine1.label} *</FieldLabel>
             <Input
               id="streetLine1"
-              {...register('streetLine1', { required: 'Street address is required' })}
+              {...register('streetLine1', { required: I18N.Account.addresses.form.fields.streetLine1.requiredError })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.streetLine1?.message}</FieldError>
           </Field>
 
           <Field className="col-span-2">
-            <FieldLabel htmlFor="streetLine2">Apartment, suite, etc.</FieldLabel>
+            <FieldLabel htmlFor="streetLine2">{I18N.Account.addresses.form.fields.streetLine2.label}</FieldLabel>
             <Input id="streetLine2" {...register('streetLine2')} disabled={isSubmitting} />
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="city">City *</FieldLabel>
+            <FieldLabel htmlFor="city">{I18N.Account.addresses.form.fields.city.label} *</FieldLabel>
             <Input
               id="city"
-              {...register('city', { required: 'City is required' })}
+              {...register('city', { required: I18N.Account.addresses.form.fields.city.requiredError })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.city?.message}</FieldError>
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="province">State/Province *</FieldLabel>
+            <FieldLabel htmlFor="province">{I18N.Account.addresses.form.fields.province.label} *</FieldLabel>
             <Input
               id="province"
-              {...register('province', { required: 'State/Province is required' })}
+              {...register('province', { required: I18N.Account.addresses.form.fields.province.requiredError })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.province?.message}</FieldError>
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="postalCode">Postal Code *</FieldLabel>
+            <FieldLabel htmlFor="postalCode">{I18N.Account.addresses.form.fields.postalCode.label} *</FieldLabel>
             <Input
               id="postalCode"
-              {...register('postalCode', { required: 'Postal code is required' })}
+              {...register('postalCode', { required: I18N.Account.addresses.form.fields.postalCode.requiredError })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.postalCode?.message}</FieldError>
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="countryCode">Country *</FieldLabel>
+            <FieldLabel htmlFor="countryCode">{I18N.Account.addresses.form.fields.countryCode.label} *</FieldLabel>
             <Controller
               name="countryCode"
               control={control}
-              rules={{ required: 'Country is required' }}
+              rules={{ required: I18N.Account.addresses.form.fields.countryCode.requiredError }}
               render={({ field }) => (
                 <CountrySelect
                   countries={countries}
@@ -152,11 +155,11 @@ export function AddressForm({ countries, address, onSubmit, onCancel, isSubmitti
           </Field>
 
           <Field className="col-span-2">
-            <FieldLabel htmlFor="phoneNumber">Phone Number *</FieldLabel>
+            <FieldLabel htmlFor="phoneNumber">{I18N.Account.addresses.form.fields.phoneNumber.label} *</FieldLabel>
             <Input
               id="phoneNumber"
               type="tel"
-              {...register('phoneNumber', { required: 'Phone number is required' })}
+              {...register('phoneNumber', { required: I18N.Account.addresses.form.fields.phoneNumber.requiredError })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.phoneNumber?.message}</FieldError>

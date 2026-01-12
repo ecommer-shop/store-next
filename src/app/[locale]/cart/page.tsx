@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {Cart} from "@/app/cart/cart";
+import {Cart} from "@/app/[locale]/cart/cart";
 import {Suspense} from "react";
 import {CartSkeleton} from "@/components/shared/skeletons/cart-skeleton";
 import {noIndexRobots} from '@/lib/vendure/shared/metadata';

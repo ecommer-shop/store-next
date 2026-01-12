@@ -9,8 +9,15 @@ export const metadata: Metadata = {
     description: 'Your order has been placed successfully.',
     robots: noIndexRobots(),
 };
+interface PageProps {
+    params: {
+        code: string;
+        locale: string;
+    };
+    searchParams: Record<string, string | string[] | undefined>;
+}
 
-export default async function OrderConfirmationPage(props: PageProps<'/order-confirmation/[code]'>) {
+export default async function OrderConfirmationPage(props: PageProps) {
     useAuth();
     return (
         <Suspense fallback={<div className="container mx-auto px-4 py-16 text-center">Loading...</div>}>

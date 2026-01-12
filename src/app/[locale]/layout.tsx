@@ -16,6 +16,10 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import {hasLocale, NextIntlClientProvider} from 'next-intl';
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import { ReactNode } from "react";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -66,19 +70,31 @@ export const viewport: Viewport = {
     ],
 };
 
-export default function RootLayout({ children }: LayoutProps<'/'>) {
+type Props = {
+  children: ReactNode;
+  params: Promise<{locale: string}>;
+};
+
+export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+  
   return (
     <ClerkProvider dynamic afterSignOutUrl="/">
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ThemeProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
+            <NextIntlClientProvider>
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </NextIntlClientProvider>
             <Toaster />
           </ThemeProvider>
         </body>

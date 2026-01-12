@@ -1,0 +1,67 @@
+{
+  "ButtonLabels": {
+    "submit": "Aceptar",
+    "cancel": "Cancelar"
+  },
+
+  "HeroSection": {
+    "title": "Compra lo nuestro",
+    "description": "Descubre y apoya el producto nacional, en un solo lugar.",
+    "shopButton": "Explorar"
+  },
+
+  "Account": {
+    "addresses": {
+      "loading": "Cargando direcciones...",
+      "content": {
+        "title": "Tus direcciones",
+        "description": "Gestiona tus direcciones de envío y facturación."
+      },
+
+      "form": {
+        "fields": {
+          "fullName": {
+            "label": "Nombre completo",
+            "requiredError": "El nombre completo es obligatorio"
+          },
+          "company": {
+            "label": "Empresa"
+          },
+          "streetLine1": {
+            "label": "Dirección",
+            "requiredError": "La dirección es obligatoria"
+          },
+          "streetLine2": {
+            "label": "Apartamento, suite, etc."
+          },
+          "city": {
+            "label": "Ciudad",
+            "requiredError": "La ciudad es obligatoria"
+          },
+          "province": {
+            "label": "Departamento / Estado",
+            "requiredError": "El departamento o estado es obligatorio"
+          },
+          "postalCode": {
+            "label": "Código postal",
+            "requiredError": "El código postal es obligatorio"
+          },
+          "countryCode": {
+            "label": "País",
+            "requiredError": "El país es obligatorio"
+          },
+          "phoneNumber": {
+            "label": "Número de teléfono",
+            "requiredError": "El número de teléfono es obligatorio"
+          }
+        },
+
+        "actions": {
+          "save": "Guardar dirección",
+          "update": "Actualizar dirección",
+          "cancel": "Cancelar"
+        }
+      }
+    }
+  }
+}

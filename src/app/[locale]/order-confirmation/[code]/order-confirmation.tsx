@@ -49,8 +49,16 @@ const GetOrderByCodeQuery = graphql(`
     }
 `);
 
-export async function OrderConfirmation({params}: PageProps<'/order-confirmation/[code]'>) {
-    const {code} = await params;
+interface OrderConfirmationProps {
+  params: {
+    code: string;
+    locale?: string;
+  };
+  searchParams: Record<string, string | string[] | undefined>;
+}
+
+export async function OrderConfirmation({params}: OrderConfirmationProps) {
+    const {code} = params;
     let order;
 
     try {

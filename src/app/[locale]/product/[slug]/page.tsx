@@ -18,6 +18,16 @@ import {
 import { ProductInfo } from '@/components/commerce/product-info';
 import { Suspense } from 'react';
 
+interface PageProps<T = any> {
+    params: Promise<T>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+interface ProductPageParams {
+    locale: string;
+    slug: string;
+}
+
 const getProductData = (slug: string) =>
   unstable_cache(
     async () => {
@@ -32,7 +42,7 @@ const getProductData = (slug: string) =>
 
 export async function generateMetadata({
     params,
-}: PageProps<'/product/[slug]'>): Promise<Metadata> {
+}: PageProps<ProductPageParams>): Promise<Metadata> {
     const { slug } = await params;
     const result = await getProductData(slug);
     const product = result.data.product;
@@ -68,7 +78,7 @@ export async function generateMetadata({
     };
 }
 
-export default async function ProductDetailPage({params, searchParams}: PageProps<'/product/[slug]'>) {
+export default async function ProductDetailPage({params, searchParams}: PageProps<ProductPageParams>) {
     const { slug } = await params;
     const searchParamsResolved = await searchParams;
 

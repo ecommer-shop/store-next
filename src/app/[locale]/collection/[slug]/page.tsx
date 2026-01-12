@@ -47,10 +47,17 @@ const getCollectionMetadata = (slug: string) =>
     { revalidate: 60 * 120 }
   );
 
-    
+interface CollectionPageProps {
+  params: {
+    slug: string;
+    locale?: string;
+  };
+  searchParams: Record<string, string | string[] | undefined>;
+}
+
 export async function generateMetadata({
     params,
-}: PageProps<'/collection/[slug]'>): Promise<Metadata> {
+}: CollectionPageProps): Promise<Metadata> {
     const { slug } = await params;
     const result = await getCollectionMetadata(slug)();
     const collection = result.data.collection;
@@ -89,9 +96,9 @@ export async function generateMetadata({
     };
 }
 
-export default async function CollectionPage({params, searchParams}: PageProps<'/collection/[slug]'>) {
-    const { slug } = await params;
-    const searchParamsResolved = await searchParams;
+export default async function CollectionPage({params, searchParams}: CollectionPageProps) {
+    const { slug } = params;
+    const searchParamsResolved = searchParams;
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved);

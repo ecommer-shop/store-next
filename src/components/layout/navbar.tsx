@@ -25,10 +25,19 @@ export function Navbar() {
                         alt="Ecommer"
                         width={60}
                         height={60}
-                        className="h-6 w-auto invert"
+                        className="h-6 w-auto invert block dark:hidden"
                     />
                     </Link>
-
+                    <Link href="/" className="text-xl font-bold flex-shrink-0">
+                        <Image
+                            src="/logo-dark.webp"
+                            alt="Ecommer"
+                            width={60}
+                            height={60}
+                            className="h-6 w-auto invert hidden dark:block"
+                        />  
+                    </Link>
+                    
                     {/* Collections solo desktop */}
                     <nav className="hidden md:flex items-center gap-6">
                     <Suspense>

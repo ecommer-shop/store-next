@@ -20,8 +20,14 @@ export const metadata: Metadata = {
     description: 'Complete your purchase.',
     robots: noIndexRobots(),
 };
+interface CheckoutContentProps {
+  params: {
+    locale?: string;
+  };
+  searchParams: Record<string, string | string[] | undefined>;
+}
 
-export default async function CheckoutContent(_props: PageProps<'/checkout'>) {
+export default async function CheckoutContent(_props: CheckoutContentProps) {
 
     
     const [orderRes, addressesRes, countries, shippingMethodsRes, paymentMethodsRes] =

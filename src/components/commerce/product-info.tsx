@@ -3,7 +3,7 @@ import {useState, useMemo, useTransition} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {RadioGroup, Label, Button, Radio} from '@heroui/react';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
-import {addToCart} from '@/app/product/[slug]/actions';
+import {addToCart} from '@/app/[locale]/product/[slug]/actions';
 import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
 import clsx from "clsx";
