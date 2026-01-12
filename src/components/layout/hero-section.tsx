@@ -16,7 +16,7 @@ export function HeroSection() {
 
             {/* Fondo DARK */}
             <Image
-                src="/bg-dark2.webp"
+                src="/bg-dark.webp"
                 className="absolute inset-0 w-full h-full object-cover hidden dark:block"
                 alt=""
                 aria-hidden

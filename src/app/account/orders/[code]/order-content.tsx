@@ -7,7 +7,7 @@ import {Button} from '@heroui/react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Separator} from '@/components/ui/separator';
 import Image from 'next/image';
-import {getActiveCustomer} from "@/lib/vendure/server/actions";
+import {getActiveCustomer} from "@/lib/vendure/server/actions/actions";
 import {notFound, redirect} from "next/navigation";
 import {Price} from '@/components/commerce/price';
 import {OrderStatusBadge} from '@/components/commerce/order-status-badge';

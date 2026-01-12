@@ -11,7 +11,7 @@ export default clerkMiddleware((auth, req) => {
     auth.protect()
   }
 }, {
-  authorizedParties: ["https://ecommer.shop/", "https://clerk.ecommer.shop/"]
+  authorizedParties: ["https://ecommer.shop/", "https://clerk.ecommer.shop/", "http://localhost:3000", "http://localhost:3001"]
 })
 
 export const config = {

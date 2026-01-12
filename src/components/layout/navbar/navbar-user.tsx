@@ -12,6 +12,7 @@ import {
 } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
+import { SyncCustomer } from "@/lib/vendure/client/sync-customer";
 
 export function NavbarUser() {
   const { theme } = useTheme();
@@ -46,6 +47,7 @@ export function NavbarUser() {
 
       {/* Autenticado */}
       <SignedIn>
+        <SyncCustomer/>
         <UserButton
           appearance={{
             baseTheme: theme === "dark" ? dark : undefined,

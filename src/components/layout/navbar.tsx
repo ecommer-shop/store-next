@@ -21,11 +21,11 @@ export function Navbar() {
                 <div className="flex items-center gap-6 flex-shrink-0">
                     <Link href="/" className="text-xl font-bold flex-shrink-0">
                     <Image
-                        src="/vendure.svg"
-                        alt="Vendure"
-                        width={40}
-                        height={27}
-                        className="h-6 w-auto dark:invert"
+                        src="/logo-light.webp"
+                        alt="Ecommer"
+                        width={60}
+                        height={60}
+                        className="h-6 w-auto invert"
                     />
                     </Link>
 

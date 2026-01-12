@@ -10,7 +10,7 @@ import {redirect} from 'next/navigation';
 import CheckoutFlow from './checkout-flow';
 import {CheckoutProvider} from './checkout-provider';
 import {noIndexRobots} from '@/lib/vendure/shared/metadata';
-import {getActiveCustomer} from '@/lib/vendure/server/actions';
+import {getActiveCustomer} from '@/lib/vendure/server/actions/actions';
 import {getAvailableCountriesCached} from '@/lib/vendure/cached';
 import { useAuth } from '@/components/shared/useAuth';
 import { Suspense } from 'react';
