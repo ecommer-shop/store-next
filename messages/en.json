@@ -1,7 +1,356 @@
 {
-    "HeroSection": {
-        "tittle": "Compra lo nuestro",
-        "description": "Descubre y apoya el producto nacional, en un solo lugar.",
-        "shopButton": "Search"
+  "ButtonLabels": {
+    "submit": "Accept",
+    "cancel": "Cancel"
+  },
+
+  "HeroSection": {
+    "title": "Buy Local",
+    "description": "Discover and support local products, all in one place.",
+    "shopButton": "Explore"
+  },
+
+  "Account": {
+    "addresses": {
+      "loading": {
+        "tittle": "Addresses",
+        "loading": "Loading addresses…",
+        "description": "Manage your shipping and billing addresses."
+      },
+      "content": {
+        "title": "Your addresses",
+        "description": "Manage your shipping and billing addresses."
+      },
+
+      "form": {
+        "fields": {
+          "fullName": {
+            "label": "Full name",
+            "requiredError": "Full name is required"
+          },
+          "company": {
+            "label": "Company"
+          },
+          "streetLine1": {
+            "label": "Address",
+            "requiredError": "Address is required"
+          },
+          "streetLine2": {
+            "label": "Apartment, suite, etc."
+          },
+          "city": {
+            "label": "City",
+            "requiredError": "City is required"
+          },
+          "province": {
+            "label": "State / Province",
+            "requiredError": "State or province is required"
+          },
+          "postalCode": {
+            "label": "Postal code",
+            "requiredError": "Postal code is required"
+          },
+          "countryCode": {
+            "label": "Country",
+            "requiredError": "Country is required"
+          },
+          "phoneNumber": {
+            "label": "Phone number",
+            "requiredError": "Phone number is required"
+          }
+        },
+
+        "actions": {
+          "save": "Save address",
+          "update": "Update address",
+          "cancel": "Cancel"
+        }
+      }
+    },
+    "common": {
+      "back": "Back",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "quantity": "Quantity",
+      "loading": "Loading…"
+    },
+    "orders": {
+      "detail": {
+        "back": "Back to orders",
+        "title": "Order {code}",
+        "placedOn": "Placed on {date}",
+
+        "sections": {
+          "items": "Order items",
+          "summary": "Order summary",
+          "shippingAddress": "Shipping address",
+          "billingAddress": "Billing address",
+          "payment": "Payment",
+          "shippingMethod": "Shipping method"
+        },
+
+        "labels": {
+          "sku": "SKU",
+          "qty": "Quantity",
+          "subtotal": "Subtotal",
+          "shipping": "Shipping",
+          "total": "Total",
+          "method": "Method",
+          "amount": "Amount",
+          "status": "Status",
+          "transactionId": "Transaction ID"
+        }
+      }
+    },
+    "profile": {
+      "loading": {
+        "title": "Profile",
+        "loading": "Loading profile…",
+        "description": "Manage your account information."
+      },
+      "content": {
+        "title": "Your profile",
+        "description": "Manage your account information."
+      }
     }
+  },
+
+  "Cart": {
+    "title": "Shopping cart",
+    "empty": {
+      "title": "Your cart is empty",
+      "description": "Add some items to your cart to get started",
+      "continueShopping": "Continue shopping"
+    },
+    "items": {
+      "each": "each",
+      "remove": "Remove"
+    },
+    "summary": {
+      "title": "Order summary",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "shippingCalculated": "Calculated at checkout",
+      "total": "Total",
+      "checkout": "Proceed to checkout",
+      "continueShopping": "Continue shopping"
+    },
+    "promotionCode": {
+      "title": "Promotion code",
+      "description": "Enter your discount code below",
+      "placeholder": "Enter code",
+      "apply": "Apply",
+      "remove": "Remove"
+    }
+  },
+
+  "Checkout": {
+    "title": "Checkout",
+    "description": "Complete your purchase",
+    "steps": {
+      "shipping": "Shipping",
+      "delivery": "Delivery",
+      "payment": "Payment",
+      "review": "Review"
+    },
+    "flow": {
+      "shippingAddress": "Shipping address",
+      "paymentMethod": "Payment method",
+      "deliveryMethod": "Delivery method",
+      "reviewPlaceOrder": "Review and place order"
+    },
+    "shippingAddress": {
+      "selectSaved": "Select a saved address",
+      "sameBilling": "Use the same address for billing",
+      "continueWithSelected": "Continue with selected address",
+      "addNew": "Add new address",
+      "addShippingAddress": "Add shipping address",
+      "fillForm": "Fill out the form below to add a new shipping address",
+      "labels": {
+        "fullName": "Full name",
+        "company": "Company",
+        "streetAddress": "Address *",
+        "apartmentSuite": "Apartment, suite, etc.",
+        "city": "City",
+        "state": "State / Province",
+        "postalCode": "Postal code",
+        "country": "Country *",
+        "phoneNumber": "Phone number"
+      },
+      "errors": {
+        "streetRequired": "Address is required",
+        "countryRequired": "Country is required"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "save": "Save address"
+      }
+    },
+    "delivery": {
+      "selectMethod": "Select a delivery method",
+      "noMethods": "No shipping methods available. Please check your address.",
+      "free": "FREE",
+      "continuePayment": "Continue to payment"
+    },
+    "payment": {
+      "selectMethod": "Select a payment method",
+      "noMethods": "No payment methods available.",
+      "continueReview": "Continue to review"
+    },
+    "review": {
+      "title": "Review your order",
+      "shippingAddress": "Shipping address",
+      "deliveryMethod": "Delivery method",
+      "paymentMethod": "Payment method",
+      "noAddressSet": "No shipping address set",
+      "noMethodSet": "No delivery method selected",
+      "noPaymentSet": "No payment method selected",
+      "edit": "Edit",
+      "placeOrder": "Place order",
+      "completeSteps": "Please complete all previous steps before placing your order"
+    },
+    "summary": {
+      "title": "Order summary",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "toCalculate": "Calculated at checkout",
+      "total": "Total"
+    }
+  },
+  "Collection": {},
+
+  "OrderConfirmation": {
+    "title": "Order confirmed!",
+    "orderNumber": "Order number",
+    "thankYou": "Thank you for your order.",
+    "summary": "Order summary",
+    "quantity": "Quantity",
+    "total": "Total",
+    "shippingAddress": "Shipping address",
+    "continueShopping": "Continue shopping"
+  },
+
+  "Product": {
+    "notFound": "Product not found",
+    "whyChooseUs": "Why choose us",
+    "premiumQuality": "Premium quality",
+    "qualityDescription": "Carefully crafted using the finest materials",
+    "ecoFriendly": "Eco-friendly",
+    "ecoDescription": "Sustainably sourced and environmentally conscious",
+    "satisfactionGuaranteed": "Satisfaction guaranteed",
+    "satisfactionDescription": "100% satisfaction or your money back",
+    "faq": "Frequently asked questions",
+    "returnPolicy": "What is your return policy?",
+    "returnDescription": "We accept returns within 30 days of purchase. Items must be unused and in their original packaging. Simply contact our support team to initiate a return and receive a prepaid shipping label.",
+    "trackOrder": "How can I track my order?",
+    "trackDescription": "Once your order ships, you will receive an email with a tracking number. You can also view your order status anytime by logging into your account and visiting the order history section.",
+    "internationalShipping": "Do you offer international shipping?",
+    "internationalDescription": "Yes! We ship to over 50 countries worldwide. International shipping times and costs vary by location. You can see the exact cost at checkout before completing your purchase."
+  },
+
+  "Search": {
+    "title": "Search",
+    "searchResults": "Search results for",
+    "noResults": "No results found",
+    "filters": "Filters"
+  },
+
+  "Commerce": {
+    "productGrid": {
+      "noProducts": "No products found",
+      "product": "product",
+      "products": "products"
+    },
+    "facetFilters": {
+      "filters": "Filters",
+      "clearFilters": "Clear filters"
+    },
+    "sortDropdown": {
+      "sort": "Sort",
+      "nameAsc": "Name: A to Z",
+      "nameDesc": "Name: Z to A",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low"
+    },
+    "productCard": {
+      "viewDetails": "View details"
+    },
+    "productInfo": {
+      "addToCart": "Add to cart",
+      "addedToCart": "Added to cart",
+      "selectOptions": "Select options",
+      "outOfStock": "Out of stock",
+      "inStock": "In stock",
+      "sku": "SKU",
+      "quantity": "Quantity",
+      "adding": "Adding...",
+      "toast": {
+        "addedTitle": "Added to cart",
+        "addedDescription": "{product} has been added to your cart",
+        "errorTitle": "Error",
+        "errorDescription": "Could not add item to cart"
+      }
+    },
+    "relatedProducts": {
+      "title": "Related products"
+    },
+    "featuredProducts": {
+      "title": "Featured products",
+      "loading": "Loading featured products..."
+    },
+    "orderStatusBadge": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "returned": "Returned"
+    }
+  },
+
+  "Layout": {
+    "navbar": {
+      "home": "Home",
+      "search": "Search",
+      "cart": "Cart",
+      "account": "Account",
+      "signIn": "Sign in",
+      "signUp": "Sign up",
+      "signOut": "Sign out"
+    },
+    "searchInput": {
+      "placeholder": "Search products..."
+    },
+    "footer": {
+      "copyright": "© {year} Ecommer Shop. All rights reserved.",
+      "sections": {
+        "categories": "Categories",
+        "about": "About",
+        "contact": "Contact"
+      },
+      "links": {
+        "github": "GitHub"
+      }
+    }
+  },
+
+  "Home": {
+    "features": {
+      "quality": {
+        "title": "Premium quality",
+        "description": "Carefully selected products just for you"
+      },
+      "prices": {
+        "title": "Best prices",
+        "description": "Competitive pricing across all our products"
+      },
+      "delivery": {
+        "title": "Fast delivery",
+        "description": "Fast and reliable worldwide shipping"
+      }
+    }
+  }
 }
