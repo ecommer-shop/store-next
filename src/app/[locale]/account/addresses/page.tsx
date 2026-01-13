@@ -6,7 +6,7 @@ import { I18N } from '@/i18n/keys';
 
 export default function AddressesPage() {
   return (
-    <Suspense fallback={<p className="text-muted-foreground">{I18N.Account.addresses.loading}</p>}>
+    <Suspense fallback={<p className="text-muted-foreground">{I18N.Account.addresses.loading.loading}</p>}>
       <AddressesContent />
     </Suspense>
   );

@@ -8,13 +8,15 @@ import { Card } from '@/components/ui/card';
 import { Loader2, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
-import { setShippingMethod as setShippingMethodAction } from '../actions';
+import { I18N } from '@/i18n/keys';
 
 interface DeliveryStepProps {
   onComplete: () => void;
+  onSetShippingMethod: (id: string) => Promise<void>;
+  t: (key: string) => string;
 }
 
-export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
+export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: DeliveryStepProps) {
   const router = useRouter();
   const { shippingMethods, order } = useCheckout();
   const [selectedMethodId, setSelectedMethodId] = useState<string | null>(() => {
@@ -32,7 +34,7 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
 
     setSubmitting(true);
     try {
-      await setShippingMethodAction(selectedMethodId);
+      await onSetShippingMethod(selectedMethodId);
       router.refresh();
       onComplete();
     } catch (error) {
@@ -45,14 +47,14 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
   if (shippingMethods.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">No shipping methods available. Please check your address.</p>
+        <p className="text-muted-foreground">{t(I18N.Checkout.delivery.noMethods)}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">Select shipping method</h3>
+      <h3 className="font-semibold">{t(I18N.Checkout.delivery.selectMethod)}</h3>
 
       <RadioGroup value={selectedMethodId || ''} onValueChange={setSelectedMethodId}>
         {shippingMethods.map((method) => (
@@ -74,7 +76,7 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
                 <div className="text-right flex-shrink-0">
                   <p className="font-semibold">
                     {method.priceWithTax === 0
-                      ? 'FREE'
+                      ? t(I18N.Checkout.delivery.free)
                       : (method.priceWithTax / 100).toLocaleString('en-US', {
                           style: 'currency',
                           currency: 'USD',
@@ -93,7 +95,7 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
         className="w-full"
       >
         {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Continue to payment
+        {t(I18N.Checkout.delivery.continuePayment)}
       </Button>
     </div>
   );

@@ -6,13 +6,14 @@ import { ProductGrid } from '@/components/commerce/product-grid';
 import { FacetFilters } from '@/components/commerce/facet-filters';
 import { ProductGridSkeleton } from '@/components/shared/product-grid-skeleton';
 import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
-import { cacheLife, cacheTag, unstable_cache } from 'next/cache';
+import { unstable_cache } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
+import { getTranslations } from 'next-intl/server';
 
 const getCollectionProducts = (slug: string, searchParams: { [key: string]: string | string[] | undefined }) => 
     unstable_cache(
@@ -102,12 +103,12 @@ export default async function CollectionPage({params, searchParams}: CollectionP
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved);
-
+    const t = getTranslations()
     return (
         <Suspense fallback={
 
             
-            <p>Cargando...</p>
+            <p></p>
         }>
             <div className="container mx-auto px-4 py-8 mt-16">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

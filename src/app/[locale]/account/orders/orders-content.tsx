@@ -23,8 +23,14 @@ import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
 
 const ITEMS_PER_PAGE = 10;
-
-export default async function OrdersContent(props: PageProps<any>) {
+interface PageProps {
+    params: {
+        locale: string;
+        currantPage: string;
+    };
+    searchParams: Record<string, string | string[] | undefined>;
+}
+export default async function OrdersContent(props: PageProps) {
 
     const searchParams = await props.searchParams;
     const pageParam = searchParams.page;

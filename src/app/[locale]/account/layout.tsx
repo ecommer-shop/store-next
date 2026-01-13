@@ -13,6 +13,9 @@ const navItems = [
     {href: '/account/addresses', label: 'Addresses', icon: MapPin},
     {href: '/account/profile', label: 'Profile', icon: User},
 ];
+type LayoutProps<T> = {
+    children: React.ReactNode;
+};
 
 export default async function AccountLayout({children}: LayoutProps<'/account'>) {
     return (

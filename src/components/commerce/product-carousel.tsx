@@ -12,7 +12,7 @@ interface ProductCarouselClientProps {
 }
 
 export function ProductCarousel({title, products}: ProductCarouselClientProps) {
-      const id = useId();
+  const id = useId();
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);

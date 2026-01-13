@@ -7,13 +7,17 @@ import { OrderLine } from './types';
 import { useCheckout } from './checkout-provider';
 import { Price } from '@/components/commerce/price';
 import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react';
+import { I18N } from '@/i18n/keys';
 
-export default function OrderSummary() {
+interface OrderSummaryProps {
+  t: (key: string) => string;
+}
+export default function OrderSummary({ t }: OrderSummaryProps) {
   const { order } = useCheckout();
   return (
     <Card className="sticky top-4">
       <CardHeader>
-        <CardTitle>Order Summary</CardTitle>
+        <CardTitle>{t(I18N.Checkout.summary.title)}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
@@ -40,7 +44,7 @@ export default function OrderSummary() {
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Qty: {line.quantity}
+                  {t(I18N.Checkout.summary.quantity)}: {line.quantity}
                 </p>
               </div>
               <div className="text-sm font-medium">
@@ -54,7 +58,7 @@ export default function OrderSummary() {
 
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal</span>
+            <span className="text-muted-foreground">{t(I18N.Checkout.summary.subtotal)}</span>
             <span>
               <Price value={order.subTotalWithTax} currencyCode={order.currencyCode} />
             </span>
@@ -74,11 +78,11 @@ export default function OrderSummary() {
           )}
 
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Shipping</span>
+            <span className="text-muted-foreground">{t(I18N.Checkout.summary.shipping)}</span>
             <span>
               {order.shippingWithTax > 0
                 ? <Price value={order.shippingWithTax} currencyCode={order.currencyCode} />
-                : 'To be calculated'}
+                : t(I18N.Checkout.summary.toCalculate)}
             </span>
           </div>
         </div>
@@ -86,7 +90,7 @@ export default function OrderSummary() {
         <Separator />
 
         <div className="flex justify-between font-bold text-lg">
-          <span>Total</span>
+          <span>{t(I18N.Checkout.summary.total)}</span>
           <span>
             <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
           </span>

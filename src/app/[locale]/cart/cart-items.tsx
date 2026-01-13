@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-
 import {Minus, Plus, X} from 'lucide-react';
 import {Price} from '@/components/commerce/price';
 import {removeFromCart, adjustQuantity} from './actions';
 import { Button } from '@heroui/react';
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
+import { getTranslations } from 'next-intl/server';
 
 type ActiveOrder = {
     id: string;
@@ -30,16 +32,18 @@ type ActiveOrder = {
 };
 
 export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
+    const t = await getTranslations('Cart');
+    
     if (!activeOrder || activeOrder.lines.length === 0) {
         return (
             <div className="container mx-auto px-4 py-16">
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+                    <h1 className="text-3xl font-bold mb-4">{t(I18N.Cart.empty.title)}</h1>
                     <p className="text-muted-foreground mb-8">
-                        Add some items to your cart to get started
+                        {t(I18N.Cart.empty.description)}
                     </p>
                     <Button asChild>
-                        <Link href="/">Continue Shopping</Link>
+                        <Link href="/">{t(I18N.Cart.empty.continueShopping)}</Link>
                     </Button>
                 </div>
             </div>
@@ -84,7 +88,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                             SKU: {line.productVariant.sku}
                         </p>
                         <p className="text-sm text-muted-foreground mt-2 sm:hidden">
-                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> each
+                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> {t(I18N.Cart.items.each)}
                         </p>
 
                         <div className="flex items-center gap-3 mt-4">
@@ -136,6 +140,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                                     variant="ghost"
                                     size="sm"
                                     className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    aria-label={t(I18N.Cart.items.remove)}
                                 >
                                     <X className="h-5 w-5"/>
                                 </Button>
@@ -155,7 +160,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                             <Price value={line.linePriceWithTax} currencyCode={activeOrder.currencyCode}/>
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
-                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> each
+                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> {t(I18N.Cart.items.each)}
                         </p>
                     </div>
                 </div>

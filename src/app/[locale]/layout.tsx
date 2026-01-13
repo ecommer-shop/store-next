@@ -20,6 +20,7 @@ import {hasLocale, NextIntlClientProvider} from 'next-intl';
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ReactNode } from "react";
+import { enUS, esMX } from '@clerk/localizations'
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -80,9 +81,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+  const localClerk = locale === 'es' ? esMX : enUS;  
   
   return (
-    <ClerkProvider dynamic afterSignOutUrl="/">
+    <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ThemeProvider>

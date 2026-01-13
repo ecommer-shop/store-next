@@ -8,6 +8,8 @@ import { Button } from '@heroui/react';
 import {SearchProductsQuery} from "@/lib/vendure/shared/queries";
 import { Accordion, Checkbox } from '@heroui/react';
 import { Icon,  } from "@iconify/react";
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
 
 interface FacetFiltersProps {
     productDataPromise: Promise<{
@@ -22,6 +24,7 @@ export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
+    const t = useTranslations('Commerce');
 
     // Group facet values by facet
     interface FacetGroup {
@@ -82,10 +85,10 @@ export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-lg">Filters</h2>
+                <h2 className="font-semibold text-lg">{t(I18N.Commerce.facetFilters.filters)}</h2>
                 {hasActiveFilters && (
                     <Button variant="ghost" size="sm" onClick={clearFilters}>
-                        Clear all
+                        {t(I18N.Commerce.facetFilters.clearFilters)}
                     </Button>
                 )}
             </div>

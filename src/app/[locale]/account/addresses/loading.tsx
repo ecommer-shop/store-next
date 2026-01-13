@@ -1,13 +1,14 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { I18N } from '@/i18n/keys';
 
 export default function AddressesLoading() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold">Addresses</h1>
+                <h1 className="text-3xl font-bold">{I18N.Account.addresses.loading.title}</h1>
                 <p className="text-muted-foreground mt-2">
-                    Manage your saved shipping and billing addresses
+                    {I18N.Account.addresses.loading.description}
                 </p>
             </div>
 

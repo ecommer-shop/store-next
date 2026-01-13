@@ -24,6 +24,13 @@ export async function generateMetadata({
     };
 }
 
+interface PageProps<T> {
+    params: {
+        locale: string;
+    };
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
 export default async function SearchPage({searchParams}: PageProps<'/search'>) {
     return (
         <div className="container mx-auto px-4 py-8 mt-16">

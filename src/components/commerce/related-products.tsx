@@ -4,6 +4,7 @@ import { query } from "@/lib/vendure/server/api";
 import { GetCollectionProductsQuery } from "@/lib/vendure/shared/queries";
 import { readFragment } from "@/graphql";
 import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
+import { RelatedProductsTitle } from './related-products-title';
 
 interface RelatedProductsProps {
     collectionSlug: string;
@@ -12,9 +13,6 @@ interface RelatedProductsProps {
 
 const getRelatedProducts = (collectionSlug: string, currentProductId: string) =>
     unstable_cache(
-    /*'use cache'
-    cacheLife('hours')
-    cacheTag(`related-products-${collectionSlug}`)*/
     async () => {
         const result = await query(GetCollectionProductsQuery, {
             slug: collectionSlug,
@@ -49,7 +47,7 @@ export async function RelatedProducts({ collectionSlug, currentProductId }: Rela
 
     return (
         <ProductCarousel
-            title="Related Products"
+            title={RelatedProductsTitle()}
             products={products}
         />
     );

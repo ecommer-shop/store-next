@@ -13,10 +13,13 @@ import {
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
 import { SyncCustomer } from "@/lib/vendure/client/sync-customer";
+import { useTranslations } from "next-intl";
+import { I18N } from "@/i18n/keys";
 
 export function NavbarUser() {
   const { theme } = useTheme();
   const { signOut } = useClerk();
+  const t = useTranslations("Layout");
 
   const [mounted, setMounted] = useState(false);
 
@@ -34,13 +37,13 @@ export function NavbarUser() {
       <SignedOut>
         <SignInButton mode="redirect">
           <Button className="text-foreground">
-            Iniciar sesión
+            {t(I18N.Layout.navbar.signIn)}
           </Button>
         </SignInButton>
 
         <SignUpButton mode="redirect">
           <Button className="text-foreground bg-[#6BB8FF] hover:bg-[#9969F8] dark:bg-[#9969F8] dark:hover:bg-[#6BB8FF]">
-            Registrarse
+            {t(I18N.Layout.navbar.signUp)}
           </Button>
         </SignUpButton>
       </SignedOut>

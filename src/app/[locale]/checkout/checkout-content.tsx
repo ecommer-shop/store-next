@@ -10,10 +10,12 @@ import {redirect} from 'next/navigation';
 import CheckoutFlow from './checkout-flow';
 import {CheckoutProvider} from './checkout-provider';
 import {noIndexRobots} from '@/lib/vendure/shared/metadata';
-import {getActiveCustomer} from '@/lib/vendure/server/actions/actions';
 import {getAvailableCountriesCached} from '@/lib/vendure/cached';
-import { useAuth } from '@/components/shared/useAuth';
 import { Suspense } from 'react';
+import { I18N } from '@/i18n/keys';
+import { getTraceEvents } from 'next/dist/trace';
+import { getTranslations } from 'next-intl/server';
+import { setShippingMethod } from './actions';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -27,9 +29,10 @@ interface CheckoutContentProps {
   searchParams: Record<string, string | string[] | undefined>;
 }
 
+export const tCheckout = await getTranslations('Checkout');
+
 export default async function CheckoutContent(_props: CheckoutContentProps) {
 
-    
     const [orderRes, addressesRes, countries, shippingMethodsRes, paymentMethodsRes] =
         await Promise.all([
             query(GetActiveOrderForCheckoutQuery, {}, {useAuthToken: true}),
@@ -58,10 +61,10 @@ export default async function CheckoutContent(_props: CheckoutContentProps) {
 
     return (
         <Suspense fallback={
-            <p>Cargando...</p>
+            <p>{tCheckout(I18N.Account.common.loading)}</p>
         }>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+                <h1 className="text-3xl font-bold mb-8">{tCheckout(I18N.Checkout.title)}</h1>
                 <CheckoutProvider
                     order={activeOrder}
                     addresses={addresses}
@@ -69,7 +72,7 @@ export default async function CheckoutContent(_props: CheckoutContentProps) {
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
                 >
-                    <CheckoutFlow/>
+                    <CheckoutFlow onSetShippingMethod={setShippingMethod} t={tCheckout}/>
                 </CheckoutProvider>
             </div>
         </Suspense>

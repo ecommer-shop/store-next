@@ -12,7 +12,12 @@ export default function UserProfileClient() {
       appearance={{
         baseTheme: theme === "dark" ? dark : undefined,
         variables: {
-            borderRadius: "2px"
+            borderRadius: "2px",
+            colorBackground: theme === "dark" ? "#12123F" : "#F1F1F1",
+            colorShadow: theme === "dark" ? "#F1F1F1" : "#12123f",
+        },
+        elements: {
+          modalContent: "bg-background/95 backdrop-blur-md w-full",
         }
       }}
     />

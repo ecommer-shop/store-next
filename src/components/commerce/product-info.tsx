@@ -7,6 +7,8 @@ import {addToCart} from '@/app/[locale]/product/[slug]/actions';
 import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
 import clsx from "clsx";
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
 
 interface ProductInfoProps {
     product: {
@@ -51,6 +53,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
     const currentSearchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [isAdded, setIsAdded] = useState(false);
+    const t = useTranslations('Commerce');
 
     // Initialize selected options from URL
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -116,15 +119,15 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
             if (result.success) {
                 setIsAdded(true);
-                toast.success('Added to cart', {
-                    description: `${product.name} has been added to your cart`,
+                toast.success(t(I18N.Commerce.productInfo.toast.addedTitle), {
+                    description: t(I18N.Commerce.productInfo.toast.addedDescription, { product: product.name }),
                 });
 
                 // Reset the added state after 2 seconds
                 setTimeout(() => setIsAdded(false), 2000);
             } else {
-                toast.error('Error', {
-                    description: result.error || 'Failed to add item to cart',
+                toast.error(t(I18N.Commerce.productInfo.toast.errorTitle), {
+                    description: result.error || t(I18N.Commerce.productInfo.toast.errorDescription),
                 });
             }
         });
@@ -211,9 +214,9 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             {selectedVariant && (
                 <div className="text-sm">
                     {isInStock ? (
-                        <span className="text-green-600 font-semibold">In Stock</span>
+                        <span className="text-green-600 font-semibold">{t(I18N.Commerce.productInfo.inStock)}</span>
                     ) : (
-                        <span className="text-destructive font-semibold">Out of Stock</span>
+                        <span className="text-destructive font-semibold">{t(I18N.Commerce.productInfo.outOfStock)}</span>
                     )}
                 </div>
             )}
@@ -230,18 +233,18 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     {isAdded ? (
                         <>
                             <CheckCircle2 className="mr-2 h-5 w-5"/>
-                            Added to Cart
+                            {t(I18N.Commerce.productInfo.addedToCart)}
                         </>
                     ) : (
                         <>
                             <ShoppingCart className="mr-2 h-5 w-5"/>
                             {isPending
-                                ? 'Adding...'
+                                ? t(I18N.Commerce.productInfo.adding)
                                 : !selectedVariant && product.optionGroups.length > 0
-                                    ? 'Select Options'
+                                    ? t(I18N.Commerce.productInfo.selectOptions)
                                     : !isInStock
-                                        ? 'Out of Stock'
-                                        : 'Add to Cart'}
+                                        ? t(I18N.Commerce.productInfo.outOfStock)
+                                        : t(I18N.Commerce.productInfo.addToCart)}
                         </>
                     )}
                 </Button>
@@ -250,7 +253,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             {/* SKU */}
             {selectedVariant && (
                 <div className="text-xs text-foreground">
-                    SKU: {selectedVariant.sku}
+                    {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
                 </div>
             )}
         </div>

@@ -3,6 +3,8 @@ import {Input} from '@/components/ui/input';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Tag} from 'lucide-react';
 import {applyPromotionCode, removePromotionCode} from './actions';
+import { I18N } from '@/i18n/keys';
+import { getTranslations } from 'next-intl/server';
 
 type ActiveOrder = {
     id: string;
@@ -10,15 +12,16 @@ type ActiveOrder = {
 };
 
 export async function PromotionCode({activeOrder}: { activeOrder: ActiveOrder }) {
+    const t = await getTranslations('Cart');
     return (
         <Card className="mt-4">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                     <Tag className="h-5 w-5"/>
-                    Promotion Code
+                    {t(I18N.Cart.promotionCode.title)}
                 </CardTitle>
                 <CardDescription>
-                    Enter your discount code below
+                    {t(I18N.Cart.promotionCode.description)}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -39,7 +42,7 @@ export async function PromotionCode({activeOrder}: { activeOrder: ActiveOrder })
                                         size="sm"
                                         className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                                     >
-                                        Remove
+                                        {t(I18N.Cart.promotionCode.remove)}
                                     </Button>
                                 </form>
                             </div>
@@ -50,11 +53,11 @@ export async function PromotionCode({activeOrder}: { activeOrder: ActiveOrder })
                         <Input
                             type="text"
                             name="code"
-                            placeholder="Enter code"
+                            placeholder={t(I18N.Cart.promotionCode.placeholder)}
                             className="flex-1"
                             required
                         />
-                        <Button type="submit">Apply</Button>
+                        <Button type="submit">{t(I18N.Cart.promotionCode.apply)}</Button>
                     </form>
                 )}
             </CardContent>

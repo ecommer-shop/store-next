@@ -9,6 +9,7 @@ import Image from 'next/image';
 import {Separator} from '@/components/ui/separator';
 import {Price} from '@/components/commerce/price';
 import {notFound} from "next/navigation";
+import { I18N } from '@/i18n/keys';
 
 const GetOrderByCodeQuery = graphql(`
     query GetOrderByCode($code: String!) {
@@ -55,9 +56,10 @@ interface OrderConfirmationProps {
     locale?: string;
   };
   searchParams: Record<string, string | string[] | undefined>;
+  t: (key: string) => string;
 }
 
-export async function OrderConfirmation({params}: OrderConfirmationProps) {
+export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
     const {code} = params;
     let order;
 
@@ -78,16 +80,16 @@ export async function OrderConfirmation({params}: OrderConfirmationProps) {
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-8">
                     <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4"/>
-                    <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
+                    <h1 className="text-3xl font-bold mb-2">{t(I18N.OrderConfirmation.title)}</h1>
                     <p className="text-muted-foreground">
-                        Thank you for your order. Your order number is
+                        {t(I18N.OrderConfirmation.thankYou)}
                         <span className="font-semibold">{order.code}</span>
                     </p>
                 </div>
 
                 <Card className="mb-6">
                     <CardHeader>
-                        <CardTitle>Order Summary</CardTitle>
+                        <CardTitle>{t(I18N.OrderConfirmation.summary)}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {order.lines.map((line) => (
@@ -112,7 +114,7 @@ export async function OrderConfirmation({params}: OrderConfirmationProps) {
                                     )}
                                 </div>
                                 <div className="text-center w-16">
-                                    <p className="text-sm text-muted-foreground">Qty</p>
+                                    <p className="text-sm text-muted-foreground">{t(I18N.OrderConfirmation.quantity)}</p>
                                     <p className="font-medium">{line.quantity}</p>
                                 </div>
                                 <div className="text-right w-24">
@@ -126,7 +128,7 @@ export async function OrderConfirmation({params}: OrderConfirmationProps) {
                         <Separator/>
 
                         <div className="flex justify-between font-bold text-lg">
-                            <span>Total</span>
+                            <span>{t(I18N.OrderConfirmation.total)}</span>
                             <span>
                 <Price value={order.totalWithTax} currencyCode={order.currencyCode}/>
               </span>
@@ -137,7 +139,7 @@ export async function OrderConfirmation({params}: OrderConfirmationProps) {
                 {order.shippingAddress && (
                     <Card className="mb-6">
                         <CardHeader>
-                            <CardTitle>Shipping Address</CardTitle>
+                            <CardTitle>{t(I18N.OrderConfirmation.shippingAddress)}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium">{order.shippingAddress.fullName}</p>
@@ -156,7 +158,7 @@ export async function OrderConfirmation({params}: OrderConfirmationProps) {
 
                 <div className="flex gap-4">
                     <Button asChild className="flex-1">
-                        <Link href="/">Continue Shopping</Link>
+                        <Link href="/">{t(I18N.OrderConfirmation.continueShopping)}</Link>
                     </Button>
                 </div>
             </div>

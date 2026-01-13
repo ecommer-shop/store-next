@@ -3,6 +3,7 @@ import {cacheLife, unstable_cache} from "next/cache";
 import {query} from "@/lib/vendure/server/api";
 import {GetCollectionProductsQuery} from "@/lib/vendure/shared/queries";
 import { Suspense } from "react";
+import { FeaturedProductsLoading } from './featured-products-loading';
 
 const getFeaturedCollectionProducts = () =>
   unstable_cache(
@@ -25,22 +26,11 @@ const getFeaturedCollectionProducts = () =>
     }
   )();
 
-    /*'use cache'
-    cacheLife('days')*/
-
-    // Fetch featured products from a specific collection
-    // Replace 'featured' with your actual collection slug
-    
-
-
-
 export async function FeaturedProducts() {
     const products = await getFeaturedCollectionProducts();
 
     return (
-        <Suspense fallback={
-            <p>Cargando Productos...</p>
-        }>
+        <Suspense fallback={<FeaturedProductsLoading />}>
             <ProductCarousel
                 title="Featured Products"
                 products={products}

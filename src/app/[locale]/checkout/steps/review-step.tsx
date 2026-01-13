@@ -6,6 +6,7 @@ import { Loader2, MapPin, Truck, CreditCard, Edit } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { placeOrder as placeOrderAction } from '../actions';
 import { Price } from '@/components/commerce/price';
+import { I18N } from '@/i18n/keys';
 
 interface ReviewStepProps {
   onEditStep: (step: 'shipping' | 'delivery' | 'payment') => void;
@@ -39,14 +40,14 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
   return (
     <>
       <div className="space-y-6">
-      <h3 className="font-semibold text-lg">Review your order</h3>
+      <h3 className="font-semibold text-lg">{I18N.Checkout.review.title}</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Shipping Address */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">Shipping Address</h4>
+            <h4 className="font-medium">{I18N.Checkout.review.shippingAddress}</h4>
           </div>
           {order.shippingAddress ? (
             <div className="text-sm space-y-3">
@@ -68,11 +69,11 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 onClick={() => onEditStep('shipping')}
               >
                 <Edit className="h-4 w-4 mr-1" />
-                Edit
+                {I18N.Checkout.review.edit}
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No shipping address set</p>
+            <p className="text-sm text-muted-foreground">{I18N.Checkout.review.noAddressSet}</p>
           )}
         </div>
 
@@ -80,7 +81,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">Delivery Method</h4>
+            <h4 className="font-medium">{I18N.Checkout.review.deliveryMethod}</h4>
           </div>
           {order.shippingLines && order.shippingLines.length > 0 ? (
             <div className="text-sm space-y-3">
@@ -88,7 +89,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 <p className="font-medium">{order.shippingLines[0].shippingMethod.name}</p>
                 <p className="text-muted-foreground">
                   {order.shippingLines[0].priceWithTax === 0
-                    ? 'FREE'
+                    ? I18N.Checkout.delivery.free
                     : <Price value={order.shippingLines[0].priceWithTax} currencyCode={order.currencyCode} />}
                 </p>
               </div>
@@ -98,11 +99,11 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 onClick={() => onEditStep('delivery')}
               >
                 <Edit className="h-4 w-4 mr-1" />
-                Edit
+                {I18N.Checkout.review.edit}
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No delivery method selected</p>
+            <p className="text-sm text-muted-foreground">{I18N.Checkout.review.noMethodSet}</p>
           )}
         </div>
 
@@ -110,7 +111,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">Payment Method</h4>
+            <h4 className="font-medium">{I18N.Checkout.review.paymentMethod}</h4>
           </div>
           {selectedPaymentMethod ? (
             <div className="text-sm space-y-3">
@@ -128,11 +129,11 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 onClick={() => onEditStep('payment')}
               >
                 <Edit className="h-4 w-4 mr-1" />
-                Edit
+                {I18N.Checkout.review.edit}
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No payment method selected</p>
+            <p className="text-sm text-muted-foreground">{I18N.Checkout.review.noPaymentSet}</p>
           )}
         </div>
       </div>
@@ -144,12 +145,12 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
         className="w-full"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Place Order
+        {I18N.Checkout.review.placeOrder}
       </Button>
 
       {(!order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode) && (
         <p className="text-sm text-destructive text-center">
-          Please complete all previous steps before placing your order
+          {I18N.Checkout.review.completeSteps}
         </p>
       )}
     </div>

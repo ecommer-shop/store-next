@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { CreditCard } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
+import { I18N } from '@/i18n/keys';
 
 interface PaymentStepProps {
   onComplete: () => void;
@@ -22,14 +23,14 @@ export default function PaymentStep({ onComplete }: PaymentStepProps) {
   if (paymentMethods.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">No payment methods available.</p>
+        <p className="text-muted-foreground">{I18N.Checkout.payment.noMethods}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">Select payment method</h3>
+      <h3 className="font-semibold">{I18N.Checkout.payment.selectMethod}</h3>
 
       <RadioGroup value={selectedPaymentMethodCode || ''} onValueChange={setSelectedPaymentMethodCode}>
         {paymentMethods.map((method) => (
@@ -57,7 +58,7 @@ export default function PaymentStep({ onComplete }: PaymentStepProps) {
         isDisabled={!selectedPaymentMethodCode}
         className="w-full"
       >
-        Continue to review
+        {I18N.Checkout.payment.continueReview}
       </Button>
     </div>
   );

@@ -8,10 +8,16 @@ import PaymentStep from './steps/payment-step';
 import ReviewStep from './steps/review-step';
 import OrderSummary from './order-summary';
 import { useCheckout } from './checkout-provider';
+import { I18N } from '@/i18n/keys';
 
 type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
 
-export default function CheckoutFlow() {
+interface CheckoutFlowProps {
+    onSetShippingMethod: (id: string) => Promise<void>;
+    t: (key: string) => string;
+  }
+
+export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowProps) {
   const { order } = useCheckout();
 
   // Determine initial step and completed steps based on order state
@@ -61,13 +67,6 @@ export default function CheckoutFlow() {
     <div className="grid lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
         <Accordion
-          
-          /*
-          onExpandedChange={(value) => {
-            if (value && canAccessStep(value as CheckoutStep)) {
-              setCurrentStep(value as CheckoutStep);
-            }
-          }}*/
           className="space-y-4"
         >
           <Accordion.Item key="shipping" className="border rounded-lg px-6">
@@ -82,7 +81,7 @@ export default function CheckoutFlow() {
                 }`}>
                   {completedSteps.has('shipping') ? '✓' : '1'}
                 </div>
-                <span className="text-lg font-semibold">Shipping Address</span>
+                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.shippingAddress)}</span>
               </div>
             </Accordion.Trigger>
             <Accordion.Body className="pt-4">
@@ -111,12 +110,14 @@ export default function CheckoutFlow() {
                 }`}>
                   {completedSteps.has('delivery') ? '✓' : '2'}
                 </div>
-                <span className="text-lg font-semibold">Delivery Method</span>
+                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.deliveryMethod)}</span>
               </div>
             </Accordion.Trigger>
             <Accordion.Body className="pt-4">
               <DeliveryStep
                 onComplete={() => handleStepComplete('delivery')}
+                onSetShippingMethod={onSetShippingMethod}
+                t={t}
               />
             </Accordion.Body>
           </Accordion.Item>
@@ -140,7 +141,7 @@ export default function CheckoutFlow() {
                 }`}>
                   {completedSteps.has('payment') ? '✓' : '3'}
                 </div>
-                <span className="text-lg font-semibold">Payment Method</span>
+                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
               </div>
             </Accordion.Trigger>
             <Accordion.Body className="pt-4">
@@ -167,7 +168,7 @@ export default function CheckoutFlow() {
                 }`}>
                   4
                 </div>
-                <span className="text-lg font-semibold">Review & Place Order</span>
+                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
               </div>
             </Accordion.Trigger>
             <Accordion.Body className="pt-4">
@@ -180,7 +181,7 @@ export default function CheckoutFlow() {
       </div>
 
       <div className="lg:col-span-1">
-        <OrderSummary />
+        <OrderSummary t={t} />
       </div>
     </div>
   );
