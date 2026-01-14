@@ -1,29 +1,53 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import createMiddleware from 'next-intl/middleware';
-import {routing} from './i18n/routing';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+import { NextResponse } from "next/server";
 
 const intlMiddleware = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
-  '/account/(.*)',
-  '/checkout/(.*)',
-  '/account/profile/(.*)',
-])
+  "/:locale/account(.*)",
+  "/:locale/checkout(.*)",
+  "/:locale/account/profile(.*)",
+]);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) {
-    auth.protect()
+export default clerkMiddleware(async (auth, req) => {
+  
+  const { pathname, search } = req.nextUrl;
+  const locale = req.nextUrl.locale ?? "es";
+
+  // 🚫 Dejar pasar assets
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith(`/${locale}/_next`) ||
+    pathname.match(/\.(.*)$/)
+  ) {
+    return NextResponse.next();
   }
 
-  return intlMiddleware(req)  
-}, {
-  authorizedParties: ["https://ecommer.shop/", "https://clerk.ecommer.shop/", "http://localhost:3000", "http://localhost:3001"]
-})
+  if (isProtectedRoute(req)) {
+    const { userId } = await auth();
+
+    if (!userId) {
+      const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
+      const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+      // 👉 URL ORIGINAL COMPLETA
+      const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+
+      signInUrl.searchParams.set("redirect_url", returnTo);
+
+      console.log("Redirigiendo a sign-in desde:", returnTo);
+
+      console.log("Redirigiendo a sign-in hacia:", signInUrl.toString());
+      return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  return intlMiddleware(req);
+});
+
+
 
 export const config = {
-  matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
-    '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
-  ],
-}
+  matcher: ["/((?!_next|.*\\..*).*)"],
+};

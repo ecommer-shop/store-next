@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
@@ -9,12 +9,15 @@ import {
   SignUpButton,
   UserButton,
   useClerk,
+  RedirectToSignIn,
 } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
 import { SyncCustomer } from "@/lib/vendure/client/sync-customer";
 import { useTranslations } from "next-intl";
 import { I18N } from "@/i18n/keys";
+import { useAuth } from "@/components/shared/useAuth";
+import { auth } from "@clerk/nextjs/server";
 
 export function NavbarUser() {
   const { theme } = useTheme();
@@ -60,6 +63,7 @@ export function NavbarUser() {
             },
             variables: {
               borderRadius: "2px",
+              colorBackground: theme === "dark" ? "#12123F" : "#F1F1F1",
             },
           }}
           showName
@@ -84,7 +88,6 @@ export function NavbarUser() {
               }
               href="/account/orders"
             />
-
             <UserButton.Link
               label="Direcciones"
               labelIcon={
