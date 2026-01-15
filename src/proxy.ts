@@ -16,7 +16,6 @@ export default clerkMiddleware(async (auth, req) => {
   const { pathname, search } = req.nextUrl;
   const locale = req.nextUrl.locale ?? "es";
 
-  // 🚫 Dejar pasar assets
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith(`/${locale}/_next`) ||
@@ -31,22 +30,16 @@ export default clerkMiddleware(async (auth, req) => {
     if (!userId) {
       const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
       const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
-      // 👉 URL ORIGINAL COMPLETA
+      
       const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
 
       signInUrl.searchParams.set("redirect_url", returnTo);
-
-      console.log("Redirigiendo a sign-in desde:", returnTo);
-
-      console.log("Redirigiendo a sign-in hacia:", signInUrl.toString());
       return NextResponse.redirect(signInUrl);
     }
   }
 
   return intlMiddleware(req);
 });
-
-
 
 export const config = {
   matcher: ["/((?!_next|.*\\..*).*)"],

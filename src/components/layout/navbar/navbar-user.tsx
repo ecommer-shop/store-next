@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { Button } from "@heroui/react";
+import { Button, Dropdown, Switch } from "@heroui/react";
 import {
   SignedIn,
   SignedOut,
@@ -18,13 +18,28 @@ import { useTranslations } from "next-intl";
 import { I18N } from "@/i18n/keys";
 import { useAuth } from "@/components/shared/useAuth";
 import { auth } from "@clerk/nextjs/server";
+import { Check, Globe, LogIn, Menu, Moon, Power, Sun, UserPlus } from "lucide-react";
+import { ThemeModal } from "./theme-switcher/theme-switcher";
+import { LocaleModal } from "../locale-modal";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter
+} from "@heroui/drawer";
 
 export function NavbarUser() {
-  const { theme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const { signOut } = useClerk();
   const t = useTranslations("Layout");
-
+  const [themeOpen, setThemeOpen] = useState(false);
+  const [localeOpen, setLocaleOpen] = useState(false);
+  const { openSignIn, openSignUp } = useClerk();
   const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
 
   useEffect(() => {
     setMounted(true);
@@ -38,32 +53,107 @@ export function NavbarUser() {
     <>
       {/* NO autenticado */}
       <SignedOut>
-        <SignInButton mode="redirect">
-          <Button className="text-foreground">
-            {t(I18N.Layout.navbar.signIn)}
-          </Button>
-        </SignInButton>
+  {/* Botón hamburguesa */}
+  <Button
+    isIconOnly
+    variant="ghost"
+    aria-label="Menú"
+    onPress={() => setSidebarOpen(true)}
+  >
+    <Menu className="size-5" />
+  </Button>
 
-        <SignUpButton mode="redirect">
-          <Button className="text-foreground bg-[#6BB8FF] hover:bg-[#9969F8] dark:bg-[#9969F8] dark:hover:bg-[#6BB8FF]">
-            {t(I18N.Layout.navbar.signUp)}
-          </Button>
-        </SignUpButton>
-      </SignedOut>
+  {/* Sidebar / Drawer */}
+  <Drawer
+    isOpen={sidebarOpen}
+    placement="right"
+    onOpenChange={setSidebarOpen}
+    className="bg-black/30 backdrop-blur-sm"
+  >
+    <DrawerContent>
+      {(onClose) => (
+        <>
+          <DrawerHeader className="flex items-center justify-between">
+            <span className="text-lg font-semibold">Menú</span>
+          </DrawerHeader>
+
+          <DrawerBody className="flex flex-col gap-3">
+            {/* Tema */}
+            <Button
+              variant="ghost"
+              onPress={() => {
+                onClose();
+                setThemeOpen(true);
+              }}
+            >
+              <Sun className="size-4" />Tema
+            </Button>
+
+            {/* Idioma */}
+            <Button
+              variant="ghost"
+              onPress={() => {
+                onClose();
+                setLocaleOpen(true);
+              }}
+            >
+              <Globe className="size-4" />Idioma
+            </Button>
+
+            {/* Sign In */}
+            <Button
+              variant="ghost"
+              onPress={() => {
+                onClose();
+                openSignIn();
+              }}
+            >
+              <LogIn className="size-4" />Iniciar sesión
+            </Button>
+
+            {/* Sign Up */}
+            <Button
+              variant="primary"
+              onPress={() => {
+                onClose();
+                openSignUp();
+              }}
+            >
+              <UserPlus className="size-4" />Registrarse
+            </Button>
+          </DrawerBody>
+        </>
+      )}
+    </DrawerContent>
+  </Drawer>
+
+  {/* Modales */}
+  <ThemeModal
+    isOpen={themeOpen}
+    onClose={() => setThemeOpen(false)}
+  />
+
+  <LocaleModal
+    isOpen={localeOpen}
+    onClose={() => setLocaleOpen(false)}
+  />
+</SignedOut>
+
+
 
       {/* Autenticado */}
       <SignedIn>
         <SyncCustomer/>
         <UserButton
           appearance={{
-            baseTheme: theme === "dark" ? dark : undefined,
+            baseTheme: resolvedTheme === "dark" ? dark : undefined,
             elements: {
               userButtonPopoverActionButton__manageAccount: "hidden!",
               userButtonPopoverActionButton__signOut: "hidden!",
             },
             variables: {
               borderRadius: "2px",
-              colorBackground: theme === "dark" ? "#12123F" : "#F1F1F1",
+              colorBackground: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
             },
           }}
           showName
@@ -78,7 +168,32 @@ export function NavbarUser() {
               }
               href="/account/profile"
             />
+            <UserButton.Action
+              label="Apariencia"
+              labelIcon={<Moon className="size-4" />}
+              onClick={() => setThemeOpen(true)}
+            />
 
+            <UserButton.Action
+              label="Idioma"
+              labelIcon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    className="text-foreground"
+                    fill="currentColor"
+                    fillRule="evenodd"
+                    d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1M2.5 8c0-.8.15-1.56.43-2.26h2.52a14 14 0 0 1 0 4.52H2.93A5.5 5.5 0 0 1 2.5 8m3.2 3.76h2.6v2.38A5.52 5.52 0 0 1 5.7 11.76m2.6-1.5H5.7a12.6 12.6 0 0 1 0-4.52h2.6zm1.5 3.88v-2.38h2.6a5.52 5.52 0 0 1-2.6 2.38m2.97-3.88h-2.47a14 14 0 0 0 0-4.52h2.47c.28.7.43 1.46.43 2.26s-.15 1.56-.43 2.26m-2.97-6.4V3.86a5.52 5.52 0 0 1 2.6 2.38z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              }
+              onClick={() => setLocaleOpen(true)}
+            />
             <UserButton.Link
               label="Mis pedidos"
               labelIcon={
@@ -109,6 +224,14 @@ export function NavbarUser() {
             />
           </UserButton.MenuItems>
         </UserButton>
+        <ThemeModal
+          isOpen={themeOpen}
+          onClose={() => setThemeOpen(false)}
+        />
+        <LocaleModal
+          isOpen={localeOpen}
+          onClose={() => setLocaleOpen(false)}
+        />
       </SignedIn>
     </>
   );
