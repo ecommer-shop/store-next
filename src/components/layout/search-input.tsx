@@ -25,7 +25,7 @@ export function SearchInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative">
+    <form onSubmit={handleSubmit} className="relative w-full">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       
       <Input
@@ -33,10 +33,7 @@ export function SearchInput() {
         placeholder={t(I18N.Layout.searchInput.placeholder)}
         className="
           pl-9
-          w-[120px]
-          sm:w-[250px]
-          md:w-[220px]
-          lg:w-64
+          w-full
           transition-all
         "
         value={searchValue}

@@ -3,7 +3,6 @@ import Link from "next/link";
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
-import {ThemeSwitcherEntry} from '@/components/layout/navbar/theme-switcher/theme-switcher-entry';
 import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
@@ -19,27 +18,30 @@ export function Navbar() {
                 
                 {/* IZQUIERDA */}
                 <div className="flex items-center gap-6 flex-shrink-0">
-                    <Link href="/" className="text-xl font-bold flex-shrink-0">
-                    <Image
-                        src="/logo-light.webp"
-                        alt="Ecommer"
-                        width={60}
-                        height={60}
-                        className="h-6 w-auto invert block dark:hidden"
-                    />
-                    </Link>
-                    <Link href="/" className="text-xl font-bold flex-shrink-0">
+                    <Link href="/" className="relative flex items-center w-[60px] h-6 flex-shrink-0">
+                        {/* Light */}
                         <Image
                             src="/logo-dark.webp"
                             alt="Ecommer"
                             width={60}
                             height={60}
-                            className="h-6 w-auto invert hidden dark:block"
-                        />  
+                            className="inset-0 h-6 w-auto block dark:hidden"
+                            priority
+                        />
+
+                        {/* Dark */}
+                        <Image
+                            src="/logo-light.webp"
+                            alt="Ecommer"
+                            width={60}
+                            height={60}
+                            className="inset-0 h-6 w-auto hidden dark:block"
+                            priority
+                        />
                     </Link>
-                    
+
                     {/* Collections solo desktop */}
-                    <nav className="hidden md:flex items-center gap-6">
+                    <nav className="hidden md:flex md:items-center md:gap-6">
                     <Suspense>
                         <NavbarCollections />
                     </Suspense>
@@ -48,30 +50,25 @@ export function Navbar() {
 
                 {/* DERECHA */}
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
-                    
-                    {/* Search siempre visible */}
-                    <div className="w-[120px] sm:w-[160px] md:w-[220px] lg:w-64">
-                    <Suspense fallback={<SearchInputSkeleton />}>
-                        <SearchInput />
-                    </Suspense>
-                    </div>
 
-                    {/* Theme solo tablet+ */}
-                    <div className="hidden md:flex">
-                    <ThemeSwitcherEntry />
+                    {/* Search ocupa todo en mobile */}
+                    <div className="flex-1 min-w-0 sm:flex-none sm:w-[160px] md:w-[220px] lg:w-74">
+                        <Suspense fallback={<SearchInputSkeleton />}>
+                        <SearchInput />
+                        </Suspense>
                     </div>
 
                     <Suspense>
-                    <NavbarCart />
+                        <NavbarCart />
                     </Suspense>
 
                     <Suspense fallback={<NavbarUserSkeleton />}>
-                    <NavbarUser />
-                    
+                        <NavbarUser />
                     </Suspense>
-                </div>
+
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
     );
 }

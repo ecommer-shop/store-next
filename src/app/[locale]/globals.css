@@ -9,7 +9,10 @@ html {
   font-size: 16px;
   zoom: 90%;
   transform: none;
+  height: 100%
 }
+
+
 
 @theme inline {
   --color-background: var(--background);
@@ -123,6 +126,7 @@ html {
   --sidebar: oklch(21.638% 0.08352 276.853);
   --sidebar-foreground: oklch(95.815% 0.00011 271.152);
   --sidebar-primary: #6BB8FF;
+  --sidebar-primary: oklch(21.638% 0.08352 276.853 / 0.333);
   --sidebar-primary-foreground: oklch(95.815% 0.00011 271.152);
   --sidebar-accent: oklch(21.638% 0.08352 276.853);
   --sidebar-accent-foreground: oklch(95.815% 0.00011 271.152);
@@ -298,3 +302,4 @@ body {
 [data-localization-key="userButton.signOut"] {
   display: none !important;
 }
+

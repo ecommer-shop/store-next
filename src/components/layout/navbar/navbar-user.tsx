@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { Button, Dropdown, Switch } from "@heroui/react";
+import { Children, useEffect, useState } from "react";
+import { Button, Dropdown, Switch, Disclosure, useDisclosureGroupNavigation, CloseButton } from "@heroui/react";
 import {
   SignedIn,
   SignedOut,
@@ -39,8 +39,11 @@ export function NavbarUser() {
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-
+  const handlecoso = () => {
+    return(
+      <SignInButton mode="redirect">Iniciar sesión</SignInButton>
+    )
+  }
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -53,93 +56,117 @@ export function NavbarUser() {
     <>
       {/* NO autenticado */}
       <SignedOut>
-  {/* Botón hamburguesa */}
-  <Button
-    isIconOnly
-    variant="ghost"
-    aria-label="Menú"
-    onPress={() => setSidebarOpen(true)}
-  >
-    <Menu className="size-5" />
-  </Button>
+        {/* Botón hamburguesa */}
+        <Button
+          isIconOnly
+          variant="ghost"
+          aria-label="Menú"
+          onPress={() => setSidebarOpen(true)}
+        >
+          <Menu className="size-5" />
+        </Button>
 
-  {/* Sidebar / Drawer */}
-  <Drawer
-    isOpen={sidebarOpen}
-    placement="right"
-    onOpenChange={setSidebarOpen}
-    className="bg-black/30 backdrop-blur-sm"
-  >
-    <DrawerContent>
-      {(onClose) => (
-        <>
-          <DrawerHeader className="flex items-center justify-between">
-            <span className="text-lg font-semibold">Menú</span>
-          </DrawerHeader>
-
-          <DrawerBody className="flex flex-col gap-3">
-            {/* Tema */}
-            <Button
-              variant="ghost"
-              onPress={() => {
-                onClose();
-                setThemeOpen(true);
+        {/* Sidebar / Drawer */}
+        <Drawer
+          isOpen={sidebarOpen}
+          placement="right"
+          onOpenChange={setSidebarOpen}
+          className="bg-primary-foreground/90 dark:bg-primary-foreground/90
+          backdrop-blur-sm shadow-2xl 
+          dark:shadow-2xl dark:shadow-white/30" 
+          backdrop="blur"
+          closeButton={<br></br>}
+          motionProps={{
+                variants: {
+                  enter: {
+                    opacity: 1,
+                    x: 0,
+                    transitionDuration: 0.3,
+                  },
+                  exit: {
+                    x: 100,
+                    opacity: 0,
+                    transitionDuration: 0.3,
+                  },
+                },
               }}
-            >
-              <Sun className="size-4" />Tema
-            </Button>
+        >
+          <DrawerContent>
+            {(onClose) => (
+              <>
+                <DrawerHeader className="flex items-center justify-between">
+                  <span className="text-lg font-semibold">Menú</span>
+                  <CloseButton className="text-red-600 w-20 hover:bg-red-300"
+                  onClick={() => onClose()}
+                  onPress={() => onClose()}>Close</CloseButton>
+                </DrawerHeader>
 
-            {/* Idioma */}
-            <Button
-              variant="ghost"
-              onPress={() => {
-                onClose();
-                setLocaleOpen(true);
-              }}
-            >
-              <Globe className="size-4" />Idioma
-            </Button>
+                <DrawerBody className="flex flex-col gap-3">
+                  {/* Tema */}
+                  <Button
+                    variant="ghost"
+                    onPress={() => {
+                      onClose();
+                      setThemeOpen(true);
+                    }}
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30"
+                  >
+                    <Sun className="size-4" />Tema
+                  </Button>
 
-            {/* Sign In */}
-            <Button
-              variant="ghost"
-              onPress={() => {
-                onClose();
-                openSignIn();
-              }}
-            >
-              <LogIn className="size-4" />Iniciar sesión
-            </Button>
+                  {/* Idioma */}
+                  <Button
+                    variant="ghost"
+                    onPress={() => {
+                      onClose();
+                      setLocaleOpen(true);
+                    }}
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30"
+                  >
+                    <Globe className="size-4" />Idioma
+                  </Button>
 
-            {/* Sign Up */}
-            <Button
-              variant="primary"
-              onPress={() => {
-                onClose();
-                openSignUp();
-              }}
-            >
-              <UserPlus className="size-4" />Registrarse
-            </Button>
-          </DrawerBody>
-        </>
-      )}
-    </DrawerContent>
-  </Drawer>
+                  {/* Sign In */}
+                  <Button
+                    variant="ghost"
+                    onPress={() => {
+                      onClose();
+                      handlecoso();
+                    }}
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30"
+                  >
+                    <LogIn className="size-4" /><SignInButton mode="redirect">Iniciar sesión</SignInButton>
+                  </Button>
 
-  {/* Modales */}
-  <ThemeModal
-    isOpen={themeOpen}
-    onClose={() => setThemeOpen(false)}
-  />
+                  {/* Sign Up */}
+                  <Button
+                    variant="primary"
+                    onPress={() => {
+                      onClose();
+                    }}
+                    className="hover:bg-[#6BB8FF] 
+                    bg-[#6BB8FF]/60 hover:bg-[#6BB8FF]
+                    dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8]"
+                  >
+                    <UserPlus className="size-4" /><SignUpButton mode="redirect">Registrarse</SignUpButton>
+                  </Button>
+                </DrawerBody>
+              </>
+            )}
+          </DrawerContent>
+        </Drawer>
 
-  <LocaleModal
-    isOpen={localeOpen}
-    onClose={() => setLocaleOpen(false)}
-  />
-</SignedOut>
+        {/* Modales */}
+        <ThemeModal
+          isOpen={themeOpen}
+          onClose={() => setThemeOpen(false)}
+        />
 
-
+        <LocaleModal
+          isOpen={localeOpen}
+          onClose={() => setLocaleOpen(false)}
+        />
+      </SignedOut>
 
       {/* Autenticado */}
       <SignedIn>
@@ -153,8 +180,15 @@ export function NavbarUser() {
             },
             variables: {
               borderRadius: "2px",
-              colorBackground: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
+              colorText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+              colorBackground: resolvedTheme === "dark" ? "oklch(21.638% 0.08352 276.853 / 0.95);" : "oklch(95.815% 0.00011 271.152 / 0.95);",
+              colorShadow: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F"
             },
+            layout: {
+              animations: true,
+              shimmer: true,
+              showOptionalFields: true,
+            }
           }}
           showName
         >

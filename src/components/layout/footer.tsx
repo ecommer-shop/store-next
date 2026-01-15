@@ -7,7 +7,7 @@ import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink } from './foo
 
 function FooterBrandName() {
     // Can hardcode or translate - for now keep as is since it's brand name
-    return "Vendure Store";
+    return "Ecommer SHop";
 }
 
 function FooterVendureLabel() {
@@ -64,42 +64,6 @@ export async function Footer() {
                                     </Link>
                                 </li>
                             ))}
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h4 className="text-sm font-semibold mb-4"><FooterVendureLabel /></h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>
-                                <a
-                                    href="https://github.com/vendure-ecommerce"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-foreground transition-colors"
-                                >
-                                    <FooterGitHubLink />
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://docs.vendure.io"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-foreground transition-colors"
-                                >
-                                    Documentation
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://github.com/vendure-ecommerce/vendure"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-foreground transition-colors"
-                                >
-                                    Source code
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </div>
