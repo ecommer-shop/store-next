@@ -5,10 +5,12 @@ import { useRouter, usePathname } from "next/navigation";
 import { useLocale } from "next-intl";
 import { Globe } from "lucide-react";
 import { useEffect } from "react";
+import { I18N } from "@/i18n/keys";
 
-type Props = {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
+  t: (key: string) => string
 };
 
 const LOCALES = [
@@ -16,7 +18,7 @@ const LOCALES = [
   { code: "en", label: "English", flag: "🇺🇸" },
 ];
 
-export function LocaleModal({ isOpen, onClose }: Props) {
+export function LocaleModal({ isOpen, onClose, t }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const currentLocale = useLocale();
@@ -40,7 +42,7 @@ useEffect(() => {
 
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose} >
+    <Modal isOpen={isOpen} onOpenChange={onClose}>
       <Modal.Container className="" backdropClassName="fixed inset-0 z-[9999]
       bg-black/30 backdrop-blur-sm" placement="center" style={
         {
@@ -57,7 +59,7 @@ useEffect(() => {
                 <Modal.Icon className="block bg-accent-soft text-accent-soft-foreground">
                   <Globe className="size-8 text-foreground" />
                 </Modal.Icon>
-            <p className="text-lg font-semibold">Idioma</p>
+            <p className="text-lg font-semibold">{t(I18N.UserBar.langSwitcher.tittle)}</p>
             </Modal.Heading>
             <Modal.Body className="flex flex-col gap-2">
                 {LOCALES.map((l) => (

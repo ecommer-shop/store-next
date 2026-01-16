@@ -4,10 +4,34 @@
     "cancel": "Cancelar"
   },
 
+  "UserBar": {
+    "menu": {
+      "tittle": "Menú",
+      "close": "Cerrar"
+    },
+    "themeSwitcher": {
+      "tittle": "Apariencia",
+      "subtittle": "Cambiar tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "langSwitcher": {
+      "tittle": "Idioma"
+    },
+    "profile": "Mi Perfil",
+    "orders": "Mis pedidos",
+    "addresses": "Mis direcciones",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "signup": "Registrarse"
+  },
+
   "HeroSection": {
     "title": "Compra lo nuestro",
     "description": "Descubre y apoya el producto nacional, en un solo lugar.",
-    "shopButton": "Explorar"
+    "shopButton": "Explorar",
+    "featuredProducts": "Productos Destacados"
   },
 
   "Account": {

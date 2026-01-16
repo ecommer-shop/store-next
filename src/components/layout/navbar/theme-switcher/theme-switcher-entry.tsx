@@ -6,5 +6,5 @@ import { ThemeModal } from "./theme-switcher";
 export function ThemeSwitcherEntry() {
     const pathname = usePathname();
 
-    return <ThemeModal key={pathname} isOpen={false} onClose={() => {}}/>
+    return <></>
 }

@@ -21,18 +21,6 @@ export const metadata: Metadata = {
         type: "website",
         url: SITE_URL,
     },
-    icons: {
-         icon: [
-            {
-                url: "/logo-dark.webp",
-                media: "(prefers-color-scheme: light)",
-            },
-            {
-                url: "/logo-light.webp",
-                media: "(prefers-color-scheme: dark)",
-            },
-            ],
-    }
 };
 
 export default async function Home(_props: PageProps<'/[locale]'>) {

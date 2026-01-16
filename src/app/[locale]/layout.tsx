@@ -60,6 +60,18 @@ export const metadata: Metadata = {
             "max-snippet": -1,
         },
     },
+    icons: {
+      icon: [
+        {
+          url: "/logo-dark.webp",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/logo-light.webp",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+    }
 };
 
 export const viewport: Viewport = {

@@ -7,7 +7,31 @@ export const I18N = {
   HeroSection: {
     title: 'title',
     description: 'description',
-    shopButton: 'shopButton'
+    shopButton: 'shopButton',
+    featuredProducts: 'featuredProducts'
+  },
+
+  UserBar:{
+    menu:{
+      tittle: 'menu.tittle',
+      close: 'menu.close'
+    },
+    themeSwitcher: {
+      tittle: 'themeSwitcher.tittle',
+      subtittle: 'themeSwitcher.subtittle',
+      light: 'themeSwitcher.light',
+      dark: 'themeSwitcher.dark',
+      system: 'themeSwitcher.system'
+    },
+    langSwitcher: {
+      tittle: 'langSwitcher.tittle'
+    },
+    profile: 'profile',
+    orders: 'orders',
+    addresses: 'addresses',
+    logout: 'logout',
+    login: 'login',
+    signup: 'signup'
   },
 
   Account: {

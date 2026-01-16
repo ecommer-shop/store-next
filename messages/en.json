@@ -4,10 +4,34 @@
     "cancel": "Cancel"
   },
 
+  "UserBar": {
+    "menu": {
+      "tittle": "Menu",
+      "close": "Close"
+    },
+    "themeSwitcher": {
+      "tittle": "Appearance",
+      "subtittle": "Change theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "langSwitcher": {
+      "tittle": "Language"
+    },
+    "profile": "My Profile",
+    "orders": "My Orders",
+    "addresses": "My Addresses",
+    "logout": "Log out",
+    "login": "Log in",
+    "signup": "Sign up"
+  },
+
   "HeroSection": {
     "title": "Buy Local",
     "description": "Discover and support local products, all in one place.",
-    "shopButton": "Explore"
+    "shopButton": "Explore",
+    "featuredProducts": "Featured Products"
   },
 
   "Account": {

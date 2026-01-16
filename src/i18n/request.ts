@@ -7,10 +7,10 @@ export default getRequestConfig(async ({requestLocale}) => {
     ? requestLocale
     : routing.locales[1];
     
-  const aa = await requestLocale.then((res) => res)
+  const currentLocale = await requestLocale.then((res) => res)
   
   return {
     locale,
-    messages: (await import(`../../messages/${aa}.json`)).default
+    messages: (await import(`../../messages/${currentLocale}.json`)).default
   };
 });
