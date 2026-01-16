@@ -20,10 +20,10 @@
       "tittle": "Idioma"
     },
     "profile": "Mi Perfil",
-    "orders": "Mis pedidos",
-    "addresses": "Mis direcciones",
-    "logout": "Cerrar sesión",
-    "login": "Iniciar sesión",
+    "orders": "Mis Pedidos",
+    "addresses": "Mis Direcciones",
+    "logout": "Cerrar Sesión",
+    "login": "Iniciar Sesión",
     "signup": "Registrarse"
   },
 
