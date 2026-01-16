@@ -17,6 +17,7 @@ import { getTraceEvents } from 'next/dist/trace';
 import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
 
+
 export const metadata: Metadata = {
     title: 'Checkout',
     description: 'Complete your purchase.',
@@ -24,14 +25,15 @@ export const metadata: Metadata = {
 };
 interface CheckoutContentProps {
   params: {
-    locale?: string;
+    locale: string;
   };
   searchParams: Record<string, string | string[] | undefined>;
+  t: (key: string) => string;
 }
 
-export const tCheckout = await getTranslations('Checkout');
 
-export default async function CheckoutContent(_props: CheckoutContentProps) {
+
+export default async function CheckoutContent({t}: CheckoutContentProps) {
 
     const [orderRes, addressesRes, countries, shippingMethodsRes, paymentMethodsRes] =
         await Promise.all([
@@ -41,7 +43,7 @@ export default async function CheckoutContent(_props: CheckoutContentProps) {
             query(GetEligibleShippingMethodsQuery, {}, {useAuthToken: true}),
             query(GetEligiblePaymentMethodsQuery, {}, {useAuthToken: true}),
         ]);
-
+    
     const activeOrder = orderRes.data.activeOrder;
 
     if (!activeOrder || activeOrder.lines.length === 0) {
@@ -61,10 +63,10 @@ export default async function CheckoutContent(_props: CheckoutContentProps) {
 
     return (
         <Suspense fallback={
-            <p>{tCheckout(I18N.Account.common.loading)}</p>
+            <p>{t(I18N.Account.common.loading)}</p>
         }>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-8">{tCheckout(I18N.Checkout.title)}</h1>
+                <h1 className="text-3xl font-bold mb-8">{t(I18N.Checkout.title)}</h1>
                 <CheckoutProvider
                     order={activeOrder}
                     addresses={addresses}
@@ -72,7 +74,7 @@ export default async function CheckoutContent(_props: CheckoutContentProps) {
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
                 >
-                    <CheckoutFlow onSetShippingMethod={setShippingMethod} t={tCheckout}/>
+                    <CheckoutFlow onSetShippingMethod={setShippingMethod} t={t}/>
                 </CheckoutProvider>
             </div>
         </Suspense>

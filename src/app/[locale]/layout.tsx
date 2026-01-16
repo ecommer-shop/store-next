@@ -10,11 +10,6 @@ import {ThemeProvider} from "@/components/providers/theme-provider";
 import {SITE_NAME, SITE_URL} from "@/lib/vendure/shared/metadata";
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
 } from '@clerk/nextjs'
 import {hasLocale, NextIntlClientProvider} from 'next-intl';
 import { notFound } from "next/navigation";
