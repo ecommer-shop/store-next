@@ -82,6 +82,19 @@ export async function Footer() {
                             </li>
                         </ul>
                     </div>
+                    <div>
+                        <h4 className="text-sm font-semibold mb-4">Empresa</h4>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                            <li>
+                                <Link
+                                    href="/quienes-somos"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    Quiénes somos
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 {/* Bottom Section */}
