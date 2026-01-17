@@ -1,6 +1,6 @@
 'use client';
 
-import {ShoppingCart} from "lucide-react";
+import {ShoppingCart, LucideShoppingCart} from "lucide-react";
 import {Button} from "@heroui/react";
 import Link from "next/link";
 

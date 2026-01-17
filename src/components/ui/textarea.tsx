@@ -1,6 +1,6 @@
 import * as React from "react"
 import {TextArea as TextareaPrimitive} from "@heroui/react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/vendure/shared/utils"
 
 function Textarea({ className, ...props }: React.ComponentProps<typeof TextareaPrimitive>) {
   return (
