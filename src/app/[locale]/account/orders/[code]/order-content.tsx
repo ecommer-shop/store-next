@@ -57,7 +57,7 @@ export default async function OrderDetailContent({params}: PageProps) {
     <div>
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" size="sm" asChild className="mb-4">
+        <Button variant="ghost" size="sm" className="mb-4">
           <Link href="/account/orders">
             <ChevronLeft className="h-4 w-4 mr-2" />
             {t(I18N.Account.orders.detail.back)}

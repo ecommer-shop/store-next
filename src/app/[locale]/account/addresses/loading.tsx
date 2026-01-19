@@ -1,14 +1,16 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { I18N } from '@/i18n/keys';
+import { useTranslations } from 'next-intl';
 
 export default function AddressesLoading() {
+    const t = useTranslations("Account.addresses")
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold">{I18N.Account.addresses.loading.title}</h1>
+                <h1 className="text-3xl font-bold">{t(I18N.Account.addresses.loading.title)}</h1>
                 <p className="text-muted-foreground mt-2">
-                    {I18N.Account.addresses.loading.description}
+                    {t(I18N.Account.addresses.loading.description)}
                 </p>
             </div>
 

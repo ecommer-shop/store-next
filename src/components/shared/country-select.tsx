@@ -1,22 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/vendure/shared/utils';
-import { Button } from '@heroui/react';
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  Select,
+  ListBox,
+  SearchField,
+  Collection,
+} from '@heroui/react';
 
 interface Country {
   code: string;
@@ -25,57 +15,63 @@ interface Country {
 
 interface CountrySelectProps {
   countries: Country[];
-  value?: string;
-  onValueChange: (value: string) => void;
   disabled?: boolean;
 }
 
-export function CountrySelect({ countries, value, onValueChange, disabled }: CountrySelectProps) {
-  const [open, setOpen] = React.useState(false);
-  const selectedCountry = countries.find((country) => country.code === value);
+export function CountrySelect({
+  countries,
+  disabled,
+}: CountrySelectProps) {
+  const [query, setQuery] = React.useState('');
+
+  const filteredCountries = React.useMemo(() => {
+    if (!query) return countries;
+    return countries.filter((c) =>
+      c.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [countries, query]);
 
   return (
-    <Popover isOpen={open} onOpenChange={setOpen}>
-      <PopoverTrigger >
-        <Button
-          variant="ghost"
-          //role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between"
-          isDisabled={disabled}
-        >
-          {selectedCountry ? selectedCountry.name : 'Select country...'}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0 align-baseline">
-        <Command>
-          <CommandInput placeholder="Search country..." />
-          <CommandList>
-            <CommandEmpty>No country found.</CommandEmpty>
-            <CommandGroup>
-              {countries.map((country) => (
-                <CommandItem
-                  key={country.code}
-                  value={country.name}
-                  onSelect={() => {
-                    onValueChange(country.code);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      value === country.code ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                  {country.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <Select
+      className="w-full text-foreground"
+      isDisabled={disabled}
+      selectionMode="single"
+      placeholder="Select country"
+    >
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+
+      <Select.Popover>
+        <div className="p-2">
+          <SearchField
+            value={query}
+            onChange={setQuery}
+            aria-label="Search country"
+          >
+            <SearchField.Group>
+              <SearchField.SearchIcon />
+              <SearchField.Input placeholder="Search country..." />
+              <SearchField.ClearButton />
+            </SearchField.Group>
+          </SearchField>
+        </div>
+
+        <ListBox>
+          <Collection items={filteredCountries}>
+            {(country) => (
+              <ListBox.Item
+                key={country.code}
+                textValue={country.name}
+              >
+                {country.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            )}
+          </Collection>
+        </ListBox>
+      </Select.Popover>
+    </Select>
   );
 }

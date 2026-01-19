@@ -5,16 +5,12 @@ import { cache } from "react";
 import { readFragment } from "@/graphql";
 import { ActiveCustomerFragment } from "@/lib/vendure/shared/fragments";
 import { getAuthToken } from "@/lib/vendure/server/auth";
-import { currentUser } from '@clerk/nextjs/server';
-import { RegisterCustomerAccountMutation, VerifyCustomerAccountMutation } from '../../shared/mutations';
+import { auth, clerkClient, currentUser, Token } from '@clerk/nextjs/server';
+import { AuthenticateWithClerk, RegisterCustomerAccountMutation, VerifyCustomerAccountMutation } from '../../shared/mutations';
 
 
 export const getActiveCustomer = cache(async () => {
-  const token = await getAuthToken();
-  const result = await query(GetActiveCustomerQuery, undefined, {
-    token
-  });
-  return readFragment(ActiveCustomerFragment, result.data.activeCustomer);
+  return await currentUser();
 })
 
 export const getActiveChannel = getActiveChannelCached;
@@ -42,4 +38,18 @@ export async function verifyVendureCustomer(token: string) {
     token,
     password: null,
   });
+}
+
+async function getVendureToken() {
+    const {sessionId} = await auth()
+    const client = await clerkClient()
+    const token = await client.sessions.getToken(
+        sessionId!,
+        "vendure"
+    )
+    const login = await query(AuthenticateWithClerk, {
+        token: token.jwt
+    })
+
+    return login.token!
 }

@@ -4,16 +4,6 @@ import { Suspense, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import {
     DropdownMenu,
@@ -269,7 +259,12 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                 </DialogContent>
             </Dialog>
 
-            <AlertDialog isOpen={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            
+        </>
+    );
+}
+/*
+<AlertDialog isOpen={false} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -285,6 +280,4 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </>
-    );
-}
+*/

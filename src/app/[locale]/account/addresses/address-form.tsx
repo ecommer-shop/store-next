@@ -1,8 +1,7 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button, FieldError, Form, Label, TextField } from '@heroui/react';
 import { Input } from '@heroui/react';
-import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field';
 import { useForm, Controller } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { CountrySelect } from '@/components/shared/country-select';
@@ -70,112 +69,103 @@ export function AddressForm({ countries, address, onSubmit, onCancel, isSubmitti
   const handleFormSubmit = async (data: AddressFormData) => {
     await onSubmit(address ? { ...data, id: address.id } : data);
   };
-  const t = useTranslations('AccountAddresses');  
+  const t = useTranslations('Account.addresses');  
   const b = useTranslations('ButtonLabels');
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <FieldGroup className="my-6">
+    <Form onSubmit={handleSubmit(handleFormSubmit)}>
+      
         <div className="grid grid-cols-2 gap-4">
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="fullName">{I18N.Account.addresses.form.fields.fullName.label} *</FieldLabel>
+          <TextField className="col-span-2">
+            <Label htmlFor="fullName">{t(I18N.Account.addresses.form.fields.fullName.label)} *</Label>
             <Input
               id="fullName"
-              {...register('fullName', { required: I18N.Account.addresses.form.fields.fullName.requiredError })}
+              {...register('fullName', { required: t(I18N.Account.addresses.form.fields.fullName.requiredError) })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.fullName?.message}</FieldError>
-          </Field>
+          </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="company">{I18N.Account.addresses.form.fields.company.label}</FieldLabel>
+          <TextField className="col-span-2">
+            <Label htmlFor="company">{t(I18N.Account.addresses.form.fields.company.label)}</Label>
             <Input id="company" {...register('company')} disabled={isSubmitting} />
-          </Field>
+          </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="streetLine1">{I18N.Account.addresses.form.fields.streetLine1.label} *</FieldLabel>
+          <TextField className="col-span-2">
+            <Label htmlFor="streetLine1">{t(I18N.Account.addresses.form.fields.streetLine1.label)} *</Label>
             <Input
               id="streetLine1"
-              {...register('streetLine1', { required: I18N.Account.addresses.form.fields.streetLine1.requiredError })}
+              {...register('streetLine1', { required: t(I18N.Account.addresses.form.fields.streetLine1.requiredError) })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.streetLine1?.message}</FieldError>
-          </Field>
+          </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="streetLine2">{I18N.Account.addresses.form.fields.streetLine2.label}</FieldLabel>
+          <TextField className="col-span-2">
+            <Label htmlFor="streetLine2">{t(I18N.Account.addresses.form.fields.streetLine2.label)}</Label>
             <Input id="streetLine2" {...register('streetLine2')} disabled={isSubmitting} />
-          </Field>
+          </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="city">{I18N.Account.addresses.form.fields.city.label} *</FieldLabel>
+          <TextField>
+            <Label htmlFor="city">{t(I18N.Account.addresses.form.fields.city.label)} *</Label>
             <Input
               id="city"
-              {...register('city', { required: I18N.Account.addresses.form.fields.city.requiredError })}
+              {...register('city', { required: t(I18N.Account.addresses.form.fields.city.requiredError) })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.city?.message}</FieldError>
-          </Field>
+          </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="province">{I18N.Account.addresses.form.fields.province.label} *</FieldLabel>
+          <TextField>
+            <Label htmlFor="province">{t(I18N.Account.addresses.form.fields.province.label)} *</Label>
             <Input
               id="province"
-              {...register('province', { required: I18N.Account.addresses.form.fields.province.requiredError })}
+              {...register('province', { required: t(I18N.Account.addresses.form.fields.province.requiredError) })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.province?.message}</FieldError>
-          </Field>
+          </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="postalCode">{I18N.Account.addresses.form.fields.postalCode.label} *</FieldLabel>
+          <TextField>
+            <Label htmlFor="postalCode">{t(I18N.Account.addresses.form.fields.postalCode.label)} *</Label>
             <Input
               id="postalCode"
-              {...register('postalCode', { required: I18N.Account.addresses.form.fields.postalCode.requiredError })}
+              {...register('postalCode', { required: t(I18N.Account.addresses.form.fields.postalCode.requiredError) })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.postalCode?.message}</FieldError>
-          </Field>
+          </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="countryCode">{I18N.Account.addresses.form.fields.countryCode.label} *</FieldLabel>
-            <Controller
-              name="countryCode"
-              control={control}
-              rules={{ required: I18N.Account.addresses.form.fields.countryCode.requiredError }}
-              render={({ field }) => (
-                <CountrySelect
+          <TextField className="text-foreground">
+            <Label className='text-foreground' htmlFor="countryCode">{t(I18N.Account.addresses.form.fields.countryCode.label)} *</Label>
+            <CountrySelect
                   countries={countries}
-                  value={field.value}
-                  onValueChange={field.onChange}
                   disabled={isSubmitting}
                 />
-              )}
-            />
             <FieldError>{errors.countryCode?.message}</FieldError>
-          </Field>
+          </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="phoneNumber">{I18N.Account.addresses.form.fields.phoneNumber.label} *</FieldLabel>
+          <TextField className="col-span-2">
+            <Label htmlFor="phoneNumber">{t(I18N.Account.addresses.form.fields.phoneNumber.label)} *</Label>
             <Input
               id="phoneNumber"
               type="tel"
-              {...register('phoneNumber', { required: I18N.Account.addresses.form.fields.phoneNumber.requiredError })}
+              {...register('phoneNumber', { required: t(I18N.Account.addresses.form.fields.phoneNumber.requiredError) })}
               disabled={isSubmitting}
             />
             <FieldError>{errors.phoneNumber?.message}</FieldError>
-          </Field>
+          </TextField>
         </div>
-      </FieldGroup>
+      
 
       <div className="flex gap-3 justify-end">
         <Button type="button" variant="ghost" onClick={onCancel} isDisabled={isSubmitting}>
-          Cancel
+          {t(I18N.Account.addresses.form.actions.cancel)}
         </Button>
         <Button type="submit" isDisabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {address ? 'Update address' : 'Save address'}
+          {address ? t(I18N.Account.addresses.form.actions.update) : t(I18N.Account.addresses.form.actions.save)}
         </Button>
       </div>
-    </form>
+    </Form>
   );
 }

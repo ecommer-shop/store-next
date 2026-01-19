@@ -65,7 +65,7 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
 
           {/* Botón SOLO desktop */}
           <Button
-            asChild
+            
             className="
               hidden lg:flex
               relative z-30

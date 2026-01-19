@@ -43,42 +43,43 @@ useEffect(() => {
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose}>
-      <Modal.Container className="" backdropClassName="fixed inset-0 z-[9999]
-      bg-black/30 backdrop-blur-sm" placement="center" style={
+      <Modal.Backdrop variant="blur" className="containerModal bg-black/30 backdrop-blur-sm" style={
         {
           height: "100%"
         }
       }>
-        <Modal.Dialog className="relative z-9999 sm:max-w-md rounded-md p-10
-        backdrop-blur-sm 
-        bg-primary-foreground/95 dark:bg-primary-foreground/95
-        shadow-2xl shadow-[#12123F]/90
-        dark:shadow-2xl dark:shadow-white/30">
-            <Modal.CloseTrigger className="text-foreground items-center flex shrink-0 size-8"/>
-            <Modal.Heading className="flex flex-row gap-3">
-                <Modal.Icon className="block bg-accent-soft text-accent-soft-foreground">
-                  <Globe className="size-8 text-foreground" />
-                </Modal.Icon>
-            <p className="text-lg font-semibold">{t(I18N.UserBar.langSwitcher.tittle)}</p>
-            </Modal.Heading>
-            <Modal.Body className="flex flex-col gap-2">
-                {LOCALES.map((l) => (
-                    <>
-                    <Button
-                    key={l.code}
-                    variant={l.code === currentLocale ? "primary" : "primary"}
-                    onClick={() => changeLocale(l.code)}
-                    className="justify-start"
-                    >
-                    <span className="mr-2">{l.flag}</span>
-                    {l.label}
-                    </Button>
-                    <Separator orientation="horizontal" className="bg-primary opacity-50"/>
-                    </>
-                ))}
-            </Modal.Body>
-        </Modal.Dialog>
-      </Modal.Container>
+        <Modal.Container placement="center">
+          <Modal.Dialog className="relative z-9999 sm:max-w-md rounded-md p-10
+          backdrop-blur-sm 
+          bg-primary-foreground/95 dark:bg-primary-foreground/95
+          shadow-2xl shadow-[#12123F]/90
+          dark:shadow-2xl dark:shadow-white/30">
+              <Modal.CloseTrigger className="text-foreground items-center flex shrink-0 size-8"/>
+              <Modal.Heading className="flex flex-row gap-3">
+                  <Modal.Icon className="block bg-accent-soft text-accent-soft-foreground">
+                    <Globe className="size-8 text-foreground" />
+                  </Modal.Icon>
+              <p className="text-lg font-semibold">{t(I18N.UserBar.langSwitcher.tittle)}</p>
+              </Modal.Heading>
+              <Modal.Body className="flex flex-col gap-2">
+                  {LOCALES.map((l) => (
+                      <>
+                      <Button
+                      key={l.code}
+                      variant={l.code === currentLocale ? "primary" : "primary"}
+                      onClick={() => changeLocale(l.code)}
+                      className="justify-start"
+                      >
+                      <span className="mr-2">{l.flag}</span>
+                      {l.label}
+                      </Button>
+                      <Separator orientation="horizontal" className="bg-primary opacity-50"/>
+                      </>
+                  ))}
+              </Modal.Body>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

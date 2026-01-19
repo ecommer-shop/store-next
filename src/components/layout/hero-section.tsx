@@ -53,7 +53,7 @@ export function HeroSection() {
 
                 <div className="flex justify-center pt-4">
                     <Button
-                    asChild
+                    
                     size="lg"
                     className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8]"
                     >
