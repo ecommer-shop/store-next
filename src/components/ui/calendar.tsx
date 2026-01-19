@@ -8,7 +8,7 @@ import {
 } from "lucide-react"
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/vendure/shared/utils"
 import { Button, buttonVariants } from "@heroui/react"
 import { Calendar as Cal } from "@heroui/react"
 import {today, getLocalTimeZone} from "@internationalized/date";

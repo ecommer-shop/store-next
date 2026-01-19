@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/vendure/shared/utils"
 import {Skeleton as SkeletonPrimitive} from "@heroui/react" 
 
 function Skeleton({ className, ...props }: React.ComponentProps<typeof SkeletonPrimitive>) {

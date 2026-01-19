@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/vendure/shared/utils"
 import { 
   Card as HeroCard, 
   CardHeader as HeroCardHeader, 

@@ -1,25 +1,45 @@
-import {cacheLife} from 'next/cache';
+import 'server-only';
 import {getTopCollections} from '@/lib/vendure/cached';
+import { unstable_cache } from 'next/cache';
 import Image from "next/image";
 import Link from "next/link";
+import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink } from './footer-content';
 
-
-async function Copyright() {
-    'use cache'
-    cacheLife('days');
-
-    return (
-        <div>
-            © {new Date().getFullYear()} Vendure Store. All rights reserved.
-        </div>
-    )
+function FooterBrandName() {
+    // Can hardcode or translate - for now keep as is since it's brand name
+    return "Ecommer SHop";
 }
 
-export async function Footer() {
-    'use cache'
-    cacheLife('days');
+function FooterVendureLabel() {
+    return "Vendure";
+}
 
-    const collections = await getTopCollections();
+type TopCollections = {
+    id: string;
+    name: string;
+    slug: string;
+}[];
+
+type TopCollection = {
+    id: string;
+    name: string;
+    slug: string;
+};
+
+const getCachedTopCollections = unstable_cache(
+  async () => {
+    return getTopCollections();
+  },
+  ['top-collections'],
+  {
+    revalidate: 72 * 3600,
+  }
+);
+    
+export async function Footer() {
+    /*'use cache'
+    cacheLife('days');*/
+    const collections = await getCachedTopCollections(); 
 
     return (
         <footer className="border-t border-border mt-auto">
@@ -27,14 +47,14 @@ export async function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div>
                         <p className="text-sm font-semibold mb-4 uppercase tracking-wider">
-                            Vendure Store
+                            <FooterBrandName />
                         </p>
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold mb-4">Categories</p>
+                        <p className="text-sm font-semibold mb-4"><FooterCategoriesLabel /></p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
-                            {collections.map((collection) => (
+                            {collections.map((collection: TopCollection) => (
                                 <li key={collection.id}>
                                     <Link
                                         href={`/collection/${collection.slug}`}
@@ -100,7 +120,7 @@ export async function Footer() {
                 {/* Bottom Section */}
                 <div
                     className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <Copyright/>
+                    <CopyrightContent/>
                     <div className="flex items-center gap-2">
                         <span>Powered by</span>
                         <a

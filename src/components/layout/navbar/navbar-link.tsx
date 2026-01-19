@@ -7,7 +7,7 @@ import {
     NavigationMenuLink,
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import {cn} from '@/lib/utils';
+import {cn} from '@/lib/vendure/shared/utils';
 
 export function NavbarLink({href, ...rest}: ComponentProps<typeof Link>) {
     const selectedLayoutSegment = useSelectedLayoutSegment();

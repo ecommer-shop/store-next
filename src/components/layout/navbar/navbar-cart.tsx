@@ -1,20 +1,21 @@
-import {cacheLife, cacheTag} from 'next/cache';
+export const dynamic = 'force-dynamic';
+
+import {cacheLife, cacheTag, unstable_cache} from 'next/cache';
 import {CartIcon} from './cart-icon';
-import {query} from '@/lib/vendure/api';
-import {GetActiveOrderQuery} from '@/lib/vendure/queries';
+import {query} from '@/lib/vendure/server/api';
+import {GetActiveOrderQuery} from '@/lib/vendure/shared/queries';
+import { getAuthToken } from '@/lib/vendure/server/auth';
 
 export async function NavbarCart() {
-    'use cache: private';
-    cacheLife('minutes');
-    cacheTag('cart');
-    cacheTag('active-order');
+    const token = await getAuthToken();
 
-    const orderResult = await query(GetActiveOrderQuery, undefined, {
-        useAuthToken: true,
-        tags: ['cart'],
-    });
+    const cart = token
+    ? await query(GetActiveOrderQuery, {}, {
+                useAuthToken: true,
+                tags: ['cart'],
+            }) : null;
 
-    const cartItemCount = orderResult.data.activeOrder?.totalQuantity || 0;
+    const cartItemCount = cart?.data.activeOrder?.totalQuantity || 0;
 
     return <CartIcon cartItemCount={cartItemCount} />;
 }

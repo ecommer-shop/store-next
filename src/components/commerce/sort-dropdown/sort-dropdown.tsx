@@ -4,18 +4,21 @@ import type { Key } from "react-aria-components";
 import { Label, ListBox, Select } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { I18N } from "@/i18n/keys";
 
-const sortOptions = [
-  { id: "name-asc", name: "Nombre: A a Z" },
-  { id: "name-desc", name: "Nombre: Z a A" },
-  { id: "price-asc", name: "Precio: Bajo a Alto" },
-  { id: "price-desc", name: "Precio: Alto a Bajo" },
+const getSortOptions = (t: (key: string) => string) => [
+  { id: "name-asc", name: t(I18N.Commerce.sortDropdown.nameAsc) },
+  { id: "name-desc", name: t(I18N.Commerce.sortDropdown.nameDesc) },
+  { id: "price-asc", name: t(I18N.Commerce.sortDropdown.priceAsc) },
+  { id: "price-desc", name: t(I18N.Commerce.sortDropdown.priceDesc) },
 ];
 
 export function SortDropdown() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("Commerce");
 
   const [sort, setSort] = useState<Key | null>(null);
 
@@ -38,14 +41,16 @@ export function SortDropdown() {
 
   if (!sort) return null;
 
+  const sortOptions = getSortOptions(t);
+
   return (
     <Select
       className="w-[180px] rounded-md"
       value={sort}
       onChange={handleChange}
-      placeholder="Sort by"
+      placeholder={t(I18N.Commerce.sortDropdown.sort)}
     >
-      <Label>Ordenar Por:</Label>
+      <Label>{t(I18N.Commerce.sortDropdown.sort)}:</Label>
 
       <Select.Trigger className="rounded-md">
         <Select.Value />
