@@ -68,41 +68,6 @@ export async function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="text-sm font-semibold mb-4">Vendure</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>
-                                <a
-                                    href="https://github.com/vendure-ecommerce"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-foreground transition-colors"
-                                >
-                                    GitHub
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://docs.vendure.io"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-foreground transition-colors"
-                                >
-                                    Documentation
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://github.com/vendure-ecommerce/vendure"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-foreground transition-colors"
-                                >
-                                    Source code
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
                         <h4 className="text-sm font-semibold mb-4">Empresa</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
