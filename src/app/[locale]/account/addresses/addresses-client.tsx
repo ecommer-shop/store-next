@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@heroui/react';
+import { Alert, AlertDialog, Button } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,7 +13,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, MoreVertical, Home, CreditCard, Edit2, Trash2 } from 'lucide-react';
-import { AddressForm } from './address-form';
+import { AddressForm, AddressFormData } from './address-form';
 import { createAddress, updateAddress, deleteAddress, setDefaultShippingAddress, setDefaultBillingAddress } from './actions';
 import { useRouter } from 'next/navigation';
 
@@ -42,6 +42,23 @@ interface AddressesClientProps {
     addresses: CustomerAddress[];
     countries: Country[];
 }
+
+export type CreateAddressPayload = {
+  fullName?: string;
+  company?: string;
+  streetLine1: string;
+  streetLine2?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  phoneNumber?: string;
+  countryCode: string;
+};
+
+export type UpdateAddressPayload = CreateAddressPayload & {
+  id: string;
+};
+
 
 export function AddressesClient({ addresses, countries } : AddressesClientProps) {
     const router = useRouter();
@@ -111,24 +128,44 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
         }
     };
 
-    const handleSubmit = async (data: any) => {
-        setIsSubmitting(true);
-        try {
-            if (editingAddress) {
-                await updateAddress(data);
-            } else {
-                await createAddress(data);
-            }
-            router.refresh();
-            setDialogOpen(false);
-            setEditingAddress(null);
-        } catch (error) {
-            console.error('Error saving address:', error);
-            alert(`Error saving address: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        } finally {
-            setIsSubmitting(false);
-        }
+    const handleSubmit = async (data: AddressFormData) => {
+  setIsSubmitting(true);
+
+  try {
+    const country = countries.find(c => c.id === data.countryId);
+    if (!country) throw new Error('Invalid country');
+
+    const baseInput: CreateAddressPayload = {
+      fullName: data.fullName,
+      company: data.company,
+      streetLine1: data.streetLine1,
+      streetLine2: data.streetLine2,
+      city: data.city,
+      province: data.province,
+      postalCode: data.postalCode,
+      phoneNumber: data.phoneNumber,
+      countryCode: country.code, // ✅
     };
+
+    if (editingAddress) {
+      const updateInput: UpdateAddressPayload = {
+        id: editingAddress.id,
+        ...baseInput,
+      };
+      await updateAddress(updateInput);
+    } else {
+      await createAddress(baseInput);
+    }
+
+    router.refresh();
+    setDialogOpen(false);
+    setEditingAddress(null);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
 
     return (
         <>
@@ -180,12 +217,13 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => handleEdit(address)}>
+                                            <DropdownMenuItem className='cursor-pointer' onClick={() => handleEdit(address)}>
                                                 <Edit2 className="mr-2 h-4 w-4" />
                                                 Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
+                                                className='cursor-pointer'
                                                 onClick={() => handleSetDefaultShipping(address.id)}
                                                 disabled={
                                                     address.defaultShippingAddress ||
@@ -196,6 +234,7 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                                 {address.defaultShippingAddress ? 'Default Shipping' : 'Set as Shipping'}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
+                                                className='cursor-pointer'
                                                 onClick={() => handleSetDefaultBilling(address.id)}
                                                 disabled={
                                                     address.defaultBillingAddress ||
@@ -208,7 +247,7 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 onClick={() => handleDelete(address.id)}
-                                                className="text-destructive focus:text-destructive"
+                                                className="cursor-pointer text-destructive focus:text-destructive"
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4 text-destructive" />
                                                 Delete
@@ -258,7 +297,36 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                     />
                 </DialogContent>
             </Dialog>
-
+            <AlertDialog isOpen={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialog.Backdrop variant='blur' style={{
+                    height: "100%"
+                }}>
+                    <AlertDialog.Container>
+                    <AlertDialog.Dialog className='w-sm rounded-md'>
+                        <AlertDialog.CloseTrigger/>
+                        <AlertDialog.Header>
+                        <AlertDialog.Heading>
+                            <AlertDialog.Icon status='danger'/>
+                            Are you sure?
+                        
+                        This action cannot be undone. This will permanently delete this address.
+                        </AlertDialog.Heading>
+                        
+                    </AlertDialog.Header>
+                    <AlertDialog.Footer>
+                        <Button 
+                        className="rounded-md"
+                        slot="close" variant='danger-soft' isDisabled={isDeleting}>Cancel</Button>
+                        <Button 
+                        className="rounded-md"
+                        variant='primary' onClick={confirmDelete} aria-disabled={isDeleting}>
+                            {isDeleting ? 'Deleting...' : 'Delete'}
+                        </Button>
+                    </AlertDialog.Footer>
+                    </AlertDialog.Dialog>
+                </AlertDialog.Container>
+                </AlertDialog.Backdrop>
+            </AlertDialog>
             
         </>
     );

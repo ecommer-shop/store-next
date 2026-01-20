@@ -89,7 +89,7 @@ export default async function OrderDetailContent({params}: PageProps) {
               <div className="space-y-4">
                 {order.lines.map(line => (
                   <div key={line.id} className="flex gap-4">
-                    <div className="relative h-20 w-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="relative h-20 w-20 rounded-md   bg-gray-100 flex-shrink-0">
                       {line.productVariant.product.featuredAsset && (
                         <Image
                           src={line.productVariant.product.featuredAsset.preview}

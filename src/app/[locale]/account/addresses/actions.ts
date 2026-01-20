@@ -10,6 +10,7 @@ import {
 } from '@/lib/vendure/shared/mutations';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import {revalidatePath} from 'next/cache';
+import { CreateAddressPayload, UpdateAddressPayload } from './addresses-client';
 
 interface AddressInput {
     fullName: string;
@@ -18,16 +19,17 @@ interface AddressInput {
     city: string;
     province: string;
     postalCode: string;
-    countryCode: string;
+    countryId: string;
     phoneNumber: string;
     company?: string;
+    countryCode: string
 }
 
 interface UpdateAddressInput extends AddressInput {
     id: string;
 }
 
-export async function createAddress(address: AddressInput) {
+export async function createAddress(address: CreateAddressPayload) {
 
     const tokenAuth = await getAuthToken(); 
     const result = await mutate(
@@ -44,24 +46,13 @@ export async function createAddress(address: AddressInput) {
     return result.data.createCustomerAddress;
 }
 
-export async function updateAddress(address: UpdateAddressInput) {
-    const {id, ...input} = address;
+export async function updateAddress(address: UpdateAddressPayload) {
+    
     const tokenAuth = await getAuthToken(); 
     const result = await mutate(
         UpdateCustomerAddressMutation,
         {
-            input: {
-                id,
-                fullName: input.fullName,
-                streetLine1: input.streetLine1,
-                streetLine2: input.streetLine2,
-                city: input.city,
-                province: input.province,
-                postalCode: input.postalCode,
-                countryCode: input.countryCode,
-                phoneNumber: input.phoneNumber,
-                company: input.company,
-            },
+            input: address
         },
         {token: tokenAuth!, useAuthToken: true}     
     );

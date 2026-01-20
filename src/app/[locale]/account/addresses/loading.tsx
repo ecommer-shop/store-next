@@ -4,13 +4,12 @@ import { I18N } from '@/i18n/keys';
 import { useTranslations } from 'next-intl';
 
 export default function AddressesLoading() {
-    const t = useTranslations("Account.addresses")
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold">{t(I18N.Account.addresses.loading.title)}</h1>
+                <h1 className="text-3xl font-bold">{I18N.Account.addresses.loading.title}</h1>
                 <p className="text-muted-foreground mt-2">
-                    {t(I18N.Account.addresses.loading.description)}
+                    {I18N.Account.addresses.loading.description}
                 </p>
             </div>
 
