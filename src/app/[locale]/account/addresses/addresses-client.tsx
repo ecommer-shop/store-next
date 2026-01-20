@@ -331,21 +331,3 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
         </>
     );
 }
-/*
-<AlertDialog isOpen={false} onOpenChange={setDeleteDialogOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete this address.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel isDisabled={isDeleting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmDelete} aria-disabled={isDeleting}>
-                            {isDeleting ? 'Deleting...' : 'Delete'}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-*/
