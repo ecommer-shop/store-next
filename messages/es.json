@@ -353,8 +353,8 @@
       "sections": {
         "categories": "Categorías",
         "about": {
-          "label": "Sobre nosotros",
-          "title": "Quiénes somos"
+          "label": "Quiénes somos",
+          "title": "Sobre nosotros"
         },
         "contact": "Contacto"
       },
