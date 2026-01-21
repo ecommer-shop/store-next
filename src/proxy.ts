@@ -1,20 +1,46 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+import { NextResponse } from "next/server";
 
-const ProtectedRoutes = createRouteMatcher([
-  '/account/(.*)',
-  '/checkout/(.*)',
-  '/account/profile/(.*)'])
+const intlMiddleware = createMiddleware(routing);
+
+const isProtectedRoute = createRouteMatcher([
+  "/:locale/account(.*)",
+  "/:locale/checkout(.*)",
+  "/:locale/account/profile(.*)",
+]);
+
+export default clerkMiddleware(async (auth, req) => {
   
-export default clerkMiddleware((auth, req) => {
-    if (ProtectedRoutes(req)) {
-        auth.protect()
-    } 
-})
+  const { pathname, search } = req.nextUrl;
+  const locale = req.nextUrl.locale ?? "es";
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith(`/${locale}/_next`) ||
+    pathname.match(/\.(.*)$/)
+  ) {
+    return NextResponse.next();
+  }
+
+  if (isProtectedRoute(req)) {
+    const { userId } = await auth();
+
+    if (!userId) {
+      const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
+      const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+      
+      const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+
+      signInUrl.searchParams.set("redirect_url", returnTo);
+      return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  return intlMiddleware(req);
+});
+
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
-}
+  matcher: ["/((?!_next|.*\\..*).*)"],
+};

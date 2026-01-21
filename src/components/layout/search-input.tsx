@@ -4,12 +4,15 @@ import { useState, useEffect, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
 
 export function SearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [searchValue, setSearchValue] = useState(searchParams.get('q') || '');
+  const t = useTranslations('Layout');
 
   useEffect(() => {
     setSearchValue(searchParams.get('q') || '');
@@ -22,18 +25,15 @@ export function SearchInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative">
+    <form onSubmit={handleSubmit} className="relative w-full">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       
       <Input
         type="search"
-        placeholder="Search products..."
+        placeholder={t(I18N.Layout.searchInput.placeholder)}
         className="
           pl-9
-          w-[120px]
-          sm:w-[250px]
-          md:w-[220px]
-          lg:w-64
+          w-full
           transition-all
         "
         value={searchValue}

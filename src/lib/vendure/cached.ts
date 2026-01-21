@@ -1,4 +1,4 @@
-import {cacheLife, cacheTag, unstable_cache} from 'next/cache';
+import {unstable_cache} from 'next/cache';
 import {query} from './server/api';
 import {GetActiveChannelQuery, GetAvailableCountriesQuery, GetTopCollectionsQuery} from './shared/queries';
 

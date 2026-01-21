@@ -2,8 +2,9 @@ import {ResultOf} from '@/graphql';
 import {ProductCard} from './product-card';
 import {Pagination} from '@/components/shared/pagination';
 import {SearchProductsQuery} from "@/lib/vendure/shared/queries";
-import {getActiveChannel} from '@/lib/vendure/server/actions';
+import {getActiveChannel} from '@/lib/vendure/server/actions/actions';
 import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
+import { ProductGridNoProducts, ProductCount } from './product-grid-content';
 
 interface ProductGridProps {
     productDataPromise: Promise<{
@@ -24,18 +25,14 @@ export async function ProductGrid({productDataPromise, currentPage, take}: Produ
     const totalPages = Math.ceil(searchResult.totalItems / take);
 
     if (!searchResult.items.length) {
-        return (
-            <div className="text-center py-12">
-                <p className="text-muted-foreground">No products found</p>
-            </div>
-        );
+        return <ProductGridNoProducts />;
     }
 
     return (
         <div className="space-y-8 ">
             <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                    {searchResult.totalItems} {searchResult.totalItems === 1 ? 'product' : 'products'}
+                    <ProductCount count={searchResult.totalItems} />
                 </p>
                 <SortDropdownEntry/>
             </div>

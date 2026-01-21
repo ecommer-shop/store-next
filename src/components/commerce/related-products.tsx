@@ -1,9 +1,11 @@
 import { ProductCarousel } from "@/components/commerce/product-carousel";
-import { cacheLife, cacheTag, unstable_cache } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { query } from "@/lib/vendure/server/api";
 import { GetCollectionProductsQuery } from "@/lib/vendure/shared/queries";
 import { readFragment } from "@/graphql";
 import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
+import { RelatedProductsTitle, RelatedProductsTitleAsync } from './related-products-title';
+import { getTranslations } from "next-intl/server";
 
 interface RelatedProductsProps {
     collectionSlug: string;
@@ -12,9 +14,6 @@ interface RelatedProductsProps {
 
 const getRelatedProducts = (collectionSlug: string, currentProductId: string) =>
     unstable_cache(
-    /*'use cache'
-    cacheLife('hours')
-    cacheTag(`related-products-${collectionSlug}`)*/
     async () => {
         const result = await query(GetCollectionProductsQuery, {
             slug: collectionSlug,
@@ -42,14 +41,13 @@ const getRelatedProducts = (collectionSlug: string, currentProductId: string) =>
 
 export async function RelatedProducts({ collectionSlug, currentProductId }: RelatedProductsProps) {
     const products = await getRelatedProducts(collectionSlug, currentProductId);
-
     if (products.length === 0) {
         return null;
     }
 
     return (
         <ProductCarousel
-            title="Related Products"
+            title={(await RelatedProductsTitleAsync()).toString()}
             products={products}
         />
     );

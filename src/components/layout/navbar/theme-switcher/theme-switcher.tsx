@@ -1,93 +1,60 @@
 "use client";
 
+import { I18N } from "@/i18n/keys";
+import { Modal, ModalHeader, ModalBody, Button, Separator } from "@heroui/react";
+import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { Moon, Sun, Monitor } from "lucide-react";
-import { Dropdown, Label, Button } from "@heroui/react";
 
-export function ThemeSwitcher() {
-  const [mounted, setMounted] = useState(false);
+interface Props{
+  isOpen: boolean;
+  onClose: () => void;
+  t: (key: string) => string;
+};
+
+export function ThemeModal({ isOpen, onClose, t }: Props) {
   const { theme, setTheme } = useTheme();
-  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <Button variant="ghost" size="sm" isDisabled={mounted}>
-        <Sun className="size-5" />
-      </Button>
-    );
-  }
-
-  const handleChange = (value: "light" | "dark" | "system") => {
+  const select = (value: "light" | "dark" | "system") => {
     setTheme(value);
-    setOpen(false); 
+    onClose();
   };
 
   return (
-    <Dropdown trigger="press" isOpen={open} onOpenChange={setOpen}>
-      <Button variant="ghost">
-        <Dropdown.Trigger className="
-            relative
-            inline-flex
-            items-center
-            justify-center
-            w-9
-            h-9
-            rounded-md
-            transition-colors
-        ">
-            <Sun
-                className="
-                absolute
-                size-5
-                transition-all
-                rotate-0
-                scale-100
-                dark:-rotate-90
-                dark:scale-0
-                "
-            />
-            
-            <Moon
-                className="
-                absolute
-                size-5
-                transition-all
-                rotate-90
-                scale-0
-                dark:rotate-0
-                dark:scale-100
-                "
-            />
-          <span className="sr-only">Cambiar tema</span>
-        </Dropdown.Trigger>
-      </Button>
+    <Modal isOpen={isOpen} onOpenChange={onClose}>
+      <Modal.Container placement="center" backdropClassName="bg-black/30 backdrop-blur-sm" style={
+          {
+            height: "100%"
+          }
+        }>
+        <Modal.Dialog className="relative z-9999 sm:max-w-md rounded-md w-90 p-10
+        backdrop-blur-sm
+        bg-primary-foreground/95 dark:bg-primary-foreground/95
+        shadow-2xl shadow-[#12123F]/90
+        dark:shadow-2xl dark:shadow-white/30">
+          <Modal.CloseTrigger className="text-foreground items-center flex shrink-0 size-8"/>
+          <Modal.Heading className="flex flex-row gap-3">
+                  <Modal.Icon className="block bg-accent-soft text-accent-soft-foreground">
+                    <Sun className="size-8 text-foreground" />
+                  </Modal.Icon>
+            <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.subtittle)}</p>
+          </Modal.Heading>
 
-      <Dropdown.Popover className="rounded-sm">
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={() => handleChange("light")}>
-            <Sun className="size-4" />
-            <Label>Claro</Label>
-            {theme === "light" && <span className="ml-auto text-xs">✓</span>}
-          </Dropdown.Item>
-
-          <Dropdown.Item onClick={() => handleChange("dark")}>
-            <Moon className="size-4" />
-            <Label>Oscuro</Label>
-            {theme === "dark" && <span className="ml-auto text-xs">✓</span>}
-          </Dropdown.Item>
-
-          <Dropdown.Item onClick={() => handleChange("system")}>
-            <Monitor className="size-4" />
-            <Label>Sistema</Label>
-            {theme === "system" && <span className="ml-auto text-xs">✓</span>}
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown.Popover>
-    </Dropdown>
+          <ModalBody className="flex flex-col gap-3 text-foreground">
+            <Button onClick={() => select("light")} className="flex gap-2">
+              <Sun /> <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.light)}</p> {theme === "light" && "✓"}
+            </Button>
+            <Separator orientation="horizontal" className="bg-primary opacity-50"/>
+            <Button onClick={() => select("dark")} className="flex gap-2">
+              <Moon /> <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.dark)}</p> {theme === "dark" && "✓"}
+            </Button>
+            <Separator orientation="horizontal" className="bg-primary opacity-50"/>
+            <Button onClick={() => select("system")} className="flex gap-2">
+              <Monitor /> <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.system)}</p> {theme === "system" && "✓"}
+            </Button>
+            <Separator orientation="horizontal" className="bg-primary opacity-50"/>
+          </ModalBody>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal>
   );
 }
