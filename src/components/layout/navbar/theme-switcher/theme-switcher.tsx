@@ -41,15 +41,15 @@ export function ThemeModal({ isOpen, onClose, t }: Props) {
             </Modal.Heading>
 
             <ModalBody className="flex flex-col gap-3 text-foreground">
-              <Button onClick={() => select("light")} className="flex gap-2">
+              <Button onClick={() => select("light")} className="flex gap-2 rounded-[2px]">
                 <Sun /> <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.light)}</p> {theme === "light" && "✓"}
               </Button>
               <Separator orientation="horizontal" className="bg-primary opacity-50"/>
-              <Button onClick={() => select("dark")} className="flex gap-2">
+              <Button onClick={() => select("dark")} className="flex gap-2 rounded-[2px]">
                 <Moon /> <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.dark)}</p> {theme === "dark" && "✓"}
               </Button>
               <Separator orientation="horizontal" className="bg-primary opacity-50"/>
-              <Button onClick={() => select("system")} className="flex gap-2">
+              <Button onClick={() => select("system")} className="flex gap-2 rounded-[2px]">
                 <Monitor /> <p className="text-lg font-semibold">{t(I18N.UserBar.themeSwitcher.system)}</p> {theme === "system" && "✓"}
               </Button>
               <Separator orientation="horizontal" className="bg-primary opacity-50"/>

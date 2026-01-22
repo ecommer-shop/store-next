@@ -68,7 +68,7 @@ useEffect(() => {
                       key={l.code}
                       variant={l.code === currentLocale ? "primary" : "primary"}
                       onClick={() => changeLocale(l.code)}
-                      className="justify-start"
+                      className="justify-start rounded-[2px]"
                       >
                       <span className="mr-2">{l.flag}</span>
                       {l.label}

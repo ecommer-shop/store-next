@@ -4,7 +4,7 @@ import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { query } from '@/lib/vendure/server/api';
 import { AuthenticateWithClerk, RegisterCustomerAccountMutation } from '@/lib/vendure/shared/mutations';
 import { mutate } from '../../server/api';
-import { setAuthToken } from '../auth';
+import { setAuthToken, setJWT } from '../auth';
 
 
 export async function syncCustomerWithVendure() {
@@ -36,6 +36,7 @@ export async function syncCustomerWithVendure() {
     })
 
     await setAuthToken(login.token!);
+    await setJWT(token.jwt);
 
     if (result.data.registerCustomerAccount.__typename !== 'Success') {
         if ('errorCode' in result.data.registerCustomerAccount && result.data.registerCustomerAccount.errorCode === 'EMAIL_ADDRESS_CONFLICT_ERROR') {
