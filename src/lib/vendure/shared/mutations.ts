@@ -1,5 +1,19 @@
 import { graphql } from '@/graphql';
 
+export const AuthenticateWithClerk = graphql(`
+    mutation AuthenticateWithClerk($token: String!) {
+        authenticate(input: {
+            clerk: { token: $token }
+        }) {
+            __typename
+            ... on CurrentUser {
+                id
+                identifier
+            }
+        }
+    }
+`);
+
 export const LoginMutation = graphql(`
     mutation Login($username: String!, $password: String!) {
         login(username: $username, password: $password) {

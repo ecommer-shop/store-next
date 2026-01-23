@@ -6,11 +6,13 @@ import {
   GetCustomerAddressesQuery,
 } from '@/lib/vendure/shared/queries';
 import { getTranslations } from 'next-intl/server';
+import { getAuthToken } from '@/lib/vendure/server/auth';
 
 
 export default async function AddressesContent() {
+  const authToken = await getAuthToken();
   const [addressesResult, countriesResult] = await Promise.all([
-    query(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
+    query(GetCustomerAddressesQuery, {}, { token: authToken ,useAuthToken: true }),
     query(GetAvailableCountriesQuery, {}),
   ]);
 

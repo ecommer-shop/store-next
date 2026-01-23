@@ -341,7 +341,10 @@ export const I18N = {
       copyright: 'footer.copyright',
       sections: {
         categories: 'footer.sections.categories',
-        about: 'footer.sections.about',
+        about: {
+          label:'footer.sections.about.label',
+          title: 'footer.sections.about.title',
+        },
         contact: 'footer.sections.contact'
       },
       links: {
@@ -364,6 +367,24 @@ export const I18N = {
         title: 'features.delivery.title',
         description: 'features.delivery.description'
       }
+    }
+  },
+  
+  About: {
+    title: 'title',
+    description: 'description',
+    legal:{
+      label: 'legal.label',
+      rs: 'legal.rs',
+      address: 'legal.address',
+    },
+    contact:{
+      label: 'contact.label',
+      phone: 'contact.phone',
+    },
+    hours: {
+      label: 'hours.label',
+      days: 'hours.days',
     }
   }
 } as const;

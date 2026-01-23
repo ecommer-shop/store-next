@@ -1,3 +1,4 @@
+import { auth, currentUser } from '@clerk/nextjs/server';
 import {revalidateTag} from 'next/cache';
 import {NextRequest, NextResponse} from 'next/server';
 
@@ -22,8 +23,9 @@ function isValidTag(tag: string): boolean {
 
 export async function POST(request: NextRequest) {
     // Verify the secret token
-    const authHeader = request.headers.get('authorization');
     const expectedToken = process.env.REVALIDATION_SECRET;
+    const { userId } = await auth();
+    const user = await currentUser()
 
     if (!expectedToken) {
         console.error('REVALIDATION_SECRET environment variable not set');
@@ -33,7 +35,7 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    if (authHeader !== `Bearer ${expectedToken}`) {
+    if (!userId || !user?.emailAddresses) {
         return NextResponse.json(
             {error: 'Unauthorized'},
             {status: 401}

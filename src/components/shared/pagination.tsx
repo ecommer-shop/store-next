@@ -54,7 +54,6 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
             <Button
                 variant="ghost"
                 size="md"
-                asChild
                 isDisabled={currentPage === 1}
             >
                 {currentPage === 1 ? (
@@ -62,7 +61,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                         <ChevronLeft className="h-4 w-4" />
                     </span>
                     ) : (
-                    <Button variant="ghost" size="md" asChild>
+                    <Button variant="ghost" size="md" >
                         <Link href={createPageUrl(currentPage - 1)}>
                         <ChevronLeft className="h-4 w-4" />
                         </Link>
@@ -94,7 +93,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                 }
 
                 return (
-                    <Button key={pageNum} variant="ghost" size="md" asChild>
+                    <Button key={pageNum} variant="ghost" size="md">
                     <Link href={createPageUrl(pageNum)}>{pageNum}</Link>
                     </Button>
                 );
@@ -103,7 +102,6 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
             <Button
                 variant="ghost"
                 size="md"
-                asChild
                 isDisabled={currentPage === totalPages}
             >
                 {currentPage === totalPages ? (
@@ -111,7 +109,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                         <ChevronRight className="h-4 w-4" />
                     </span>
                     ) : (
-                    <Button variant="ghost" size="md" asChild>
+                    <Button variant="ghost" size="md">
                         <Link href={createPageUrl(currentPage + 1)}>
                         <ChevronRight className="h-4 w-4" />
                         </Link>

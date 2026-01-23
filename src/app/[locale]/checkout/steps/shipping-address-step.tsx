@@ -247,8 +247,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                           render={({ field }) => (
                             <CountrySelect
                               countries={countries}
-                              value={field.value}
-                              onValueChange={field.onChange}
+                              
                               disabled={saving}
                             />
                           )}
@@ -361,8 +360,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                       render={({ field }) => (
                         <CountrySelect
                           countries={countries}
-                          value={field.value}
-                          onValueChange={field.onChange}
+                          
                           disabled={saving}
                         />
                       )}

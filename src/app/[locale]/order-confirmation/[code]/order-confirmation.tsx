@@ -157,7 +157,7 @@ export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
                 )}
 
                 <div className="flex gap-4">
-                    <Button asChild className="flex-1">
+                    <Button className="flex-1">
                         <Link href="/">{t(I18N.OrderConfirmation.continueShopping)}</Link>
                     </Button>
                 </div>
