@@ -35,7 +35,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
     return (
         <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
+            <div className="relative aspect-square bg-muted rounded-lg   group">
                 <Image
                     src={images[currentIndex].source}
                     alt={`Product image ${currentIndex + 1}`}
@@ -82,7 +82,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                         <button
                             key={image.id}
                             onClick={() => setCurrentIndex(index)}
-                            className={`aspect-square relative rounded-lg overflow-hidden border-2 transition-colors ${
+                            className={`aspect-square relative rounded-lg   border-2 transition-colors ${
                                 index === currentIndex
                                     ? 'border-primary'
                                     : 'border-transparent hover:border-muted-foreground'

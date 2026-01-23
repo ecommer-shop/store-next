@@ -42,7 +42,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                     <p className="text-muted-foreground mb-8">
                         {t(I18N.Cart.empty.description)}
                     </p>
-                    <Button asChild>
+                    <Button>
                         <Link href="/">{t(I18N.Cart.empty.continueShopping)}</Link>
                     </Button>
                 </div>

@@ -1,12 +1,16 @@
 'use server';
 
 import {mutate} from '@/lib/vendure/server/api';
+import { getAuthToken } from '@/lib/vendure/server/auth';
 import {
     CreateCustomerAddressMutation,
     UpdateCustomerAddressMutation,
     DeleteCustomerAddressMutation,
+    AuthenticateWithClerk,
 } from '@/lib/vendure/shared/mutations';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import {revalidatePath} from 'next/cache';
+import { CreateAddressPayload, UpdateAddressPayload } from './addresses-client';
 
 interface AddressInput {
     fullName: string;
@@ -15,50 +19,42 @@ interface AddressInput {
     city: string;
     province: string;
     postalCode: string;
-    countryCode: string;
+    countryId: string;
     phoneNumber: string;
     company?: string;
+    countryCode: string
 }
 
 interface UpdateAddressInput extends AddressInput {
     id: string;
 }
 
-export async function createAddress(address: AddressInput) {
+export async function createAddress(address: CreateAddressPayload) {
+
+    const tokenAuth = await getAuthToken(); 
     const result = await mutate(
         CreateCustomerAddressMutation,
         {input: address},
-        {useAuthToken: true}
+        {token: tokenAuth!, useAuthToken: true}     
     );
 
     if (!result.data.createCustomerAddress) {
         throw new Error('Failed to create address');
     }
-
+    
     revalidatePath('/account/addresses');
     return result.data.createCustomerAddress;
 }
 
-export async function updateAddress(address: UpdateAddressInput) {
-    const {id, ...input} = address;
-
+export async function updateAddress(address: UpdateAddressPayload) {
+    
+    const tokenAuth = await getAuthToken(); 
     const result = await mutate(
         UpdateCustomerAddressMutation,
         {
-            input: {
-                id,
-                fullName: input.fullName,
-                streetLine1: input.streetLine1,
-                streetLine2: input.streetLine2,
-                city: input.city,
-                province: input.province,
-                postalCode: input.postalCode,
-                countryCode: input.countryCode,
-                phoneNumber: input.phoneNumber,
-                company: input.company,
-            },
+            input: address
         },
-        {useAuthToken: true}
+        {token: tokenAuth!, useAuthToken: true}     
     );
 
     if (!result.data.updateCustomerAddress) {
@@ -70,10 +66,11 @@ export async function updateAddress(address: UpdateAddressInput) {
 }
 
 export async function deleteAddress(id: string) {
+    const tokenAuth = await getAuthToken(); 
     const result = await mutate(
         DeleteCustomerAddressMutation,
         {id},
-        {useAuthToken: true}
+        {token: tokenAuth!, useAuthToken: true}      
     );
 
     if (!result.data.deleteCustomerAddress.success) {
@@ -85,6 +82,7 @@ export async function deleteAddress(id: string) {
 }
 
 export async function setDefaultShippingAddress(id: string) {
+    const tokenAuth = await getAuthToken(); 
     const result = await mutate(
         UpdateCustomerAddressMutation,
         {
@@ -93,7 +91,7 @@ export async function setDefaultShippingAddress(id: string) {
                 defaultShippingAddress: true,
             },
         },
-        {useAuthToken: true}
+        {token: tokenAuth!, useAuthToken: true}     
     );
 
     if (!result.data.updateCustomerAddress) {
@@ -105,6 +103,7 @@ export async function setDefaultShippingAddress(id: string) {
 }
 
 export async function setDefaultBillingAddress(id: string) {
+    const tokenAuth = await getAuthToken(); 
     const result = await mutate(
         UpdateCustomerAddressMutation,
         {
@@ -113,7 +112,7 @@ export async function setDefaultBillingAddress(id: string) {
                 defaultBillingAddress: true,
             },
         },
-        {useAuthToken: true}
+        {token: tokenAuth!, useAuthToken: true}     
     );
 
     if (!result.data.updateCustomerAddress) {
