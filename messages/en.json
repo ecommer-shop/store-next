@@ -352,7 +352,10 @@
       "copyright": "© {year} Ecommer Shop. All rights reserved.",
       "sections": {
         "categories": "Categories",
-        "about": "About",
+        "about": {
+          "label":"About us",
+          "title":"Who We Are"
+        },
         "contact": "Contact"
       },
       "links": {
@@ -375,6 +378,24 @@
         "title": "Fast delivery",
         "description": "Fast and reliable worldwide shipping"
       }
+    }
+  },
+
+  "About": {
+    "title": "About us",
+    "description": "Supplier information in accordance with Law 1480 of 2011, guaranteeing a clear and transparent shopping experience.",
+    "legal":{
+      "label": "Legal information",
+      "rs": "Business name:",
+      "address": "Address:"
+    },
+    "contact":{
+      "label":"Contact",
+      "phone":"Phone:"
+    },
+    "hours":{
+      "label":"Business hours",
+      "days":"Monday to Friday"
     }
   }
 }
