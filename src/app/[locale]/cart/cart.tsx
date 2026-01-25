@@ -2,11 +2,14 @@ import {CartItems} from "@/app/[locale]/cart/cart-items";
 import {OrderSummary} from "@/app/[locale]/cart/order-summary";
 import {PromotionCode} from "@/app/[locale]/cart/promotion-code";
 import {query} from "@/lib/vendure/server/api";
+import { getAuthToken } from "@/lib/vendure/server/auth";
 import {GetActiveOrderQuery} from "@/lib/vendure/shared/queries";
 
 export async function Cart() {
 
+    const token = await getAuthToken()
     const {data} = await query(GetActiveOrderQuery, {}, {
+        token,
         useAuthToken: true,
     });
 

@@ -76,7 +76,11 @@ export const I18N = {
           },
           countryCode: {
             label: 'form.fields.countryCode.label',
-            requiredError: 'form.fields.countryCode.requiredError'
+            requiredError: 'form.fields.countryCode.requiredError',
+            select: 'form.fields.countryCode.select',
+            cancel: 'form.fields.countryCode.cancel',
+            save: 'form.fields.countryCode.save',
+            search: 'form.fields.countryCode.search'
           },
           phoneNumber: {
             label: 'form.fields.phoneNumber.label',
@@ -87,7 +91,23 @@ export const I18N = {
         actions: {
           save: 'form.actions.save',
           update: 'form.actions.update',
-          cancel: 'form.actions.cancel'
+          cancel: 'form.actions.cancel',
+          addFirstAddress: 'form.actions.addFirstAddress',
+          noAddresses: 'form.actions.noAddresses',
+          addAddress: 'form.actions.addAddress',
+          edit: 'form.actions.edit',
+          delete: 'form.actions.delete',
+          setAsShipping: 'form.actions.setAsShipping',
+          defaultShipping: 'form.actions.defaultShipping',
+          setAsBilling: 'form.actions.setAsBilling',
+          defaultBilling: 'form.actions.defaultBilling',
+          deleting: 'form.actions.deleting',
+          editAddress: 'form.actions.editAddress',
+          addNewAddress: 'form.actions.addNewAddress',
+          updateDetails: 'form.actions.updateDetails',
+          fillForm: 'form.actions.fillForm',
+          areYouSure: 'form.actions.areYouSure',
+          deleteWarning: 'form.actions.deleteWarning'
         }
       }
     },
@@ -213,7 +233,7 @@ export const I18N = {
         shippingAddress: 'flow.shippingAddress',
         paymentMethod: 'flow.paymentMethod',
         deliveryMethod: 'flow.deliveryMethod',
-        reviewPlaceOrder: 'flow.review&PlaceOrder'
+        reviewPlaceOrder: 'flow.reviewPlaceOrder'
     },
     delivery: {
       selectMethod: 'delivery.selectMethod',

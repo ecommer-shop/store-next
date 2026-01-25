@@ -1,20 +1,22 @@
-import type {Metadata} from 'next';
-import {query} from '@/lib/vendure/server/api';
+import type { Metadata } from 'next';
+import { query } from '@/lib/vendure/server/api';
 import {
     GetActiveOrderForCheckoutQuery,
+    GetAvailableCountriesQuery,
     GetCustomerAddressesQuery,
     GetEligiblePaymentMethodsQuery,
     GetEligibleShippingMethodsQuery,
 } from '@/lib/vendure/shared/queries';
-import {redirect} from 'next/navigation';
+import { redirect } from 'next/navigation';
 import CheckoutFlow from './checkout-flow';
-import {CheckoutProvider} from './checkout-provider';
-import {noIndexRobots} from '@/lib/vendure/shared/metadata';
-import {getAvailableCountriesCached} from '@/lib/vendure/cached';
+import { CheckoutProvider } from './checkout-provider';
+import { noIndexRobots } from '@/lib/vendure/shared/metadata';
+import { getAvailableCountriesCached } from '@/lib/vendure/cached';
 import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
+import { getAuthToken } from '@/lib/vendure/server/auth';
 
 
 export const metadata: Metadata = {
@@ -23,26 +25,29 @@ export const metadata: Metadata = {
     robots: noIndexRobots(),
 };
 interface CheckoutContentProps {
-  params: {
-    locale: string;
-  };
-  searchParams: Record<string, string | string[] | undefined>;
+    params: {
+        locale: string;
+    };
+    searchParams: Record<string, string | string[] | undefined>;
 }
 
-
-
-export default async function CheckoutContent({}: CheckoutContentProps) {
+export default async function CheckoutContent({ }: CheckoutContentProps) {
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
-    const [orderRes, addressesRes, countries, shippingMethodsRes, paymentMethodsRes] =
+    const token = await getAuthToken();
+    const [orderRes, addressesRes, shippingMethodsRes, paymentMethodsRes] =
         await Promise.all([
-            query(GetActiveOrderForCheckoutQuery, {}, {useAuthToken: true}),
-            query(GetCustomerAddressesQuery, {}, {useAuthToken: true}),
-            getAvailableCountriesCached(),
-            query(GetEligibleShippingMethodsQuery, {}, {useAuthToken: true}),
-            query(GetEligiblePaymentMethodsQuery, {}, {useAuthToken: true}),
+            query(GetActiveOrderForCheckoutQuery, {}, { token, useAuthToken: true }),
+            query(GetCustomerAddressesQuery, {}, { token, useAuthToken: true }),
+            query(GetEligibleShippingMethodsQuery, {}, { token, useAuthToken: true }),
+            query(GetEligiblePaymentMethodsQuery, {}, { token, useAuthToken: true }),
         ]);
-    
+
+    const [countriesResult] = await Promise.all([
+        query(GetAvailableCountriesQuery, {}),
+    ]);
+
+    const countries = countriesResult.data.availableCountries;
     const activeOrder = orderRes.data.activeOrder;
 
     if (!activeOrder || activeOrder.lines.length === 0) {
@@ -73,7 +78,7 @@ export default async function CheckoutContent({}: CheckoutContentProps) {
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
                 >
-                    <CheckoutFlow onSetShippingMethod={setShippingMethod}/>
+                    <CheckoutFlow onSetShippingMethod={setShippingMethod} />
                 </CheckoutProvider>
             </div>
         </Suspense>

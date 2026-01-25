@@ -76,7 +76,11 @@
           },
           "countryCode": {
             "label": "Country",
-            "requiredError": "Country is required"
+            "requiredError": "Country is required",
+            "select": "Select country",
+            "search": "Search country",
+            "cancel": "Cancel",
+            "save": "Confirm country"
           },
           "phoneNumber": {
             "label": "Phone number",
@@ -87,7 +91,23 @@
         "actions": {
           "save": "Save address",
           "update": "Update address",
-          "cancel": "Cancel"
+          "cancel": "Cancel",
+          "addFirstAddress": "Add your first address",
+          "noAddresses": "No Addresses saved yet",
+          "addAddress": "Add new address",
+          "edit": "Edit",
+          "delete": "Delete",
+          "setAsShipping": "Set as Shipping",
+          "defaultShipping": "Default Shipping",
+          "setAsBilling": "Set as Billing",
+          "defaultBilling": "Default Billing",
+          "deleting": "Deleting...",
+          "editAddress": "Edit address",
+          "addNewAddress": "Add new address",
+          "updateDetails": "Update the details of your address",
+          "fillForm": "Fill in the form below to add a new address",
+          "areYouSure": "Are you sure?",
+          "deleteWarning": "This action cannot be undone. This will permanently delete this address."
         }
       }
     },

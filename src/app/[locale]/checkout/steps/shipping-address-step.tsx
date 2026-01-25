@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@heroui/react';
+import { Button, Form, TextField } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -17,25 +17,17 @@ import { useCheckout } from '../checkout-provider';
 import { setShippingAddress, createCustomerAddress } from '../actions';
 import { CountrySelect } from '@/components/shared/country-select';
 import { I18N } from '@/i18n/keys';
+import { CustomerAddress } from '../../account/addresses/addresses-client';
+import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
   t: (key: string) => string;
 }
 
-interface AddressFormData {
-  fullName: string;
-  streetLine1: string;
-  streetLine2?: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  countryCode: string;
-  phoneNumber: string;
-  company?: string;
-}
 
 export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
+  const td = useTranslations('Account.addresses');
   const router = useRouter();
   const { addresses, countries, order } = useCheckout();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
@@ -52,14 +44,25 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
     const defaultAddress = addresses.find((a) => a.defaultShippingAddress);
     return defaultAddress?.id || null;
   });
+
   const [dialogOpen, setDialogOpen] = useState(addresses.length === 0);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [useSameForBilling, setUseSameForBilling] = useState(true);
-
+  const [address, seetAddress] = useState<CustomerAddress | null>(null);
   const { register, handleSubmit, formState: { errors }, reset, control } = useForm<AddressFormData>({
-    defaultValues: {
-      countryCode: countries[0]?.code || 'US',
+    defaultValues: address ? {
+      fullName: address.fullName || '',
+      company: address.company || '',
+      streetLine1: address.streetLine1,
+      streetLine2: address.streetLine2 || '',
+      city: address.city || '',
+      province: address.province || '',
+      postalCode: address.postalCode || '',
+      countryCode: address.country.code,
+      phoneNumber: address.phoneNumber || '',
+    } : {
+      countryCode: countries[0]?.code || 'CO',
     }
   });
 
@@ -95,8 +98,13 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   const onSaveNewAddress = async (data: AddressFormData) => {
     setSaving(true);
     try {
+      const country = countries.find(c => c.id === data.countryCode);
+      if (!country) throw new Error('Invalid country');
       // First create the address in Vendure
-      const newAddress = await createCustomerAddress(data);
+      const newAddress = await createCustomerAddress({
+        ...data,
+        countryCode: country.code
+      });
 
       // Close dialog and reset form
       setDialogOpen(false);
@@ -144,11 +152,11 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
               </div>
             ))}
           </RadioGroup>
-          {}
+          { }
           <div className="flex items-center space-x-2">
             <Checkbox
               id="same-billing"
-              /*checked={useSameForBilling}*/ 
+              /*checked={useSameForBilling}*/
               onChange={(checked) => setUseSameForBilling(checked === true)}
             />
             <label
@@ -176,110 +184,31 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <form onSubmit={handleSubmit(onSaveNewAddress)}>
-                  <DialogHeader>
-                    <DialogTitle>{t(I18N.Checkout.shippingAddress.addNew)}</DialogTitle>
-                    <DialogDescription>
-                      {t(I18N.Checkout.shippingAddress.fillForm)}
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <FieldGroup className="my-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="fullName">{t(I18N.Checkout.shippingAddress.labels.fullName)}</FieldLabel>
-                        <Input
-                          id="fullName"
-                          {...register('fullName')}
-                        />
-                        <FieldError>{errors.fullName?.message}</FieldError>
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="company">{t(I18N.Checkout.shippingAddress.labels.company)}</FieldLabel>
-                        <Input id="company" {...register('company')} />
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="streetLine1">{t(I18N.Checkout.shippingAddress.labels.streetAddress)}</FieldLabel>
-                        <Input
-                          id="streetLine1"
-                          {...register('streetLine1', { required: t(I18N.Checkout.shippingAddress.errors.streetRequired) })}
-                        />
-                        <FieldError>{errors.streetLine1?.message}</FieldError>
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="streetLine2">{t(I18N.Checkout.shippingAddress.labels.apartmentSuite)}</FieldLabel>
-                        <Input id="streetLine2" {...register('streetLine2')} />
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="city">{t(I18N.Checkout.shippingAddress.labels.city)}</FieldLabel>
-                        <Input
-                          id="city"
-                          {...register('city')}
-                        />
-                        <FieldError>{errors.city?.message}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="province">{t(I18N.Checkout.shippingAddress.labels.state)}</FieldLabel>
-                        <Input
-                          id="province"
-                          {...register('province')}
-                        />
-                        <FieldError>{errors.province?.message}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="postalCode">{t(I18N.Checkout.shippingAddress.labels.postalCode)}</FieldLabel>
-                        <Input
-                          id="postalCode"
-                          {...register('postalCode')}
-                        />
-                        <FieldError>{errors.postalCode?.message}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="countryCode">{t(I18N.Checkout.shippingAddress.labels.country)}</FieldLabel>
-                        <Controller
-                          name="countryCode"
-                          control={control}
-                          rules={{ required: t(I18N.Checkout.shippingAddress.errors.countryRequired) }}
-                          render={({ field }) => (
-                            <CountrySelect
-                              countries={countries}
-                              
-                              disabled={saving}
-                            />
-                          )}
-                        />
-                        <FieldError>{errors.countryCode?.message}</FieldError>
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="phoneNumber">{t(I18N.Checkout.shippingAddress.labels.phoneNumber)}</FieldLabel>
-                        <Input
-                          id="phoneNumber"
-                          type="tel"
-                          {...register('phoneNumber')}
-                        />
-                        <FieldError>{errors.phoneNumber?.message}</FieldError>
-                      </Field>
-                    </div>
-                  </FieldGroup>
-
-                  <DialogFooter>
-                    <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} isDisabled={saving}>
-                      {t(I18N.Checkout.shippingAddress.actions.cancel)}
-                    </Button>
-                    <Button type="submit" isDisabled={saving}>
-                      {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {t(I18N.Checkout.shippingAddress.actions.save)}
-                    </Button>
-                  </DialogFooter>
-                </form>
+                <DialogHeader>
+                  <DialogTitle>{td(I18N.Account.addresses.form.actions.addNewAddress)}</DialogTitle>
+                  <DialogDescription>
+                    {td(I18N.Account.addresses.form.actions.fillForm)}
+                  </DialogDescription>
+                </DialogHeader>
+                <AddressForm
+                  countries={countries}
+                  isSubmitting={saving}
+                  onSubmit={onSaveNewAddress}
+                  onCancel={() => setDialogOpen(false)}
+                  labels={{
+                    fullName: td(I18N.Account.addresses.form.fields.fullName.label),
+                    company: td(I18N.Account.addresses.form.fields.company.label),
+                    streetLine1: td(I18N.Account.addresses.form.fields.streetLine1.label),
+                    streetLine2: td(I18N.Account.addresses.form.fields.streetLine2.label),
+                    city: td(I18N.Account.addresses.form.fields.city.label),
+                    province: td(I18N.Account.addresses.form.fields.province.label),
+                    postalCode: td(I18N.Account.addresses.form.fields.postalCode.label),
+                    country: td(I18N.Account.addresses.form.fields.countryCode.label),
+                    phoneNumber: td(I18N.Account.addresses.form.fields.phoneNumber.label),
+                    cancel: td(I18N.Account.addresses.form.actions.cancel),
+                    submit: td(I18N.Account.addresses.form.actions.save),
+                  }}
+                />
               </DialogContent>
             </Dialog>
           </div>
@@ -363,7 +292,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                       render={({ field }) => (
                         <CountrySelect
                           countries={countries}
-                          
+
                           disabled={saving}
                         />
                       )}

@@ -41,19 +41,19 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
   return (
     <>
       <div className="space-y-6">
-      <h3 className="font-semibold text-lg">{t(I18N.Checkout.review.title)}</h3>
+      <h3 className="font-semibold text-lg text-foreground">{t(I18N.Checkout.review.title)}</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Shipping Address */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{t(I18N.Checkout.review.shippingAddress)}</h4>
+            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.shippingAddress)}</h4>
           </div>
           {order.shippingAddress ? (
             <div className="text-sm space-y-3">
               <div>
-                <p className="font-medium">{order.shippingAddress.fullName}</p>
+                <p className="font- text-foreground">{order.shippingAddress.fullName}</p>
                 <p className="text-muted-foreground">
                   {order.shippingAddress.streetLine1}
                   {order.shippingAddress.streetLine2 && `, ${order.shippingAddress.streetLine2}`}
@@ -82,12 +82,12 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{t(I18N.Checkout.review.deliveryMethod)}</h4>
+            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.deliveryMethod)}</h4>
           </div>
           {order.shippingLines && order.shippingLines.length > 0 ? (
             <div className="text-sm space-y-3">
               <div>
-                <p className="font-medium">{order.shippingLines[0].shippingMethod.name}</p>
+                <p className="font-medium text-foreground">{order.shippingLines[0].shippingMethod.name}</p>
                 <p className="text-muted-foreground">
                   {order.shippingLines[0].priceWithTax === 0
                     ? t(I18N.Checkout.delivery.free)
@@ -112,12 +112,12 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{t(I18N.Checkout.review.paymentMethod)}</h4>
+            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.paymentMethod)}</h4>
           </div>
           {selectedPaymentMethod ? (
             <div className="text-sm space-y-3">
               <div>
-                <p className="font-medium">{selectedPaymentMethod.name}</p>
+                <p className="font-medium text-foreground">{selectedPaymentMethod.name}</p>
                 {selectedPaymentMethod.description && (
                   <p className="text-muted-foreground mt-1">
                     {selectedPaymentMethod.description}

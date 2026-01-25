@@ -2,7 +2,6 @@ import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {OrderConfirmation} from './order-confirmation';
 import {noIndexRobots} from '@/lib/vendure/shared/metadata';
-import { useAuth } from '@/components/shared/useAuth';
 import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {

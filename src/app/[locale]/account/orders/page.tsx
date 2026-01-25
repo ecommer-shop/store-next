@@ -12,7 +12,8 @@ interface PageProps<T> {
     searchParams: Record<string, string | string[] | undefined>;
 }
 export default function OrdersPage(props: PageProps<'/account/orders'>) {
-    const t = useTranslations('Account.orders')
+    const t = useTranslations('Account.orders') 
+    //aa
     return (
         <Suspense fallback={
             <div className="flex flex-col items-center gap-2">

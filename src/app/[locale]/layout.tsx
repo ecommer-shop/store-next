@@ -1,4 +1,5 @@
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 import type {Metadata, Viewport} from "next";
 import {Geist, Geist_Mono} from "next/font/google";
@@ -79,12 +80,12 @@ export const viewport: Viewport = {
     ],
 };
 
-type Props = {
+type Props<T> = {
   children: ReactNode;
   params: Promise<{locale: string}>;
 };
 
-export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
+export default async function LocaleLayout({ children, params }: Props<"/[locale]">) {
   const {locale} = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();

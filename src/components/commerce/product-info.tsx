@@ -112,7 +112,10 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
     };
 
     const handleAddToCart = async () => {
-        if (!selectedVariant) return;
+        if (!selectedVariant) {
+            setIsAdded(true)
+            return;
+        }
 
         startTransition(async () => {
             const result = await addToCart(selectedVariant.id, 1);
@@ -227,7 +230,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     size="lg"
                     variant='ghost'
                     className="w-full hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
-                    isDisabled={!canAddToCart || isPending}
+                    isDisabled={isAdded}
                     onClick={handleAddToCart}
                 >
                     {isAdded ? (

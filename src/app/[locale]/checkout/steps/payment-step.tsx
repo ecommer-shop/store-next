@@ -42,7 +42,7 @@ export default function PaymentStep({ onComplete, t }: PaymentStepProps) {
                 <CreditCard className="h-5 w-5 text-muted-foreground" />
                 <div className="flex-1">
                   <p className="font-medium">{method.name}</p>
-                  {method.description && (
+                  {method.description+"aaa" && (
                     <p className="text-sm text-muted-foreground mt-1">
                       {method.description}
                     </p>

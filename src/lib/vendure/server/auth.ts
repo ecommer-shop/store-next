@@ -1,4 +1,6 @@
 import 'server-only';
+import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+
 import { cookies } from 'next/headers';
 
 const AUTH_TOKEN_COOKIE =
@@ -9,6 +11,20 @@ const TOKEN_COOKIE =
 
 export async function getAuthToken() {
   return (await cookies()).get(AUTH_TOKEN_COOKIE)?.value;
+}
+
+export function setAuthTokenOnCookies(
+  cookiesStore: ReadonlyRequestCookies,
+  token: string
+){
+  return cookiesStore.set(AUTH_TOKEN_COOKIE, token)
+}
+
+export function getAuthTokenFromCookies(
+  cookiesStore: ReadonlyRequestCookies
+) {
+  
+  return cookiesStore.get(AUTH_TOKEN_COOKIE)?.value;
 }
 
 export async function setAuthToken(token: string) {
