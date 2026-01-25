@@ -100,6 +100,20 @@
       "loading": "Loading…"
     },
     "orders": {
+      "list": {
+        "title": "My Orders",
+        "empty": "You haven't placed any orders yet.",
+        "loading": "Loading orders...",
+        "table": {
+          "orderNumber": "Order Number",
+          "date": "Date",
+          "status": "Status",
+          "items": "Items",
+          "total": "Total"
+        },
+        "itemSingular": "item",
+        "itemPlural": "items"
+      },
       "detail": {
         "back": "Back to orders",
         "title": "Order {code}",

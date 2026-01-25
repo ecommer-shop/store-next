@@ -100,6 +100,20 @@
       "loading": "Cargando…"
     },
     "orders": {
+      "list": {
+        "title": "Mis Pedidos",
+        "empty": "No has realizado ningún pedido aún.",
+        "loading": "Cargando pedidos...",
+        "table": {
+          "orderNumber": "Número de Pedido",
+          "date": "Fecha",
+          "status": "Estado",
+          "items": "Artículos",
+          "total": "Total"
+        },
+        "itemSingular": "artículo",
+        "itemPlural": "artículos"
+      },
       "detail": {
         "back": "Volver a pedidos",
         "title": "Pedido {code}",

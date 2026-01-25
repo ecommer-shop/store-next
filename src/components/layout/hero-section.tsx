@@ -6,7 +6,7 @@ import Link from "next/link";
 export function HeroSection() {
     const t = useTranslations("HeroSection");
     return (
-        <section className="relative bg-muted   mt-10 ">
+        <section className="relative bg-muted overflow-hidden mt-10 ">
             {/* Fondo LIGHT */}
             <Image
                 src="/bg-light.webp"

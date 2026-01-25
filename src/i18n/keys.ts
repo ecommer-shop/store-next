@@ -100,6 +100,20 @@ export const I18N = {
       loading: 'common.loading'
     },
     orders: {
+      list: {
+        title: 'list.title',
+        empty: 'list.empty',
+        loading: 'list.loading',
+        table: {
+          orderNumber: 'list.table.orderNumber',
+          date: 'list.table.date',
+          status: 'list.table.status',
+          items: 'list.table.items',
+          total: 'list.table.total'
+        },
+        itemSingular: 'list.itemSingular',
+        itemPlural: 'list.itemPlural'
+      },
       detail: {
         back: 'detail.back',
         title: 'detail.title',

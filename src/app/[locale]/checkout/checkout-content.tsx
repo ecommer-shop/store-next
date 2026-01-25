@@ -13,7 +13,6 @@ import {noIndexRobots} from '@/lib/vendure/shared/metadata';
 import {getAvailableCountriesCached} from '@/lib/vendure/cached';
 import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
-import { getTraceEvents } from 'next/dist/trace';
 import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
 
@@ -28,13 +27,13 @@ interface CheckoutContentProps {
     locale: string;
   };
   searchParams: Record<string, string | string[] | undefined>;
-  t: (key: string) => string;
 }
 
 
 
-export default async function CheckoutContent({t}: CheckoutContentProps) {
-
+export default async function CheckoutContent({}: CheckoutContentProps) {
+    const ts = await getTranslations('Checkout');
+    const tsa = await getTranslations('Account')
     const [orderRes, addressesRes, countries, shippingMethodsRes, paymentMethodsRes] =
         await Promise.all([
             query(GetActiveOrderForCheckoutQuery, {}, {useAuthToken: true}),
@@ -63,10 +62,10 @@ export default async function CheckoutContent({t}: CheckoutContentProps) {
 
     return (
         <Suspense fallback={
-            <p>{t(I18N.Account.common.loading)}</p>
+            <p>{tsa(I18N.Account.common.loading)}</p>
         }>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-8">{t(I18N.Checkout.title)}</h1>
+                <h1 className="text-3xl font-bold mb-8">{ts(I18N.Checkout.title)}</h1>
                 <CheckoutProvider
                     order={activeOrder}
                     addresses={addresses}
@@ -74,7 +73,7 @@ export default async function CheckoutContent({t}: CheckoutContentProps) {
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
                 >
-                    <CheckoutFlow onSetShippingMethod={setShippingMethod} t={t}/>
+                    <CheckoutFlow onSetShippingMethod={setShippingMethod}/>
                 </CheckoutProvider>
             </div>
         </Suspense>

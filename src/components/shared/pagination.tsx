@@ -1,8 +1,8 @@
 'use client';
 
-import {usePathname, useSearchParams} from 'next/navigation';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
-import {Button} from '@heroui/react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@heroui/react';
 import Link from "next/link";
 
 interface PaginationProps {
@@ -10,7 +10,7 @@ interface PaginationProps {
     totalPages: number;
 }
 
-export function Pagination({currentPage, totalPages}: PaginationProps) {
+export function Pagination({ currentPage, totalPages }: PaginationProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
@@ -51,30 +51,26 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
 
     return (
         <nav className="flex items-center justify-center gap-2">
-            <Button
-                variant="ghost"
-                size="md"
-                isDisabled={currentPage === 1}
-            >
-                {currentPage === 1 ? (
-                    <span className="flex h-9 w-9 items-center justify-center cursor-not-allowed text-muted-foreground">
+            {/* PREVIOUS */}
+            {currentPage === 1 ? (
+                <Button variant="ghost" size="md" isDisabled>
+                    <ChevronLeft className="h-4 w-4" />
+                </Button>
+            ) : (
+                <Link href={createPageUrl(currentPage - 1)}>
+                    <Button variant="ghost" size="md">
                         <ChevronLeft className="h-4 w-4" />
-                    </span>
-                    ) : (
-                    <Button variant="ghost" size="md" >
-                        <Link href={createPageUrl(currentPage - 1)}>
-                        <ChevronLeft className="h-4 w-4" />
-                        </Link>
                     </Button>
-                )}
-            </Button>
+                </Link>
+            )}
 
+            {/* PAGES */}
             {pages.map((page, index) => {
                 if (page === '...') {
                     return (
-                    <span key={`dots-${index}`} className="px-2 text-muted-foreground">
-                        ...
-                    </span>
+                        <span key={`dots-${index}`} className="px-2 text-muted-foreground">
+                            ...
+                        </span>
                     );
                 }
 
@@ -83,39 +79,36 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
 
                 if (isActive) {
                     return (
-                    <span
-                        key={pageNum}
-                        className="flex h-9 min-w-9 items-center justify-center rounded-md bg-primary text-primary-foreground"
-                    >
-                        {pageNum}
-                    </span>
+                        <span
+                            key={pageNum}
+                            className="flex h-9 min-w-9 items-center justify-center rounded-md bg-primary text-primary-foreground"
+                        >
+                            {pageNum}
+                        </span>
                     );
                 }
 
                 return (
-                    <Button key={pageNum} variant="ghost" size="md">
-                    <Link href={createPageUrl(pageNum)}>{pageNum}</Link>
-                    </Button>
+                    <Link key={pageNum} href={createPageUrl(pageNum)}>
+                        <Button variant="ghost" size="md">
+                            {pageNum}
+                        </Button>
+                    </Link>
                 );
             })}
 
-            <Button
-                variant="ghost"
-                size="md"
-                isDisabled={currentPage === totalPages}
-            >
-                {currentPage === totalPages ? (
-                    <span className="flex h-9 w-9 items-center justify-center cursor-not-allowed text-muted-foreground">
-                        <ChevronRight className="h-4 w-4" />
-                    </span>
-                    ) : (
+            {/* NEXT */}
+            {currentPage === totalPages ? (
+                <Button variant="ghost" size="md" isDisabled>
+                    <ChevronRight className="h-4 w-4" />
+                </Button>
+            ) : (
+                <Link href={createPageUrl(currentPage + 1)}>
                     <Button variant="ghost" size="md">
-                        <Link href={createPageUrl(currentPage + 1)}>
                         <ChevronRight className="h-4 w-4" />
-                        </Link>
                     </Button>
-                )}
-            </Button>
+                </Link>
+            )}
         </nav>
     );
 }

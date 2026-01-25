@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,9 +16,11 @@ import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
 import { setShippingAddress, createCustomerAddress } from '../actions';
 import { CountrySelect } from '@/components/shared/country-select';
+import { I18N } from '@/i18n/keys';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
+  t: (key: string) => string;
 }
 
 interface AddressFormData {
@@ -32,7 +35,7 @@ interface AddressFormData {
   company?: string;
 }
 
-export default function ShippingAddressStep({ onComplete }: ShippingAddressStepProps) {
+export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
   const router = useRouter();
   const { addresses, countries, order } = useCheckout();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
@@ -116,7 +119,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
     <div className="space-y-6">
       {addresses.length > 0 && (
         <div className="space-y-4">
-          <h3 className="font-semibold">Select a saved address</h3>
+          <h3 className="font-semibold">{t(I18N.Checkout.shippingAddress.selectSaved)}</h3>
           <RadioGroup value={selectedAddressId || ''} onValueChange={setSelectedAddressId}>
             {addresses.map((address) => (
               <div key={address.id} className="flex items-start space-x-3">
@@ -152,7 +155,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
               htmlFor="same-billing"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Use same address for billing
+              {t(I18N.Checkout.shippingAddress.sameBilling)}
             </label>
           </div>
 
@@ -163,28 +166,28 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
               className="flex-1"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Continue with selected address
+              {t(I18N.Checkout.shippingAddress.continueWithSelected)}
             </Button>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button type="button" variant="ghost">
-                  Add new address
+                  {t(I18N.Checkout.shippingAddress.addNew)}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <form onSubmit={handleSubmit(onSaveNewAddress)}>
                   <DialogHeader>
-                    <DialogTitle>Add new address</DialogTitle>
+                    <DialogTitle>{t(I18N.Checkout.shippingAddress.addNew)}</DialogTitle>
                     <DialogDescription>
-                      Fill in the form below to add a new shipping address
+                      {t(I18N.Checkout.shippingAddress.fillForm)}
                     </DialogDescription>
                   </DialogHeader>
 
                   <FieldGroup className="my-6">
                     <div className="grid grid-cols-2 gap-4">
                       <Field className="col-span-2">
-                        <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
+                        <FieldLabel htmlFor="fullName">{t(I18N.Checkout.shippingAddress.labels.fullName)}</FieldLabel>
                         <Input
                           id="fullName"
                           {...register('fullName')}
@@ -193,26 +196,26 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                       </Field>
 
                       <Field className="col-span-2">
-                        <FieldLabel htmlFor="company">Company</FieldLabel>
+                        <FieldLabel htmlFor="company">{t(I18N.Checkout.shippingAddress.labels.company)}</FieldLabel>
                         <Input id="company" {...register('company')} />
                       </Field>
 
                       <Field className="col-span-2">
-                        <FieldLabel htmlFor="streetLine1">Street Address *</FieldLabel>
+                        <FieldLabel htmlFor="streetLine1">{t(I18N.Checkout.shippingAddress.labels.streetAddress)}</FieldLabel>
                         <Input
                           id="streetLine1"
-                          {...register('streetLine1', { required: 'Street address is required' })}
+                          {...register('streetLine1', { required: t(I18N.Checkout.shippingAddress.errors.streetRequired) })}
                         />
                         <FieldError>{errors.streetLine1?.message}</FieldError>
                       </Field>
 
                       <Field className="col-span-2">
-                        <FieldLabel htmlFor="streetLine2">Apartment, suite, etc.</FieldLabel>
+                        <FieldLabel htmlFor="streetLine2">{t(I18N.Checkout.shippingAddress.labels.apartmentSuite)}</FieldLabel>
                         <Input id="streetLine2" {...register('streetLine2')} />
                       </Field>
 
                       <Field>
-                        <FieldLabel htmlFor="city">City</FieldLabel>
+                        <FieldLabel htmlFor="city">{t(I18N.Checkout.shippingAddress.labels.city)}</FieldLabel>
                         <Input
                           id="city"
                           {...register('city')}
@@ -221,7 +224,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                       </Field>
 
                       <Field>
-                        <FieldLabel htmlFor="province">State/Province</FieldLabel>
+                        <FieldLabel htmlFor="province">{t(I18N.Checkout.shippingAddress.labels.state)}</FieldLabel>
                         <Input
                           id="province"
                           {...register('province')}
@@ -230,7 +233,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                       </Field>
 
                       <Field>
-                        <FieldLabel htmlFor="postalCode">Postal Code</FieldLabel>
+                        <FieldLabel htmlFor="postalCode">{t(I18N.Checkout.shippingAddress.labels.postalCode)}</FieldLabel>
                         <Input
                           id="postalCode"
                           {...register('postalCode')}
@@ -239,11 +242,11 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                       </Field>
 
                       <Field>
-                        <FieldLabel htmlFor="countryCode">Country *</FieldLabel>
+                        <FieldLabel htmlFor="countryCode">{t(I18N.Checkout.shippingAddress.labels.country)}</FieldLabel>
                         <Controller
                           name="countryCode"
                           control={control}
-                          rules={{ required: 'Country is required' }}
+                          rules={{ required: t(I18N.Checkout.shippingAddress.errors.countryRequired) }}
                           render={({ field }) => (
                             <CountrySelect
                               countries={countries}
@@ -256,7 +259,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                       </Field>
 
                       <Field className="col-span-2">
-                        <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
+                        <FieldLabel htmlFor="phoneNumber">{t(I18N.Checkout.shippingAddress.labels.phoneNumber)}</FieldLabel>
                         <Input
                           id="phoneNumber"
                           type="tel"
@@ -269,11 +272,11 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
 
                   <DialogFooter>
                     <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} isDisabled={saving}>
-                      Cancel
+                      {t(I18N.Checkout.shippingAddress.actions.cancel)}
                     </Button>
                     <Button type="submit" isDisabled={saving}>
                       {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Save address
+                      {t(I18N.Checkout.shippingAddress.actions.save)}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -288,16 +291,16 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <form onSubmit={handleSubmit(onSaveNewAddress)}>
               <DialogHeader>
-                <DialogTitle>Add shipping address</DialogTitle>
+                <DialogTitle>{t(I18N.Checkout.shippingAddress.addShippingAddress)}</DialogTitle>
                 <DialogDescription>
-                  Fill in the form below to add your shipping address
+                  {t(I18N.Checkout.shippingAddress.fillForm)}
                 </DialogDescription>
               </DialogHeader>
 
               <FieldGroup className="my-6">
                 <div className="grid grid-cols-2 gap-4">
                   <Field className="col-span-2">
-                    <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
+                    <FieldLabel htmlFor="fullName">{t(I18N.Checkout.shippingAddress.labels.fullName)}</FieldLabel>
                     <Input
                       id="fullName"
                       {...register('fullName')}
@@ -306,26 +309,26 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                   </Field>
 
                   <Field className="col-span-2">
-                    <FieldLabel htmlFor="company">Company</FieldLabel>
+                    <FieldLabel htmlFor="company">{t(I18N.Checkout.shippingAddress.labels.company)}</FieldLabel>
                     <Input id="company" {...register('company')} />
                   </Field>
 
                   <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine1">Street Address *</FieldLabel>
+                    <FieldLabel htmlFor="streetLine1">{t(I18N.Checkout.shippingAddress.labels.streetAddress)}</FieldLabel>
                     <Input
                       id="streetLine1"
-                      {...register('streetLine1', { required: 'Street address is required' })}
+                      {...register('streetLine1', { required: t(I18N.Checkout.shippingAddress.errors.streetRequired) })}
                     />
                     <FieldError>{errors.streetLine1?.message}</FieldError>
                   </Field>
 
                   <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine2">Apartment, suite, etc.</FieldLabel>
+                    <FieldLabel htmlFor="streetLine2">{t(I18N.Checkout.shippingAddress.labels.apartmentSuite)}</FieldLabel>
                     <Input id="streetLine2" {...register('streetLine2')} />
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="city">City</FieldLabel>
+                    <FieldLabel htmlFor="city">{t(I18N.Checkout.shippingAddress.labels.city)}</FieldLabel>
                     <Input
                       id="city"
                       {...register('city')}
@@ -334,7 +337,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="province">State/Province</FieldLabel>
+                    <FieldLabel htmlFor="province">{t(I18N.Checkout.shippingAddress.labels.state)}</FieldLabel>
                     <Input
                       id="province"
                       {...register('province')}
@@ -343,7 +346,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="postalCode">Postal Code</FieldLabel>
+                    <FieldLabel htmlFor="postalCode">{t(I18N.Checkout.shippingAddress.labels.postalCode)}</FieldLabel>
                     <Input
                       id="postalCode"
                       {...register('postalCode')}
@@ -352,11 +355,11 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="countryCode">Country *</FieldLabel>
+                    <FieldLabel htmlFor="countryCode">{t(I18N.Checkout.shippingAddress.labels.country)}</FieldLabel>
                     <Controller
                       name="countryCode"
                       control={control}
-                      rules={{ required: 'Country is required' }}
+                      rules={{ required: t(I18N.Checkout.shippingAddress.errors.countryRequired) }}
                       render={({ field }) => (
                         <CountrySelect
                           countries={countries}
@@ -369,7 +372,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
                   </Field>
 
                   <Field className="col-span-2">
-                    <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
+                    <FieldLabel htmlFor="phoneNumber">{t(I18N.Checkout.shippingAddress.labels.phoneNumber)}</FieldLabel>
                     <Input
                       id="phoneNumber"
                       type="tel"
@@ -383,7 +386,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
               <DialogFooter>
                 <Button type="submit" isDisabled={saving} className="w-full">
                   {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Save address
+                  {t(I18N.Checkout.shippingAddress.actions.save)}
                 </Button>
               </DialogFooter>
             </form>

@@ -10,9 +10,10 @@ import { I18N } from '@/i18n/keys';
 
 interface PaymentStepProps {
   onComplete: () => void;
+  t: (key: string) => string;
 }
 
-export default function PaymentStep({ onComplete }: PaymentStepProps) {
+export default function PaymentStep({ onComplete, t }: PaymentStepProps) {
   const { paymentMethods, selectedPaymentMethodCode, setSelectedPaymentMethodCode } = useCheckout();
 
   const handleContinue = () => {
@@ -23,14 +24,14 @@ export default function PaymentStep({ onComplete }: PaymentStepProps) {
   if (paymentMethods.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">{I18N.Checkout.payment.noMethods}</p>
+        <p className="text-muted-foreground">{t(I18N.Checkout.payment.noMethods)}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">{I18N.Checkout.payment.selectMethod}</h3>
+      <h3 className="font-semibold">{t(I18N.Checkout.payment.selectMethod)}</h3>
 
       <RadioGroup value={selectedPaymentMethodCode || ''} onValueChange={setSelectedPaymentMethodCode}>
         {paymentMethods.map((method) => (
@@ -58,7 +59,7 @@ export default function PaymentStep({ onComplete }: PaymentStepProps) {
         isDisabled={!selectedPaymentMethodCode}
         className="w-full"
       >
-        {I18N.Checkout.payment.continueReview}
+        {t(I18N.Checkout.payment.continueReview)}
       </Button>
     </div>
   );

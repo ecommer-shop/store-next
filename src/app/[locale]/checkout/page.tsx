@@ -21,13 +21,12 @@ interface PageProps {
 }
 
 export default function CheckoutPage(props: PageProps) {
-  const t = useTranslations('Checkout');
+  
   return (
     <Suspense>
       <CheckoutContent
         params={props.params}
         searchParams={props.searchParams}
-        t={t}
       />
     </Suspense>
   );
