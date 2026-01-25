@@ -33,12 +33,12 @@ export function LocaleModal({ isOpen, onClose, t }: Props) {
     onClose();
   };
 
-useEffect(() => {
-  document.body.style.overflow = isOpen ? "hidden" : "";
-  return () => {
-    document.body.style.overflow = "";
-  };
-}, [isOpen]);
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
 
   return (
@@ -54,29 +54,29 @@ useEffect(() => {
           bg-primary-foreground/95 dark:bg-primary-foreground/95
           shadow-2xl shadow-[#12123F]/90
           dark:shadow-2xl dark:shadow-white/30">
-              <Modal.CloseTrigger className="text-foreground items-center flex shrink-0 size-8"/>
-              <Modal.Heading className="flex flex-row gap-3">
-                  <Modal.Icon className="block bg-accent-soft text-accent-soft-foreground">
-                    <Globe className="size-8 text-foreground" />
-                  </Modal.Icon>
+            <Modal.CloseTrigger className="text-foreground items-center flex shrink-0 size-8" />
+            <Modal.Heading className="flex flex-row gap-3">
+              <Modal.Icon className="block bg-accent-soft text-accent-soft-foreground">
+                <Globe className="size-8 text-foreground" />
+              </Modal.Icon>
               <p className="text-lg font-semibold">{t(I18N.UserBar.langSwitcher.tittle)}</p>
-              </Modal.Heading>
-              <Modal.Body className="flex flex-col gap-2">
-                  {LOCALES.map((l) => (
-                      <>
-                      <Button
-                      key={l.code}
-                      variant={l.code === currentLocale ? "primary" : "primary"}
-                      onClick={() => changeLocale(l.code)}
-                      className="justify-start rounded-[2px]"
-                      >
-                      <span className="mr-2">{l.flag}</span>
-                      {l.label}
-                      </Button>
-                      <Separator orientation="horizontal" className="bg-primary opacity-50"/>
-                      </>
-                  ))}
-              </Modal.Body>
+            </Modal.Heading>
+            <Modal.Body className="flex flex-col gap-2">
+              {LOCALES.map((l) => (
+                <div>
+                  <Button
+                    key={l.code}
+                    variant={l.code === currentLocale ? "primary" : "primary"}
+                    onClick={() => changeLocale(l.code)}
+                    className="justify-start rounded-[2px]"
+                  >
+                    <span className="mr-2">{l.flag}</span>
+                    {l.label}
+                  </Button>
+                  <Separator orientation="horizontal" className="bg-primary opacity-50" />
+                </div>
+              ))}
+            </Modal.Body>
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>
