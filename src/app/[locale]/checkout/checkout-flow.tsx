@@ -9,15 +9,17 @@ import ReviewStep from './steps/review-step';
 import OrderSummary from './order-summary';
 import { useCheckout } from './checkout-provider';
 import { I18N } from '@/i18n/keys';
+import { useTranslations } from 'next-intl';
 
 type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
 
 interface CheckoutFlowProps {
     onSetShippingMethod: (id: string) => Promise<void>;
-    t: (key: string) => string;
   }
 
-export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowProps) {
+export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps) {
+
+  const t = useTranslations('Checkout')
   const { order } = useCheckout();
 
   // Determine initial step and completed steps based on order state
@@ -87,6 +89,7 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
             <Accordion.Body className="pt-4">
               <ShippingAddressStep
                 onComplete={() => handleStepComplete('shipping')}
+                t={t}
               />
             </Accordion.Body>
           </Accordion.Item>
@@ -147,6 +150,7 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
             <Accordion.Body className="pt-4">
               <PaymentStep
                 onComplete={() => handleStepComplete('payment')}
+                t={t}
               />
             </Accordion.Body>
           </Accordion.Item>
@@ -174,6 +178,7 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
             <Accordion.Body className="pt-4">
               <ReviewStep
                 onEditStep={setCurrentStep}
+                t={t}
               />
             </Accordion.Body>
           </Accordion.Item>

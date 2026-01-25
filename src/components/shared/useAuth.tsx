@@ -1,14 +1,17 @@
 
-import { RedirectToSignIn, SignedOut } from "@clerk/nextjs";
+import { redirect } from 'next/navigation';
 import { auth } from "@clerk/nextjs/server";
 
-export async function useAuth() {
-    const user = auth();
+/**
+ * Server-side auth check that redirects to sign-in if user is not authenticated
+ * Must be called from a Server Component or Server Action
+ */
+export async function protectRoute() {
+    const user = await auth();
 
-    if (!(await user).isAuthenticated){
-        return (<SignedOut>
-                    <RedirectToSignIn />
-                </SignedOut>)
+    if (!user.userId) {
+        redirect('/sign-in');
     }
-    return;
+
+    return user;
 }

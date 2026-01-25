@@ -11,6 +11,8 @@ import {
   ScrollShadow,
 } from '@heroui/react';
 import { useEffect } from 'react';
+import { I18N } from '@/i18n/keys';
+import { useTranslations } from 'next-intl';
 
 interface Country {
   id: string;
@@ -38,7 +40,8 @@ export function CountrySelect({
   const [query, setQuery] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
-
+  const t = useTranslations('Account.addresses');
+  const tr = I18N.Account.addresses.form.fields.countryCode
   // Asegurar que el scroll funcione
   useEffect(() => {
     if (open && scrollRef.current) {
@@ -89,7 +92,7 @@ export function CountrySelect({
         isDisabled={disabled}
       >
         <span className="text-foreground">
-          {selectedCountry ? selectedCountry.name : "Select country"}
+          {selectedCountry ? selectedCountry.name : t(tr.select)}
         </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
           <path className='text-foreground' fill="currentColor" fillRule="evenodd" d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 1 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06" clipRule="evenodd" />
@@ -104,8 +107,7 @@ export function CountrySelect({
           <Modal.Dialog className="bg-primary-foreground rounded-md w-full max-w-md">
             <Modal.CloseTrigger />
             <Modal.Heading className="px-6 pt-6 pb-2">
-
-              Selecciona un País
+              {t(tr.select)}
             </Modal.Heading>
 
             <Modal.Body className="px-6 pb-6">
@@ -119,7 +121,7 @@ export function CountrySelect({
                   <SearchField.Group>
                     <SearchField.SearchIcon className='text-foreground' fill='currentColor' />
                     <SearchField.Input
-                      placeholder="Search country..."
+                      placeholder={t(tr.search)+"..."}
                       className="text-foreground"
                     />
                     <SearchField.ClearButton />
@@ -162,12 +164,12 @@ export function CountrySelect({
                 className="hover:bg-red-600 hover:text-primary-foreground
                  dark:hover:bg-red-600 dark:hover:text-primary
                  rounded-md">
-                Cancel
+                {t(tr.cancel)}
               </Button>
               <Button slot="close"
                 className="rounded-md
                 hover:bg-primary hover:text-primary-foreground">
-                Confirm
+                {t(tr.save)}
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
