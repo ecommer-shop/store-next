@@ -3,7 +3,7 @@ import { getTopCollections } from '@/lib/vendure/cached';
 import { unstable_cache } from 'next/cache';
 import Image from "next/image";
 import Link from "next/link";
-import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink } from './footer-content';
+import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText } from './footer-content';
 
 function FooterBrandName() {
     // Can hardcode or translate - for now keep as is since it's brand name
@@ -64,6 +64,20 @@ export async function Footer() {
                                     </Link>
                                 </li>
                             ))}
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p className="text-sm font-semibold mb-4"><UseLayoutText path={['footer','sections', 'about', 'title']}/></p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                            <li>
+                                <Link
+                                    href="/about-us"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseLayoutText path={['footer','sections', 'about', 'label']}/> 
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </div>
