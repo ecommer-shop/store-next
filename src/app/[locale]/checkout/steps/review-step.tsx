@@ -68,6 +68,7 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('shipping')}
+                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
               >
                 <Edit className="h-4 w-4 mr-1" />
                 {t(I18N.Checkout.review.edit)}
@@ -98,6 +99,7 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('delivery')}
+                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
               >
                 <Edit className="h-4 w-4 mr-1" />
                 {t(I18N.Checkout.review.edit)}
@@ -128,6 +130,7 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('payment')}
+                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
               >
                 <Edit className="h-4 w-4 mr-1" />
                 {t(I18N.Checkout.review.edit)}
@@ -143,14 +146,14 @@ export default function ReviewStep({ onEditStep, t }: ReviewStepProps) {
         onClick={handlePlaceOrder}
         isDisabled={loading || !order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode}
         size="lg"
-        className="w-full"
+        className="w-full rounded-md"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {t(I18N.Checkout.review.placeOrder)}
       </Button>
 
       {(!order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode) && (
-        <p className="text-sm text-destructive text-center">
+        <p className="text-sm text-destructive text-center text-foreground">
           {t(I18N.Checkout.review.completeSteps)}
         </p>
       )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Accordion } from '@heroui/react';
+import { Accordion, Surface } from '@heroui/react';
 import ShippingAddressStep from './steps/shipping-address-step';
 import DeliveryStep from './steps/delivery-step';
 import PaymentStep from './steps/payment-step';
@@ -14,8 +14,8 @@ import { useTranslations } from 'next-intl';
 type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
 
 interface CheckoutFlowProps {
-    onSetShippingMethod: (id: string) => Promise<void>;
-  }
+  onSetShippingMethod: (id: string) => Promise<void>;
+}
 
 export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps) {
 
@@ -66,32 +66,38 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2">
+    <div className="grid lg:grid-cols-3 gap-8 max-w-full relative">
+      <Surface className="lg:col-span-2 rounded-md dark:bg-primary-foreground/60 shadow-2xl shadow-[#12123F]/90
+    dark:shadow-2xl dark:shadow-white/30">
         <Accordion
+          allowsMultipleExpanded
           className="space-y-4"
         >
           <Accordion.Item key="shipping" className="border rounded-lg px-6">
-            <Accordion.Trigger className="hover:no-underline">
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  completedSteps.has('shipping')
+            <Accordion.Heading>
+              <Accordion.Trigger className="hover:no-underline">
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('shipping')
                     ? 'bg-green-500 text-white'
                     : currentStep === 'shipping'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {completedSteps.has('shipping') ? '✓' : '1'}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('shipping') ? '✓' : '1'}
+                  </div>
+                  <span className="text-lg font-semibold">{t(I18N.Checkout.flow.shippingAddress)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.shippingAddress)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <ShippingAddressStep
-                onComplete={() => handleStepComplete('shipping')}
-                t={t}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <ShippingAddressStep
+                  onComplete={() => handleStepComplete('shipping')}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item
@@ -99,30 +105,34 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('delivery')}
           >
-            <Accordion.Trigger
-              className="hover:no-underline"
-              isDisabled={!canAccessStep('delivery')}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  completedSteps.has('delivery')
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('delivery')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`text-foreground flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('delivery')
                     ? 'bg-green-500 text-white'
                     : currentStep === 'delivery'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {completedSteps.has('delivery') ? '✓' : '2'}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('delivery') ? '✓' : '2'}
+                  </div>
+                  <span className="text-lg font-semibold text-foreground">{t(I18N.Checkout.flow.deliveryMethod)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.deliveryMethod)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <DeliveryStep
-                onComplete={() => handleStepComplete('delivery')}
-                onSetShippingMethod={onSetShippingMethod}
-                t={t}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <DeliveryStep
+                  onComplete={() => handleStepComplete('delivery')}
+                  onSetShippingMethod={onSetShippingMethod}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item
@@ -130,29 +140,33 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('payment')}
           >
-            <Accordion.Trigger
-              className="hover:no-underline"
-              isDisabled={!canAccessStep('payment')}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  completedSteps.has('payment')
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('payment')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('payment')
                     ? 'bg-green-500 text-white'
                     : currentStep === 'payment'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {completedSteps.has('payment') ? '✓' : '3'}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('payment') ? '✓' : '3'}
+                  </div>
+                  <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <PaymentStep
-                onComplete={() => handleStepComplete('payment')}
-                t={t}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <PaymentStep
+                  onComplete={() => handleStepComplete('payment')}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item
@@ -160,30 +174,34 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('review')}
           >
-            <Accordion.Trigger
-              className="hover:no-underline"
-              isDisabled={!canAccessStep('review')}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  currentStep === 'review'
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('review')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${currentStep === 'review'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
-                }`}>
-                  4
+                    }`}>
+                    4
+                  </div>
+                  <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <ReviewStep
-                onEditStep={setCurrentStep}
-                t={t}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <ReviewStep
+                  onEditStep={setCurrentStep}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
-      </div>
+      </Surface>
 
       <div className="lg:col-span-1">
         <OrderSummary t={t} />

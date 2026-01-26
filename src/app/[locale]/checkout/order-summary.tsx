@@ -15,7 +15,10 @@ interface OrderSummaryProps {
 export default function OrderSummary({ t }: OrderSummaryProps) {
   const { order } = useCheckout();
   return (
-    <Card className="sticky top-4">
+    <Card className="sticky top-11
+    rounded-md
+    shadow-2xl shadow-[#12123F]/90
+    dark:shadow-2xl dark:shadow-white/40">
       <CardHeader>
         <CardTitle>{t(I18N.Checkout.summary.title)}</CardTitle>
       </CardHeader>
