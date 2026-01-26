@@ -45,7 +45,7 @@ export default function QuienesSomosPage() {
 
         
         <Card className="p-6 space-y-3">
-          <h2 className="text-lg font-semibold">Documentos legales</h2>
+          <h2 className="text-lg font-semibold"><UseAboutText path={['documents','label']} /></h2>
 
           <a
             href="/legal/Ley1480_de_2011/terminos_condiciones.pdf"
@@ -53,7 +53,7 @@ export default function QuienesSomosPage() {
             rel="noopener noreferrer"
             className="block text-primary underline"
           >
-            Terminos y Condiciones
+            <UseAboutText path={['documents','terms']} />
           </a>
           <a
             href="/legal/Ley1480_de_2011/garantia.pdf"
@@ -61,7 +61,7 @@ export default function QuienesSomosPage() {
             rel="noopener noreferrer"
             className="block text-primary underline"
           >
-            Garantía
+            <UseAboutText path={['documents','warranty']} />
           </a>
            <a
             href="/legal/Ley1480_de_2011/retracto.pdf"
@@ -69,7 +69,7 @@ export default function QuienesSomosPage() {
             rel="noopener noreferrer"
             className="block text-primary underline"
           >
-            Retracto
+            <UseAboutText path={['documents','withdrawal']} />
           </a>
            <a
             href="/legal/Ley1480_de_2011/reversion_pago.pdf"
@@ -77,7 +77,7 @@ export default function QuienesSomosPage() {
             rel="noopener noreferrer"
             className="block text-primary underline"
           >
-            Reversión del pago
+            <UseAboutText path={['documents','paymentReversal']} />
           </a>
         </Card>
 

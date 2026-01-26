@@ -419,6 +419,13 @@ export const I18N = {
     hours: {
       label: 'hours.label',
       days: 'hours.days',
+    },
+    documents: {
+      label: 'documents.label',
+      terms: 'documents.terms',
+      warranty: 'documents.warranty',
+      withdrawal: 'documents.withdrawal',
+      paymentReversal: 'documents.paymentReversal',
     }
   }
 } as const;
