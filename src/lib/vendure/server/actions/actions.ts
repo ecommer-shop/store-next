@@ -10,7 +10,10 @@ import { AuthenticateWithClerk, RegisterCustomerAccountMutation, VerifyCustomerA
 
 
 export const getActiveCustomer = cache(async () => {
-  return await currentUser();
+  const token = await getAuthToken()
+  return await query(GetActiveCustomerQuery,{}, {
+    token: token
+  });
 })
 
 export const getActiveChannel = getActiveChannelCached;

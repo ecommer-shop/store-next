@@ -3,14 +3,15 @@ import CheckoutContent from './checkout-content';
 import { useTranslations } from 'next-intl';
 import { Metadata } from 'next';
 import { noIndexRobots } from '@/lib/vendure/shared/metadata';
+import { Spinner } from '@heroui/react';
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
 export const metadata: Metadata = {
-    title: 'Checkout',
-    description: 'Complete your purchase.',
-    robots: noIndexRobots(),
+  title: 'Checkout',
+  description: 'Complete your purchase.',
+  robots: noIndexRobots(),
 };
 
 interface PageProps {
@@ -21,13 +22,16 @@ interface PageProps {
 }
 
 export default function CheckoutPage(props: PageProps) {
-  const t = useTranslations('Checkout');
+
   return (
-    <Suspense>
+    <Suspense fallback={
+      <div className="flex flex-col items-center gap-2">
+        <Spinner color="current" />
+      </div>
+    }>
       <CheckoutContent
         params={props.params}
         searchParams={props.searchParams}
-        t={t}
       />
     </Suspense>
   );
