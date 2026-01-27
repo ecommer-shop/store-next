@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "nextjs-starter-vendure",
+      "name": "Ecommer-Shop",
       "dependencies": {
         "@auth0/nextjs-auth0": "^4.13.2",
         "@clerk/localizations": "^3.34.0",

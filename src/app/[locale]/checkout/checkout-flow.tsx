@@ -28,15 +28,8 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
     let current: CheckoutStep = 'shipping';
 
     // Check if shipping address has required fields, not just if the object exists
-    if (order.shippingAddress?.streetLine1 && order.shippingAddress?.country) {
-      completed.add('shipping');
-      current = 'delivery';
-    }
 
-    if (order.shippingLines && order.shippingLines.length > 0) {
-      completed.add('delivery');
-      current = 'payment';
-    }
+    
 
     return { completed, current };
   };

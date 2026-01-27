@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button, Form, Radio, RadioGroup, TextField } from '@heroui/react';
+import { Button, Checkbox, Form, Radio, RadioGroup, TextField } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@heroui/react';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field';
 import { useForm, Controller } from 'react-hook-form';
@@ -127,7 +126,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
     <div
       className="flex w-full flex-col items-center space-y-6"
     >
-      {addresses.length > 0 && (
+      {addresses.length >= 0 && (
         <div className="space-y-4">
           <h3 className="font-semibold text-foreground">{t(I18N.Checkout.shippingAddress.selectSaved)}</h3>
           <RadioGroup defaultValue={selectedAddressId || ''} onChange={setSelectedAddressId} value={selectedAddressId || ''}>
@@ -163,19 +162,23 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
             ))}
           </RadioGroup>
           { }
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="same-billing"
-              /*checked={useSameForBilling}*/
-              onChange={(checked) => setUseSameForBilling(checked === true)}
-            />
-            <label
-              htmlFor="same-billing"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          <Checkbox className="flex items-center space-x-2" id="same-billing"
+            isSelected={useSameForBilling}
+            onChange={(checked) => setUseSameForBilling(checked === true)}>
+            <Checkbox.Control>
+              <Checkbox.Indicator />
+            </Checkbox.Control>
+            <Checkbox.Content
+
             >
-              {t(I18N.Checkout.shippingAddress.sameBilling)}
-            </label>
-          </div>
+              <label
+                htmlFor="same-billing"
+                className="text-sm font-medium text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {t(I18N.Checkout.shippingAddress.sameBilling)}
+              </label>
+            </Checkbox.Content>
+          </Checkbox>
 
           <div className="grid lg:grid-cols-3 gap-3 max-w-full">
             <Button
@@ -223,114 +226,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
             </Dialog>
           </div>
         </div>
-      )}
-
-      {addresses.length === 0 && (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <form onSubmit={handleSubmit(onSaveNewAddress)}>
-              <DialogHeader>
-                <DialogTitle>{t(I18N.Checkout.shippingAddress.addShippingAddress)}</DialogTitle>
-                <DialogDescription>
-                  {t(I18N.Checkout.shippingAddress.fillForm)}
-                </DialogDescription>
-              </DialogHeader>
-
-              <FieldGroup className="my-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="fullName">{t(I18N.Checkout.shippingAddress.labels.fullName)}</FieldLabel>
-                    <Input
-                      id="fullName"
-                      {...register('fullName')}
-                    />
-                    <FieldError>{errors.fullName?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="company">{t(I18N.Checkout.shippingAddress.labels.company)}</FieldLabel>
-                    <Input id="company" {...register('company')} />
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine1">{t(I18N.Checkout.shippingAddress.labels.streetAddress)}</FieldLabel>
-                    <Input
-                      id="streetLine1"
-                      {...register('streetLine1', { required: t(I18N.Checkout.shippingAddress.errors.streetRequired) })}
-                    />
-                    <FieldError>{errors.streetLine1?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine2">{t(I18N.Checkout.shippingAddress.labels.apartmentSuite)}</FieldLabel>
-                    <Input id="streetLine2" {...register('streetLine2')} />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="city">{t(I18N.Checkout.shippingAddress.labels.city)}</FieldLabel>
-                    <Input
-                      id="city"
-                      {...register('city')}
-                    />
-                    <FieldError>{errors.city?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="province">{t(I18N.Checkout.shippingAddress.labels.state)}</FieldLabel>
-                    <Input
-                      id="province"
-                      {...register('province')}
-                    />
-                    <FieldError>{errors.province?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="postalCode">{t(I18N.Checkout.shippingAddress.labels.postalCode)}</FieldLabel>
-                    <Input
-                      id="postalCode"
-                      {...register('postalCode')}
-                    />
-                    <FieldError>{errors.postalCode?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="countryCode">{t(I18N.Checkout.shippingAddress.labels.country)}</FieldLabel>
-                    <Controller
-                      name="countryCode"
-                      control={control}
-                      rules={{ required: t(I18N.Checkout.shippingAddress.errors.countryRequired) }}
-                      render={({ field }) => (
-                        <CountrySelect
-                          countries={countries}
-
-                          disabled={saving}
-                        />
-                      )}
-                    />
-                    <FieldError>{errors.countryCode?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="phoneNumber">{t(I18N.Checkout.shippingAddress.labels.phoneNumber)}</FieldLabel>
-                    <Input
-                      id="phoneNumber"
-                      type="tel"
-                      {...register('phoneNumber')}
-                    />
-                    <FieldError>{errors.phoneNumber?.message}</FieldError>
-                  </Field>
-                </div>
-              </FieldGroup>
-
-              <DialogFooter>
-                <Button type="submit" isDisabled={saving} className="w-full">
-                  {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t(I18N.Checkout.shippingAddress.actions.save)}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
       )}
     </div>
   );

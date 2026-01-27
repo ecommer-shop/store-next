@@ -12,9 +12,26 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  
+
   const { pathname, search } = req.nextUrl;
+  const cleanPathname = pathname.startsWith("/")
+  ? pathname.slice(1)
+  : pathname;
+
   const locale = req.nextUrl.locale ?? "es";
+  if (cleanPathname === "/legal/terms") {
+    const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+    const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+    domain.searchParams.set("redirect_url", returnTo)
+    return NextResponse.redirect(domain);
+  }
+
+  if (cleanPathname === "/legal/privacy") {
+    const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+    const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+    domain.searchParams.set("redirect_url", returnTo)
+    return NextResponse.redirect(domain);
+  }
 
   if (
     pathname.startsWith("/_next") ||
@@ -30,7 +47,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (!userId) {
       const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
       const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
-      
+
       const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
 
       signInUrl.searchParams.set("redirect_url", returnTo);

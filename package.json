@@ -1,9 +1,9 @@
 {
-  "name": "nextjs-starter-vendure",
+  "name": "Ecommer-Shop",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --run next dev",
+    "dev": "PORT=3001 bun --run next dev",
     "build": "bun --run next build",
     "start": "bun --run next start",
     "lint": "eslint",

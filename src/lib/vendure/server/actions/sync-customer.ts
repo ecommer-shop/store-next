@@ -36,6 +36,7 @@ export async function syncCustomerWithVendure() {
         token: token.jwt
     })
 
+    console.log("LOGIN", login.token)
     await setAuthToken(login.token!);
     await setJWT(token.jwt);
     setAuthTokenOnCookies(cookiesStore, login.token!)

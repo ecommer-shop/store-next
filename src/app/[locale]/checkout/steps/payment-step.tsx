@@ -18,7 +18,7 @@ export default function PaymentStep({ onComplete, t }: PaymentStepProps) {
     if (!selectedPaymentMethodCode) return;
     onComplete();
   };
-
+  console.log("Selected paaa", selectedPaymentMethodCode)
   if (paymentMethods.length === 0) {
     return (
       <div className="text-center py-8">

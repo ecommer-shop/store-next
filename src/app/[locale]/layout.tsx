@@ -18,6 +18,8 @@ import { routing } from "@/i18n/routing";
 import { ReactNode } from "react";
 import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
+import { useTheme } from "next-themes";
+import { ThemeVariables } from "@/components/providers/theme-variables";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,7 +92,6 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
-
   const localClerk = locale === 'es' ? esMX : enUS;
   const messages = await getMessages();
   return (
@@ -98,27 +99,21 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ThemeProvider>
-            <NextIntlClientProvider
-              locale={locale}
-              messages={messages}
-            >
-              <div className="flex flex-col min-h-screen" style={{
-                // @ts-expect-error - Overrides default variables
-                "--accent": "#006FEE",
-                "--accent-foreground": "#fff",
-                "--accent-hover": "#006FEE",
-                "--border-width": "2px",
-                "--border-width-field": "2px",
-                "--focus": "#006FEE",
-              }}>
-                <Navbar />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-              </div>
-            </NextIntlClientProvider>
-            <Toaster />
+            <ThemeVariables>
+              <NextIntlClientProvider
+                locale={locale}
+                messages={messages}
+              >
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+              </NextIntlClientProvider>
+              <Toaster />
+            </ThemeVariables>
           </ThemeProvider>
         </body>
       </html>
