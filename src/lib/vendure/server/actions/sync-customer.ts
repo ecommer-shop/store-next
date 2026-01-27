@@ -6,6 +6,7 @@ import { AuthenticateWithClerk, RegisterCustomerAccountMutation } from '@/lib/ve
 import { mutate } from '../../server/api';
 import { setAuthToken, setAuthTokenOnCookies, setJWT } from '../auth';
 import { cookies } from 'next/headers';
+import { GetWompiSignatureQuery } from '../../shared/queries';
 
 
 export async function syncCustomerWithVendure() {
@@ -36,7 +37,6 @@ export async function syncCustomerWithVendure() {
         token: token.jwt
     })
 
-    console.log("LOGIN", login.token)
     await setAuthToken(login.token!);
     await setJWT(token.jwt);
     setAuthTokenOnCookies(cookiesStore, login.token!)

@@ -30,9 +30,10 @@ interface CheckoutContentProps {
         locale: string;
     };
     searchParams: Record<string, string | string[] | undefined>;
+    pb: string
 }
 
-export default async function CheckoutContent({ }: CheckoutContentProps) {
+export default async function CheckoutContent({ pb }: CheckoutContentProps) {
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
     const token = await getAuthToken();
@@ -83,7 +84,7 @@ export default async function CheckoutContent({ }: CheckoutContentProps) {
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
                 >
-                    <CheckoutFlow onSetShippingMethod={setShippingMethod} />
+                    <CheckoutFlow onSetShippingMethod={setShippingMethod} pb={pb}/>
                 </CheckoutProvider>
             </div>
         </Suspense>

@@ -19,6 +19,13 @@ export default clerkMiddleware(async (auth, req) => {
   : pathname;
 
   const locale = req.nextUrl.locale ?? "es";
+  if (cleanPathname === "/go") {
+    const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+    const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+    domain.searchParams.set("redirect_url", returnTo)
+    return NextResponse.redirect(domain);
+  }
+
   if (cleanPathname === "/legal/terms") {
     const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
     const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();

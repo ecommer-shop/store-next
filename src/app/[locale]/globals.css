@@ -12,8 +12,6 @@ html {
   height: 100%
 }
 
-
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -324,4 +322,23 @@ cl-internal-167d2r6,
   align-items: center !important;
   align-self: center !important;
   align-content: center !important;
+}
+
+.waybox-modal,
+.waybox-display-block{
+ position: relative
+}
+
+.waybox-iframe{
+  position: sticky;
+  top: 14dvh;
+}
+
+body.wompi-open {
+  overflow: hidden;
+  height: 100%;
+}
+
+body.wompi-open .checkout-container {
+  filter: blur(2px);
 }

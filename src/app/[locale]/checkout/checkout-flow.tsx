@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Accordion, Surface } from '@heroui/react';
 import ShippingAddressStep from './steps/shipping-address-step';
 import DeliveryStep from './steps/delivery-step';
@@ -10,14 +10,16 @@ import OrderSummary from './order-summary';
 import { useCheckout } from './checkout-provider';
 import { I18N } from '@/i18n/keys';
 import { useTranslations } from 'next-intl';
+import React from 'react';
 
 type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
 
 interface CheckoutFlowProps {
   onSetShippingMethod: (id: string) => Promise<void>;
+  pb: string
 }
 
-export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps) {
+export default function CheckoutFlow({ onSetShippingMethod, pb }: CheckoutFlowProps) {
 
   const t = useTranslations('Checkout')
   const { order } = useCheckout();
@@ -33,7 +35,27 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
 
     return { completed, current };
   };
-
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+    
+    useEffect(() => {
+      if (scrollRef.current) {
+        const element = scrollRef.current;
+  
+        // Forzar el foco en el contenedor scrollable
+        element.focus();
+  
+        // Prevenir propagación de eventos de scroll
+        const handleWheel = (e: WheelEvent) => {
+          e.stopPropagation();
+        };
+  
+        element.addEventListener('wheel', handleWheel, { passive: true });
+  
+        return () => {
+          element.removeEventListener('wheel', handleWheel);
+        };
+      }
+    }, [open]);
   const initialState = getInitialState();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(initialState.current);
   const [completedSteps, setCompletedSteps] = useState<Set<CheckoutStep>>(initialState.completed);
@@ -157,6 +179,7 @@ export default function CheckoutFlow({ onSetShippingMethod }: CheckoutFlowProps)
                 <PaymentStep
                   onComplete={() => handleStepComplete('payment')}
                   t={t}
+                  pb={pb}
                 />
               </Accordion.Body>
             </Accordion.Panel>
