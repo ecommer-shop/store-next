@@ -20,6 +20,7 @@ import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
 import { useTheme } from "next-themes";
 import { ThemeVariables } from "@/components/providers/theme-variables";
+import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -104,6 +105,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 locale={locale}
                 messages={messages}
               >
+                <WompiScrollGuard />
                 <div className="flex flex-col min-h-screen">
                   <Navbar />
                   <main className="flex-1">

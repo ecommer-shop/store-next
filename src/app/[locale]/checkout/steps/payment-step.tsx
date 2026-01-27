@@ -5,46 +5,30 @@ import { CreditCard } from 'lucide-react';
 import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
 import { getPaymentSignature } from '../actions';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PaymentStepProps {
   onComplete: () => void;
   t: (key: string) => string;
-  pb: string
+  pb: string;
+  uri: string;
 }
 
-export function WompiScrollFix() {
-  useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      if (
-        typeof event.data === 'object' &&
-        event.data?.type === 'WOMPI_WIDGET_CLOSED'
-      ) {
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
-      }
-    }
 
-    window.addEventListener('message', handleMessage);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, []); 
-  return null;
-}
-export default function PaymentStep({ pb }: PaymentStepProps) {
+export default function PaymentStep({ pb, uri }: PaymentStepProps) {
   const { order } = useCheckout();
+  const [loading, setLoading] = useState(false);
   const openWompi = async () => {
-    document.body.classList.add('wompi-open');
+    //document.body.classList.add('wompi-open');
     const signature = await getPaymentSignature(1)
-
+    setLoading(true)
     // @ts-ignore
     const checkout = new window.WidgetCheckout({
       currency: 'COP',
       amountInCents: order.totalWithTax * 100,
       reference: order.code,
       publicKey: pb,
+      redirectUrl: `${uri}/order-confirmation/${order.code}`,
       signature: {
         integrity: signature,
       },
@@ -52,11 +36,12 @@ export default function PaymentStep({ pb }: PaymentStepProps) {
         email: order.customer?.emailAddress,
         fullName: order.customer?.firstName,
       },
+      
     });
 
     checkout.open(({ transaction }: any) => {
       console.log('Wompi status:', transaction.status);
-      document.body.classList.remove('wompi-open');
+      //document.body.classList.remove('wompi-open');
       // ⚠️ NO confirmes pago aquí
       // solo muestra feedback visual
     });
@@ -75,7 +60,8 @@ export default function PaymentStep({ pb }: PaymentStepProps) {
       </Card>
 
       <Button onClick={openWompi}
-        className="w-full sticky bottom-0 z-10">
+      isDisabled={loading || !order.shippingAddress || !order.shippingLines?.length}
+        className="w-full sticky bottom-0">
         Pagar con Wompi
       </Button>
 
