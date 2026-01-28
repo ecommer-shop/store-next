@@ -60,7 +60,6 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
       </Card>
 
       <Button onClick={openWompi}
-      isDisabled={loading || !order.shippingAddress || !order.shippingLines?.length}
         className="w-full sticky bottom-0">
         Pagar con Wompi
       </Button>
