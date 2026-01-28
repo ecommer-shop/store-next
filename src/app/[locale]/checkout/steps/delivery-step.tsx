@@ -28,19 +28,25 @@ export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: Del
   const [submitting, setSubmitting] = useState(false);
 
   const handleContinue = async () => {
-    if (!selectedMethodId) return;
+  if (!selectedMethodId) return;
 
-    setSubmitting(true);
-    try {
-      await onSetShippingMethod(selectedMethodId);
-      router.refresh();
-      onComplete();
-    } catch (error) {
-      console.error('Error setting shipping method:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  setSubmitting(true);
+  try {
+    await fetch('/api/checkout/shipping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shippingMethodId: selectedMethodId }),
+    });
+
+    router.refresh();
+    onComplete();
+  } catch (error) {
+    console.error('Error setting shipping method:', error);
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   if (shippingMethods.length === 0) {
     return (
