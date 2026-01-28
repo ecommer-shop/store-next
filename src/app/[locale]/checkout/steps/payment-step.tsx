@@ -6,10 +6,10 @@ import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
 import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
-
+//t: (key: string) => string;
 interface PaymentStepProps {
   onComplete: () => void;
-  t: (key: string) => string;
+  
   pb: string;
   uri: string;
 }
@@ -28,7 +28,7 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
       amountInCents: order.totalWithTax * 100,
       reference: order.code,
       publicKey: pb,
-      redirectUrl: `${uri}/order-confirmation/${order.code}`,
+      redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
       signature: {
         integrity: signature,
       },
@@ -38,15 +38,15 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
       },
       
     });
-
+    console.log("SIGNAA",signature)
+    console.log(checkout)
     checkout.open(({ transaction }: any) => {
       console.log('Wompi status:', transaction.status);
       //document.body.classList.remove('wompi-open');
-      // ⚠️ NO confirmes pago aquí
+      // ⚠️ NO confirmes pago aquíaa
       // solo muestra feedback visual
     });
   };
-
   return (
     <div className="space-y-6">
       <Card className="p-6 flex items-center gap-4">

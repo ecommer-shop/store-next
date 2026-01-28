@@ -30,33 +30,11 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
     const completed = new Set<CheckoutStep>();
     let current: CheckoutStep = 'shipping';
 
-    // Check if shipping address has required fields, not just if the object exists
-
-    
-
     return { completed, current };
   };
-  const scrollRef = React.useRef<HTMLDivElement>(null);
+  
     
-    useEffect(() => {
-      if (scrollRef.current) {
-        const element = scrollRef.current;
-  
-        // Forzar el foco en el contenedor scrollable
-        element.focus();
-  
-        // Prevenir propagación de eventos de scroll
-        const handleWheel = (e: WheelEvent) => {
-          e.stopPropagation();
-        };
-  
-        element.addEventListener('wheel', handleWheel, { passive: true });
-  
-        return () => {
-          element.removeEventListener('wheel', handleWheel);
-        };
-      }
-    }, []);
+    
   const initialState = getInitialState();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(initialState.current);
   const [completedSteps, setCompletedSteps] = useState<Set<CheckoutStep>>(initialState.completed);
@@ -214,7 +192,6 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
               <Accordion.Body className="pt-4">
                 <PaymentStep
                   onComplete={() => handleStepComplete('payment')}
-                  t={t}
                   pb={pb}
                   uri={uri}
                 />
