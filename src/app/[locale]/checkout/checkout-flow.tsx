@@ -56,7 +56,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
           element.removeEventListener('wheel', handleWheel);
         };
       }
-    }, [open]);
+    }, []);
   const initialState = getInitialState();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(initialState.current);
   const [completedSteps, setCompletedSteps] = useState<Set<CheckoutStep>>(initialState.completed);
