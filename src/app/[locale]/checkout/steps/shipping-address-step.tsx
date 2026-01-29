@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button, Form, TextField } from '@heroui/react';
+import { Button, Checkbox, Form, Radio, RadioGroup, TextField } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field';
 import { useForm, Controller } from 'react-hook-form';
@@ -19,6 +17,7 @@ import { CountrySelect } from '@/components/shared/country-select';
 import { I18N } from '@/i18n/keys';
 import { CustomerAddress } from '../../account/addresses/addresses-client';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
+import clsx from 'clsx';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
@@ -124,54 +123,68 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   };
 
   return (
-    <div className="space-y-6">
-      {addresses.length > 0 && (
+    <div
+      className="flex w-full flex-col items-center space-y-6"
+    >
+      {addresses.length >= 0 && (
         <div className="space-y-4">
-          <h3 className="font-semibold">{t(I18N.Checkout.shippingAddress.selectSaved)}</h3>
-          <RadioGroup value={selectedAddressId || ''} onValueChange={setSelectedAddressId}>
+          <h3 className="font-semibold text-foreground">{t(I18N.Checkout.shippingAddress.selectSaved)}</h3>
+          <RadioGroup defaultValue={selectedAddressId || ''} onChange={setSelectedAddressId} value={selectedAddressId || ''}>
             {addresses.map((address) => (
-              <div key={address.id} className="flex items-start space-x-3">
-                <RadioGroupItem value={address.id} id={address.id} className="mt-1" />
-                <Label htmlFor={address.id} className="flex-1 cursor-pointer">
-                  <Card className="p-4">
-                    <div className="leading-tight space-y-0">
-                      <p className="font-medium">{address.fullName}</p>
-                      {address.company && <p className="text-sm text-muted-foreground">{address.company}</p>}
-                      <p className="text-sm text-muted-foreground">
-                        {address.streetLine1}
-                        {address.streetLine2 && `, ${address.streetLine2}`}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {address.city}, {address.province} {address.postalCode}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{address.country.name}</p>
-                      <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
-                    </div>
-                  </Card>
+
+              <Radio key={address.id} value={address.id} id={address.id} className={clsx(
+                "group relative flex-col gap-3 rounded-xl border border-transparent bg-primary-foreground dark:bg-primary-foreground px-5 py-4 transition-all data-[selected=true]:border-accent data-[selected=true]:bg-accent/10",
+                "data-[focus-visible=true]:border-accent data-[focus-visible=true]:bg-accent/10"
+              )}>
+                <Label htmlFor={address.id} className="flex-1 cursor-pointer w-full">
+                  <Radio.Control className="absolute top-3 right-4 size-5">
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content className="mt-1">
+                    <Card className="p-4" variant='tertiary'>
+                      <div className="leading-tight space-y-0">
+                        <p className="font-medium">{address.fullName}</p>
+                        {address.company && <p className="text-sm text-muted-foreground">{address.company}</p>}
+                        <p className="text-sm text-muted-foreground">
+                          {address.streetLine1}
+                          {address.streetLine2 && `, ${address.streetLine2}`}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {address.city}, {address.province} {address.postalCode}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{address.country.name}</p>
+                        <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
+                      </div>
+                    </Card>
+                  </Radio.Content>
                 </Label>
-              </div>
+              </Radio>
             ))}
           </RadioGroup>
           { }
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="same-billing"
-              /*checked={useSameForBilling}*/
-              onChange={(checked) => setUseSameForBilling(checked === true)}
-            />
-            <label
-              htmlFor="same-billing"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {t(I18N.Checkout.shippingAddress.sameBilling)}
-            </label>
-          </div>
+          <Checkbox className="flex items-center space-x-2" id="same-billing"
+            isSelected={useSameForBilling}
+            onChange={(checked) => setUseSameForBilling(checked === true)}>
+            <Checkbox.Control>
+              <Checkbox.Indicator />
+            </Checkbox.Control>
+            <Checkbox.Content
 
-          <div className="flex gap-3">
+            >
+              <label
+                htmlFor="same-billing"
+                className="text-sm font-medium text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {t(I18N.Checkout.shippingAddress.sameBilling)}
+              </label>
+            </Checkbox.Content>
+          </Checkbox>
+
+          <div className="grid lg:grid-cols-3 gap-3 max-w-full">
             <Button
               onClick={handleSelectExistingAddress}
               isDisabled={!selectedAddressId || loading}
-              className="flex-1"
+              className="flex-1 rounded-md"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t(I18N.Checkout.shippingAddress.continueWithSelected)}
@@ -179,7 +192,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button type="button" variant="ghost">
+                <Button type="button" variant='tertiary' className="rounded-md text-foreground">
                   {t(I18N.Checkout.shippingAddress.addNew)}
                 </Button>
               </DialogTrigger>
@@ -213,114 +226,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
             </Dialog>
           </div>
         </div>
-      )}
-
-      {addresses.length === 0 && (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <form onSubmit={handleSubmit(onSaveNewAddress)}>
-              <DialogHeader>
-                <DialogTitle>{t(I18N.Checkout.shippingAddress.addShippingAddress)}</DialogTitle>
-                <DialogDescription>
-                  {t(I18N.Checkout.shippingAddress.fillForm)}
-                </DialogDescription>
-              </DialogHeader>
-
-              <FieldGroup className="my-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="fullName">{t(I18N.Checkout.shippingAddress.labels.fullName)}</FieldLabel>
-                    <Input
-                      id="fullName"
-                      {...register('fullName')}
-                    />
-                    <FieldError>{errors.fullName?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="company">{t(I18N.Checkout.shippingAddress.labels.company)}</FieldLabel>
-                    <Input id="company" {...register('company')} />
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine1">{t(I18N.Checkout.shippingAddress.labels.streetAddress)}</FieldLabel>
-                    <Input
-                      id="streetLine1"
-                      {...register('streetLine1', { required: t(I18N.Checkout.shippingAddress.errors.streetRequired) })}
-                    />
-                    <FieldError>{errors.streetLine1?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine2">{t(I18N.Checkout.shippingAddress.labels.apartmentSuite)}</FieldLabel>
-                    <Input id="streetLine2" {...register('streetLine2')} />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="city">{t(I18N.Checkout.shippingAddress.labels.city)}</FieldLabel>
-                    <Input
-                      id="city"
-                      {...register('city')}
-                    />
-                    <FieldError>{errors.city?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="province">{t(I18N.Checkout.shippingAddress.labels.state)}</FieldLabel>
-                    <Input
-                      id="province"
-                      {...register('province')}
-                    />
-                    <FieldError>{errors.province?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="postalCode">{t(I18N.Checkout.shippingAddress.labels.postalCode)}</FieldLabel>
-                    <Input
-                      id="postalCode"
-                      {...register('postalCode')}
-                    />
-                    <FieldError>{errors.postalCode?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="countryCode">{t(I18N.Checkout.shippingAddress.labels.country)}</FieldLabel>
-                    <Controller
-                      name="countryCode"
-                      control={control}
-                      rules={{ required: t(I18N.Checkout.shippingAddress.errors.countryRequired) }}
-                      render={({ field }) => (
-                        <CountrySelect
-                          countries={countries}
-
-                          disabled={saving}
-                        />
-                      )}
-                    />
-                    <FieldError>{errors.countryCode?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="phoneNumber">{t(I18N.Checkout.shippingAddress.labels.phoneNumber)}</FieldLabel>
-                    <Input
-                      id="phoneNumber"
-                      type="tel"
-                      {...register('phoneNumber')}
-                    />
-                    <FieldError>{errors.phoneNumber?.message}</FieldError>
-                  </Field>
-                </div>
-              </FieldGroup>
-
-              <DialogFooter>
-                <Button type="submit" isDisabled={saving} className="w-full">
-                  {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t(I18N.Checkout.shippingAddress.actions.save)}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
       )}
     </div>
   );

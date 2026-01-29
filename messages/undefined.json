@@ -1,0 +1,434 @@
+{
+  "ButtonLabels": {
+    "submit": "Aceptar",
+    "cancel": "Cancelar"
+  },
+
+  "UserBar": {
+    "menu": {
+      "tittle": "Menú",
+      "close": "Cerrar"
+    },
+    "themeSwitcher": {
+      "tittle": "Apariencia",
+      "subtittle": "Cambiar tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "langSwitcher": {
+      "tittle": "Idioma"
+    },
+    "profile": "Mi Perfil",
+    "orders": "Mis Pedidos",
+    "addresses": "Mis Direcciones",
+    "logout": "Cerrar Sesión",
+    "login": "Iniciar Sesión",
+    "signup": "Registrarse"
+  },
+
+  "HeroSection": {
+    "title": "Compra lo nuestro",
+    "description": "Descubre y apoya el producto nacional, en un solo lugar.",
+    "shopButton": "Explorar",
+    "featuredProducts": "Productos Destacados"
+  },
+
+  "Account": {
+    "addresses": {
+      "loading": {
+        "tittle": "Direcciones",
+        "loading": "Cargando direcciones…",
+        "description": "Gestiona tus direcciones de envío y facturación."
+      },
+      "content": {
+        "title": "Tus direcciones",
+        "description": "Gestiona tus direcciones de envío y facturación."
+      },
+
+      "form": {
+        "fields": {
+          "fullName": {
+            "label": "Nombre completo",
+            "requiredError": "El nombre completo es obligatorio"
+          },
+          "company": {
+            "label": "Empresa"
+          },
+          "streetLine1": {
+            "label": "Dirección",
+            "requiredError": "La dirección es obligatoria"
+          },
+          "streetLine2": {
+            "label": "Apartamento, suite, etc."
+          },
+          "city": {
+            "label": "Ciudad",
+            "requiredError": "La ciudad es obligatoria"
+          },
+          "province": {
+            "label": "Departamento / Estado",
+            "requiredError": "El departamento o estado es obligatorio"
+          },
+          "postalCode": {
+            "label": "Código postal",
+            "requiredError": "El código postal es obligatorio"
+          },
+          "countryCode": {
+            "label": "País",
+            "requiredError": "El país es obligatorio",
+            "select": "Selecciona un país",
+            "search": "Busca país",
+            "cancel": "Cancelar",
+            "save": "Confirmar país"
+          },
+          "phoneNumber": {
+            "label": "Número de teléfono",
+            "requiredError": "El número de teléfono es obligatorio"
+          }
+        },
+
+        "actions": {
+          "save": "Guardar dirección",
+          "update": "Actualizar dirección",
+          "cancel": "Cancelar",
+          "addFirstAddress": "Añade tu primer dirección",
+          "noAddresses": "Aún no hay direcciones guardadas",
+          "addAddress": "Añade una dirección",
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "setAsShipping": "Establecer como envío",
+          "defaultShipping": "Envío predeterminado",
+          "setAsBilling": "Establecer como facturación",
+          "defaultBilling": "Facturación predeterminada",
+          "deleting": "Eliminando...",
+          "editAddress": "Editar dirección",
+          "addNewAddress": "Añadir nueva dirección",
+          "updateDetails": "Actualiza los detalles de tu dirección",
+          "fillForm": "Completa el formulario a continuación para agregar una nueva dirección",
+          "areYouSure": "¿Estás seguro?",
+          "deleteWarning": "Esta acción no se puede deshacer. Esto eliminará permanentemente esta dirección."
+        }
+      }
+    },
+    "common": {
+      "back": "Volver",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "shipping": "Envío",
+      "quantity": "Cantidad",
+      "loading": "Cargando…"
+    },
+    "orders": {
+      "list": {
+        "title": "Mis Pedidos",
+        "empty": "No has realizado ningún pedido aún.",
+        "loading": "Cargando pedidos...",
+        "table": {
+          "orderNumber": "Número de Pedido",
+          "date": "Fecha",
+          "status": "Estado",
+          "items": "Artículos",
+          "total": "Total"
+        },
+        "itemSingular": "artículo",
+        "itemPlural": "artículos"
+      },
+      "detail": {
+        "back": "Volver a pedidos",
+        "title": "Pedido {code}",
+        "placedOn": "Realizado el {date}",
+
+        "sections": {
+          "items": "Artículos del pedido",
+          "summary": "Resumen del pedido",
+          "shippingAddress": "Dirección de envío",
+          "billingAddress": "Dirección de facturación",
+          "payment": "Pago",
+          "shippingMethod": "Método de envío"
+        },
+
+        "labels": {
+          "sku": "SKU",
+          "qty": "Cantidad",
+          "subtotal": "Subtotal",
+          "shipping": "Envío",
+          "total": "Total",
+          "method": "Método",
+          "amount": "Monto",
+          "status": "Estado",
+          "transactionId": "ID de transacción"
+        }
+      }
+    },
+    "profile": {
+      "loading": {
+        "title": "Perfil",
+        "loading": "Cargando perfil…",
+        "description": "Gestiona la información de tu cuenta."
+      },
+      "content": {
+        "title": "Tu perfil",
+        "description": "Gestiona la información de tu cuenta."
+      }
+    }
+  },
+
+  "Cart": {
+    "title": "Carrito de compras",
+    "empty": {
+      "title": "Tu carrito está vacío",
+      "description": "Agrega algunos artículos a tu carrito para comenzar",
+      "continueShopping": "Continuar comprando"
+    },
+    "items": {
+      "each": "cada uno",
+      "remove": "Eliminar"
+    },
+    "summary": {
+      "title": "Resumen del pedido",
+      "subtotal": "Subtotal",
+      "discount": "Descuento",
+      "shipping": "Envío",
+      "shippingCalculated": "Se calcula en el pago",
+      "total": "Total",
+      "checkout": "Ir al pago",
+      "continueShopping": "Continuar comprando"
+    },
+    "promotionCode": {
+      "title": "Código de promoción",
+      "description": "Ingresa tu código de descuento a continuación",
+      "placeholder": "Ingresa código",
+      "apply": "Aplicar",
+      "remove": "Eliminar"
+    }
+  },
+
+  "Checkout": {
+    "title": "Pagar",
+    "description": "Completa tu compra",
+    "steps": {
+      "shipping": "Envío",
+      "delivery": "Entrega",
+      "payment": "Pago",
+      "review": "Revisar"
+    },
+    "flow": {
+      "shippingAddress": "Dirección de envío",
+      "paymentMethod": "Método de pago",
+      "deliveryMethod": "Método de entrega",
+      "reviewPlaceOrder": "Revisar y realizar pedido"
+    },
+    "shippingAddress": {
+      "selectSaved": "Selecciona una dirección guardada",
+      "sameBilling": "Usar la misma dirección para facturación",
+      "continueWithSelected": "Continuar con la dirección seleccionada",
+      "addNew": "Agregar nueva dirección",
+      "addShippingAddress": "Agregar dirección de envío",
+      "fillForm": "Completa el formulario a continuación para agregar una nueva dirección de envío",
+      "labels": {
+        "fullName": "Nombre completo",
+        "company": "Empresa",
+        "streetAddress": "Dirección *",
+        "apartmentSuite": "Apartamento, suite, etc.",
+        "city": "Ciudad",
+        "state": "Estado/Provincia",
+        "postalCode": "Código postal",
+        "country": "País *",
+        "phoneNumber": "Número de teléfono"
+      },
+      "errors": {
+        "streetRequired": "La dirección es obligatoria",
+        "countryRequired": "El país es obligatorio"
+      },
+      "actions": {
+        "cancel": "Cancelar",
+        "save": "Guardar dirección"
+      }
+    },
+    "delivery": {
+      "selectMethod": "Selecciona el método de entrega",
+      "noMethods": "No hay métodos de envío disponibles. Por favor verifica tu dirección.",
+      "free": "GRATIS",
+      "continuePayment": "Continuar al pago"
+    },
+    "payment": {
+      "selectMethod": "Selecciona el método de pago",
+      "noMethods": "No hay métodos de pago disponibles.",
+      "continueReview": "Continuar a revisar"
+    },
+    "review": {
+      "title": "Revisa tu pedido",
+      "shippingAddress": "Dirección de envío",
+      "deliveryMethod": "Método de entrega",
+      "paymentMethod": "Método de pago",
+      "noAddressSet": "No hay dirección de envío establecida",
+      "noMethodSet": "No hay método de entrega seleccionado",
+      "noPaymentSet": "No hay método de pago seleccionado",
+      "edit": "Editar",
+      "placeOrder": "Realizar pedido",
+      "completeSteps": "Por favor completa todos los pasos anteriores antes de realizar tu pedido"
+    },
+    "summary": {
+      "title": "Resumen del pedido",
+      "quantity": "Cantidad",
+      "subtotal": "Subtotal",
+      "shipping": "Envío",
+      "toCalculate": "Se calcula al finalizar",
+      "total": "Total"
+    }
+  },
+  "Collection": {},
+
+  "OrderConfirmation": {
+    "title": "¡Pedido confirmado!",
+    "orderNumber": "Número de pedido",
+    "thankYou": "Gracias por tu pedido.",
+    "summary": "Resumen del pedido",
+    "quantity": "Cantidad",
+    "total": "Total",
+    "shippingAddress": "Dirección de envío",
+    "continueShopping": "Continuar comprando"
+  },
+
+  "Product": {
+    "notFound": "Producto no encontrado",
+    "whyChooseUs": "Por qué elegirnos",
+    "premiumQuality": "Calidad Premium",
+    "qualityDescription": "Elaborado con cuidado utilizando los mejores materiales",
+    "ecoFriendly": "Ecológico",
+    "ecoDescription": "Obtenido de forma sostenible y ambientalmente consciente",
+    "satisfactionGuaranteed": "Satisfacción garantizada",
+    "satisfactionDescription": "100% de satisfacción o devolución de dinero",
+    "faq": "Preguntas frecuentes",
+    "returnPolicy": "¿Cuál es tu política de devolución?",
+    "returnDescription": "Aceptamos devoluciones dentro de 30 días de compra. Los artículos deben estar sin usar y en su empaque original. Simplemente contacta a nuestro equipo de soporte para iniciar una devolución y recibir una etiqueta de envío pagada.",
+    "trackOrder": "¿Cómo puedo rastrear mi pedido?",
+    "trackDescription": "Una vez que tu pedido se envía, recibirás un correo electrónico con un número de rastreo. También puedes ver el estado de tu pedido en cualquier momento iniciando sesión en tu cuenta y visitando la sección de historial de pedidos.",
+    "internationalShipping": "¿Ofrecen envío internacional?",
+    "internationalDescription": "¡Sí! Enviamos a más de 50 países en todo el mundo. Los tiempos de entrega y costos de envío internacional varían según la ubicación. Puedes ver el costo exacto en el pago antes de completar tu compra."
+  },
+
+  "Search": {
+    "title": "Buscar",
+    "searchResults": "Resultados de búsqueda para",
+    "noResults": "No se encontraron resultados",
+    "filters": "Filtros"
+  },
+
+  "Commerce": {
+    "productGrid": {
+      "noProducts": "No se encontraron productos",
+      "product": "producto",
+      "products": "productos"
+    },
+    "facetFilters": {
+      "filters": "Filtros",
+      "clearFilters": "Limpiar filtros"
+    },
+    "sortDropdown": {
+      "sort": "Ordenar",
+      "nameAsc": "Nombre: A a Z",
+      "nameDesc": "Nombre: Z a A",
+      "priceAsc": "Precio: Menor a Mayor",
+      "priceDesc": "Precio: Mayor a Menor"
+    },
+    "productCard": {
+      "viewDetails": "Ver detalles"
+    },
+    "productInfo": {
+      "addToCart": "Agregar al carrito",
+      "addedToCart": "Agregado al carrito",
+      "selectOptions": "Seleccionar opciones",
+      "outOfStock": "Agotado",
+      "inStock": "En stock",
+      "sku": "SKU",
+      "quantity": "Cantidad",
+      "adding": "Agregando...",
+      "toast": {
+        "addedTitle": "Agregado al carrito",
+        "addedDescription": "{product} ha sido agregado a tu carrito",
+        "errorTitle": "Error",
+        "errorDescription": "No se pudo agregar el artículo al carrito"
+      }
+    },
+    "relatedProducts": {
+      "title": "Productos relacionados"
+    },
+    "featuredProducts": {
+      "title": "Productos destacados",
+      "loading": "Cargando productos destacados..."
+    },
+    "orderStatusBadge": {
+      "pending": "Pendiente",
+      "processing": "Procesando",
+      "shipped": "Enviado",
+      "delivered": "Entregado",
+      "cancelled": "Cancelado",
+      "returned": "Devuelto"
+    }
+  },
+
+  "Layout": {
+    "navbar": {
+      "home": "Inicio",
+      "search": "Buscar",
+      "cart": "Carrito",
+      "account": "Cuenta",
+      "signIn": "Iniciar sesión",
+      "signUp": "Registrarse",
+      "signOut": "Cerrar sesión"
+    },
+    "searchInput": {
+      "placeholder": "Buscar productos..."
+    },
+    "footer": {
+      "copyright": "© {year} Ecommer Shop. Todos los derechos reservados.",
+      "sections": {
+        "categories": "Categorías",
+        "about": {
+          "label": "Quiénes somos",
+          "title": "Sobre nosotros"
+        },
+        "contact": "Contacto"
+      },
+      "links": {
+        "github": "GitHub"
+      }
+    }
+  },
+
+  "Home": {
+    "features": {
+      "quality": {
+        "title": "Calidad Premium",
+        "description": "Productos cuidadosamente seleccionados para ti"
+      },
+      "prices": {
+        "title": "Mejores Precios",
+        "description": "Precios competitivos en todos nuestros productos"
+      },
+      "delivery": {
+        "title": "Entrega Rápida",
+        "description": "Envío rápido y confiable en todo el mundo"
+      }
+    }
+  },
+  "About": {
+    "title": "Quiénes somos",
+    "description": "Información del proveedor conforme a la Ley 1480 de 2011, garantizando una experiencia de compra clara y transparente.",
+    "legal":{
+      "label": "Información legal",
+      "rs": "Razón social:",
+      "address": "Dirección:"
+    },
+    "contact":{
+      "label":"Contacto",
+      "phone":"Teléfono:"
+    },
+    "hours":{
+      "label":"Horarios de atención",
+      "days":"Lunes a Viernes"
+    }
+  }
+}
