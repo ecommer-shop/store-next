@@ -16,7 +16,7 @@ export function CartIcon({cartItemCount}: CartIconProps) {
                 <ShoppingCart className="h-5 w-5"/>
                 {cartItemCount > 0 && (
                     <span
-                        className="absolute -top-1 -right-1 text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                         {cartItemCount}
                     </span>
                 )}

@@ -255,7 +255,8 @@
     "payment": {
       "selectMethod": "Select a payment method",
       "noMethods": "No payment methods available.",
-      "continueReview": "Continue to review"
+      "continueReview": "Continue to review",
+      "payWompi": "Pay"
     },
     "review": {
       "title": "Review your order",

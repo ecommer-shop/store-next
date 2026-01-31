@@ -35,7 +35,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
     return (
         <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
+            <div className="relative aspect-square rounded-lg overflow-hidden group">
                 <Image
                     src={images[currentIndex].source}
                     alt={`Product image ${currentIndex + 1}`}
@@ -54,7 +54,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                             className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={goToPrevious}
                         >
-                            <ChevronLeft className="h-6 w-6" />
+                            <ChevronLeft className="h-6 w-6 text-foreground" fill='currentColor'/>
                         </Button>
                         <Button
                             variant="ghost"

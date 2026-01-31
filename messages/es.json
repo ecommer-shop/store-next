@@ -255,7 +255,8 @@
     "payment": {
       "selectMethod": "Selecciona el método de pago",
       "noMethods": "No hay métodos de pago disponibles.",
-      "continueReview": "Continuar a revisar"
+      "continueReview": "Continuar a revisar",
+      "payWompi": "Pagar"
     },
     "review": {
       "title": "Revisa tu pedido",

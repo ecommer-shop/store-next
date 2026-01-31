@@ -105,6 +105,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 locale={locale}
                 messages={messages}
               >
+                
                 <WompiScrollGuard />
                 <div className="flex flex-col min-h-screen">
                   <Navbar />

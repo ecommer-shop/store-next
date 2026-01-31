@@ -16,8 +16,9 @@ interface PaymentStepProps {
 
 
 export default function PaymentStep({ pb, uri }: PaymentStepProps) {
-  const { order } = useCheckout();
+  const { order, addresses } = useCheckout();
   const [loading, setLoading] = useState(false);
+  
   const openWompi = async () => {
     //document.body.classList.add('wompi-open');
     const signature = await getPaymentSignature(1)
@@ -25,7 +26,7 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
     // @ts-ignore
     const checkout = new window.WidgetCheckout({
       currency: 'COP',
-      amountInCents: order.totalWithTax * 100,
+      amountInCents: order.totalWithTax,
       reference: order.code,
       publicKey: pb,
       redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
