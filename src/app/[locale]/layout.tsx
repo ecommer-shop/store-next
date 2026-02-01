@@ -21,6 +21,7 @@ import { getMessages } from "next-intl/server";
 import { useTheme } from "next-themes";
 import { ThemeVariables } from "@/components/providers/theme-variables";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
+import { Toast } from "@heroui/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -105,7 +106,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 locale={locale}
                 messages={messages}
               >
-                
+                <Toast.Container className="bottom-8 right-8 rounded-md text-foreground" placement="bottom end"/>
                 <WompiScrollGuard />
                 <div className="flex flex-col min-h-screen">
                   <Navbar />

@@ -350,7 +350,8 @@
         "addedTitle": "Added to cart",
         "addedDescription": "{product} has been added to your cart",
         "errorTitle": "Error",
-        "errorDescription": "Could not add item to cart"
+        "errorDescription": "Could not add item to cart",
+        "goToCart": "Go to cart"
       }
     },
     "relatedProducts": {

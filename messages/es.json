@@ -350,7 +350,8 @@
         "addedTitle": "Agregado al carrito",
         "addedDescription": "{product} ha sido agregado a tu carrito",
         "errorTitle": "Error",
-        "errorDescription": "No se pudo agregar el artículo al carrito"
+        "errorDescription": "No se pudo agregar el artículo al carrito",
+        "goToCart": "Ir al carrito"
       }
     },
     "relatedProducts": {
