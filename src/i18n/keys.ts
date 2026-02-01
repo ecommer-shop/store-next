@@ -338,7 +338,8 @@ export const I18N = {
         addedTitle: 'productInfo.toast.addedTitle',
         addedDescription: 'productInfo.toast.addedDescription',
         errorTitle: 'productInfo.toast.errorTitle',
-        errorDescription: 'productInfo.toast.errorDescription'
+        errorDescription: 'productInfo.toast.errorDescription',
+        goToCart: 'productInfo.toast.goToCart'
       }
     },
     relatedProducts: {

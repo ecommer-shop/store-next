@@ -342,3 +342,21 @@ body.wompi-open {
 body.wompi-open .checkout-container {
   filter: blur(2px);
 }
+
+@layer components{
+  .toast__description{
+    @apply text-foreground;
+  }
+  .toast{
+    @apply rounded-md bg-surface-tertiary
+  }
+  .toast__close{
+    @apply bg-accent-foreground
+  }
+  .toast__action{
+    @apply rounded-md
+  }
+  .button--primary{
+    @apply bg-accent text-accent-foreground rounded-md
+  }
+}
