@@ -40,11 +40,10 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                     <Button
                         key={image.id}
                         onClick={() => setCurrentIndex(index)}
-                        className={`relative w-15 h-15 aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                            index === currentIndex
+                        className={`relative w-15 h-15 aspect-square rounded-lg overflow-hidden border-2 transition-all ${index === currentIndex
                                 ? 'border-primary'
                                 : 'border-transparent hover:border-muted-foreground'
-                        }`}
+                            }`}
                         aria-label={`View image ${index + 1}`}
                     >
                         <Image
@@ -103,28 +102,27 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                 </div>
 
                 {/* Tabs para mobile/tablet */}
-                <div className="flex lg:hidden flex-row justify-center mt-1 w-50 gap-3">
-                {images.map((image, index) => (
-                    <Button
-                        key={image.id}
-                        onClick={() => setCurrentIndex(index)}
-                        className={`relative w-15 h-15 aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                            index === currentIndex
-                                ? 'border-primary'
-                                : 'border-transparent hover:border-muted-foreground'
-                        }`}
-                        aria-label={`View image ${index + 1}`}
-                    >
-                        <Image
-                            src={image.preview}
-                            alt={`Thumbnail ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            sizes="80px"
-                        />
-                    </Button>
-                ))}
-            </div>
+                <div className="flex lg:hidden flex-row mt-4 justify-center items-center w-full gap-3">
+                    {images.map((image, index) => (
+                        <Button
+                            key={image.id}
+                            onClick={() => setCurrentIndex(index)}
+                            className={`relative w-15 h-15 aspect-square rounded-lg overflow-hidden border-2 transition-all ${index === currentIndex
+                                    ? 'border-primary'
+                                    : 'border-transparent hover:border-muted-foreground'
+                                }`}
+                            aria-label={`View image ${index + 1}`}
+                        >
+                            <Image
+                                src={image.preview}
+                                alt={`Thumbnail ${index + 1}`}
+                                fill
+                                className="object-cover"
+                                sizes="80px"
+                            />
+                        </Button>
+                    ))}
+                </div>
             </div>
         </div>
     );
