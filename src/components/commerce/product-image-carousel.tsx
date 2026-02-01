@@ -103,24 +103,28 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                 </div>
 
                 {/* Tabs para mobile/tablet */}
-                <div className="lg:hidden mt-4">
-                    <Tabs 
-                        selectedKey={currentIndex.toString()} 
-                        onSelectionChange={(key) => setCurrentIndex(parseInt(key as string))}
-                        aria-label="Product images"
-                        className="w-full bg-amber-500"
+                <div className="flex lg:hidden flex-row justify-center mt-1 w-50 gap-3">
+                {images.map((image, index) => (
+                    <Button
+                        key={image.id}
+                        onClick={() => setCurrentIndex(index)}
+                        className={`relative w-15 h-15 aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                            index === currentIndex
+                                ? 'border-primary'
+                                : 'border-transparent hover:border-muted-foreground'
+                        }`}
+                        aria-label={`View image ${index + 1}`}
                     >
-                        <Tabs.ListContainer>
-                            <Tabs.List>
-                                {images.map((_, index) => (
-                                    <Tabs.Tab key={index.toString()} id={index.toString()}>
-                                        {index + 1}
-                                    </Tabs.Tab>
-                                ))}
-                            </Tabs.List>
-                        </Tabs.ListContainer>
-                    </Tabs>
-                </div>
+                        <Image
+                            src={image.preview}
+                            alt={`Thumbnail ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                        />
+                    </Button>
+                ))}
+            </div>
             </div>
         </div>
     );
