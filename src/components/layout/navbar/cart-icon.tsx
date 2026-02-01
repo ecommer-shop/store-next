@@ -1,7 +1,7 @@
 'use client';
 
-import {ShoppingCart, LucideShoppingCart} from "lucide-react";
-import {Button} from "@heroui/react";
+import { ShoppingCart, LucideShoppingCart } from "lucide-react";
+import { Button } from "@heroui/react";
 import Link from "next/link";
 
 
@@ -9,11 +9,12 @@ interface CartIconProps {
     cartItemCount: number;
 }
 
-export function CartIcon({cartItemCount}: CartIconProps) {
+export function CartIcon({ cartItemCount }: CartIconProps) {
     return (
-        <Button variant="ghost" size="lg" className="relative">
-            <Link href="/cart">
-                <ShoppingCart className="h-5 w-5"/>
+        <Link href="/cart">
+            <Button variant="ghost" size="lg" className="relative">
+
+                <ShoppingCart className="h-5 w-5" />
                 {cartItemCount > 0 && (
                     <span
                         className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -21,7 +22,7 @@ export function CartIcon({cartItemCount}: CartIconProps) {
                     </span>
                 )}
                 <span className="sr-only">Shopping Cart</span>
-            </Link>
-        </Button>
+            </Button>
+        </Link>
     );
 }
