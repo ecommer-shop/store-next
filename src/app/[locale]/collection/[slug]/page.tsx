@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { query } from '@/lib/vendure/server/api';
 import { SearchProductsQuery, GetCollectionProductsQuery } from '@/lib/vendure/shared/queries';
 import { ProductGrid } from '@/components/commerce/product-grid';
-import { FacetFilters } from '@/components/commerce/facet-filters';
+import { FacetFilters } from '@/components/commerce/facet-filters/facet-filters';
 import { ProductGridSkeleton } from '@/components/shared/product-grid-skeleton';
 import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
 import { unstable_cache } from 'next/cache';

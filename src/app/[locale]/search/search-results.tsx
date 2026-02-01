@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { FacetFilters } from "@/components/commerce/facet-filters";
+import { FacetFilters } from "@/components/commerce/facet-filters/facet-filters";
 import { ProductGridSkeleton } from "@/components/shared/product-grid-skeleton";
 import { ProductGrid } from "@/components/commerce/product-grid";
 import { buildSearchInput, getCurrentPage } from "@/lib/vendure/shared/search-helpers";
