@@ -348,13 +348,15 @@ body.wompi-open .checkout-container {
     @apply text-foreground;
   }
   .toast{
-    @apply rounded-md;
-    @apply bg-surface-tertiary
+    @apply rounded-md bg-surface-tertiary
   }
   .toast__close{
     @apply bg-accent-foreground
   }
   .toast__action{
     @apply rounded-md
+  }
+  .button--primary{
+    @apply bg-accent text-accent-foreground rounded-md
   }
 }

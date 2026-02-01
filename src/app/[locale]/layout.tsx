@@ -22,6 +22,7 @@ import { useTheme } from "next-themes";
 import { ThemeVariables } from "@/components/providers/theme-variables";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Toast } from "@heroui/react";
+import { Providers } from "@/components/providers/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,9 +101,8 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <ThemeProvider>
-            <ThemeVariables>
-              <NextIntlClientProvider
+          <Providers>
+            <NextIntlClientProvider
                 locale={locale}
                 messages={messages}
               >
@@ -117,8 +117,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 </div>
               </NextIntlClientProvider>
               <Toaster />
-            </ThemeVariables>
-          </ThemeProvider>
+          </Providers>
         </body>
       </html>
     </ClerkProvider>

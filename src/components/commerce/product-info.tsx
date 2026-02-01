@@ -237,7 +237,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     size="lg"
                     variant='ghost'
                     className="w-full text-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
-                    isDisabled={isAdded}
+                    isDisabled={!canAddToCart || isPending}
                     onPress={handleAddToCart}
                 >
                     {isAdded ? (
