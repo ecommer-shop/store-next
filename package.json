@@ -1,13 +1,14 @@
 {
-  "name": "nextjs-starter-vendure",
+  "name": "Ecommer-Shop",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --run next dev",
+    "dev": "PORT=3001 bun --run next dev",
     "build": "bun --run next build",
     "start": "bun --run next start",
     "lint": "eslint",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "codegen": "graphql-codegen"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.13.2",
@@ -15,9 +16,9 @@
     "@clerk/nextjs": "^6.36.5",
     "@clerk/themes": "^2.4.46",
     "@heroui/drawer": "^2.2.26",
-    "@heroui/react": "^3.0.0-beta.3",
+    "@heroui/react": "^3.0.0-beta.5",
     "@heroui/skeleton": "^2.2.17",
-    "@heroui/styles": "^3.0.0-beta.3",
+    "@heroui/styles": "^3.0.0-beta.5",
     "@hookform/resolvers": "^5.2.2",
     "@iconify/react": "^6.0.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -53,6 +54,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "12.23.26",
     "gql.tada": "^1.9.0",
+    "graphql": "^16.12.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.544.0",
     "next": "^16.0.10",
@@ -71,11 +73,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
+    "@graphql-codegen/cli": "^6.1.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "baseline-browser-mapping": "^2.9.0",
+    "baseline-browser-mapping": "^2.9.19",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.0",
     "tailwindcss": "^4.1.17",

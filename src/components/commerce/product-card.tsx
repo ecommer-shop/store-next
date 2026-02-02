@@ -47,6 +47,12 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
             bg-gradient-to-t from-black/70 via-black/50 to-transparent
           "
         >
+          <Link
+        href={`/product/${product.slug}`}
+        className="absolute inset-0 z-10"
+        aria-label={`Ver ${product.productName}`}
+      />
+
           <div>
             <div className="text-sm font-bold text-white sm:text-base md:text-lg">
               {product.productName}

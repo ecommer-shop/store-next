@@ -1,6 +1,7 @@
 'use server';
 
-import {mutate} from '@/lib/vendure/server/api';
+import { mutate, query } from '@/lib/vendure/server/api';
+import { getAuthTokenFromCookies } from '@/lib/vendure/server/auth';
 import {
     SetOrderShippingAddressMutation,
     SetOrderBillingAddressMutation,
@@ -9,8 +10,10 @@ import {
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
 } from '@/lib/vendure/shared/mutations';
-import {revalidatePath, updateTag} from 'next/cache';
-import {redirect} from "next/navigation";
+import { GetWompiSignatureQuery } from '@/lib/vendure/shared/queries';
+import { revalidatePath, updateTag } from 'next/cache';
+import { cookies } from 'next/headers';
+import { redirect } from "next/navigation";
 
 interface AddressInput {
     fullName: string;
@@ -24,14 +27,18 @@ interface AddressInput {
     company?: string;
 }
 
+
+
 export async function setShippingAddress(
     shippingAddress: AddressInput,
     useSameForBilling: boolean
 ) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
     const shippingResult = await mutate(
         SetOrderShippingAddressMutation,
-        {input: shippingAddress},
-        {useAuthToken: true}
+        { input: shippingAddress },
+        { token, useAuthToken: true }
     );
 
     if (shippingResult.data.setOrderShippingAddress.__typename !== 'Order') {
@@ -41,8 +48,8 @@ export async function setShippingAddress(
     if (useSameForBilling) {
         await mutate(
             SetOrderBillingAddressMutation,
-            {input: shippingAddress},
-            {useAuthToken: true}
+            { input: shippingAddress },
+            { token, useAuthToken: true }
         );
     }
 
@@ -50,10 +57,12 @@ export async function setShippingAddress(
 }
 
 export async function setShippingMethod(shippingMethodId: string) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
         SetOrderShippingMethodMutation,
-        {shippingMethodId: [shippingMethodId]},
-        {useAuthToken: true}
+        { shippingMethodId: [shippingMethodId] },
+        { token, useAuthToken: true }
     );
 
     if (result.data.setOrderShippingMethod.__typename !== 'Order') {
@@ -64,10 +73,12 @@ export async function setShippingMethod(shippingMethodId: string) {
 }
 
 export async function createCustomerAddress(address: AddressInput) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
         CreateCustomerAddressMutation,
-        {input: address},
-        {useAuthToken: true}
+        { input: address },
+        { token, useAuthToken: true }
     );
 
     if (!result.data.createCustomerAddress) {
@@ -79,10 +90,12 @@ export async function createCustomerAddress(address: AddressInput) {
 }
 
 export async function transitionToArrangingPayment() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
         TransitionOrderToStateMutation,
-        {state: 'ArrangingPayment'},
-        {useAuthToken: true}
+        { state: 'ArrangingPayment' },
+        { token, useAuthToken: true }
     );
 
     if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
@@ -96,6 +109,8 @@ export async function transitionToArrangingPayment() {
 }
 
 export async function placeOrder(paymentMethodCode: string) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
     // First, transition the order to ArrangingPayment state
     await transitionToArrangingPayment();
 
@@ -118,7 +133,7 @@ export async function placeOrder(paymentMethodCode: string) {
                 metadata,
             },
         },
-        {useAuthToken: true}
+        { token, useAuthToken: true }
     );
 
     if (result.data.addPaymentToOrder.__typename !== 'Order') {
@@ -135,4 +150,17 @@ export async function placeOrder(paymentMethodCode: string) {
     updateTag('active-order');
 
     redirect(`/order-confirmation/${orderCode}`);
+}
+
+export async function getPaymentSignature(amountInCents: number) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const signature = await query(GetWompiSignatureQuery, {
+        amountInCents: amountInCents!
+    }, {
+        token
+    })
+
+    return signature.data.GetPaymentSignature;
 }

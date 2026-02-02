@@ -1,66 +1,73 @@
 'use client';
 
-import { Button } from '@heroui/react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
+import { Button, Card } from '@heroui/react';
 import { CreditCard } from 'lucide-react';
+import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
-import { I18N } from '@/i18n/keys';
-
+import { getPaymentSignature } from '../actions';
+import { useEffect, useState } from 'react';
+//t: (key: string) => string;
 interface PaymentStepProps {
   onComplete: () => void;
-  t: (key: string) => string;
+  
+  pb: string;
+  uri: string;
 }
 
-export default function PaymentStep({ onComplete, t }: PaymentStepProps) {
-  const { paymentMethods, selectedPaymentMethodCode, setSelectedPaymentMethodCode } = useCheckout();
 
-  const handleContinue = () => {
-    if (!selectedPaymentMethodCode) return;
-    onComplete();
+export default function PaymentStep({ pb, uri }: PaymentStepProps) {
+  const { order, addresses } = useCheckout();
+  const [loading, setLoading] = useState(false);
+  
+  const openWompi = async () => {
+    const signature = await getPaymentSignature(order.totalWithTax)
+    setLoading(true)
+    // @ts-ignore
+    const checkout = new window.WidgetCheckout({
+      currency: 'COP',
+      amountInCents: order.totalWithTax,
+      reference: order.code,
+      publicKey: pb,
+      redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
+      signature: {
+        integrity: signature,
+      },
+      customerData: {
+        email: order.customer?.emailAddress,
+        fullName: order.customer?.firstName,
+      },
+      
+    });
+    
+    checkout.open(({ transaction }: any) => {
+      console.log('Wompi status:', transaction.status);
+      //document.body.classList.remove('wompi-open');
+      // ⚠️ NO confirmes pago aquíaa
+      // solo muestra feedback visual
+    });
   };
-
-  if (paymentMethods.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">{t(I18N.Checkout.payment.noMethods)}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">{t(I18N.Checkout.payment.selectMethod)}</h3>
+      <Card className="p-6 flex items-center gap-4">
+        <CreditCard className="h-6 w-6 text-muted-foreground" />
+        <div>
+          <p className="font-medium text-foreground">Pago con Wompi</p>
+          <p className="text-sm text-muted-foreground">
+            Tarjeta, PSE, Nequi, Bancolombia
+          </p>
+        </div>
+      </Card>
 
-      <RadioGroup value={selectedPaymentMethodCode || ''} onValueChange={setSelectedPaymentMethodCode}>
-        {paymentMethods.map((method) => (
-          <Label key={method.code} htmlFor={method.code} className="cursor-pointer">
-            <Card className="p-4">
-              <div className="flex items-center gap-3">
-                <RadioGroupItem value={method.code} id={method.code} />
-                <CreditCard className="h-5 w-5 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="font-medium">{method.name}</p>
-                  {method.description+"aaa" && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {method.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </Card>
-          </Label>
-        ))}
-      </RadioGroup>
-
-      <Button
-        onClick={handleContinue}
-        isDisabled={!selectedPaymentMethodCode}
-        className="w-full"
-      >
-        {t(I18N.Checkout.payment.continueReview)}
+      <Button onClick={openWompi}
+        className="w-full sticky bottom-0">
+        Pagar con Wompi
       </Button>
+
+      <Script
+        src="https://checkout.wompi.co/widget.js"
+        strategy="afterInteractive"
+        className='sticky top-11'
+      />
     </div>
   );
 }

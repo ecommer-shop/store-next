@@ -17,6 +17,7 @@ import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
 import { getAuthToken } from '@/lib/vendure/server/auth';
+import { Spinner } from '@heroui/react';
 
 
 export const metadata: Metadata = {
@@ -29,9 +30,11 @@ interface CheckoutContentProps {
         locale: string;
     };
     searchParams: Record<string, string | string[] | undefined>;
+    pb: string;
+    uri: string;
 }
 
-export default async function CheckoutContent({ }: CheckoutContentProps) {
+export default async function CheckoutContent({ pb, uri }: CheckoutContentProps) {
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
     const token = await getAuthToken();
@@ -67,10 +70,14 @@ export default async function CheckoutContent({ }: CheckoutContentProps) {
 
     return (
         <Suspense fallback={
-            <p>{tsa(I18N.Account.common.loading)}</p>
+            <div className="flex flex-col items-center gap-2">
+                <Spinner color="current" />
+                <p>{tsa(I18N.Account.common.loading)}</p>
+            </div>
+
         }>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-8">{ts(I18N.Checkout.title)}</h1>
+                <h1 className="text-3xl font-bold mb-8 mt-10">{ts(I18N.Checkout.title)}</h1>
                 <CheckoutProvider
                     order={activeOrder}
                     addresses={addresses}
@@ -78,7 +85,7 @@ export default async function CheckoutContent({ }: CheckoutContentProps) {
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
                 >
-                    <CheckoutFlow onSetShippingMethod={setShippingMethod} />
+                    <CheckoutFlow onSetShippingMethod={setShippingMethod} pb={pb} uri={uri}/>
                 </CheckoutProvider>
             </div>
         </Suspense>
