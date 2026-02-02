@@ -10,12 +10,6 @@ const nextConfig: NextConfig = {
         
         remotePatterns: [
             {
-                hostname: 'readonlydemo.vendure.io',
-            },
-            {
-                hostname: 'demo.vendure.io'
-            },
-            {
                 hostname: 'localhost'
             },
             {

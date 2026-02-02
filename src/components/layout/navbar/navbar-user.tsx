@@ -154,7 +154,7 @@ export function NavbarUser() {
                     bg-[#6BB8FF]/60 hover:bg-[#6BB8FF]
                     dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
                   >
-                    <UserPlus className="size-5" /><SignUpButton mode="redirect">{t(I18N.UserBar.signup)}</SignUpButton>
+                    <UserPlus className="size-5" /><SignUpButton oauthFlow="redirect" mode="redirect">{t(I18N.UserBar.signup)}</SignUpButton>
                   </Button>
                 </DrawerBody>
               </>

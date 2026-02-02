@@ -436,3 +436,11 @@ export const GetCollectionProductsQuery = graphql(`
         }
     }
 `, [ProductCardFragment]);
+
+export const GetWompiSignatureQuery = graphql(`
+    query GetWompiSignature($amountInCents: Int!){
+        GetPaymentSignature(amountInCents: $amountInCents)
+    }
+    `
+)
+

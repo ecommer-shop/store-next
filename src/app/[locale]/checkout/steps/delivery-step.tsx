@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@heroui/react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
+import { Button, Card, Label, Radio, RadioGroup } from '@heroui/react';
 import { Loader2, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
 import { I18N } from '@/i18n/keys';
+import clsx from 'clsx';
 
 interface DeliveryStepProps {
   onComplete: () => void;
@@ -30,19 +28,25 @@ export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: Del
   const [submitting, setSubmitting] = useState(false);
 
   const handleContinue = async () => {
-    if (!selectedMethodId) return;
+  if (!selectedMethodId) return;
 
-    setSubmitting(true);
-    try {
-      await onSetShippingMethod(selectedMethodId);
-      router.refresh();
-      onComplete();
-    } catch (error) {
-      console.error('Error setting shipping method:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  setSubmitting(true);
+  try {
+    await fetch('/api/checkout/shipping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shippingMethodId: selectedMethodId }),
+    });
+
+    router.refresh();
+    onComplete();
+  } catch (error) {
+    console.error('Error setting shipping method:', error);
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   if (shippingMethods.length === 0) {
     return (
@@ -53,38 +57,47 @@ export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: Del
   }
 
   return (
-    <div className="space-y-6">
-      <h3 className="font-semibold">{t(I18N.Checkout.delivery.selectMethod)}</h3>
+    <div className="flex w-full flex-col space-y-6">
+      <h3 className="font-semibold text-foreground">{t(I18N.Checkout.delivery.selectMethod)}</h3>
 
-      <RadioGroup value={selectedMethodId || ''} onValueChange={setSelectedMethodId}>
+      <RadioGroup value={selectedMethodId || ''} onChange={setSelectedMethodId}>
         {shippingMethods.map((method) => (
           <Label key={method.id} htmlFor={method.id} className="cursor-pointer">
-            <Card className="p-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 flex-1">
-                  <RadioGroupItem value={method.id} id={method.id} />
-                  <Truck className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">{method.name}</p>
-                    {method.description && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {method.description}
+            <Radio value={method.id} id={method.id} className={clsx(
+              "group relative flex-col gap-3 rounded-xl border border-transparent bg-primary-foreground dark:bg-primary-foreground px-5 py-4 transition-all data-[selected=true]:border-accent data-[selected=true]:bg-accent/10",
+              "data-[focus-visible=true]:border-accent data-[focus-visible=true]:bg-accent/10",
+            )}>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
+              <Radio.Content>
+                <Card className="p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 flex-1">
+                      <Truck className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">{method.name}</p>
+                        {method.description && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {method.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="font-semibold text-foreground">
+                        {method.priceWithTax === 0
+                          ? t(I18N.Checkout.delivery.free)
+                          : (method.priceWithTax / 100).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                          })}
                       </p>
-                    )}
+                    </div>
                   </div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-semibold">
-                    {method.priceWithTax === 0
-                      ? t(I18N.Checkout.delivery.free)
-                      : (method.priceWithTax / 100).toLocaleString('en-US', {
-                          style: 'currency',
-                          currency: 'USD',
-                        })}
-                  </p>
-                </div>
-              </div>
-            </Card>
+                </Card>
+              </Radio.Content>
+            </Radio>
           </Label>
         ))}
       </RadioGroup>
