@@ -20,8 +20,7 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
   const [loading, setLoading] = useState(false);
   
   const openWompi = async () => {
-    //document.body.classList.add('wompi-open');
-    const signature = await getPaymentSignature(1)
+    const signature = await getPaymentSignature(order.totalWithTax)
     setLoading(true)
     // @ts-ignore
     const checkout = new window.WidgetCheckout({
