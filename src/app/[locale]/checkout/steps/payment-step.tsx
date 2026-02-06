@@ -6,6 +6,8 @@ import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
 import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
+import { v7 as uuid } from 'uuid'
+
 //t: (key: string) => string;
 interface PaymentStepProps {
   onComplete: () => void;
@@ -26,7 +28,7 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
     const checkout = new window.WidgetCheckout({
       currency: 'COP',
       amountInCents: order.totalWithTax,
-      reference: order.code,
+      reference: uuid(),
       publicKey: pb,
       redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
       signature: {
@@ -36,7 +38,6 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
         email: order.customer?.emailAddress,
         fullName: order.customer?.firstName,
       },
-      
     });
     
     checkout.open(({ transaction }: any) => {
