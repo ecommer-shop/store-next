@@ -6,6 +6,8 @@ import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
 import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
+import { v7 as uuid } from 'uuid'
+
 //t: (key: string) => string;
 interface PaymentStepProps {
   onComplete: () => void;
@@ -16,17 +18,17 @@ interface PaymentStepProps {
 
 
 export default function PaymentStep({ pb, uri }: PaymentStepProps) {
-  const { order } = useCheckout();
+  const { order, addresses } = useCheckout();
   const [loading, setLoading] = useState(false);
+  
   const openWompi = async () => {
-    //document.body.classList.add('wompi-open');
-    const signature = await getPaymentSignature(1)
+    const signature = await getPaymentSignature(order.totalWithTax)
     setLoading(true)
     // @ts-ignore
     const checkout = new window.WidgetCheckout({
       currency: 'COP',
       amountInCents: order.totalWithTax,
-      reference: order.code,
+      reference: uuid(),
       publicKey: pb,
       redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
       signature: {
@@ -36,10 +38,8 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
         email: order.customer?.emailAddress,
         fullName: order.customer?.firstName,
       },
-      
     });
-    console.log("SIGNAA",signature)
-    console.log(checkout)
+    
     checkout.open(({ transaction }: any) => {
       console.log('Wompi status:', transaction.status);
       //document.body.classList.remove('wompi-open');
