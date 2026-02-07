@@ -283,10 +283,113 @@
   },
 
   "Commerce": {
+    "ReviewForm": {
+      "title": "Escribe una reseña",
+      "subtitle": "Comparte tu experiencia con este producto",
+      "success": {
+        "title": "¡Gracias por tu reseña!",
+        "description": "Tu reseña será revisada y publicada pronto."
+      },
+      "error": {
+        "title": "Error al enviar reseña",
+        "networkError": "Hubo un problema de conexión. Por favor intenta de nuevo.",
+        "duplicateReview": "Ya has escrito una reseña para este producto.",
+        "notPurchased": "Debes comprar este producto antes de escribir una reseña."
+      },
+      "fields": {
+        "rating": {
+          "label": "Calificación"
+        },
+        "summary": {
+          "label": "Título de la reseña",
+          "placeholder": "Resume tu experiencia en pocas palabras"
+        },
+        "body": {
+          "label": "Reseña detallada",
+          "placeholder": "Cuéntanos tu experiencia con el producto, qué te gustó o no te gustó"
+        },
+        "authorName": {
+          "label": "Tu nombre",
+          "placeholder": "Nombre que aparecerá en tu reseña"
+        },
+        "authorLocation": {
+          "label": "Ubicación (opcional)",
+          "placeholder": "Ciudad o país donde compraste el producto"
+        }
+      },
+      "actions": {
+        "submit": "Publicar reseña",
+        "submitting": "Publicando...",
+        "cancel": "Cancelar"
+      },
+      "writeReviewPlaceholder": "Escribe una reseña...",
+      "yourRating": "Tu calificación:",
+      "auth": {
+        "loginRequired": "Debes iniciar sesión",
+        "loginDescription": "Inicia sesión para dejar una reseña"
+      }
+    },
+    "ReviewsList": {
+      "title": "Reseñas de clientes",
+      "empty": {
+        "title": "Sé el primero en calificar este producto",
+        "description": "Tu opinión ayuda a otros compradores a tomar decisiones informadas."
+      },
+      "count": "Basado en {count} reseña",
+      "count_plural": "Basado en {count} reseñas",
+      "rating": "{rating} de 5 estrellas",
+      "helpful": "{count} persona encontró esto útil",
+      "helpful_plural": "{count} personas encontraron esto útil",
+      "totalHelpful": "de {total} persona",
+      "totalHelpful_plural": "de {total} personas",
+      "actions": {
+        "helpful": "¿Te fue útil?",
+        "notHelpful": "No me fue útil"
+      },
+      "error": {
+        "title": "Error al cargar reseñas",
+        "fetchError": "No se pudieron cargar las reseñas. Por favor intenta de nuevo."
+      },
+      "vote": {
+        "success": {
+          "title": "Gracias por tu voto",
+          "helpful": "Esta reseña te pareció útil.",
+          "notHelpful": "Esta reseña no te pareció útil."
+        },
+        "error": {
+          "title": "Error al votar",
+          "networkError": "No se pudo registrar tu voto. Por favor intenta de nuevo."
+        }
+      },
+      "pagination": {
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "pageInfo": "Página {current} de {total}"
+      }
+    },
+    "ReviewsSection": {
+      "title": "Reseñas de clientes",
+      "totalReviews": "{count} reseña",
+      "totalReviews_plural": "{count} reseñas",
+      "ratingDistribution": "Distribución de calificaciones",
+      "error": {
+        "title": "Error al cargar estadísticas",
+        "fetchError": "No se pudieron cargar las estadísticas de reseñas."
+      },
+      "success": {
+        "title": "Reseña enviada exitosamente",
+        "description": "Gracias por compartir tu experiencia. Tu reseña será revisada."
+      },
+      "form": {
+        "writeReview": "Escribir reseña",
+        "alreadySubmitted": "Reseña enviada",
+        "title": "Escribe una reseña"
+      }
+    },
     "productGrid": {
-      "noProducts": "No se encontraron productos",
-      "product": "producto",
-      "products": "productos"
+      "noProducts": "No products found",
+      "product": "product",
+      "products": "products"
     },
     "facetFilters": {
       "filters": "Filtros",

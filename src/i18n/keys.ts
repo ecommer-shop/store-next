@@ -272,6 +272,109 @@ export const I18N = {
   },
 
   Commerce: {
+    ReviewForm: {
+      title: 'Commerce.ReviewForm.title',
+      subtitle: 'Commerce.ReviewForm.subtitle',
+      success: {
+        title: 'Commerce.ReviewForm.success.title',
+        description: 'Commerce.ReviewForm.success.description',
+      },
+      error: {
+        title: 'Commerce.ReviewForm.error.title',
+        networkError: 'Commerce.ReviewForm.error.networkError',
+        duplicateReview: 'Commerce.ReviewForm.error.duplicateReview',
+        notPurchased: 'Commerce.ReviewForm.error.notPurchased',
+      },
+      fields: {
+        rating: {
+          label: 'Commerce.ReviewForm.fields.rating.label',
+        },
+        summary: {
+          label: 'Commerce.ReviewForm.fields.summary.label',
+          placeholder: 'Commerce.ReviewForm.fields.summary.placeholder',
+        },
+        body: {
+          label: 'Commerce.ReviewForm.fields.body.label',
+          placeholder: 'Commerce.ReviewForm.fields.body.placeholder',
+        },
+        authorName: {
+          label: 'Commerce.ReviewForm.fields.authorName.label',
+          placeholder: 'Commerce.ReviewForm.fields.authorName.placeholder',
+        },
+        authorLocation: {
+          label: 'Commerce.ReviewForm.fields.authorLocation.label',
+          placeholder: 'Commerce.ReviewForm.fields.authorLocation.placeholder',
+        },
+      },
+      actions: {
+        submit: 'Commerce.ReviewForm.actions.submit',
+        submitting: 'Commerce.ReviewForm.actions.submitting',
+        cancel: 'Commerce.ReviewForm.actions.cancel',
+      },
+      writeReviewPlaceholder: 'Commerce.ReviewForm.writeReviewPlaceholder',
+      yourRating: 'Commerce.ReviewForm.yourRating',
+      auth: {
+        loginRequired: 'Commerce.ReviewForm.auth.loginRequired',
+        loginDescription: 'Commerce.ReviewForm.auth.loginDescription',
+      },
+    },
+    ReviewsList: {
+      title: 'Commerce.ReviewsList.title',
+      empty: {
+        title: 'Commerce.ReviewsList.empty.title',
+        description: 'Commerce.ReviewsList.empty.description',
+      },
+      count: 'Commerce.ReviewsList.count',
+      count_plural: 'Commerce.ReviewsList.count_plural',
+      rating: 'Commerce.ReviewsList.rating',
+      helpful: 'Commerce.ReviewsList.helpful',
+      helpful_plural: 'Commerce.ReviewsList.helpful_plural',
+      totalHelpful: 'Commerce.ReviewsList.totalHelpful',
+      totalHelpful_plural: 'Commerce.ReviewsList.totalHelpful_plural',
+      actions: {
+        helpful: 'Commerce.ReviewsList.actions.helpful',
+        notHelpful: 'Commerce.ReviewsList.actions.notHelpful',
+      },
+      error: {
+        title: 'Commerce.ReviewsList.error.title',
+        fetchError: 'Commerce.ReviewsList.error.fetchError',
+      },
+      vote: {
+        success: {
+          title: 'Commerce.ReviewsList.vote.success.title',
+          helpful: 'Commerce.ReviewsList.vote.success.helpful',
+          notHelpful: 'Commerce.ReviewsList.vote.success.notHelpful',
+        },
+        error: {
+          title: 'Commerce.ReviewsList.vote.error.title',
+          networkError: 'Commerce.ReviewsList.vote.error.networkError',
+        },
+      },
+      pagination: {
+        previous: 'Commerce.ReviewsList.pagination.previous',
+        next: 'Commerce.ReviewsList.pagination.next',
+        pageInfo: 'Commerce.ReviewsList.pagination.pageInfo',
+      },
+    },
+    ReviewsSection: {
+      title: 'Commerce.ReviewsSection.title',
+      totalReviews: 'Commerce.ReviewsSection.totalReviews',
+      totalReviews_plural: 'Commerce.ReviewsSection.totalReviews_plural',
+      ratingDistribution: 'Commerce.ReviewsSection.ratingDistribution',
+      error: {
+        title: 'Commerce.ReviewsSection.error.title',
+        fetchError: 'Commerce.ReviewsSection.error.fetchError',
+      },
+      success: {
+        title: 'Commerce.ReviewsSection.success.title',
+        description: 'Commerce.ReviewsSection.success.description',
+      },
+      form: {
+        writeReview: 'Commerce.ReviewsSection.form.writeReview',
+        alreadySubmitted: 'Commerce.ReviewsSection.form.alreadySubmitted',
+        title: 'Commerce.ReviewsSection.form.title',
+      },
+    },
     productGrid: {
       noProducts: 'productGrid.noProducts',
       product: 'productGrid.product',
