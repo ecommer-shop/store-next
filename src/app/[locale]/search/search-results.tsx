@@ -1,10 +1,11 @@
-import {Suspense} from "react";
-import {FacetFilters} from "@/components/commerce/facet-filters";
-import {ProductGridSkeleton} from "@/components/shared/product-grid-skeleton";
-import {ProductGrid} from "@/components/commerce/product-grid";
-import {buildSearchInput, getCurrentPage} from "@/lib/vendure/shared/search-helpers";
-import {query} from "@/lib/vendure/server/api";
-import {SearchProductsQuery} from "@/lib/vendure/shared/queries";
+import { Suspense } from "react";
+import { FacetFilters } from "@/components/commerce/facet-filters/facet-filters";
+import { ProductGridSkeleton } from "@/components/shared/product-grid-skeleton";
+import { ProductGrid } from "@/components/commerce/product-grid";
+import { buildSearchInput, getCurrentPage } from "@/lib/vendure/shared/search-helpers";
+import { query } from "@/lib/vendure/server/api";
+import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
+import { Spinner } from "@heroui/react";
 
 interface SearchResultsProps {
     searchParams: Promise<{
@@ -12,12 +13,12 @@ interface SearchResultsProps {
     }>
 }
 
-export async function SearchResults({searchParams}: SearchResultsProps) {
+export async function SearchResults({ searchParams }: SearchResultsProps) {
     const searchParamsResolved = await searchParams;
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = query(SearchProductsQuery, {
-        input: buildSearchInput({searchParams: searchParamsResolved})
+        input: buildSearchInput({ searchParams: searchParamsResolved })
     });
 
 
@@ -25,15 +26,19 @@ export async function SearchResults({searchParams}: SearchResultsProps) {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filters Sidebar */}
             <aside className="lg:col-span-1">
-                <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg"/>}>
-                    <FacetFilters productDataPromise={productDataPromise}/>
+                <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                    <FacetFilters productDataPromise={productDataPromise} />
                 </Suspense>
             </aside>
 
             {/* Product Grid */}
             <div className="lg:col-span-3">
-                <Suspense fallback={<ProductGridSkeleton/>}>
-                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12}/>
+                <Suspense fallback={
+                    <div className="flex flex-col mt-17 items-center gap-2">
+                        <Spinner color="current" />
+                    </div>
+                }>
+                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
                 </Suspense>
             </div>
         </div>

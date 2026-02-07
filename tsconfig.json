@@ -23,7 +23,7 @@
       },
       {
         "name": "gql.tada/ts-plugin",
-        "schema": "https://readonlydemo.vendure.io/shop-api",
+        "schema": "https://admin.ecommer.shop/shop-api",
         "tadaOutputLocation": "./src/graphql-env.d.ts"
       }
     ],

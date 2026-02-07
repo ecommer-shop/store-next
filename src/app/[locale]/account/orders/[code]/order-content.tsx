@@ -16,39 +16,37 @@ import Link from 'next/link';
 
 import {I18N} from '../../../../../i18n/keys';
 import {getTranslations} from 'next-intl/server';
+import { getAuthToken } from '@/lib/vendure/server/auth';
 
 export interface PageProps {
-  params: {
+  params: Promise<{
     code: string;
     locale: string;
-  };
+  }>;
   searchParams: Record<string, string | string[] | undefined>;
 }
 
 export async function generateMetadata({params}: PageProps): Promise<Metadata> {
   return {
-    title: `Order ${params.code}`,
+    title: `Order ${(await params).code}`,
   };
 }
 
 export default async function OrderDetailContent({params}: PageProps) {
-  const t = await getTranslations();
-  const {code} = params;
+  const token = await getAuthToken()
+  const t = await getTranslations('Account.orders');
+  const {code} = await params;
 
   const activeCustomer = await getActiveCustomer();
 
   const {data} = await query(
     GetOrderDetailQuery,
     {code},
-    {useAuthToken: true, fetch: {}}
+    {useAuthToken: true, token: token, fetch: {}}
   );
 
   if (!data.orderByCode) {
     return redirect('/account/orders');
-  }
-
-  if (data.orderByCode.customer?.id !== activeCustomer?.id) {
-    return notFound();
   }
 
   const order = data.orderByCode;
@@ -57,8 +55,10 @@ export default async function OrderDetailContent({params}: PageProps) {
     <div>
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" size="sm" asChild className="mb-4">
-          <Link href="/account/orders">
+        <Button variant="ghost" size="sm" className="mb-4">
+          <Link 
+          className='flex'
+          href="/account/orders">
             <ChevronLeft className="h-4 w-4 mr-2" />
             {t(I18N.Account.orders.detail.back)}
           </Link>
@@ -67,10 +67,12 @@ export default async function OrderDetailContent({params}: PageProps) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {t(I18N.Account.orders.detail.title)} {order.code}
+              {t(I18N.Account.orders.detail.title, {code: order.code})}
             </h1>
             <p className="text-muted-foreground mt-1">
-              {t(I18N.Account.orders.detail.placedOn)} {formatDate(order.createdAt, 'long')}
+              {t(I18N.Account.orders.detail.placedOn, {
+                date:formatDate(order.createdAt, 'long')
+              })}
             </p>
           </div>
           <OrderStatusBadge state={order.state} />
@@ -83,7 +85,7 @@ export default async function OrderDetailContent({params}: PageProps) {
           {/* Order Items */}
           <Card>
             <CardHeader>
-              <CardTitle>{t(I18N.Account.orders.detail.title)}</CardTitle>
+              <CardTitle>{t(I18N.Account.orders.detail.sections.items)}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -123,7 +125,7 @@ export default async function OrderDetailContent({params}: PageProps) {
                         />
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {t(I18N.Account.common.quantity)}: {line.quantity} ×{' '}
+                        {t(I18N.Account.orders.detail.labels.qty)}: {line.quantity} ×{' '}
                         <Price
                           value={line.unitPriceWithTax}
                           currencyCode={order.currencyCode}
@@ -145,7 +147,7 @@ export default async function OrderDetailContent({params}: PageProps) {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">
-                    {t(I18N.Account.common.subtotal)}
+                    {t(I18N.Account.orders.detail.labels.subtotal)}
                   </span>
                   <Price
                     value={order.subTotalWithTax}
@@ -155,7 +157,7 @@ export default async function OrderDetailContent({params}: PageProps) {
 
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">
-                    {t(I18N.Account.common.shipping)}
+                    {t(I18N.Account.orders.detail.labels.shipping)}
                   </span>
                   <Price
                     value={order.shippingWithTax}
@@ -166,7 +168,7 @@ export default async function OrderDetailContent({params}: PageProps) {
                 <Separator className="my-2" />
 
                 <div className="flex justify-between font-bold text-lg">
-                  <span>{t(I18N.Account.common.total)}</span>
+                  <span>{t(I18N.Account.orders.detail.labels.total)}</span>
                   <Price
                     value={order.totalWithTax}
                     currencyCode={order.currencyCode}
@@ -182,7 +184,7 @@ export default async function OrderDetailContent({params}: PageProps) {
           {order.shippingAddress && (
             <Card>
               <CardHeader>
-                <CardTitle>{t(I18N.Account.orders.detail.placedOn)}</CardTitle>
+                <CardTitle>{t(I18N.Account.orders.detail.sections.shippingAddress)}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm">
                 <p className="font-medium">{order.shippingAddress.fullName}</p>

@@ -1,5 +1,5 @@
 import 'server-only';
-import {getTopCollections} from '@/lib/vendure/cached';
+import { getTopCollections } from '@/lib/vendure/cached';
 import { unstable_cache } from 'next/cache';
 import Image from "next/image";
 import Link from "next/link";
@@ -27,19 +27,19 @@ type TopCollection = {
 };
 
 const getCachedTopCollections = unstable_cache(
-  async () => {
-    return getTopCollections();
-  },
-  ['top-collections'],
-  {
-    revalidate: 72 * 3600,
-  }
+    async () => {
+        return getTopCollections();
+    },
+    ['top-collections'],
+    {
+        revalidate: 72 * 3600,
+    }
 );
-    
+
 export async function Footer() {
     /*'use cache'
     cacheLife('days');*/
-    const collections = await getCachedTopCollections(); 
+    const collections = await getCachedTopCollections();
 
     return (
         <footer className="border-t border-border mt-auto">
@@ -85,26 +85,27 @@ export async function Footer() {
                 {/* Bottom Section */}
                 <div
                     className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <CopyrightContent/>
+                    <CopyrightContent />
                     <div className="flex items-center gap-2">
-                        <span>Powered by</span>
-                        <a
-                            href="https://vendure.io"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-foreground transition-colors"
-                        >
-                            <Image src="/vendure.svg" alt="Vendure" width={40} height={27} className="h-4 w-auto dark:invert" />
-                        </a>
-                        <span>&</span>
-                        <a
-                            href="https://nextjs.org"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-foreground transition-colors"
-                        >
-                            <Image src="/next.svg" alt="Next.js" width={16} height={16} className="h-5 w-auto dark:invert" />
-                        </a>
+
+                        <Image
+                            src="/logo-dark.webp"
+                            alt="Ecommer"
+                            width={60}
+                            height={60}
+                            className="inset-0 h-6 w-auto block dark:hidden"
+                            priority
+                        />
+
+                        {/* Dark */}
+                        <Image
+                            src="/logo-light.webp"
+                            alt="Ecommer"
+                            width={60}
+                            height={60}
+                            className="inset-0 h-6 w-auto hidden dark:block"
+                            priority
+                        />
                     </div>
                 </div>
             </div>

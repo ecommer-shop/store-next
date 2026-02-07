@@ -1,10 +1,9 @@
 'use client';
 import {useState, useMemo, useTransition} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {RadioGroup, Label, Button, Radio} from '@heroui/react';
+import {RadioGroup, Label, Button, Radio, toast, Link} from '@heroui/react';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
 import {addToCart} from '@/app/[locale]/product/[slug]/actions';
-import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
 import clsx from "clsx";
 import { useTranslations } from 'next-intl';
@@ -112,7 +111,10 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
     };
 
     const handleAddToCart = async () => {
-        if (!selectedVariant) return;
+        if (!selectedVariant) {
+            setIsAdded(true)
+            return;
+        }
 
         startTransition(async () => {
             const result = await addToCart(selectedVariant.id, 1);
@@ -120,13 +122,22 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             if (result.success) {
                 setIsAdded(true);
                 toast.success(t(I18N.Commerce.productInfo.toast.addedTitle), {
+                    actionProps:{
+                        children: "Ir al carrito",
+                        className: "text-foreground bg-success",
+                        onPress: () => {
+                            router.push('/cart')
+                            toast.clear()
+                        },
+                        
+                    },
                     description: t(I18N.Commerce.productInfo.toast.addedDescription, { product: product.name }),
                 });
 
                 // Reset the added state after 2 seconds
                 setTimeout(() => setIsAdded(false), 2000);
             } else {
-                toast.error(t(I18N.Commerce.productInfo.toast.errorTitle), {
+                toast.danger(t(I18N.Commerce.productInfo.toast.errorTitle), {
                     description: result.error || t(I18N.Commerce.productInfo.toast.errorDescription),
                 });
             }
@@ -169,7 +180,6 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     {product.optionGroups.map((group) => (
                         <section key={group.id} className="flex w-full max-w-lg flex-col gap-4">
                             <RadioGroup
-                                isOnSurface
                                 value={selectedOptions[group.id] || ''}
                                 onChange={(value) => handleOptionChange(group.id, value)}
                             >   
@@ -226,9 +236,9 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 <Button
                     size="lg"
                     variant='ghost'
-                    className="w-full hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                    className="w-full text-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
                     isDisabled={!canAddToCart || isPending}
-                    onClick={handleAddToCart}
+                    onPress={handleAddToCart}
                 >
                     {isAdded ? (
                         <>

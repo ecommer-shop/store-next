@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@heroui/react';
+import { useTranslations } from 'next-intl';
+import { Button, Checkbox, Form, Radio, RadioGroup, TextField } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field';
 import { useForm, Controller } from 'react-hook-form';
@@ -15,24 +14,19 @@ import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
 import { setShippingAddress, createCustomerAddress } from '../actions';
 import { CountrySelect } from '@/components/shared/country-select';
+import { I18N } from '@/i18n/keys';
+import { CustomerAddress } from '../../account/addresses/addresses-client';
+import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
+import clsx from 'clsx';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
+  t: (key: string) => string;
 }
 
-interface AddressFormData {
-  fullName: string;
-  streetLine1: string;
-  streetLine2?: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  countryCode: string;
-  phoneNumber: string;
-  company?: string;
-}
 
-export default function ShippingAddressStep({ onComplete }: ShippingAddressStepProps) {
+export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
+  const td = useTranslations('Account.addresses');
   const router = useRouter();
   const { addresses, countries, order } = useCheckout();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
@@ -49,14 +43,25 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
     const defaultAddress = addresses.find((a) => a.defaultShippingAddress);
     return defaultAddress?.id || null;
   });
+
   const [dialogOpen, setDialogOpen] = useState(addresses.length === 0);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [useSameForBilling, setUseSameForBilling] = useState(true);
-
+  const [address, seetAddress] = useState<CustomerAddress | null>(null);
   const { register, handleSubmit, formState: { errors }, reset, control } = useForm<AddressFormData>({
-    defaultValues: {
-      countryCode: countries[0]?.code || 'US',
+    defaultValues: address ? {
+      fullName: address.fullName || '',
+      company: address.company || '',
+      streetLine1: address.streetLine1,
+      streetLine2: address.streetLine2 || '',
+      city: address.city || '',
+      province: address.province || '',
+      postalCode: address.postalCode || '',
+      countryCode: address.country.code,
+      phoneNumber: address.phoneNumber || '',
+    } : {
+      countryCode: countries[0]?.code || 'CO',
     }
   });
 
@@ -92,8 +97,13 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
   const onSaveNewAddress = async (data: AddressFormData) => {
     setSaving(true);
     try {
+      const country = countries.find(c => c.id === data.countryCode);
+      if (!country) throw new Error('Invalid country');
       // First create the address in Vendure
-      const newAddress = await createCustomerAddress(data);
+      const newAddress = await createCustomerAddress({
+        ...data,
+        countryCode: country.code
+      });
 
       // Close dialog and reset form
       setDialogOpen(false);
@@ -113,284 +123,109 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
   };
 
   return (
-    <div className="space-y-6">
-      {addresses.length > 0 && (
+    <div
+      className="flex w-full flex-col items-center space-y-6"
+    >
+      {addresses.length >= 0 && (
         <div className="space-y-4">
-          <h3 className="font-semibold">Select a saved address</h3>
-          <RadioGroup value={selectedAddressId || ''} onValueChange={setSelectedAddressId}>
+          <h3 className="font-semibold text-foreground">{t(I18N.Checkout.shippingAddress.selectSaved)}</h3>
+          <RadioGroup defaultValue={selectedAddressId || ''} onChange={setSelectedAddressId} value={selectedAddressId || ''}>
             {addresses.map((address) => (
-              <div key={address.id} className="flex items-start space-x-3">
-                <RadioGroupItem value={address.id} id={address.id} className="mt-1" />
-                <Label htmlFor={address.id} className="flex-1 cursor-pointer">
-                  <Card className="p-4">
-                    <div className="leading-tight space-y-0">
-                      <p className="font-medium">{address.fullName}</p>
-                      {address.company && <p className="text-sm text-muted-foreground">{address.company}</p>}
-                      <p className="text-sm text-muted-foreground">
-                        {address.streetLine1}
-                        {address.streetLine2 && `, ${address.streetLine2}`}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {address.city}, {address.province} {address.postalCode}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{address.country.name}</p>
-                      <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
-                    </div>
-                  </Card>
+
+              <Radio key={address.id} value={address.id} id={address.id} className={clsx(
+                "group relative flex-col gap-3 rounded-xl border border-transparent bg-primary-foreground dark:bg-primary-foreground px-5 py-4 transition-all data-[selected=true]:border-accent data-[selected=true]:bg-accent/10",
+                "data-[focus-visible=true]:border-accent data-[focus-visible=true]:bg-accent/10"
+              )}>
+                <Label htmlFor={address.id} className="flex-1 cursor-pointer w-full">
+                  <Radio.Control className="absolute top-3 right-4 size-5">
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content className="mt-1">
+                    <Card className="p-4" variant='tertiary'>
+                      <div className="leading-tight space-y-0">
+                        <p className="font-medium">{address.fullName}</p>
+                        {address.company && <p className="text-sm text-muted-foreground">{address.company}</p>}
+                        <p className="text-sm text-muted-foreground">
+                          {address.streetLine1}
+                          {address.streetLine2 && `, ${address.streetLine2}`}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {address.city}, {address.province} {address.postalCode}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{address.country.name}</p>
+                        <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
+                      </div>
+                    </Card>
+                  </Radio.Content>
                 </Label>
-              </div>
+              </Radio>
             ))}
           </RadioGroup>
-          {}
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="same-billing"
-              /*checked={useSameForBilling}*/ 
-              onChange={(checked) => setUseSameForBilling(checked === true)}
-            />
-            <label
-              htmlFor="same-billing"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Use same address for billing
-            </label>
-          </div>
+          { }
+          <Checkbox className="flex items-center space-x-2" id="same-billing"
+            isSelected={useSameForBilling}
+            onChange={(checked) => setUseSameForBilling(checked === true)}>
+            <Checkbox.Control>
+              <Checkbox.Indicator />
+            </Checkbox.Control>
+            <Checkbox.Content
 
-          <div className="flex gap-3">
+            >
+              <label
+                htmlFor="same-billing"
+                className="text-sm font-medium text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {t(I18N.Checkout.shippingAddress.sameBilling)}
+              </label>
+            </Checkbox.Content>
+          </Checkbox>
+
+          <div className="grid lg:grid-cols-3 gap-3 max-w-full">
             <Button
               onClick={handleSelectExistingAddress}
               isDisabled={!selectedAddressId || loading}
-              className="flex-1"
+              className="flex-1 rounded-md"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Continue with selected address
+              {t(I18N.Checkout.shippingAddress.continueWithSelected)}
             </Button>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button type="button" variant="ghost">
-                  Add new address
+                <Button type="button" variant='tertiary' className="rounded-md text-foreground">
+                  {t(I18N.Checkout.shippingAddress.addNew)}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <form onSubmit={handleSubmit(onSaveNewAddress)}>
-                  <DialogHeader>
-                    <DialogTitle>Add new address</DialogTitle>
-                    <DialogDescription>
-                      Fill in the form below to add a new shipping address
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <FieldGroup className="my-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
-                        <Input
-                          id="fullName"
-                          {...register('fullName')}
-                        />
-                        <FieldError>{errors.fullName?.message}</FieldError>
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="company">Company</FieldLabel>
-                        <Input id="company" {...register('company')} />
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="streetLine1">Street Address *</FieldLabel>
-                        <Input
-                          id="streetLine1"
-                          {...register('streetLine1', { required: 'Street address is required' })}
-                        />
-                        <FieldError>{errors.streetLine1?.message}</FieldError>
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="streetLine2">Apartment, suite, etc.</FieldLabel>
-                        <Input id="streetLine2" {...register('streetLine2')} />
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="city">City</FieldLabel>
-                        <Input
-                          id="city"
-                          {...register('city')}
-                        />
-                        <FieldError>{errors.city?.message}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="province">State/Province</FieldLabel>
-                        <Input
-                          id="province"
-                          {...register('province')}
-                        />
-                        <FieldError>{errors.province?.message}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="postalCode">Postal Code</FieldLabel>
-                        <Input
-                          id="postalCode"
-                          {...register('postalCode')}
-                        />
-                        <FieldError>{errors.postalCode?.message}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="countryCode">Country *</FieldLabel>
-                        <Controller
-                          name="countryCode"
-                          control={control}
-                          rules={{ required: 'Country is required' }}
-                          render={({ field }) => (
-                            <CountrySelect
-                              countries={countries}
-                              value={field.value}
-                              onValueChange={field.onChange}
-                              disabled={saving}
-                            />
-                          )}
-                        />
-                        <FieldError>{errors.countryCode?.message}</FieldError>
-                      </Field>
-
-                      <Field className="col-span-2">
-                        <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
-                        <Input
-                          id="phoneNumber"
-                          type="tel"
-                          {...register('phoneNumber')}
-                        />
-                        <FieldError>{errors.phoneNumber?.message}</FieldError>
-                      </Field>
-                    </div>
-                  </FieldGroup>
-
-                  <DialogFooter>
-                    <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} isDisabled={saving}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" isDisabled={saving}>
-                      {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Save address
-                    </Button>
-                  </DialogFooter>
-                </form>
+                <DialogHeader>
+                  <DialogTitle>{td(I18N.Account.addresses.form.actions.addNewAddress)}</DialogTitle>
+                  <DialogDescription>
+                    {td(I18N.Account.addresses.form.actions.fillForm)}
+                  </DialogDescription>
+                </DialogHeader>
+                <AddressForm
+                  countries={countries}
+                  isSubmitting={saving}
+                  onSubmit={onSaveNewAddress}
+                  onCancel={() => setDialogOpen(false)}
+                  labels={{
+                    fullName: td(I18N.Account.addresses.form.fields.fullName.label),
+                    company: td(I18N.Account.addresses.form.fields.company.label),
+                    streetLine1: td(I18N.Account.addresses.form.fields.streetLine1.label),
+                    streetLine2: td(I18N.Account.addresses.form.fields.streetLine2.label),
+                    city: td(I18N.Account.addresses.form.fields.city.label),
+                    province: td(I18N.Account.addresses.form.fields.province.label),
+                    postalCode: td(I18N.Account.addresses.form.fields.postalCode.label),
+                    country: td(I18N.Account.addresses.form.fields.countryCode.label),
+                    phoneNumber: td(I18N.Account.addresses.form.fields.phoneNumber.label),
+                    cancel: td(I18N.Account.addresses.form.actions.cancel),
+                    submit: td(I18N.Account.addresses.form.actions.save),
+                  }}
+                />
               </DialogContent>
             </Dialog>
           </div>
         </div>
-      )}
-
-      {addresses.length === 0 && (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <form onSubmit={handleSubmit(onSaveNewAddress)}>
-              <DialogHeader>
-                <DialogTitle>Add shipping address</DialogTitle>
-                <DialogDescription>
-                  Fill in the form below to add your shipping address
-                </DialogDescription>
-              </DialogHeader>
-
-              <FieldGroup className="my-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
-                    <Input
-                      id="fullName"
-                      {...register('fullName')}
-                    />
-                    <FieldError>{errors.fullName?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="company">Company</FieldLabel>
-                    <Input id="company" {...register('company')} />
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine1">Street Address *</FieldLabel>
-                    <Input
-                      id="streetLine1"
-                      {...register('streetLine1', { required: 'Street address is required' })}
-                    />
-                    <FieldError>{errors.streetLine1?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="streetLine2">Apartment, suite, etc.</FieldLabel>
-                    <Input id="streetLine2" {...register('streetLine2')} />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="city">City</FieldLabel>
-                    <Input
-                      id="city"
-                      {...register('city')}
-                    />
-                    <FieldError>{errors.city?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="province">State/Province</FieldLabel>
-                    <Input
-                      id="province"
-                      {...register('province')}
-                    />
-                    <FieldError>{errors.province?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="postalCode">Postal Code</FieldLabel>
-                    <Input
-                      id="postalCode"
-                      {...register('postalCode')}
-                    />
-                    <FieldError>{errors.postalCode?.message}</FieldError>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="countryCode">Country *</FieldLabel>
-                    <Controller
-                      name="countryCode"
-                      control={control}
-                      rules={{ required: 'Country is required' }}
-                      render={({ field }) => (
-                        <CountrySelect
-                          countries={countries}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          disabled={saving}
-                        />
-                      )}
-                    />
-                    <FieldError>{errors.countryCode?.message}</FieldError>
-                  </Field>
-
-                  <Field className="col-span-2">
-                    <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
-                    <Input
-                      id="phoneNumber"
-                      type="tel"
-                      {...register('phoneNumber')}
-                    />
-                    <FieldError>{errors.phoneNumber?.message}</FieldError>
-                  </Field>
-                </div>
-              </FieldGroup>
-
-              <DialogFooter>
-                <Button type="submit" isDisabled={saving} className="w-full">
-                  {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Save address
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
       )}
     </div>
   );

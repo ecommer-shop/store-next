@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { I18N } from '@/i18n/keys';
+import { useTranslations } from 'next-intl';
 
 export default function AddressesLoading() {
     return (

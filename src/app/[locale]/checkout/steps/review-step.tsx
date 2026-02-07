@@ -9,21 +9,20 @@ import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
 
 interface ReviewStepProps {
-  onEditStep: (step: 'shipping' | 'delivery' | 'payment') => void;
+  onComplete: () => void;
+  onEditStep: (step: 'shipping' | 'delivery') => void;
+  t: (key: string) => string;
 }
 
-export default function ReviewStep({ onEditStep }: ReviewStepProps) {
+export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProps) {
   const { order, paymentMethods, selectedPaymentMethodCode } = useCheckout();
   const [loading, setLoading] = useState(false);
-
-  const selectedPaymentMethod = paymentMethods.find(
-    (method) => method.code === selectedPaymentMethodCode
-  );
 
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethodCode) return;
 
     setLoading(true);
+    onComplete()
     try {
       await placeOrderAction(selectedPaymentMethodCode);
     } catch (error) {
@@ -40,19 +39,19 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
   return (
     <>
       <div className="space-y-6">
-      <h3 className="font-semibold text-lg">{I18N.Checkout.review.title}</h3>
+      <h3 className="font-semibold text-lg text-foreground">{t(I18N.Checkout.review.title)}</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Shipping Address */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{I18N.Checkout.review.shippingAddress}</h4>
+            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.shippingAddress)}</h4>
           </div>
           {order.shippingAddress ? (
             <div className="text-sm space-y-3">
               <div>
-                <p className="font-medium">{order.shippingAddress.fullName}</p>
+                <p className="font- text-foreground">{order.shippingAddress.fullName}</p>
                 <p className="text-muted-foreground">
                   {order.shippingAddress.streetLine1}
                   {order.shippingAddress.streetLine2 && `, ${order.shippingAddress.streetLine2}`}
@@ -67,13 +66,14 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('shipping')}
+                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
               >
                 <Edit className="h-4 w-4 mr-1" />
-                {I18N.Checkout.review.edit}
+                {t(I18N.Checkout.review.edit)}
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">{I18N.Checkout.review.noAddressSet}</p>
+            <p className="text-sm text-muted-foreground">{t(I18N.Checkout.review.noAddressSet)}</p>
           )}
         </div>
 
@@ -81,15 +81,15 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{I18N.Checkout.review.deliveryMethod}</h4>
+            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.deliveryMethod)}</h4>
           </div>
           {order.shippingLines && order.shippingLines.length > 0 ? (
             <div className="text-sm space-y-3">
               <div>
-                <p className="font-medium">{order.shippingLines[0].shippingMethod.name}</p>
+                <p className="font-medium text-foreground">{order.shippingLines[0].shippingMethod.name}</p>
                 <p className="text-muted-foreground">
                   {order.shippingLines[0].priceWithTax === 0
-                    ? I18N.Checkout.delivery.free
+                    ? t(I18N.Checkout.delivery.free)
                     : <Price value={order.shippingLines[0].priceWithTax} currencyCode={order.currencyCode} />}
                 </p>
               </div>
@@ -97,60 +97,30 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onEditStep('delivery')}
+                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
               >
                 <Edit className="h-4 w-4 mr-1" />
-                {I18N.Checkout.review.edit}
+                {t(I18N.Checkout.review.edit)}
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">{I18N.Checkout.review.noMethodSet}</p>
-          )}
-        </div>
-
-        {/* Payment Method */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{I18N.Checkout.review.paymentMethod}</h4>
-          </div>
-          {selectedPaymentMethod ? (
-            <div className="text-sm space-y-3">
-              <div>
-                <p className="font-medium">{selectedPaymentMethod.name}</p>
-                {selectedPaymentMethod.description && (
-                  <p className="text-muted-foreground mt-1">
-                    {selectedPaymentMethod.description}
-                  </p>
-                )}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onEditStep('payment')}
-              >
-                <Edit className="h-4 w-4 mr-1" />
-                {I18N.Checkout.review.edit}
-              </Button>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{I18N.Checkout.review.noPaymentSet}</p>
+            <p className="text-sm text-muted-foreground">{t(I18N.Checkout.review.noMethodSet)}</p>
           )}
         </div>
       </div>
 
       <Button
-        onClick={handlePlaceOrder}
-        isDisabled={loading || !order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode}
+        onClick={onComplete}
         size="lg"
-        className="w-full"
+        className="w-full rounded-md"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {I18N.Checkout.review.placeOrder}
+        {t(I18N.Checkout.review.placeOrder)}
       </Button>
 
-      {(!order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode) && (
-        <p className="text-sm text-destructive text-center">
-          {I18N.Checkout.review.completeSteps}
+      {(!order.shippingAddress || !order.shippingLines?.length) && (
+        <p className="text-sm text-destructive text-center text-foreground">
+          {t(I18N.Checkout.review.completeSteps)}
         </p>
       )}
     </div>

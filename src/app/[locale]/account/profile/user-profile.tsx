@@ -17,7 +17,16 @@ export default function UserProfileClient() {
               colorShadow: resolvedTheme === "dark" ? "#F1F1F1" : "#12123f",
           },
           elements: {
-            modalContent: "bg-background/95 backdrop-blur-md w-full",
+            modalContent: {
+              background: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
+              borderRadius: "2px",
+            },
+            modalBackdrop: {
+              "&::backdrop": {
+                height: "100%",
+                width: "100%"
+              }
+            }
           },
         }}
       />

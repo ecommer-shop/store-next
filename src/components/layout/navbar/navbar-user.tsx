@@ -96,8 +96,10 @@ export function NavbarUser() {
               <>
                 <DrawerHeader className="flex items-center justify-between">
                   <span className="text-2xl font-semibold">{t(I18N.UserBar.menu.tittle)}</span>
-                  <Button variant="danger"
-                    className="text-2xl"
+                  <Button variant="danger-soft"
+                    className="text-2xl rounded-[2px]
+                    hover:bg-red-600 hover:text-primary-foreground
+                 dark:hover:bg-red-600 dark:hover:text-primary"
                     onClick={() => onClose()}
                     onPress={() => onClose()}>
                     {t(I18N.UserBar.menu.close)}
@@ -112,7 +114,7 @@ export function NavbarUser() {
                       onClose();
                       setThemeOpen(true);
                     }}
-                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg"
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
                   >
                     <Sun className="size-5" />{t(I18N.UserBar.themeSwitcher.tittle)}
                   </Button>
@@ -124,7 +126,7 @@ export function NavbarUser() {
                       onClose();
                       setLocaleOpen(true);
                     }}
-                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg"
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
                   >
                     <Globe className="size-5" />{t(I18N.UserBar.langSwitcher.tittle)}
                   </Button>
@@ -136,7 +138,7 @@ export function NavbarUser() {
                       onClose();
                       handleSignINButton();
                     }}
-                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg"
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
                   >
                     <LogIn className="size-5" /><SignInButton mode="redirect" 
                     withSignUp>{t(I18N.UserBar.login)}</SignInButton>
@@ -150,9 +152,9 @@ export function NavbarUser() {
                     }}
                     className="
                     bg-[#6BB8FF]/60 hover:bg-[#6BB8FF]
-                    dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg"
+                    dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
                   >
-                    <UserPlus className="size-5" /><SignUpButton mode="redirect">{t(I18N.UserBar.signup)}</SignUpButton>
+                    <UserPlus className="size-5" /><SignUpButton oauthFlow="redirect" mode="redirect">{t(I18N.UserBar.signup)}</SignUpButton>
                   </Button>
                 </DrawerBody>
               </>

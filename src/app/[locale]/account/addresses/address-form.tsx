@@ -1,21 +1,18 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button, FieldError, Form, Label, TextField } from '@heroui/react';
 import { Input } from '@heroui/react';
-import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { CountrySelect } from '@/components/shared/country-select';
-import { useTranslations } from 'next-intl';
-import { I18N } from '@/i18n/keys';
 
-interface Country {
+export interface Country {
   id: string;
   code: string;
   name: string;
 }
 
-interface AddressFormData {
+export interface AddressFormData {
   fullName: string;
   streetLine1: string;
   streetLine2?: string;
@@ -27,155 +24,117 @@ interface AddressFormData {
   company?: string;
 }
 
-interface CustomerAddress {
-  id: string;
-  fullName?: string | null;
-  company?: string | null;
-  streetLine1: string;
-  streetLine2?: string | null;
-  city?: string | null;
-  province?: string | null;
-  postalCode?: string | null;
-  country: { id: string; code: string; name: string };
-  phoneNumber?: string | null;
-  defaultShippingAddress?: boolean | null;
-  defaultBillingAddress?: boolean | null;
-}
-
 interface AddressFormProps {
   countries: Country[];
-  address?: CustomerAddress;
-  onSubmit: (data: AddressFormData & { id?: string }) => Promise<void>;
-  onCancel: () => void;
-  isSubmitting: boolean;
+  defaultValues?: Partial<AddressFormData>;
+  onSubmit: (data: AddressFormData) => Promise<void>;
+  onCancel?: () => void;
+  isSubmitting?: boolean;
+  labels: {
+    fullName: string;
+    company: string;
+    streetLine1: string;
+    streetLine2: string;
+    city: string;
+    province: string;
+    postalCode: string;
+    country: string;
+    phoneNumber: string;
+    cancel?: string;
+    submit: string;
+  };
 }
 
-export function AddressForm({ countries, address, onSubmit, onCancel, isSubmitting }: AddressFormProps) {
-  const { register, handleSubmit, formState: { errors }, control } = useForm<AddressFormData>({
-    defaultValues: address ? {
-      fullName: address.fullName || '',
-      company: address.company || '',
-      streetLine1: address.streetLine1,
-      streetLine2: address.streetLine2 || '',
-      city: address.city || '',
-      province: address.province || '',
-      postalCode: address.postalCode || '',
-      countryCode: address.country.code,
-      phoneNumber: address.phoneNumber || '',
-    } : {
-      countryCode: countries[0]?.code || 'US',
-    }
-  });
+export function AddressForm({
+  countries,
+  defaultValues,
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+  labels,
+}: AddressFormProps) {
+  const { register, handleSubmit, control, formState: { errors } } =
+    useForm<AddressFormData>({
+      defaultValues: {
+        countryCode: countries[0]?.code ?? 'CO',
+        ...defaultValues,
+      },
+    });
 
-  const handleFormSubmit = async (data: AddressFormData) => {
-    await onSubmit(address ? { ...data, id: address.id } : data);
-  };
-  const t = useTranslations('AccountAddresses');  
-  const b = useTranslations('ButtonLabels');
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <FieldGroup className="my-6">
-        <div className="grid grid-cols-2 gap-4">
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="fullName">{I18N.Account.addresses.form.fields.fullName.label} *</FieldLabel>
-            <Input
-              id="fullName"
-              {...register('fullName', { required: I18N.Account.addresses.form.fields.fullName.requiredError })}
-              disabled={isSubmitting}
-            />
-            <FieldError>{errors.fullName?.message}</FieldError>
-          </Field>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid grid-cols-2 gap-4">
+        <TextField className="col-span-2">
+          <Label>{labels.fullName} *</Label>
+          <Input {...register('fullName', { required: labels.fullName })} />
+          <FieldError>{errors.fullName?.message}</FieldError>
+        </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="company">{I18N.Account.addresses.form.fields.company.label}</FieldLabel>
-            <Input id="company" {...register('company')} disabled={isSubmitting} />
-          </Field>
+        <TextField className="col-span-2">
+          <Label>{labels.company}</Label>
+          <Input {...register('company')} />
+        </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="streetLine1">{I18N.Account.addresses.form.fields.streetLine1.label} *</FieldLabel>
-            <Input
-              id="streetLine1"
-              {...register('streetLine1', { required: I18N.Account.addresses.form.fields.streetLine1.requiredError })}
-              disabled={isSubmitting}
-            />
-            <FieldError>{errors.streetLine1?.message}</FieldError>
-          </Field>
+        <TextField className="col-span-2">
+          <Label>{labels.streetLine1} *</Label>
+          <Input {...register('streetLine1', { required: labels.streetLine1 })} />
+          <FieldError>{errors.streetLine1?.message}</FieldError>
+        </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="streetLine2">{I18N.Account.addresses.form.fields.streetLine2.label}</FieldLabel>
-            <Input id="streetLine2" {...register('streetLine2')} disabled={isSubmitting} />
-          </Field>
+        <TextField className="col-span-2">
+          <Label>{labels.streetLine2}</Label>
+          <Input {...register('streetLine2')} />
+        </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="city">{I18N.Account.addresses.form.fields.city.label} *</FieldLabel>
-            <Input
-              id="city"
-              {...register('city', { required: I18N.Account.addresses.form.fields.city.requiredError })}
-              disabled={isSubmitting}
-            />
-            <FieldError>{errors.city?.message}</FieldError>
-          </Field>
+        <TextField>
+          <Label>{labels.city} *</Label>
+          <Input {...register('city', { required: labels.city })} />
+        </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="province">{I18N.Account.addresses.form.fields.province.label} *</FieldLabel>
-            <Input
-              id="province"
-              {...register('province', { required: I18N.Account.addresses.form.fields.province.requiredError })}
-              disabled={isSubmitting}
-            />
-            <FieldError>{errors.province?.message}</FieldError>
-          </Field>
+        <TextField>
+          <Label>{labels.province} *</Label>
+          <Input {...register('province', { required: labels.province })} />
+        </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="postalCode">{I18N.Account.addresses.form.fields.postalCode.label} *</FieldLabel>
-            <Input
-              id="postalCode"
-              {...register('postalCode', { required: I18N.Account.addresses.form.fields.postalCode.requiredError })}
-              disabled={isSubmitting}
-            />
-            <FieldError>{errors.postalCode?.message}</FieldError>
-          </Field>
+        <TextField>
+          <Label>{labels.postalCode} *</Label>
+          <Input {...register('postalCode', { required: labels.postalCode })} />
+        </TextField>
 
-          <Field>
-            <FieldLabel htmlFor="countryCode">{I18N.Account.addresses.form.fields.countryCode.label} *</FieldLabel>
-            <Controller
-              name="countryCode"
-              control={control}
-              rules={{ required: I18N.Account.addresses.form.fields.countryCode.requiredError }}
-              render={({ field }) => (
-                <CountrySelect
-                  countries={countries}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isSubmitting}
-                />
-              )}
-            />
-            <FieldError>{errors.countryCode?.message}</FieldError>
-          </Field>
+        <TextField>
+          <Label>{labels.country} *</Label>
+          <Controller
+            name="countryCode"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <CountrySelect
+                countries={countries}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <FieldError>{errors.countryCode?.message}</FieldError>
+        </TextField>
 
-          <Field className="col-span-2">
-            <FieldLabel htmlFor="phoneNumber">{I18N.Account.addresses.form.fields.phoneNumber.label} *</FieldLabel>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              {...register('phoneNumber', { required: I18N.Account.addresses.form.fields.phoneNumber.requiredError })}
-              disabled={isSubmitting}
-            />
-            <FieldError>{errors.phoneNumber?.message}</FieldError>
-          </Field>
-        </div>
-      </FieldGroup>
+        <TextField className="col-span-2">
+          <Label>{labels.phoneNumber} *</Label>
+          <Input {...register('phoneNumber', { required: labels.phoneNumber })} />
+        </TextField>
+      </div>
 
-      <div className="flex gap-3 justify-end">
-        <Button type="button" variant="ghost" onClick={onCancel} isDisabled={isSubmitting}>
-          Cancel
-        </Button>
+      <div className="flex justify-end gap-3 mt-6">
+        {onCancel && (
+          <Button type="button" variant="danger-soft" onClick={onCancel}>
+            {labels.cancel}
+          </Button>
+        )}
         <Button type="submit" isDisabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {address ? 'Update address' : 'Save address'}
+          {labels.submit}
         </Button>
       </div>
-    </form>
+    </Form>
   );
 }

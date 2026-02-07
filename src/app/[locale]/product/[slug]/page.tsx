@@ -6,6 +6,7 @@ import { RelatedProducts } from '@/components/commerce/related-products';
 import {
     Accordion,
     Separator,
+    Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
 import { cacheLife, cacheTag, unstable_cache } from 'next/cache';

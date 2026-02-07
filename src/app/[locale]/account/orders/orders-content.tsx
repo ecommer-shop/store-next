@@ -21,6 +21,9 @@ import {redirect} from "next/navigation";
 import { Protect, RedirectToSignIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
+import { getAuthToken } from '@/lib/vendure/server/auth';
+import { getTranslations } from 'next-intl/server';
+import { I18N } from '@/i18n/keys';
 
 const ITEMS_PER_PAGE = 10;
 interface PageProps {
@@ -31,7 +34,8 @@ interface PageProps {
     searchParams: Record<string, string | string[] | undefined>;
 }
 export default async function OrdersContent(props: PageProps) {
-
+    const token = await getAuthToken();
+    const t = await getTranslations('Account.orders');
     const searchParams = await props.searchParams;
     const pageParam = searchParams.page;
     const currentPage = parseInt(Array.isArray(pageParam) ? pageParam[0] : pageParam || '1', 10);
@@ -43,16 +47,12 @@ export default async function OrdersContent(props: PageProps) {
             options: {
                 take: ITEMS_PER_PAGE,
                 skip,
-                filter: {
-                    state: {
-                        notEq: 'AddingItems',
-                    },
-                },
             },
         },
-        
+        {
+            token: token
+        }
     );
-    
 
     const orders = data.activeCustomer?.orders.items;
     const totalItems = data.activeCustomer?.orders.totalItems ?? 0;
@@ -60,33 +60,35 @@ export default async function OrdersContent(props: PageProps) {
     
     return (
             <div>
-                <h1 className="text-3xl font-bold mb-6">Mis Ordenes</h1>
+                <h1 className="text-3xl font-bold mb-6">{t(I18N.Account.orders.list.title)}</h1>
 
                 {orders?.length === 0 ? (
                     <div className="text-center py-12">
-                        <p className="text-gray-500">You haven&apos;t placed any orders yet.</p>
+                        <p className="text-gray-500">{t(I18N.Account.orders.list.empty)}</p>
                     </div>
                 ) : (
                     <Suspense fallback={
-                        <p>Cargando Ordenes...</p>
+                        <p>{t(I18N.Account.orders.list.loading)}</p>
                     }>
                         <div className="border rounded-lg">
                             <Table>
                                 <TableHeader className="bg-muted">
                                     <TableRow>
-                                        <TableHead>Order Number</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Items</TableHead>
-                                        <TableHead className="text-right">Total</TableHead>
+                                        <TableHead>{t(I18N.Account.orders.list.table.orderNumber)}</TableHead>
+                                        <TableHead>{t(I18N.Account.orders.list.table.date)}</TableHead>
+                                        <TableHead>{t(I18N.Account.orders.list.table.status)}</TableHead>
+                                        <TableHead>{t(I18N.Account.orders.list.table.items)}</TableHead>
+                                        <TableHead className="text-right">{t(I18N.Account.orders.list.table.total)}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {orders?.map((order) => (
                                         <TableRow key={order.id} className="hover:bg-muted/50">
                                             <TableCell className="font-medium">
-                                                <Button asChild variant="ghost">
+                                                <Button variant="ghost"
+                                                className="rounded-md">
                                                     <Link
+                                                        className='flex justify-between gap-1'
                                                         href={`/account/orders/${order.code}`}
                                                     >
                                                         {order.code} <ArrowRightIcon/>
@@ -101,7 +103,7 @@ export default async function OrdersContent(props: PageProps) {
                                             </TableCell>
                                             <TableCell>
                                                 {order.lines.length}{' '}
-                                                {order.lines.length === 1 ? 'item' : 'items'}
+                                                {order.lines.length === 1 ? t(I18N.Account.orders.list.itemSingular) : t(I18N.Account.orders.list.itemPlural)}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <Price value={order.totalWithTax} currencyCode={order.currencyCode}/>

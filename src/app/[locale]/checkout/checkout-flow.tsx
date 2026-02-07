@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Accordion } from '@heroui/react';
+import { useEffect, useState } from 'react';
+import { Accordion, Surface } from '@heroui/react';
 import ShippingAddressStep from './steps/shipping-address-step';
 import DeliveryStep from './steps/delivery-step';
 import PaymentStep from './steps/payment-step';
@@ -9,15 +9,20 @@ import ReviewStep from './steps/review-step';
 import OrderSummary from './order-summary';
 import { useCheckout } from './checkout-provider';
 import { I18N } from '@/i18n/keys';
+import { useTranslations } from 'next-intl';
+import React from 'react';
 
 type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
 
 interface CheckoutFlowProps {
-    onSetShippingMethod: (id: string) => Promise<void>;
-    t: (key: string) => string;
-  }
+  onSetShippingMethod: (id: string) => Promise<void>;
+  pb: string;
+  uri: string;
+}
 
-export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowProps) {
+export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutFlowProps) {
+
+  const t = useTranslations('Checkout')
   const { order } = useCheckout();
 
   // Determine initial step and completed steps based on order state
@@ -25,20 +30,11 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
     const completed = new Set<CheckoutStep>();
     let current: CheckoutStep = 'shipping';
 
-    // Check if shipping address has required fields, not just if the object exists
-    if (order.shippingAddress?.streetLine1 && order.shippingAddress?.country) {
-      completed.add('shipping');
-      current = 'delivery';
-    }
-
-    if (order.shippingLines && order.shippingLines.length > 0) {
-      completed.add('delivery');
-      current = 'payment';
-    }
-
     return { completed, current };
   };
-
+  
+    
+    
   const initialState = getInitialState();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(initialState.current);
   const [completedSteps, setCompletedSteps] = useState<Set<CheckoutStep>>(initialState.completed);
@@ -46,7 +42,7 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
   const handleStepComplete = (step: CheckoutStep) => {
     setCompletedSteps(prev => new Set([...prev, step]));
 
-    const stepOrder: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review'];
+    const stepOrder: CheckoutStep[] = ['shipping', 'delivery', 'review', 'payment'];
     const currentIndex = stepOrder.indexOf(step);
     if (currentIndex < stepOrder.length - 1) {
       setCurrentStep(stepOrder[currentIndex + 1]);
@@ -54,7 +50,7 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
   };
 
   const canAccessStep = (step: CheckoutStep): boolean => {
-    const stepOrder: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review'];
+    const stepOrder: CheckoutStep[] = ['shipping', 'delivery', 'review', 'payment'];
     const stepIndex = stepOrder.indexOf(step);
 
     if (stepIndex === 0) return true;
@@ -64,31 +60,38 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2">
+    <div className="grid lg:grid-cols-3 gap-8 max-w-full relative">
+      <Surface className="lg:col-span-2 rounded-md dark:bg-primary-foreground/60 shadow-2xl shadow-[#12123F]/90
+    dark:shadow-2xl dark:shadow-white/30">
         <Accordion
+          allowsMultipleExpanded
           className="space-y-4"
         >
           <Accordion.Item key="shipping" className="border rounded-lg px-6">
-            <Accordion.Trigger className="hover:no-underline">
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  completedSteps.has('shipping')
+            <Accordion.Heading>
+              <Accordion.Trigger className="hover:no-underline">
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('shipping')
                     ? 'bg-green-500 text-white'
                     : currentStep === 'shipping'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {completedSteps.has('shipping') ? '✓' : '1'}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('shipping') ? '✓' : '1'}
+                  </div>
+                  <span className="text-lg font-semibold">{t(I18N.Checkout.flow.shippingAddress)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.shippingAddress)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <ShippingAddressStep
-                onComplete={() => handleStepComplete('shipping')}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <ShippingAddressStep
+                  onComplete={() => handleStepComplete('shipping')}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item
@@ -96,59 +99,34 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('delivery')}
           >
-            <Accordion.Trigger
-              className="hover:no-underline"
-              isDisabled={!canAccessStep('delivery')}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  completedSteps.has('delivery')
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('delivery')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`text-foreground flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('delivery')
                     ? 'bg-green-500 text-white'
                     : currentStep === 'delivery'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {completedSteps.has('delivery') ? '✓' : '2'}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('delivery') ? '✓' : '2'}
+                  </div>
+                  <span className="text-lg font-semibold text-foreground">{t(I18N.Checkout.flow.deliveryMethod)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.deliveryMethod)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <DeliveryStep
-                onComplete={() => handleStepComplete('delivery')}
-                onSetShippingMethod={onSetShippingMethod}
-                t={t}
-              />
-            </Accordion.Body>
-          </Accordion.Item>
-
-          <Accordion.Item
-            key="payment"
-            className="border rounded-lg px-6"
-            isDisabled={!canAccessStep('payment')}
-          >
-            <Accordion.Trigger
-              className="hover:no-underline"
-              isDisabled={!canAccessStep('payment')}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  completedSteps.has('payment')
-                    ? 'bg-green-500 text-white'
-                    : currentStep === 'payment'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {completedSteps.has('payment') ? '✓' : '3'}
-                </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <PaymentStep
-                onComplete={() => handleStepComplete('payment')}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <DeliveryStep
+                  onComplete={() => handleStepComplete('delivery')}
+                  onSetShippingMethod={onSetShippingMethod}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item
@@ -156,29 +134,72 @@ export default function CheckoutFlow({ onSetShippingMethod, t }: CheckoutFlowPro
             className="border rounded-lg px-6"
             isDisabled={!canAccessStep('review')}
           >
-            <Accordion.Trigger
-              className="hover:no-underline"
-              isDisabled={!canAccessStep('review')}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
-                  currentStep === 'review'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  4
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('review')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('review')
+                    ? 'bg-green-500 text-white'
+                    : currentStep === 'review'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('review') ? '✓' : '3'}
+                  </div>
+                  <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
                 </div>
-                <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
-              </div>
-            </Accordion.Trigger>
-            <Accordion.Body className="pt-4">
-              <ReviewStep
-                onEditStep={setCurrentStep}
-              />
-            </Accordion.Body>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <ReviewStep
+                  onEditStep={setCurrentStep}
+                  onComplete={() => handleStepComplete('review')}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>          
+
+          <Accordion.Item
+            key="payment"
+            className="border rounded-lg px-6"
+            isDisabled={!canAccessStep('payment')}
+          >
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('payment')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('payment')
+                    ? 'bg-green-500 text-white'
+                    : currentStep === 'payment'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('payment') ? '✓' : '4'}
+                  </div>
+                  <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
+                </div>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <PaymentStep
+                  onComplete={() => handleStepComplete('payment')}
+                  pb={pb}
+                  uri={uri}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
-      </div>
+      </Surface>
 
       <div className="lg:col-span-1">
         <OrderSummary t={t} />

@@ -52,13 +52,14 @@ export function HeroSection() {
                 </p>
 
                 <div className="flex justify-center pt-4">
-                    <Button
-                    asChild
-                    size="lg"
-                    className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8]"
-                    >
-                    <Link href="/search">{t(I18N.HeroSection.shopButton)}</Link>
-                    </Button>
+                    <Link className="rounded-md" href="/search">
+                        <Button
+                            size="lg"
+                            className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8] rounded-md"
+                        >
+                            {t(I18N.HeroSection.shopButton)}
+                        </Button>
+                    </Link>
                 </div>
                 </div>
             </div>

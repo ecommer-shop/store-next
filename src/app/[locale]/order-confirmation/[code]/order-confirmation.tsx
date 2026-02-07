@@ -51,16 +51,16 @@ const GetOrderByCodeQuery = graphql(`
 `);
 
 interface OrderConfirmationProps {
-  params: {
+  params: Promise<{
     code: string;
     locale?: string;
-  };
+  }>;
   searchParams: Record<string, string | string[] | undefined>;
   t: (key: string) => string;
 }
 
 export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
-    const {code} = params;
+    const {code} = await params;
     let order;
 
     try {
@@ -82,7 +82,7 @@ export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
                     <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4"/>
                     <h1 className="text-3xl font-bold mb-2">{t(I18N.OrderConfirmation.title)}</h1>
                     <p className="text-muted-foreground">
-                        {t(I18N.OrderConfirmation.thankYou)}
+                        {t(I18N.OrderConfirmation.thankYou)+" "}
                         <span className="font-semibold">{order.code}</span>
                     </p>
                 </div>
@@ -157,7 +157,7 @@ export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
                 )}
 
                 <div className="flex gap-4">
-                    <Button asChild className="flex-1">
+                    <Button className="flex-1">
                         <Link href="/">{t(I18N.OrderConfirmation.continueShopping)}</Link>
                     </Button>
                 </div>

@@ -60,12 +60,12 @@ export async function OrderSummary({activeOrder}: { activeOrder: ActiveOrder }) 
                 </div>
             </div>
 
-            <Button className="w-full" size="lg" asChild>
-                <Link href="/checkout">{t(I18N.Cart.summary.checkout)}</Link>
+            <Button className="w-full" size="lg">
+                <Link className='w-full' href="/checkout">{t(I18N.Cart.summary.checkout)}</Link>
             </Button>
 
-            <Button variant="ghost" className="w-full mt-2" asChild>
-                <Link href="/">{t(I18N.Cart.summary.continueShopping)}</Link>
+            <Button variant="ghost" className="w-full mt-2">
+                <Link className='w-full' href="/">{t(I18N.Cart.summary.continueShopping)}</Link>
             </Button>
         </div>
     );

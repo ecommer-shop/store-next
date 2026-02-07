@@ -1,19 +1,10 @@
 'use client';
 
 import { Suspense, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@heroui/react';
+import { Alert, AlertDialog, Button } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import {
     DropdownMenu,
@@ -23,9 +14,10 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, MoreVertical, Home, CreditCard, Edit2, Trash2 } from 'lucide-react';
-import { AddressForm } from './address-form';
+import { AddressForm, AddressFormData } from './address-form';
 import { createAddress, updateAddress, deleteAddress, setDefaultShippingAddress, setDefaultBillingAddress } from './actions';
 import { useRouter } from 'next/navigation';
+import { I18N } from '@/i18n/keys';
 
 interface Country {
     id: string;
@@ -33,7 +25,7 @@ interface Country {
     name: string;
 }
 
-interface CustomerAddress {
+export interface CustomerAddress {
     id: string;
     fullName?: string | null;
     company?: string | null;
@@ -53,7 +45,25 @@ interface AddressesClientProps {
     countries: Country[];
 }
 
-export function AddressesClient({ addresses, countries } : AddressesClientProps) {
+export type CreateAddressPayload = {
+    fullName?: string;
+    company?: string;
+    streetLine1: string;
+    streetLine2?: string;
+    city?: string;
+    province?: string;
+    postalCode?: string;
+    phoneNumber?: string;
+    countryCode: string;
+};
+
+export type UpdateAddressPayload = CreateAddressPayload & {
+    id: string;
+};
+
+
+export function AddressesClient({ addresses, countries }: AddressesClientProps) {
+    const t = useTranslations('Account.addresses');
     const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState<CustomerAddress | null>(null);
@@ -121,42 +131,59 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
         }
     };
 
-    const handleSubmit = async (data: any) => {
+    const handleSubmit = async (data: AddressFormData) => {
         setIsSubmitting(true);
+
         try {
+            const country = countries.find(c => c.id === data.countryCode);
+            if (!country) throw new Error('Invalid country');
+
+            const baseInput: CreateAddressPayload = {
+                fullName: data.fullName,
+                company: data.company,
+                streetLine1: data.streetLine1,
+                streetLine2: data.streetLine2,
+                city: data.city,
+                province: data.province,
+                postalCode: data.postalCode,
+                phoneNumber: data.phoneNumber,
+                countryCode: country.code,
+            };
+
             if (editingAddress) {
-                await updateAddress(data);
+                const updateInput: UpdateAddressPayload = {
+                    id: editingAddress.id,
+                    ...baseInput,
+                };
+                await updateAddress(updateInput);
             } else {
-                await createAddress(data);
+                await createAddress(baseInput);
             }
+
             router.refresh();
             setDialogOpen(false);
             setEditingAddress(null);
-        } catch (error) {
-            console.error('Error saving address:', error);
-            alert(`Error saving address: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setIsSubmitting(false);
         }
     };
-
     return (
         <>
             <div className="flex justify-between items-center">
                 <div></div>
                 <Button onClick={handleAddNew}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Add new address
+                    {t(I18N.Account.addresses.form.actions.addAddress)}
                 </Button>
             </div>
 
             {addresses.length === 0 ? (
                 <Card>
                     <CardContent className="py-12 text-center">
-                        <p className="text-muted-foreground mb-4">No addresses saved yet</p>
+                        <p className="text-muted-foreground mb-4">{t(I18N.Account.addresses.form.actions.noAddresses)}</p>
                         <Button onClick={handleAddNew}>
                             <Plus className="mr-2 h-4 w-4" />
-                            Add your first address
+                            {t(I18N.Account.addresses.form.actions.addFirstAddress)}
                         </Button>
                     </CardContent>
                 </Card>
@@ -171,10 +198,10 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                         {(address.defaultShippingAddress || address.defaultBillingAddress) && (
                                             <div className="flex gap-2">
                                                 {address.defaultShippingAddress && (
-                                                    <Badge variant="secondary">Default Shipping</Badge>
+                                                    <Badge variant="secondary">{t(I18N.Account.addresses.form.actions.defaultShipping)}</Badge>
                                                 )}
                                                 {address.defaultBillingAddress && (
-                                                    <Badge variant="secondary">Default Billing</Badge>
+                                                    <Badge variant="secondary">{t(I18N.Account.addresses.form.actions.defaultBilling)}</Badge>
                                                 )}
                                             </div>
                                         )}
@@ -190,12 +217,13 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => handleEdit(address)}>
+                                            <DropdownMenuItem className='cursor-pointer' onClick={() => handleEdit(address)}>
                                                 <Edit2 className="mr-2 h-4 w-4" />
-                                                Edit
+                                                {t(I18N.Account.addresses.form.actions.edit)}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
+                                                className='cursor-pointer'
                                                 onClick={() => handleSetDefaultShipping(address.id)}
                                                 disabled={
                                                     address.defaultShippingAddress ||
@@ -203,9 +231,10 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                                 }
                                             >
                                                 <Home className="mr-2 h-4 w-4" />
-                                                {address.defaultShippingAddress ? 'Default Shipping' : 'Set as Shipping'}
+                                                {address.defaultShippingAddress ? t(I18N.Account.addresses.form.actions.defaultShipping) : t(I18N.Account.addresses.form.actions.setAsShipping)}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
+                                                className='cursor-pointer'
                                                 onClick={() => handleSetDefaultBilling(address.id)}
                                                 disabled={
                                                     address.defaultBillingAddress ||
@@ -213,15 +242,15 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                                                 }
                                             >
                                                 <CreditCard className="mr-2 h-4 w-4" />
-                                                {address.defaultBillingAddress ? 'Default Billing' : 'Set as Billing'}
+                                                {address.defaultBillingAddress ? t(I18N.Account.addresses.form.actions.defaultBilling) : t(I18N.Account.addresses.form.actions.setAsBilling)}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 onClick={() => handleDelete(address.id)}
-                                                className="text-destructive focus:text-destructive"
+                                                className="cursor-pointer text-destructive focus:text-destructive"
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                                                Delete
+                                                {t(I18N.Account.addresses.form.actions.delete)}
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -249,16 +278,28 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>{editingAddress ? 'Edit address' : 'Add new address'}</DialogTitle>
+                        <DialogTitle>{editingAddress ? t(I18N.Account.addresses.form.actions.editAddress) : t(I18N.Account.addresses.form.actions.addNewAddress)}</DialogTitle>
                         <DialogDescription>
                             {editingAddress
-                                ? 'Update the details of your address'
-                                : 'Fill in the form below to add a new address'}
+                                ? t(I18N.Account.addresses.form.actions.updateDetails)
+                                : t(I18N.Account.addresses.form.actions.fillForm)}
                         </DialogDescription>
                     </DialogHeader>
                     <AddressForm
                         countries={countries}
-                        address={editingAddress || undefined}
+                        labels={{
+                            fullName: t(I18N.Account.addresses.form.fields.fullName.label),
+                            company: t(I18N.Account.addresses.form.fields.company.label),
+                            streetLine1: t(I18N.Account.addresses.form.fields.streetLine1.label),
+                            streetLine2: t(I18N.Account.addresses.form.fields.streetLine2.label),
+                            city: t(I18N.Account.addresses.form.fields.city.label),
+                            province: t(I18N.Account.addresses.form.fields.province.label),
+                            postalCode: t(I18N.Account.addresses.form.fields.postalCode.label),
+                            country: t(I18N.Account.addresses.form.fields.countryCode.label),
+                            phoneNumber: t(I18N.Account.addresses.form.fields.phoneNumber.label),
+                            cancel: t(I18N.Account.addresses.form.actions.cancel),
+                            submit: t(I18N.Account.addresses.form.actions.save),
+                        }}
                         onSubmit={handleSubmit}
                         onCancel={() => {
                             setDialogOpen(false);
@@ -268,23 +309,37 @@ export function AddressesClient({ addresses, countries } : AddressesClientProps)
                     />
                 </DialogContent>
             </Dialog>
-
             <AlertDialog isOpen={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete this address.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel isDisabled={isDeleting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmDelete} aria-disabled={isDeleting}>
-                            {isDeleting ? 'Deleting...' : 'Delete'}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
+                <AlertDialog.Backdrop variant='blur' style={{
+                    height: "100%"
+                }}>
+                    <AlertDialog.Container>
+                        <AlertDialog.Dialog className='w-sm rounded-md'>
+                            <AlertDialog.CloseTrigger />
+                            <AlertDialog.Header>
+                                <AlertDialog.Heading>
+                                    <AlertDialog.Icon status='danger' />
+                                    {t(I18N.Account.addresses.form.actions.areYouSure)}
+
+                                    {t(I18N.Account.addresses.form.actions.deleteWarning)}
+                                </AlertDialog.Heading>
+
+                            </AlertDialog.Header>
+                            <AlertDialog.Footer>
+                                <Button
+                                    className="rounded-md"
+                                    slot="close" variant='danger-soft' isDisabled={isDeleting}>{t(I18N.Account.addresses.form.actions.cancel)}</Button>
+                                <Button
+                                    className="rounded-md"
+                                    variant='primary' onClick={confirmDelete} aria-disabled={isDeleting}>
+                                    {isDeleting ? t(I18N.Account.addresses.form.actions.deleting) : t(I18N.Account.addresses.form.actions.delete)}
+                                </Button>
+                            </AlertDialog.Footer>
+                        </AlertDialog.Dialog>
+                    </AlertDialog.Container>
+                </AlertDialog.Backdrop>
             </AlertDialog>
+
         </>
     );
 }
