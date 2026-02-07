@@ -22,11 +22,17 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
   const openWompi = async () => {
     const signature = await getPaymentSignature(order.totalWithTax)
     setLoading(true)
+    
+    // Generar una referencia única para cada intento de pago usando UUID
+    // Formato: ORDER_CODE-UUID (sin guiones del UUID para mayor compatibilidad)
+    const uuid = crypto.randomUUID().replace(/-/g, '');
+    const uniqueReference = `${order.code}-${uuid}`;
+    
     // @ts-ignore
     const checkout = new window.WidgetCheckout({
       currency: 'COP',
       amountInCents: order.totalWithTax,
-      reference: order.code,
+      reference: uniqueReference,
       publicKey: pb,
       redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
       signature: {
