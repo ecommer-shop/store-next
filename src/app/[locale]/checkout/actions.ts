@@ -152,12 +152,13 @@ export async function placeOrder(paymentMethodCode: string) {
     redirect(`/order-confirmation/${orderCode}`);
 }
 
-export async function getPaymentSignature(amountInCents: number) {
+export async function getPaymentSignature(amountInCents: number, paymentReference: string) {
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
     const signature = await query(GetWompiSignatureQuery, {
-        amountInCents: amountInCents!
+        amountInCents: amountInCents!,
+        paymentReference: paymentReference
     }, {
         token
     })
