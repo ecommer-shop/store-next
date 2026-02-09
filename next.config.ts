@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
             },
             {
                 hostname: 'admin.ecommer.shop'
+            },
+            {
+                hostname: 'admin-stg.ecommer.shop'
             }
         ],
     },
