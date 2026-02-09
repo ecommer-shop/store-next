@@ -37,10 +37,14 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
       currency: 'COP',
       amountInCents: order.totalWithTax,
 <<<<<<< HEAD
+<<<<<<< HEAD
       reference: uuid(),
 =======
       reference: uniqueReference,
 >>>>>>> 924eb8ef3eb688ddef6a4d901c367e28be3a8ef1
+=======
+      reference: uniqueReference,
+>>>>>>> 5ecf9228621b7d85ca5d8fe80c72a308803cf1e8
       publicKey: pb,
       redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
       signature: {
