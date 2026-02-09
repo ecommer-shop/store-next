@@ -6,6 +6,8 @@ import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
 import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
+import { v7 as uuid } from 'uuid'
+
 //t: (key: string) => string;
 interface PaymentStepProps {
   onComplete: () => void;
@@ -44,7 +46,6 @@ export default function PaymentStep({ pb, uri }: PaymentStepProps) {
         email: order.customer?.emailAddress,
         fullName: order.customer?.firstName,
       },
-      
     });
     
     checkout.open(({ transaction }: any) => {
