@@ -431,6 +431,13 @@
     "hours":{
       "label":"Horarios de atención",
       "days":"Lunes a Viernes"
+    },
+    "documents": {
+      "label": "Documentos legales",
+      "terms": "Términos y Condiciones",
+      "warranty": "Garantía",
+      "withdrawal": "Retracto",
+      "paymentReversal": "Reversión del pago"
     }
   }
 }

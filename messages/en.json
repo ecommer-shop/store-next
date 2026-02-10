@@ -432,6 +432,13 @@
     "hours":{
       "label":"Business hours",
       "days":"Monday to Friday"
+    },
+    "documents": {
+      "label": "Legal documents",
+      "terms": "Terms and Conditions",
+      "warranty": "Warranty",
+      "withdrawal": "Withdrawal",
+      "paymentReversal": "Payment reversal"
     }
   }
 }
