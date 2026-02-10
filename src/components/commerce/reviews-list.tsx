@@ -131,22 +131,22 @@ export function ReviewsList({
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="animate-pulse">
-          <div className="h-6 bg-muted rounded w-1/4 mb-4"></div>
+          <div className="h-5 bg-muted rounded w-1/4 mb-3"></div>
           {[...Array(3)].map((_, i) => (
-            <Card key={i} className="p-6 mb-4">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-muted rounded-full"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-muted rounded w-1/3 mb-2"></div>
-                  <div className="h-3 bg-muted rounded w-1/4"></div>
+            <Card key={i} className="p-4 md:p-5 mb-3">
+              <div className="p-4 md:p-5 flex items-center gap-4 mb-4">
+                <div className="p-4 md:p-5 w-12 h-12 bg-muted rounded-full"></div>
+                <div className="p-4 md:p-5 flex-1">
+                  <div className="p-4 md:p-5 h-4 bg-muted rounded w-1/3 mb-2"></div>
+                  <div className="p-4 md:p-5 h-3 bg-muted rounded w-1/4"></div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="h-4 bg-muted rounded w-full"></div>
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-4 bg-muted rounded w-1/2"></div>
+              <div className="p-4 md:p-5 space-y-2">
+                <div className="p-4 md:p-5 h-4 bg-muted rounded w-full"></div>
+                <div className="p-4 md:p-5 h-4 bg-muted rounded w-3/4"></div>
+                <div className="p-4 md:p-5 h-4 bg-muted rounded w-1/2"></div>
               </div>
             </Card>
           ))}
@@ -180,7 +180,7 @@ export function ReviewsList({
 
       <div className="space-y-6">
         {reviews.map((review) => (
-          <Card key={review.id} className="p-6 hover:shadow-md transition-shadow">
+          <Card key={review.id} className="p-4 md:p-5 hover:shadow-md transition-shadow">
             {/* Header: Author and Rating */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-4">

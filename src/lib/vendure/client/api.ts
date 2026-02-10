@@ -9,12 +9,20 @@ import {
 const VENDURE_URL =
   process.env.VENDURE_SHOP_API_URL || '';
 
+//const VENDURE_URL = process.env.NEXT_PUBLIC_VENDURE_SHOP_API_URL || '';
+
+console.log('🔥 VENDURE_URL:', VENDURE_URL);
+
 export async function query<T>(
   document: TadaDocumentNode<T, any>,
   variables?: any,
   options?: { authToken?: string }
 ) {
-  const headers: HeadersInit = {};
+  console.log('🔥 Haciendo query a:', VENDURE_URL);
+  console.log('🔥 Variables:', variables); 
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
 
   if (options?.authToken) {
     headers.Authorization = `Bearer ${options.authToken}`;

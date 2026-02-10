@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,7 +16,6 @@ import { I18N } from '@/i18n/keys';
 import { SubmitProductReviewMutation } from '@/lib/vendure/shared/reviews';
 import { query } from '@/lib/vendure/client/api';
 
-// Esquema simplificado - solo rating y body
 const reviewSchema = z.object({
   rating: z.number().min(1, 'Debes seleccionar una calificación').max(5),
   body: z
@@ -36,7 +35,6 @@ interface ReviewFormInlineProps {
 export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewFormInlineProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasPurchased, setHasPurchased] = useState<boolean | null>(null);
   const { user, isLoaded } = useUser();
   const t = useTranslations();
 
@@ -58,23 +56,6 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
 
   const watchedRating = watch('rating');
   const watchedBody = watch('body');
-
-  useEffect(() => {
-    const checkPurchase = async () => {
-      if (!isLoaded || !user) {
-        setHasPurchased(false);
-        return;
-      }
-
-      try {
-        setHasPurchased(true);
-      } catch (error) {
-        setHasPurchased(false);
-      }
-    };
-
-    checkPurchase();
-  }, [user, isLoaded, productId]);
 
   const handleExpand = () => {
     if (!user) {
@@ -100,21 +81,17 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
     setIsSubmitting(true);
 
     try {
-      // Obtener nombre del usuario de Clerk
       const authorName = user.fullName || user.firstName || 'Usuario';
-      
-      // Generar summary automático (primeras palabras)
       const summary = data.body.substring(0, 100).trim();
 
       const result = await query(SubmitProductReviewMutation, {
         input: {
           productId,
           variantId,
-          summary, // Auto-generado
+          summary,
           body: data.body.trim(),
           rating: data.rating,
-          authorName, // Desde Clerk
-          // authorLocation eliminado
+          authorName,
         },
       });
 
@@ -128,11 +105,6 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
       }
     } catch (error: any) {
       console.error('Error submitting review:', error);
-
-      if (error?.message?.includes('purchase') || error?.message?.includes('comprar')) {
-        setHasPurchased(false);
-        setIsExpanded(false);
-      }
       
       const errorMessage = error?.message || t(I18N.Commerce.ReviewForm.error.networkError);
       
@@ -144,22 +116,19 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
     }
   };
 
-  if (!isLoaded || !user || hasPurchased === false) {
+  // Solo renderizar si el usuario está cargado y logueado
+  if (!isLoaded || !user) {
     return null;
   }
 
-  if (hasPurchased === null) {
-    return null; // O un skeleton si prefieres
-  }
-
-  // Vista colapsada - botón para expandir
+  // Vista colapsada - COMPACTO
   if (!isExpanded) {
     return (
-      <Card className="p-4"> 
+      <Card className="p-3 md:p-4"> 
         <Button
           onClick={handleExpand}
           variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:text-foreground"
+          className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
         >
           ✍️ {t(I18N.Commerce.ReviewForm.writeReviewPlaceholder)}
         </Button>
@@ -167,11 +136,11 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
     );
   }
 
-  // Vista expandida - formulario completo
+  // Vista expandida - COMPACTO
   return (
-    <Card className="p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Rating con estrellas */}
+    <Card className="p-4 md:p-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+        {/* Rating */}
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium">
@@ -181,21 +150,21 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
               value={watchedRating}
               interactive={true}
               onRatingChange={(rating) => setValue('rating', rating, { shouldValidate: true })}
-              size="lg"
+              size="md"
             />
           </div>
           {errors.rating && (
-            <p className="text-sm text-destructive">{errors.rating.message}</p>
+            <p className="text-xs text-destructive">{errors.rating.message}</p>
           )}
         </div>
 
-        {/* Textarea para el comentario */}
+        {/* Textarea */}
         <div className="space-y-2">
           <Textarea
             placeholder={t(I18N.Commerce.ReviewForm.fields.body.placeholder)}
             {...register('body')}
-            className={errors.body ? 'border-destructive' : ''}
-            rows={4}
+            className={errors.body ? 'border-destructive text-sm' : 'text-sm'}
+            rows={3}
           />
           <div className="flex justify-between items-center text-xs text-muted-foreground">
             <span>{errors.body?.message || ''}</span>
@@ -203,11 +172,12 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
           </div>
         </div>
 
-        {/* Botones de acción */}
-        <div className="flex gap-3 justify-end">
+        {/* Botones */}
+        <div className="flex gap-2 justify-end">
           <Button
             type="button"
             variant="ghost"
+            size="sm"
             onClick={handleCancel}
             isDisabled={isSubmitting}
           >
@@ -215,12 +185,13 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
           </Button>
           <Button
             type="submit"
+            size="sm"
             isDisabled={!isValid || isSubmitting}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {isSubmitting ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2" />
                 {t(I18N.Commerce.ReviewForm.actions.submitting)}
               </>
             ) : (

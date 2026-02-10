@@ -1,3 +1,5 @@
+'use client';
+
 import { I18N } from "@/i18n/keys";
 import {Button} from "@heroui/react";
 import { useTranslations } from "next-intl";

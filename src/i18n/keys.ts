@@ -408,6 +408,7 @@ export const I18N = {
         alreadySubmitted: 'Commerce.ReviewsSection.form.alreadySubmitted',
         title: 'Commerce.ReviewsSection.form.title',
       },
+      mustPurchaseFirst:'Commerce.ReviewsSection.mustPurchaseFirst',
     },
     productGrid: {
       noProducts: 'productGrid.noProducts',

@@ -419,7 +419,8 @@
         "writeReview": "Escribir reseña",
         "alreadySubmitted": "Reseña enviada",
         "title": "Escribe una reseña"
-      }
+      },
+      "mustPurchaseFirst": "Debes comprar este producto antes de escribir una reseña."
     },
     "productGrid": {
       "noProducts": "No products found",

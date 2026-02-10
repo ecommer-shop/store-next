@@ -420,7 +420,8 @@
         "writeReview": "Write review",
         "alreadySubmitted": "Review submitted",
         "title": "Write a review"
-      }
+      },
+      "mustPurchaseFirst": "You must purchase this product before writing a review."
     },
     "productGrid": {
       "noProducts": "No products found",
