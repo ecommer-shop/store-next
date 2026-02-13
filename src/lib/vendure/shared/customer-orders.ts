@@ -3,7 +3,7 @@
 import { graphql } from 'gql.tada';
 
 export const CheckUserPurchasedProductQuery = graphql(`
-  query CheckUserPurchasedProduct($productId: ID!) {
+  query CheckUserPurchasedProduct {
     activeCustomer {
       id
       orders(options: { 

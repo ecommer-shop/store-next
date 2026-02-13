@@ -51,9 +51,7 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
   const checkUserPurchase = async () => {
     setCheckingPurchase(true);
     try {
-      const result = await query(CheckUserPurchasedProductQuery, {
-        productId
-      });
+      const result = await query(CheckUserPurchasedProductQuery, {});
 
       const activeCustomer = result.data?.activeCustomer;
       
@@ -85,7 +83,7 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
     try {
       const result = await query(GetProductReviewsQuery, {
         productId,
-        options: { take: 1000 }
+        options: { take: 100 }
       });
 
       const productReviews = (result.data?.product?.reviews?.items || []) as Review[];
