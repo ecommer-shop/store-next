@@ -4,10 +4,10 @@ import {query} from "@/lib/vendure/server/api";
 import {GetCollectionProductsQuery} from "@/lib/vendure/shared/queries";
 import { Suspense } from "react";
 import { FeaturedProductsLoading } from './featured-products-loading';
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { I18N } from "@/i18n/keys";
 
-const getFeaturedCollectionProducts = () =>
+const getFeaturedCollectionProducts = (locale: string) =>
   unstable_cache(
     async () => {
       const result = await query(GetCollectionProductsQuery, {
@@ -22,14 +22,15 @@ const getFeaturedCollectionProducts = () =>
 
       return result.data.search.items;
     },
-    ['collection-products', 'electronics', 'featured'],
+    ['collection-products', 'electronics', 'featured', locale],
     {
       revalidate: 72 * 3600,
     }
   )();
 
 export async function FeaturedProducts() {
-    const products = await getFeaturedCollectionProducts();
+    const locale = await getLocale();
+    const products = await getFeaturedCollectionProducts(locale);
 
     const t = await getTranslations("HeroSection"); 
     

@@ -5,14 +5,14 @@ import { GetCollectionProductsQuery } from "@/lib/vendure/shared/queries";
 import { readFragment } from "@/graphql";
 import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
 import { RelatedProductsTitle, RelatedProductsTitleAsync } from './related-products-title';
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 
 interface RelatedProductsProps {
     collectionSlug: string;
     currentProductId: string;
 }
 
-const getRelatedProducts = (collectionSlug: string, currentProductId: string) =>
+const getRelatedProducts = (collectionSlug: string, currentProductId: string, locale: string) =>
     unstable_cache(
     async () => {
         const result = await query(GetCollectionProductsQuery, {
@@ -33,14 +33,15 @@ const getRelatedProducts = (collectionSlug: string, currentProductId: string) =>
             })
             .slice(0, 12);
     },
-    [`related-products-${collectionSlug}`],
+    [`related-products-${collectionSlug}-${locale}`],
     {
         revalidate: 120 * 60
     }
 )()
 
 export async function RelatedProducts({ collectionSlug, currentProductId }: RelatedProductsProps) {
-    const products = await getRelatedProducts(collectionSlug, currentProductId);
+    const locale = await getLocale();
+    const products = await getRelatedProducts(collectionSlug, currentProductId, locale);
     if (products.length === 0) {
         return null;
     }
