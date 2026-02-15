@@ -31,20 +31,20 @@ import { I18N } from "@/i18n/keys";
 
 const getFeaturedCollectionProducts = async () => {
   const result = await query(GetCollectionProductsQuery, {
-    slug: 'electronics',
+    slug: 'Electronics',
     input: {
       take: 12,
       skip: 0,
-      collectionId: "2",
+      collectionId: "5",
       groupByProduct: true,
     },
   });
-
+  console.log({featuredCollectionProductsResult: result.data.search.items})
   return result.data.search.items;
 }
 export async function FeaturedProducts() {
   const products = await getFeaturedCollectionProducts();
-
+  console.log({featuredProducts: products})
   const t = await getTranslations("HeroSection");
 
   return (

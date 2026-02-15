@@ -3,12 +3,17 @@
 import { mutate } from '@/lib/vendure/server/api';
 import { AddToCartMutation } from '@/lib/vendure/shared/mutations';
 import { updateTag } from 'next/cache';
-import { setAuthToken, getAuthToken } from '@/lib/vendure/server/auth';
+import { setAuthToken, getAuthToken, getAuthTokenFromCookies } from '@/lib/vendure/server/auth';
+import { cookies } from 'next/headers';
+
 
 export async function addToCart(variantId: string, quantity: number = 1) {
   try {
-    const result = await mutate(AddToCartMutation, { variantId, quantity }, { useAuthToken: true });
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!
 
+    const result = await mutate(AddToCartMutation, { variantId, quantity }, { token, useAuthToken: true });
+    console.log({addToCartResult: result.data.addItemToOrder})
     // Only store the auth token if we don't have one yet (new session)
     const existingToken = await getAuthToken();
     if (result.token && !existingToken) {
