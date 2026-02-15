@@ -13,7 +13,7 @@ export async function addToCart(variantId: string, quantity: number = 1) {
     const token = getAuthTokenFromCookies(cookiesStore)!
 
     const result = await mutate(AddToCartMutation, { variantId, quantity }, { token, useAuthToken: true });
-    console.log({addToCartResult: result.data.addItemToOrder})
+    
     // Only store the auth token if we don't have one yet (new session)
     const existingToken = await getAuthToken();
     if (result.token && !existingToken) {

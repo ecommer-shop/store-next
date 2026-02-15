@@ -39,12 +39,12 @@ const getFeaturedCollectionProducts = async () => {
       groupByProduct: true,
     },
   });
-  console.log({featuredCollectionProductsResult: result.data.search.items})
+  
   return result.data.search.items;
 }
 export async function FeaturedProducts() {
   const products = await getFeaturedCollectionProducts();
-  console.log({featuredProducts: products})
+  
   const t = await getTranslations("HeroSection");
 
   return (
