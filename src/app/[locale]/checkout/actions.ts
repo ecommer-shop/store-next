@@ -7,9 +7,11 @@ import {
     SetOrderBillingAddressMutation,
     SetOrderShippingMethodMutation,
     AddPaymentToOrderMutation,
+    RemoveFromCartMutation,
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
 } from '@/lib/vendure/shared/mutations';
+import { GetActiveOrderQuery } from '@/lib/vendure/shared/queries';
 import { GetWompiSignatureQuery } from '@/lib/vendure/shared/queries';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -146,6 +148,24 @@ export async function placeOrder(paymentMethodCode: string) {
     const orderCode = result.data.addPaymentToOrder.code;
 
     // Update the cart tag to immediately invalidate cached cart data
+    // After placing the order, remove items from the active cart
+    try {
+        const activeOrderRes = await query(GetActiveOrderQuery, {}, { token, useAuthToken: true });
+        const activeOrder = activeOrderRes.data.activeOrder;
+        if (activeOrder && activeOrder.lines && activeOrder.lines.length > 0) {
+            for (const line of activeOrder.lines) {
+                try {
+                    await mutate(RemoveFromCartMutation, { lineId: line.id }, { token, useAuthToken: true });
+                } catch (err) {
+                    // ignore individual removal errors
+                    console.error('Failed to remove cart line', line.id, err);
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Failed to clear cart after order placement', err);
+    }
+
     updateTag('cart');
     updateTag('active-order');
 

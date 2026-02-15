@@ -57,7 +57,7 @@ export default async function OrdersContent(props: PageProps) {
     const orders = data.activeCustomer?.orders.items;
     const totalItems = data.activeCustomer?.orders.totalItems ?? 0;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    
+    console.log("ORDNES", data.activeCustomer?.orders)
     return (
             <div>
                 <h1 className="text-3xl font-bold mb-6">{t(I18N.Account.orders.list.title)}</h1>
