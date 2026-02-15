@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { Price } from '@/components/commerce/price';
 import { useSelectedItems } from './selected-items-context';
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
 
 type OrderSummaryClientProps = {
     lines: Array<{
@@ -18,8 +20,6 @@ type OrderSummaryClientProps = {
     }> | null;
 };
 
-// ...existing code...
-
 export function OrderSummaryClient({
   lines,
   subTotalWithTax,
@@ -28,7 +28,8 @@ export function OrderSummaryClient({
   discounts,
 }: OrderSummaryClientProps) {
   const { selectedLineIds, initializeDefaultSelection } = useSelectedItems();
-
+  const t = useTranslations('Cart');
+  const tBase = I18N.Cart.summary
   // Ask the provider to initialize default selection only once (won't overwrite persisted selection)
   useEffect(() => {
     if (lines.length > 0) {
@@ -47,7 +48,7 @@ export function OrderSummaryClient({
   return (
     <>
       <div className="flex justify-between text-sm">
-        <span className="text-muted-foreground">Subtotal (items seleccionados)</span>
+        <span className="text-muted-foreground">{t(tBase.subtotal)}</span>
         <span>
           <Price value={selectedLinesTotal} currencyCode={currencyCode} />
         </span>
@@ -65,19 +66,19 @@ export function OrderSummaryClient({
         </>
       )}
       <div className="flex justify-between text-sm">
-        <span className="text-muted-foreground">Envío</span>
+        <span className="text-muted-foreground">{t(tBase.shipping)}</span>
         <span>
           {shippingWithTax > 0 ? (
             <Price value={shippingWithTax} currencyCode={currencyCode} />
           ) : (
-            'Por calcular'
+            t(tBase.shippingCalculated)
           )}
         </span>
       </div>
 
       <div className="border-t pt-4">
         <div className="flex justify-between font-bold text-lg">
-          <span>Total</span>
+          <span>{t(tBase.total)}</span>
           <span>
             <Price value={finalTotal} currencyCode={currencyCode} />
           </span>

@@ -14,7 +14,7 @@ type ActiveOrder = {
 export async function PromotionCode({activeOrder}: { activeOrder: ActiveOrder }) {
     const t = await getTranslations('Cart');
     return (
-        <Card className="mt-4">
+        <Card className="mt-4 sticky top-7">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                     <Tag className="h-5 w-5"/>

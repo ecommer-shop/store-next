@@ -26,7 +26,7 @@ export async function OrderSummary({ activeOrder }: { activeOrder: ActiveOrder }
     const t = await getTranslations('Cart');
     const totalLines = activeOrder.lines.length;
     return (
-        <div className="border rounded-lg p-6 bg-card sticky top-4">
+        <div className="border rounded-lg p-6 bg-card sticky top-10 z-9">
             <h2 className="text-xl font-bold mb-4">{t(I18N.Cart.summary.title)}</h2>
 
             <div className="space-y-2 mb-4">

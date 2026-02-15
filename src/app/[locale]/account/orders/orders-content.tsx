@@ -71,7 +71,7 @@ export default async function OrdersContent(props: PageProps) {
                 <Suspense fallback={
                     <p>{t(I18N.Account.orders.list.loading)}</p>
                 }>
-                    <div className="border rounded-lg">
+                    <div className="hidden sm:block border rounded-lg">
                         <Table>
                             <TableHeader className="bg-muted">
                                 <TableRow>
@@ -113,6 +113,38 @@ export default async function OrdersContent(props: PageProps) {
                                 ))}
                             </TableBody>
                         </Table>
+                    </div>
+
+                    {/* Mobile list view */}
+                    <div className="sm:hidden space-y-3">
+                        {orders?.map((order) => (
+                            <div key={order.id} className="border rounded-lg p-4">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <Link href={`/account/orders/${order.code}`} className="font-medium hover:underline">
+                                            {order.code}
+                                        </Link>
+                                        <p className="text-sm text-muted-foreground mt-1">{formatDate(order.createdAt)}</p>
+                                    </div>
+
+                                    <div className="text-right">
+                                        <div className="mb-2">
+                                            <OrderStatusBadge state={order.state} />
+                                        </div>
+                                        <div className="font-semibold">
+                                            <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-3 flex items-center justify-between">
+                                    <p className="text-sm text-muted-foreground">{order.lines.length} {order.lines.length === 1 ? t(I18N.Account.orders.list.itemSingular) : t(I18N.Account.orders.list.itemPlural)}</p>
+                                    <Button variant="ghost" size="sm" className="rounded-md">
+                                        <Link href={`/account/orders/${order.code}`}>{t(I18N.Account.orders.list.table.orderNumber)}</Link>
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {totalPages > 1 && (
