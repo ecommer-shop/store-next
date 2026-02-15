@@ -110,9 +110,31 @@ export async function transitionToArrangingPayment() {
     revalidatePath('/checkout');
 }
 
-export async function placeOrder(paymentMethodCode: string) {
+export async function placeOrder(paymentMethodCode: string, selectedLineIds?: string[]) {
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    // If selectedLineIds provided, remove unselected lines from the active order
+    if (Array.isArray(selectedLineIds)) {
+        if (selectedLineIds.length === 0) {
+            throw new Error('No items selected for the order');
+        }
+
+        // Fetch active order to know current lines
+        const activeOrderRes = await query(GetActiveOrderQuery, {}, { token, useAuthToken: true });
+        const activeOrder = activeOrderRes.data.activeOrder;
+        if (activeOrder && Array.isArray(activeOrder.lines)) {
+            const linesToRemove = activeOrder.lines.filter((l: any) => !selectedLineIds.includes(l.id));
+            for (const line of linesToRemove) {
+                try {
+                    await mutate(RemoveFromCartMutation, { lineId: line.id }, { token, useAuthToken: true });
+                } catch (err) {
+                    console.error('Failed to remove unselected line before placing order', line.id, err);
+                }
+            }
+        }
+    }
+
     // First, transition the order to ArrangingPayment state
     await transitionToArrangingPayment();
 

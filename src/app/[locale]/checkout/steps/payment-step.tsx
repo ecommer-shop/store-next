@@ -8,6 +8,7 @@ import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
 import { v7 as uuid } from 'uuid'
 import { placeOrder as placeOrderAction } from '../actions';
+import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 
 interface PaymentStepProps {
   onComplete: () => void;
@@ -17,8 +18,24 @@ interface PaymentStepProps {
 
 export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
   const { order, addresses, selectedPaymentMethodCode, setSelectedPaymentMethodCode } = useCheckout();
+  const { selectedLineIds } = useSelectedItems();
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  // Calculate total based on selected lines from context
+  const getSelectedOrderTotal = () => {
+    // Filter lines to only selected ones
+    const selectedLines = order.lines.filter((line) => selectedLineIds.includes(line.id));
+
+    // Calculate subtotal from selected lines
+    const selectedSubtotal = selectedLines.reduce((sum, line) => sum + line.linePriceWithTax, 0);
+
+    // Add shipping and discounts to get final total
+    const discountTotal = order.discounts?.reduce((sum, d) => sum + d.amountWithTax, 0) ?? 0;
+    const total = selectedSubtotal + order.shippingWithTax - discountTotal;
+
+    return total;
+  };
 
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethodCode) return;
@@ -26,7 +43,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
     onComplete()
     try {
-      await placeOrderAction(selectedPaymentMethodCode);
+      await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
     } catch (error) {
       // Check if this is a Next.js redirect (which is expected)
       if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
@@ -42,17 +59,20 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
 
     try {
+      // Calculate the correct total based on selected items
+      const correctTotal = getSelectedOrderTotal();
+
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
 
       // Obtener la firma usando la referencia única
-      const signature = await getPaymentSignature(order.totalWithTax, uniqueReference);
+      const signature = await getPaymentSignature(correctTotal, uniqueReference);
 
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: 'COP',
-        amountInCents: order.totalWithTax,
+        amountInCents: correctTotal,
         reference: uniqueReference,
         publicKey: pb,
         redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
@@ -71,7 +91,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         // Verificar si el pago fue exitoso
         if (transaction.status === 'APPROVED' || transaction.status === 'approved') {
           console.log('Payment successful!', transaction.status);
-          handlePlaceOrder(); // Colocar la orden después de la aprobación del pago
+            handlePlaceOrder(); // Colocar la orden después de la aprobación del pago
           // Habilitar el método de pago seleccionado
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);

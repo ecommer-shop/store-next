@@ -7,6 +7,7 @@ import { Button } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
+import SelectLineCheckbox from './select-line-checkbox';
 
 type ActiveOrder = {
     id: string;
@@ -55,8 +56,12 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
             {activeOrder.lines.map((line) => (
                 <div
                     key={line.id}
-                    className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-card"
+                    className="relative flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-card"
                 >
+                    <div className="absolute top-3 left-3 p-2 sm:static sm:p-0">
+                        <SelectLineCheckbox lineId={line.id} />
+                    </div>
+
                     {line.productVariant.product.featuredAsset && (
                         <Link
                             href={`/product/${line.productVariant.product.slug}`}
