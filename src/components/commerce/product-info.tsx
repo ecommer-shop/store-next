@@ -231,13 +231,11 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 </div>
             )}
 
-            {/* Add to Cart Button */}
             <div className="pt-4">
                 <Button
                     size="lg"
-                    //variant='ghost'
-                    variant="primary"
-                    className="w-full bg-[#6bb8ff] text-white hover:bg-[#9969f8] transition-all duration-200"
+                    variant='primary'
+                    className="w-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
                     isDisabled={!canAddToCart || isPending}
                     onPress={handleAddToCart}
                 >

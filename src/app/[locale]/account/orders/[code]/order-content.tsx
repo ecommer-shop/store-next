@@ -90,7 +90,7 @@ export default async function OrderDetailContent({params}: PageProps) {
             <CardContent>
               <div className="space-y-4">
                 {order.lines.map(line => (
-                  <div key={line.id} className="flex gap-4">
+                  <div key={line.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <div className="relative h-20 w-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
                       {line.productVariant.product.featuredAsset && (
                         <Image
@@ -117,7 +117,7 @@ export default async function OrderDetailContent({params}: PageProps) {
                       </p>
                     </div>
 
-                    <div className="text-right">
+                    <div className="mt-2 sm:mt-0 sm:text-right">
                       <p className="font-medium">
                         <Price
                           value={line.linePriceWithTax}
@@ -145,34 +145,21 @@ export default async function OrderDetailContent({params}: PageProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    {t(I18N.Account.orders.detail.labels.subtotal)}
-                  </span>
-                  <Price
-                    value={order.subTotalWithTax}
-                    currencyCode={order.currencyCode}
-                  />
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm">
+                  <span className="text-muted-foreground">{t(I18N.Account.orders.detail.labels.subtotal)}</span>
+                  <span className="sm:text-right"><Price value={order.subTotalWithTax} currencyCode={order.currencyCode} /></span>
                 </div>
 
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    {t(I18N.Account.orders.detail.labels.shipping)}
-                  </span>
-                  <Price
-                    value={order.shippingWithTax}
-                    currencyCode={order.currencyCode}
-                  />
+                <div className="flex flex-col sm:flex-row sm:justify-between text-sm">
+                  <span className="text-muted-foreground">{t(I18N.Account.orders.detail.labels.shipping)}</span>
+                  <span className="sm:text-right"><Price value={order.shippingWithTax} currencyCode={order.currencyCode} /></span>
                 </div>
 
                 <Separator className="my-2" />
 
-                <div className="flex justify-between font-bold text-lg">
+                <div className="flex flex-col sm:flex-row sm:justify-between font-bold text-lg">
                   <span>{t(I18N.Account.orders.detail.labels.total)}</span>
-                  <Price
-                    value={order.totalWithTax}
-                    currencyCode={order.currencyCode}
-                  />
+                  <span className="sm:text-right"><Price value={order.totalWithTax} currencyCode={order.currencyCode} /></span>
                 </div>
               </div>
             </CardContent>
