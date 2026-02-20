@@ -318,6 +318,111 @@
   },
 
   "Commerce": {
+    "ReviewForm": {
+      "title": "Write a review",
+      "subtitle": "Share your experience with this product",
+      "success": {
+        "title": "Thank you for your review!",
+        "description": "Your review will be reviewed and published soon."
+      },
+      "error": {
+        "title": "Error submitting review",
+        "networkError": "There was a connection problem. Please try again.",
+        "duplicateReview": "You have already written a review for this product.",
+        "notPurchased": "You must purchase this product before writing a review."
+      },
+      "fields": {
+        "rating": {
+          "label": "Rating"
+        },
+        "summary": {
+          "label": "Review title",
+          "placeholder": "Summarize your experience in a few words"
+        },
+        "body": {
+          "label": "Detailed review",
+          "placeholder": "Tell us about your experience with the product, what you liked or didn't like"
+        },
+        "authorName": {
+          "label": "Your name",
+          "placeholder": "Name that will appear on your review"
+        },
+        "authorLocation": {
+          "label": "Location (optional)",
+          "placeholder": "City or country where you purchased the product"
+        }
+      },
+      "actions": {
+        "submit": "Post review",
+        "submitting": "Posting...",
+        "cancel": "Cancel"
+      },
+      "writeReviewPlaceholder": "Write a review...",
+      "yourRating": "Your rating:",
+      "auth": {
+        "loginRequired": "You must log in",
+        "loginDescription": "Log in to leave a review"
+      }
+      
+    },
+    "ReviewsList": {
+      "title": "Customer reviews",
+      "empty": {
+        "title": "Be the first to review this product",
+        "description": "Your opinion helps other buyers make informed decisions."
+      },
+      "count": "Based on {count} review",
+      "count_plural": "Based on {count} reviews",
+      "rating": "{rating} out of 5 stars",
+      "helpful": "{count} person found this helpful",
+      "helpful_plural": "{count} people found this helpful",
+      "totalHelpful": "out of {total} person",
+      "totalHelpful_plural": "out of {total} people",
+      "actions": {
+        "helpful": "Was this helpful?",
+        "notHelpful": "Not helpful"
+      },
+      "error": {
+        "title": "Error loading reviews",
+        "fetchError": "Could not load reviews. Please try again."
+      },
+      "vote": {
+        "success": {
+          "title": "Thanks for your vote",
+          "helpful": "This review was helpful to you.",
+          "notHelpful": "This review was not helpful to you."
+        },
+        "error": {
+          "title": "Error voting",
+          "networkError": "Could not register your vote. Please try again."
+        }
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} of {total}"
+      }
+    },
+    "ReviewsSection": {
+      "title": "Customer reviews",
+      "totalReviews": "{count} review",
+      "totalReviews_plural": "{count} reviews",
+      "ratingDistribution": "Rating distribution",
+      "error": {
+        "title": "Error loading statistics",
+        "fetchError": "Could not load review statistics."
+      },
+      "success": {
+        "title": "Review submitted successfully",
+        "description": "Thank you for sharing your experience. Your review will be reviewed."
+      },
+      "form": {
+        "writeReview": "Write review",
+        "alreadySubmitted": "Review submitted",
+        "title": "Write a review"
+      },
+      "mustPurchaseFirst": "You must purchase this product before writing a review."
+    },
     "productGrid": {
       "noProducts": "No products found",
       "product": "product",

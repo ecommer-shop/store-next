@@ -20,6 +20,7 @@ import { ProductInfo } from '@/components/commerce/product-info';
 import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
+import { ReviewsSection } from '@/components/commerce/reviews-section-inline';
 
 interface PageProps<T = any> {
     params: Promise<T>;
@@ -93,6 +94,9 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
         notFound();
     }
 
+    const productId = product.id;
+    const variantId = product.variants[0]?.id;
+
     // Get the primary collection (prefer deepest nested / most specific)
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
     const t = await getTranslations('Product');
@@ -128,6 +132,13 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                         </Suspense>
                     </div>
                 </div>
+            </div>
+
+            <div className="mt-16 container mx-auto px-4">
+                <ReviewsSection
+                    productId={productId}
+                    variantId={variantId}
+                />
             </div>
 
             {/* Product Benefits Section */}
