@@ -2,6 +2,7 @@
 
 import { createContext, useContext, ReactNode, useState } from 'react';
 import { CheckoutOrder } from './types';
+import { SelectedItemsProvider } from '@/app/[locale]/cart/selected-items-context';
 
 interface CustomerAddress {
   id: string;
@@ -75,19 +76,21 @@ export function CheckoutProvider({
   );
 
   return (
-    <CheckoutContext.Provider
-      value={{
-        order,
-        addresses,
-        countries,
-        shippingMethods,
-        paymentMethods,
-        selectedPaymentMethodCode,
-        setSelectedPaymentMethodCode,
-      }}
-    >
-      {children}
-    </CheckoutContext.Provider>
+    <SelectedItemsProvider orderId={order.id}>
+      <CheckoutContext.Provider
+        value={{
+          order,
+          addresses,
+          countries,
+          shippingMethods,
+          paymentMethods,
+          selectedPaymentMethodCode,
+          setSelectedPaymentMethodCode,
+        }}
+      >
+        {children}
+      </CheckoutContext.Provider>
+    </SelectedItemsProvider>
   );
 }
 

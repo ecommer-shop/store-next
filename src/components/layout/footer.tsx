@@ -25,7 +25,7 @@ type TopCollection = {
     name: string;
     slug: string;
 };
-
+/*
 const getCachedTopCollections = unstable_cache(
     async () => {
         return getTopCollections();
@@ -34,8 +34,11 @@ const getCachedTopCollections = unstable_cache(
     {
         revalidate: 72 * 3600,
     }
-);
+);*/
 
+const getCachedTopCollections = async () => {
+    return await getTopCollections();
+}
 export async function Footer() {
     /*'use cache'
     cacheLife('days');*/

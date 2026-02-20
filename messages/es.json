@@ -187,7 +187,7 @@
     },
     "summary": {
       "title": "Resumen del pedido",
-      "subtotal": "Subtotal",
+      "subtotal": "Subtotal (productos seleccionados)",
       "discount": "Descuento",
       "shipping": "Envío",
       "shippingCalculated": "Se calcula en el pago",

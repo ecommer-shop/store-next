@@ -1,14 +1,14 @@
-import {connection} from 'next/server';
-import {query} from '@/lib/vendure/server/api';
-import {graphql} from '@/graphql';
-import {Button} from '@heroui/react';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
-import {CheckCircle2} from 'lucide-react';
+import { connection } from 'next/server';
+import { query } from '@/lib/vendure/server/api';
+import { graphql } from '@/graphql';
+import { Button } from '@heroui/react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {Separator} from '@/components/ui/separator';
-import {Price} from '@/components/commerce/price';
-import {notFound} from "next/navigation";
+import { Separator } from '@/components/ui/separator';
+import { Price } from '@/components/commerce/price';
+import { notFound } from "next/navigation";
 import { I18N } from '@/i18n/keys';
 
 const GetOrderByCodeQuery = graphql(`
@@ -51,20 +51,20 @@ const GetOrderByCodeQuery = graphql(`
 `);
 
 interface OrderConfirmationProps {
-  params: Promise<{
-    code: string;
-    locale?: string;
-  }>;
-  searchParams: Record<string, string | string[] | undefined>;
-  t: (key: string) => string;
+    params: Promise<{
+        code: string;
+        locale?: string;
+    }>;
+    searchParams: Record<string, string | string[] | undefined>;
+    t: (key: string) => string;
 }
 
-export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
-    const {code} = await params;
+export async function OrderConfirmation({ params, t }: OrderConfirmationProps) {
+    const { code } = await params;
     let order;
 
     try {
-        const {data} = await query(GetOrderByCodeQuery, {code}, {useAuthToken: true});
+        const { data } = await query(GetOrderByCodeQuery, { code }, { useAuthToken: true });
         order = data.orderByCode;
     }
     catch (error) {
@@ -72,17 +72,17 @@ export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
     }
 
     if (!order) {
-       notFound();
+        notFound();
     }
 
     return (
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-8">
-                    <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4"/>
+                    <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
                     <h1 className="text-3xl font-bold mb-2">{t(I18N.OrderConfirmation.title)}</h1>
                     <p className="text-muted-foreground">
-                        {t(I18N.OrderConfirmation.thankYou)+" "}
+                        {t(I18N.OrderConfirmation.thankYou) + " "}
                         <span className="font-semibold">{order.code}</span>
                     </p>
                 </div>
@@ -119,19 +119,19 @@ export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
                                 </div>
                                 <div className="text-right w-24">
                                     <p className="font-semibold">
-                                        <Price value={line.linePriceWithTax} currencyCode={order.currencyCode}/>
+                                        <Price value={line.linePriceWithTax} currencyCode={order.currencyCode} />
                                     </p>
                                 </div>
                             </div>
                         ))}
 
-                        <Separator/>
+                        <Separator />
 
                         <div className="flex justify-between font-bold text-lg">
                             <span>{t(I18N.OrderConfirmation.total)}</span>
                             <span>
-                <Price value={order.totalWithTax} currencyCode={order.currencyCode}/>
-              </span>
+                                <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
+                            </span>
                         </div>
                     </CardContent>
                 </Card>
@@ -157,9 +157,11 @@ export async function OrderConfirmation({params, t}: OrderConfirmationProps) {
                 )}
 
                 <div className="flex gap-4">
-                    <Button className="flex-1">
-                        <Link href="/">{t(I18N.OrderConfirmation.continueShopping)}</Link>
-                    </Button>
+                    <Link href="/" className='flex-1'>
+                        <Button className="w-full">
+                            {t(I18N.OrderConfirmation.continueShopping)}
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>
