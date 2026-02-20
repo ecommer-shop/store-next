@@ -6,7 +6,7 @@ import { getVendureLanguageCode } from './server/locale';
 /**
  * Get the active channel with caching enabled.
  * Channel configuration rarely changes, so we cache it for 1 hour.
- */
+ 
 export const getActiveChannelCached = () =>
     unstable_cache(
         async () => {
@@ -18,11 +18,12 @@ export const getActiveChannelCached = () =>
             revalidate: 120 * 60
         }
 )()
+        */
 
 /**
  * Get available countries with caching enabled.
  * Countries list never changes, so we cache it with max duration.
- */
+
 export const getAvailableCountriesCached = () =>
     unstable_cache(
         async () => {
@@ -34,7 +35,7 @@ export const getAvailableCountriesCached = () =>
             revalidate: false
         }
 )()
-    
+   */
 
 
 /**
@@ -55,6 +56,12 @@ export const getTopCollections = async () => {
     )();
 }
 
+export const getActiveChannelCached = async () => {
+    const result = await query(GetActiveChannelQuery);
+    return result.data.activeChannel;
+}
 
-    
-
+export const getAvailableCountriesCached = async () => {
+    const result = await query(GetAvailableCountriesQuery);
+    return result.data.availableCountries || [];
+}

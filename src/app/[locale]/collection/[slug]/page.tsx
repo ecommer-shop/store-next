@@ -29,7 +29,7 @@ const getCollectionProducts = (slug: string, searchParams: { [key: string]: stri
     {
         revalidate: 60 * 120
     } 
-)()    
+)()
 
 
 const getCollectionMetadata = (slug: string, locale: string) =>
@@ -49,8 +49,8 @@ const getCollectionMetadata = (slug: string, locale: string) =>
   );
 
 type Props = {
-  params: Promise<{ locale: string; slug: string }>;
-  searchParams: Promise<{ page?: string }>;
+    params: Promise<{ locale: string; slug: string }>;
+    searchParams: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({
@@ -97,14 +97,12 @@ export async function generateMetadata({
 export default async function CollectionPage({params, searchParams}: Props) {
     const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
-    const page =  getCurrentPage(searchParamsResolved);
+    const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved, locale);
     const t = getTranslations()
     return (
         <Suspense fallback={
-
-            
             <p></p>
         }>
             <div className="container mx-auto px-4 py-8 mt-16">
