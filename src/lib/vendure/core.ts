@@ -17,6 +17,8 @@ export const VENDURE_AUTH_TOKEN_HEADER =
 export const VENDURE_CHANNEL_TOKEN_HEADER =
   process.env.VENDURE_CHANNEL_TOKEN_HEADER || 'vendure-token';
 
+export const VENDURE_LANGUAGE_CODE_HEADER = 'vendure-language-code';
+
 if (!VENDURE_API_URL) {
   throw new Error('VENDURE_SHOP_API_URL is not set');
 }
@@ -24,6 +26,7 @@ if (!VENDURE_API_URL) {
 export interface VendureRequestOptions {
   token?: string;
   channelToken?: string;
+  languageCode?: string;
   fetch?: RequestInit;
   tags?: string[];
 }
@@ -54,6 +57,11 @@ export async function executeVendureRequest<TResult, TVariables>(
 
   headers[VENDURE_CHANNEL_TOKEN_HEADER] =
     options.channelToken || VENDURE_CHANNEL_TOKEN;
+
+  // Agregar header de idioma si está disponible
+  if (options.languageCode) {
+    headers[VENDURE_LANGUAGE_CODE_HEADER] = options.languageCode;
+  }
 
   const response = await fetch(VENDURE_API_URL!, {
     ...options.fetch,

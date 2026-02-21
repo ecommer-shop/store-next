@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache';
 import { getTopCollections } from '@/lib/vendure/cached';
 
-export const getNavbarCollections = unstable_cache(
+/*export const getNavbarCollections = unstable_cache(
   async () => {
     return getTopCollections();
   },
@@ -9,4 +9,9 @@ export const getNavbarCollections = unstable_cache(
   {
     revalidate: 72 * 3600,
   }
-);
+);*/
+
+export const getNavbarCollections =
+  async () => {
+    return getTopCollections();
+  }

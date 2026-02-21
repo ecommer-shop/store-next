@@ -32,6 +32,7 @@ interface ProductPageParams {
     slug: string;
 }
 
+/* 
 const getProductData = (slug: string) =>
   unstable_cache(
     async () => {
@@ -42,7 +43,11 @@ const getProductData = (slug: string) =>
       revalidate: 300
     }
   )();
+*/
 
+const getProductData = async (slug: string) => {
+    return await query(GetProductDetailQuery, { slug });
+};
 
 export async function generateMetadata({
     params,

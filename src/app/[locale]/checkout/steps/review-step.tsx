@@ -5,6 +5,7 @@ import { Button } from '@heroui/react';
 import { Loader2, MapPin, Truck, CreditCard, Edit } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { placeOrder as placeOrderAction } from '../actions';
+import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
 
@@ -17,6 +18,7 @@ interface ReviewStepProps {
 export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProps) {
   const { order, paymentMethods, selectedPaymentMethodCode } = useCheckout();
   const [loading, setLoading] = useState(false);
+  const { selectedLineIds } = useSelectedItems();
 
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethodCode) return;
@@ -24,7 +26,7 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
     setLoading(true);
     onComplete()
     try {
-      await placeOrderAction(selectedPaymentMethodCode);
+      await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
     } catch (error) {
       // Check if this is a Next.js redirect (which is expected)
       if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
@@ -110,7 +112,7 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
       </div>
 
       <Button
-        onClick={onComplete}
+        onClick={handlePlaceOrder}
         size="lg"
         className="w-full rounded-md"
       >
