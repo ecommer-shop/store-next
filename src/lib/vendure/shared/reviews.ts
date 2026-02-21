@@ -21,6 +21,17 @@ export const ReviewFragment = graphql(`
   }
 `);
 
+// Fragmento de resumen de IA
+export const ProductAISummaryFragment = graphql(`
+  fragment ProductAISummary on ProductAISummary {
+    id
+    title
+    summary
+    basedOnReviewsCount
+    generatedAt
+  }
+`);
+
 // Query para obtener reviews de un producto
 export const GetProductReviewsQuery = graphql(`
   query GetProductReviews($productId: ID!, $options: ProductReviewListOptions) {
@@ -32,9 +43,12 @@ export const GetProductReviewsQuery = graphql(`
         }
         totalItems
       }
+      aiSummary {
+        ...ProductAISummary
+      }
     }
   }
-`, [ReviewFragment]);
+`, [ReviewFragment, ProductAISummaryFragment]);
 
 // Query para obtener histograma de ratings
 export const GetProductReviewsHistogramQuery = graphql(`

@@ -408,7 +408,15 @@ export const I18N = {
         alreadySubmitted: 'Commerce.ReviewsSection.form.alreadySubmitted',
         title: 'Commerce.ReviewsSection.form.title',
       },
-      mustPurchaseFirst:'Commerce.ReviewsSection.mustPurchaseFirst',
+      mustPurchaseFirst: 'Commerce.ReviewsSection.mustPurchaseFirst',
+      aiSummary: {
+        badge: 'Commerce.ReviewsSection.aiSummary.badge',
+        noReviewsTitle: 'Commerce.ReviewsSection.aiSummary.noReviewsTitle',
+        noReviewsDescription: 'Commerce.ReviewsSection.aiSummary.noReviewsDescription',
+        basedOn: 'Commerce.ReviewsSection.aiSummary.basedOn',
+        showMore: 'Commerce.ReviewsSection.aiSummary.showMore',
+        hide: 'Commerce.ReviewsSection.aiSummary.hide',
+      },
     },
     productGrid: {
       noProducts: 'productGrid.noProducts',

@@ -420,7 +420,15 @@
         "alreadySubmitted": "Reseña enviada",
         "title": "Escribe una reseña"
       },
-      "mustPurchaseFirst": "Debes comprar este producto antes de escribir una reseña."
+      "mustPurchaseFirst": "Debes comprar este producto antes de escribir una reseña.",
+      "aiSummary": {
+        "badge": "IA • Resumen Inteligente",
+        "noReviewsTitle": "Todavía no hay un análisis disponible 💬",
+        "noReviewsDescription": "Sé parte de las primeras opiniones que permitirán generar un resumen inteligente.",
+        "basedOn": "Basado en {count} opiniones verificadas",
+        "showMore": "Ver más",
+        "hide": "Ocultar"
+      }
     },
     "productGrid": {
       "noProducts": "No products found",

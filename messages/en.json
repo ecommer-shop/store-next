@@ -421,7 +421,15 @@
         "alreadySubmitted": "Review submitted",
         "title": "Write a review"
       },
-      "mustPurchaseFirst": "You must purchase this product before writing a review."
+      "mustPurchaseFirst": "You must purchase this product before writing a review.",
+      "aiSummary": {
+        "badge": "AI • Smart Summary",
+        "noReviewsTitle": "No analysis available yet 💬",
+        "noReviewsDescription": "Be among the first to share your opinion and help generate an intelligent summary.",
+        "basedOn": "Based on {count} verified reviews",
+        "showMore": "Show more",
+        "hide": "Hide"
+      }
     },
     "productGrid": {
       "noProducts": "No products found",
