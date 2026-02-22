@@ -1,6 +1,7 @@
-import { unstable_cache } from 'next/cache';
-import { query } from './server/api';
-import { GetActiveChannelQuery, GetAvailableCountriesQuery, GetTopCollectionsQuery } from './shared/queries';
+import {unstable_cache} from 'next/cache';
+import {query} from './server/api';
+import {GetActiveChannelQuery, GetAvailableCountriesQuery, GetTopCollectionsQuery} from './shared/queries';
+import { getVendureLanguageCode } from './server/locale';
 
 /**
  * Get the active channel with caching enabled.
@@ -40,19 +41,20 @@ export const getAvailableCountriesCached = () =>
 /**
  * Get top-level collections with caching enabled.
  * Collections rarely change, so we cache them for 1 day.
-
-export const getTopCollections = () => 
-    unstable_cache(
+ */
+export const getTopCollections = async () => {
+    const locale = await getVendureLanguageCode();
+    return unstable_cache(
         async () => {
             const result = await query(GetTopCollectionsQuery);
             return result.data.collections.items;
         },
-        ["collections"],
+        ["collections", locale],
         {
             revalidate: 72 * 3600
         }
-)()
-*/
+    )();
+}
 
 export const getActiveChannelCached = async () => {
     const result = await query(GetActiveChannelQuery);
@@ -62,9 +64,4 @@ export const getActiveChannelCached = async () => {
 export const getAvailableCountriesCached = async () => {
     const result = await query(GetAvailableCountriesQuery);
     return result.data.availableCountries || [];
-}
-
-export const getTopCollections = async () => {
-    const result = await query(GetTopCollectionsQuery);
-    return result.data.collections.items;
 }

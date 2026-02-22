@@ -2,6 +2,7 @@ import 'server-only';
 
 import type { TadaDocumentNode } from 'gql.tada';
 import { getAuthToken } from '@/lib/vendure/server/auth';
+import { getVendureLanguageCode } from '@/lib/vendure/server/locale';
 import {
   executeVendureRequest,
   VendureRequestOptions,
@@ -18,10 +19,13 @@ export async function query<TResult, TVariables>(
     authToken = await getAuthToken();
   }
 
+  // Obtener el código de idioma actual si no se proporciona explícitamente
+  const languageCode = options?.languageCode || await getVendureLanguageCode();
+
   return executeVendureRequest(
     document,
     variables,
-    options || {},
+    { ...options, languageCode },
     authToken
   );
 }
