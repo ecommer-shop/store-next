@@ -9,7 +9,7 @@ import {
     Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
-import { cacheLife, cacheTag, unstable_cache } from 'next/cache';
+import { unstable_cache } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
@@ -32,28 +32,22 @@ interface ProductPageParams {
     slug: string;
 }
 
-/* 
-const getProductData = (slug: string) =>
+const getProductData = (slug: string, locale: string) =>
   unstable_cache(
     async () => {
       return query(GetProductDetailQuery, { slug });
     },
-    [`product-${slug}`],
+    [`product-${slug}-${locale}`],
     {
       revalidate: 300
     }
   )();
-*/
-
-const getProductData = async (slug: string) => {
-    return await query(GetProductDetailQuery, { slug });
-};
 
 export async function generateMetadata({
     params,
 }: PageProps<ProductPageParams>): Promise<Metadata> {
-    const { slug } = await params;
-    const result = await getProductData(slug);
+    const { slug, locale } = await params;
+    const result = await getProductData(slug, locale);
     const product = result.data.product;
 
     if (!product) {
@@ -88,10 +82,10 @@ export async function generateMetadata({
 }
 
 export default async function ProductDetailPage({params, searchParams}: PageProps<ProductPageParams>) {
-    const { slug } = await params;
+    const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
 
-    const result = await getProductData(slug);
+    const result = await getProductData(slug, locale);
 
     const product = result.data.product;
 
