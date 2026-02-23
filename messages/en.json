@@ -371,6 +371,7 @@
         "title": "Be the first to review this product",
         "description": "Your opinion helps other buyers make informed decisions."
       },
+      "verified": "Verified purchase",
       "count": "Based on {count} review",
       "count_plural": "Based on {count} reviews",
       "rating": "{rating} out of 5 stars",

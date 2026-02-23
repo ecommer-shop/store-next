@@ -370,6 +370,7 @@
         "title": "Sé el primero en calificar este producto",
         "description": "Tu opinión ayuda a otros compradores a tomar decisiones informadas."
       },
+      "verified": "Compra verificada",
       "count": "Basado en {count} reseña",
       "count_plural": "Basado en {count} reseñas",
       "rating": "{rating} de 5 estrellas",

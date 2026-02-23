@@ -13,6 +13,7 @@ export const ReviewFragment = graphql(`
     rating
     authorName
     authorLocation
+    verifiedPurchase
     upvotes
     downvotes
     state

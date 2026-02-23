@@ -358,6 +358,7 @@ export const I18N = {
         title: 'Commerce.ReviewsList.empty.title',
         description: 'Commerce.ReviewsList.empty.description',
       },
+      verified: 'Commerce.ReviewsList.verified',
       count: 'Commerce.ReviewsList.count',
       count_plural: 'Commerce.ReviewsList.count_plural',
       rating: 'Commerce.ReviewsList.rating',
