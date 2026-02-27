@@ -10,11 +10,11 @@ export function FacetsAccordionContent({
   toggleFacet: (id: string) => void;
 }) {
   return (
-    <Accordion allowsMultipleExpanded className="space-y-1">
+    <Accordion allowsMultipleExpanded className="space-y-3">
       {Object.entries(facetGroups).map(([_, facet]) => (
-        <Accordion.Item key={facet.id} className="space-y-1">
+        <Accordion.Item key={facet.id} className="rounded-lg border border-border bg-background px-3 py-2">
           <Accordion.Heading>
-            <Accordion.Trigger className="text-foreground">
+            <Accordion.Trigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-foreground">
               {facet.name}
               <Accordion.Indicator className="text-foreground" fill="currentColor">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -30,12 +30,13 @@ export function FacetsAccordionContent({
             </Accordion.Trigger>
           </Accordion.Heading>
 
-          <Accordion.Panel className="space-y-2">
+          <Accordion.Panel className="space-y-3 pt-2">
+
             {facet.values.map((value: any) => {
               const isChecked = selectedFacets.includes(value.id);
 
               return (
-                <Accordion.Body key={value.id} className="flex items-center space-x-2">
+                <Accordion.Body key={value.id} className="flex items-center justify-between rounded-md px-2 py-2 hover:bg-muted/50 transition-colors">
                   <Checkbox
                     id={value.id}
                     isSelected={isChecked}
@@ -47,7 +48,7 @@ export function FacetsAccordionContent({
                     <Checkbox.Content>
                       <Label
                         htmlFor={value.id}
-                        className="text-sm font-normal cursor-pointer flex items-center gap-2"
+                        className="text-sm font-medium cursor-pointer flex items-center gap-2"
                       >
                         {value.name}
                         <span className="text-xs text-muted-foreground">

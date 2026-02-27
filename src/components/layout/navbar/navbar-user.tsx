@@ -136,26 +136,28 @@ export function NavbarUser() {
                     variant="ghost"
                     onPress={() => {
                       onClose();
-                      handleSignINButton();
+                      openSignIn();
                     }}
                     className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
                   >
-                    <LogIn className="size-5" /><SignInButton mode="redirect" 
-                    withSignUp>{t(I18N.UserBar.login)}</SignInButton>
+                    <LogIn className="size-5" />
+                    {t(I18N.UserBar.login)}
                   </Button>
+
 
                   {/* Sign Up */}
                   <Button
                     variant="primary"
                     onPress={() => {
                       onClose();
+                      openSignUp();
                     }}
-                    className="
-                    bg-[#6BB8FF]/60 hover:bg-[#6BB8FF]
-                    dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
+                    className="bg-[#6BB8FF]/60 hover:bg-[#6BB8FF] dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
                   >
-                    <UserPlus className="size-5" /><SignUpButton oauthFlow="redirect" mode="redirect">{t(I18N.UserBar.signup)}</SignUpButton>
+                    <UserPlus className="size-5" />
+                    {t(I18N.UserBar.signup)}
                   </Button>
+
                 </DrawerBody>
               </>
             )}

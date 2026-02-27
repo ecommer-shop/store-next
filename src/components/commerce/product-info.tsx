@@ -231,7 +231,6 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 </div>
             )}
 
-            {/* Add to Cart Button */}
             <div className="pt-4">
                 <Button
                     size="lg"
@@ -240,23 +239,33 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     isDisabled={!canAddToCart || isPending}
                     onPress={handleAddToCart}
                 >
-                    {isAdded ? (
+                    {isPending ? (
                         <>
-                            <CheckCircle2 className="mr-2 h-5 w-5"/>
+                            <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            {t(I18N.Commerce.productInfo.adding)}
+                        </>
+                    ) : isAdded ? (
+                        <>
+                            <CheckCircle2 className="mr-2 h-5 w-5" />
                             {t(I18N.Commerce.productInfo.addedToCart)}
+                        </>
+                    ) : !selectedVariant && product.optionGroups.length > 0 ? (
+                        <>
+                            <ShoppingCart className="mr-2 h-5 w-5" />
+                            {t(I18N.Commerce.productInfo.selectOptions)}
+                        </>
+                    ) : !isInStock ? (
+                        <>
+                            <ShoppingCart className="mr-2 h-5 w-5" />
+                            {t(I18N.Commerce.productInfo.outOfStock)}
                         </>
                     ) : (
                         <>
-                            <ShoppingCart className="mr-2 h-5 w-5"/>
-                            {isPending
-                                ? t(I18N.Commerce.productInfo.adding)
-                                : !selectedVariant && product.optionGroups.length > 0
-                                    ? t(I18N.Commerce.productInfo.selectOptions)
-                                    : !isInStock
-                                        ? t(I18N.Commerce.productInfo.outOfStock)
-                                        : t(I18N.Commerce.productInfo.addToCart)}
+                            <ShoppingCart className="mr-2 h-5 w-5" />
+                            {t(I18N.Commerce.productInfo.addToCart)}
                         </>
                     )}
+
                 </Button>
             </div>
 
