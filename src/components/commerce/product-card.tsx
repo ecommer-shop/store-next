@@ -1,3 +1,5 @@
+"use client";
+
 import Image from 'next/image';
 import {FragmentOf, readFragment} from '@/graphql';
 import {ProductCardFragment} from '@/lib/vendure/shared/fragments';
@@ -6,9 +8,14 @@ import {Suspense} from "react";
 import Link from "next/link"; 
 import {Avatar, Button, Card, CloseButton, Link as HLink} from "@heroui/react";
 
+
+import { useRouter } from "next/navigation";
+
+
 interface ProductCardProps { product: FragmentOf<typeof ProductCardFragment>; }
 
 export function ProductCard({ product: productProp }: ProductCardProps) {
+  const router = useRouter();
   const product = readFragment(ProductCardFragment, productProp);
 
   return (
@@ -71,7 +78,7 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
 
           {/* Botón SOLO desktop */}
           <Button
-            
+            onClick={() => router.push(`/product/${product.slug}`)}
             className="
               hidden lg:flex
               relative z-30
@@ -79,11 +86,9 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
               min-w-[90px] h-10
             "
           >
-            
-            <Link href={`/product/${product.slug}`}>
-            Comprar
-            </Link>
+          Comprar
           </Button>
+
         </Card.Footer>
       </Card>
     </div>

@@ -3,7 +3,7 @@ import { getTopCollections } from '@/lib/vendure/cached';
 import { unstable_cache } from 'next/cache';
 import Image from "next/image";
 import Link from "next/link";
-import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText } from './footer-content';
+import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText, UseAboutText } from './footer-content';
 
 function FooterBrandName() {
     // Can hardcode or translate - for now keep as is since it's brand name
@@ -80,6 +80,46 @@ export async function Footer() {
                                 >
                                     <UseLayoutText path={['footer','sections', 'about', 'label']}/> 
                                 </Link>
+                            </li>
+                            <li>
+                                <a
+                                    href="/legal/Ley1480_de_2011/terminos_condiciones.pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents','terms']} />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/legal/Ley1480_de_2011/garantia.pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents','warranty']} />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/legal/Ley1480_de_2011/retracto.pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents','withdrawal']} />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/legal/Ley1480_de_2011/reversion_pago.pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents','paymentReversal']} />
+                                </a>
                             </li>
                         </ul>
                     </div>
