@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { StarRating } from '@/components/ui/star-rating';
-import { Card } from "@heroui/react";
+import { Card, Button } from "@heroui/react";
 import { Separator } from '@/components/ui/separator';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
@@ -14,6 +14,7 @@ import { CheckUserPurchasedProductQuery } from '@/lib/vendure/shared/customer-or
 import { query } from '@/lib/vendure/client/api';
 import { ReviewsList } from './reviews-list';
 import { ReviewFormInline } from './review-form-inline';
+import { AISummary } from './ai-summary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ShoppingBag } from 'lucide-react';
 
@@ -39,12 +40,21 @@ interface ReviewStats {
   }>;
 }
 
+interface AISummary {
+  id: string;
+  title: string;
+  summary: string;
+  basedOnReviewsCount: number;
+  generatedAt: string;
+}
+
 export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [hasPurchased, setHasPurchased] = useState<boolean | null>(null);
   const [checkingPurchase, setCheckingPurchase] = useState(true);
+  const [showReviews, setShowReviews] = useState(false);
   const t = useTranslations();
 
   // Verificar si el usuario compró el producto
@@ -150,66 +160,12 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
     );
   }
 
+  // Datos para el resumen de IA
+  const hasReviews = stats && stats.totalReviews > 0;
+
   return (
     <div className="space-y-6">
-      {/* Header con estadísticas - COMPACTO */}
-      <Card className="p-4 md:p-5">
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold mb-2">
-              {t(I18N.Commerce.ReviewsSection.title)}
-            </h2>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2">
-                <StarRating value={stats?.averageRating || 0} interactive={false} size="md" />
-                <span className="text-xl md:text-2xl font-bold">
-                  {stats?.averageRating || 0}
-                </span>
-                <span className="text-sm text-muted-foreground">/ 5</span>
-              </div>
-              <div className="text-xs md:text-sm text-muted-foreground">
-                {t(I18N.Commerce.ReviewsSection.totalReviews, { 
-                  count: stats?.totalReviews || 0 
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Distribución de ratings - COMPACTO */}
-          {stats && stats.totalReviews > 0 && (
-            <div className="space-y-2">
-              <div className="text-xs md:text-sm font-medium">
-                {t(I18N.Commerce.ReviewsSection.ratingDistribution)}
-              </div>
-              {Array.from({ length: 5 }, (_, i) => {
-                const rating = 5 - i;
-                const percentage = getRatingPercentage(rating);
-                return (
-                  <div key={rating} className="flex items-center gap-2 md:gap-3">
-                    <div className="flex items-center gap-1 md:gap-2 w-14 md:w-16">
-                      <span className="text-xs md:text-sm text-muted-foreground">{rating}</span>
-                      <StarRating value={1} interactive={false} size="sm" />
-                    </div>
-                    <div className="flex-1 bg-muted rounded-full h-1.5 md:h-2">
-                      <div
-                        className="bg-primary h-1.5 md:h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${percentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="text-xs md:text-sm text-muted-foreground w-10 md:w-12 text-right">
-                      {percentage}%
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </Card>
-
-      <Separator className="my-4" />
-
-      {/* Formulario - SOLO SI COMPRÓ */}
+      {/* Formulario - SOLO SI COMPRÓ - PRIMERO */}
       {hasPurchased ? (
         <ReviewFormInline
           productId={productId}
@@ -225,14 +181,70 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
           </AlertDescription>
         </Alert>
       )}
- 
-      {/* Lista de reviews */}
-      <ReviewsList 
+
+      {/* Card de IA - SIEMPRE VISIBLE */}
+      <AISummary 
         productId={productId} 
-        limit={10} 
-        showPagination={true}
-        refreshTrigger={refreshTrigger}
+        showReviews={showReviews}
+        onToggleReviews={() => setShowReviews(!showReviews)}
       />
+
+      <Separator className="my-4" />
+
+      {/* Card de estadísticas - SOLO SI HAY REVIEWS */}
+      {hasReviews && (
+        <div className="relative">
+          {/* Efecto de brillo de fondo */}
+          <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-secondary to-primary opacity-20 blur-lg" />
+          
+          <Card className="relative border border-primary/50 bg-content1/95 backdrop-blur-md p-4 md:p-5">
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <div className="text-xs md:text-sm text-muted-foreground">
+                  {t(I18N.Commerce.ReviewsSection.totalReviews, { 
+                    count: stats?.totalReviews || 0 
+                  })}
+                </div>
+              </div>
+
+              {/* Distribución de ratings */}
+              <div className="space-y-2">
+                {Array.from({ length: 5 }, (_, i) => {
+                  const rating = 5 - i;
+                  const percentage = getRatingPercentage(rating);
+                  return (
+                    <div key={rating} className="flex items-center gap-2 md:gap-3">
+                      <div className="flex items-center gap-1 md:gap-2 w-14 md:w-16">
+                        <span className="text-xs md:text-sm text-muted-foreground">{rating}</span>
+                        <StarRating value={1} interactive={false} size="sm" />
+                      </div>
+                      <div className="flex-1 bg-muted rounded-full h-1.5 md:h-2">
+                        <div
+                          className="bg-primary h-1.5 md:h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-xs md:text-sm text-muted-foreground w-10 md:w-12 text-right">
+                        {percentage}%
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Lista de reviews - OCULTA POR DEFECTO */}
+      {showReviews && (
+        <ReviewsList 
+          productId={productId} 
+          limit={10} 
+          showPagination={true}
+          refreshTrigger={refreshTrigger}
+        />
+      )}
     </div>
   );
 }

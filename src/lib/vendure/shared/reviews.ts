@@ -13,11 +13,23 @@ export const ReviewFragment = graphql(`
     rating
     authorName
     authorLocation
+    verifiedPurchase
     upvotes
     downvotes
     state
     response
     responseCreatedAt
+  }
+`);
+
+// Fragmento de resumen de IA
+export const ProductAISummaryFragment = graphql(`
+  fragment ProductAISummary on ProductAISummary {
+    id
+    title
+    summary
+    basedOnReviewsCount
+    generatedAt
   }
 `);
 
@@ -32,9 +44,12 @@ export const GetProductReviewsQuery = graphql(`
         }
         totalItems
       }
+      aiSummary {
+        ...ProductAISummary
+      }
     }
   }
-`, [ReviewFragment]);
+`, [ReviewFragment, ProductAISummaryFragment]);
 
 // Query para obtener histograma de ratings
 export const GetProductReviewsHistogramQuery = graphql(`

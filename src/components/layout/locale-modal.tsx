@@ -63,9 +63,8 @@ export function LocaleModal({ isOpen, onClose, t }: Props) {
             </Modal.Heading>
             <Modal.Body className="flex flex-col gap-2">
               {LOCALES.map((l) => (
-                <div>
+                <div key={l.code}>
                   <Button
-                    key={l.code}
                     variant={l.code === currentLocale ? "primary" : "primary"}
                     onClick={() => changeLocale(l.code)}
                     className="justify-start rounded-[2px]"
