@@ -371,6 +371,7 @@
         "title": "Be the first to review this product",
         "description": "Your opinion helps other buyers make informed decisions."
       },
+      "verified": "Verified purchase",
       "count": "Based on {count} review",
       "count_plural": "Based on {count} reviews",
       "rating": "{rating} out of 5 stars",
@@ -421,7 +422,15 @@
         "alreadySubmitted": "Review submitted",
         "title": "Write a review"
       },
-      "mustPurchaseFirst": "You must purchase this product before writing a review."
+      "mustPurchaseFirst": "You must purchase this product before writing a review.",
+      "aiSummary": {
+        "badge": "AI • Smart Summary",
+        "noReviewsTitle": "No analysis available yet 💬",
+        "noReviewsDescription": "Be among the first to share your opinion and help generate an intelligent summary.",
+        "basedOn": "Based on {count} verified reviews",
+        "showMore": "Show more",
+        "hide": "Hide"
+      }
     },
     "productGrid": {
       "noProducts": "No products found",
