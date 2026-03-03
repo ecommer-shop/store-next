@@ -5,7 +5,7 @@ export default function TermsPage(){
         <h1 className="text-3xl font-bold mb-8">Términos y Condiciones</h1>
         
         <embed
-          src="/legal/Ley1480_de_2011/terminos_condiciones.pdf"
+          src="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf"
           type="application/pdf"
           width="100%"
           height="800px"

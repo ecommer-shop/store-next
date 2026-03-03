@@ -20,6 +20,12 @@ const nextConfig: NextConfig = {
             },
             {
                 hostname: 'admin-stg.ecommer.shop'
+            },
+            {
+                hostname: 'ecommer-stg-assets-willian.s3.us-east-2.amazonaws.com'
+            },
+            {
+                hostname: 'ecommer-stg-product-images.s3.us-east-2.amazonaws.com'
             }
         ],
     },
