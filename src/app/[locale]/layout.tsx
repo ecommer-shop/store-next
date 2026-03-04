@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Shop the best products at Vendure Store. Quality products, competitive prices, and fast delivery.",
+    "Shop the best products at Ecommer. Quality products, competitive prices, and fast delivery.",
   openGraph: {
     type: "website",
     siteName: SITE_NAME,

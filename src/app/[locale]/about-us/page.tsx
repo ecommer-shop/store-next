@@ -48,7 +48,7 @@ export default function QuienesSomosPage() {
           <h2 className="text-lg font-semibold"><UseAboutText path={['documents','label']} /></h2>
 
           <a
-            href="/legal/Ley1480_de_2011/terminos_condiciones.pdf"
+            href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="block text-primary underline"
@@ -56,7 +56,7 @@ export default function QuienesSomosPage() {
             <UseAboutText path={['documents','terms']} />
           </a>
           <a
-            href="/legal/Ley1480_de_2011/garantia.pdf"
+            href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=5"
             target="_blank"
             rel="noopener noreferrer"
             className="block text-primary underline"
@@ -64,7 +64,7 @@ export default function QuienesSomosPage() {
             <UseAboutText path={['documents','warranty']} />
           </a>
            <a
-            href="/legal/Ley1480_de_2011/retracto.pdf"
+            href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=9"
             target="_blank"
             rel="noopener noreferrer"
             className="block text-primary underline"
@@ -72,7 +72,7 @@ export default function QuienesSomosPage() {
             <UseAboutText path={['documents','withdrawal']} />
           </a>
            <a
-            href="/legal/Ley1480_de_2011/reversion_pago.pdf"
+            href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=10"
             target="_blank"
             rel="noopener noreferrer"
             className="block text-primary underline"
