@@ -7,7 +7,6 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SITE_NAME, SITE_URL } from "@/lib/vendure/shared/metadata";
 import {
   ClerkProvider,
@@ -18,10 +17,7 @@ import { routing } from "@/i18n/routing";
 import { ReactNode } from "react";
 import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
-import { useTheme } from "next-themes";
-import { ThemeVariables } from "@/components/providers/theme-variables";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
-import { toast } from "sonner";
 import { Providers } from "@/components/providers/providers";
 
 const geistSans = Geist({
@@ -99,25 +95,21 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   const messages = await getMessages();
   return (
     <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
-      <html lang="en" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <Providers>
-            <NextIntlClientProvider
-                locale={locale}
-                messages={messages}
-              >
-                <Toaster position="bottom-right" richColors />
-                <WompiScrollGuard />
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <main className="flex-1">
-                    {children}
-                  </main>
-                  <Footer />
-                </div>
-              </NextIntlClientProvider>
-              <Toaster />
-          </Providers>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Providers>
+              <Toaster position="bottom-right" richColors />
+              <WompiScrollGuard />
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </Providers>
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>

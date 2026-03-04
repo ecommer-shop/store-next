@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { SubmitProductReviewMutation } from '@/lib/vendure/shared/reviews';
 import { query } from '@/lib/vendure/client/api';
+import { getToken } from './getToken';
 
 const reviewSchema = z.object({
   rating: z.number().min(1, 'Debes seleccionar una calificación').max(5),
@@ -80,8 +81,7 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
 
     setIsSubmitting(true);
 
-    try {
-      const authorName = user.fullName || user.firstName || 'Usuario';
+    const authorName = user.fullName || user.firstName || 'Usuario';
       const summary = data.body.substring(0, 100).trim();
 
       const result = await query(SubmitProductReviewMutation, {
@@ -93,8 +93,8 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
           rating: data.rating,
           authorName,
         },
-      });
-
+      }, { authToken: await getToken() });
+      console.log('submit review result:', result);
       if (result.data?.submitProductReview) {
         toast.success(t(I18N.Commerce.ReviewForm.success.title), {
           description: t(I18N.Commerce.ReviewForm.success.description),
@@ -103,17 +103,6 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
         setIsExpanded(false);
         onSuccess?.();
       }
-    } catch (error: any) {
-      console.error('Error submitting review:', error);
-      
-      const errorMessage = error?.message || t(I18N.Commerce.ReviewForm.error.networkError);
-      
-      toast.error(t(I18N.Commerce.ReviewForm.error.title), {
-        description: errorMessage,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   // Solo renderizar si el usuario está cargado y logueado
