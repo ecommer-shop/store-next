@@ -17,6 +17,7 @@ import { ReviewFormInline } from './review-form-inline';
 import { AISummary } from './ai-summary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ShoppingBag } from 'lucide-react';
+import { getToken } from './getToken';
 
 interface ReviewsSectionProps {
   productId: string;
@@ -60,8 +61,9 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
   // Verificar si el usuario compró el producto
   const checkUserPurchase = async () => {
     setCheckingPurchase(true);
+    const token = await getToken()
     try {
-      const result = await query(CheckUserPurchasedProductQuery, {});
+      const result = await query(CheckUserPurchasedProductQuery, {}, {authToken: token});
 
       const activeCustomer = result.data?.activeCustomer;
       
@@ -77,11 +79,9 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
           line.productVariant?.product?.id === productId
         )
       );
-
       setHasPurchased(purchased);
     } catch (error) {
-      console.error('Error checking purchase:', error);
-      // Si hay error de autenticación, asumir que no ha comprado
+      // Si hay error de autenticación o red, asumir que no ha comprado
       setHasPurchased(false);
     } finally {
       setCheckingPurchase(false);
@@ -115,9 +115,11 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
         ratingCounts,
       });
     } catch (error) {
-      console.error('Error fetching review stats:', error);
-      toast.error(t(I18N.Commerce.ReviewsSection.error.title), {
-        description: t(I18N.Commerce.ReviewsSection.error.fetchError),
+      // Establecer estadísticas por defecto si hay error de red
+      setStats({
+        averageRating: 0,
+        totalReviews: 0,
+        ratingCounts: [5, 4, 3, 2, 1].map(bin => ({ bin, frequency: 0 }))
       });
     } finally {
       setLoadingStats(false);

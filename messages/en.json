@@ -554,5 +554,14 @@
       "withdrawal": "Withdrawal",
       "paymentReversal": "Payment reversal"
     }
+  },
+
+  "Legal": {
+    "terms": {
+      "title": "Terms and Conditions"
+    },
+    "privacy": {
+      "title": "Privacy Policy"
+    }
   }
 }

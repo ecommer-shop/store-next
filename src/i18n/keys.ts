@@ -541,5 +541,14 @@ export const I18N = {
       withdrawal: 'documents.withdrawal',
       paymentReversal: 'documents.paymentReversal',
     }
+  },
+
+  Legal: {
+    terms: {
+      title: 'title'
+    },
+    privacy: {
+      title: 'title'
+    }
   }
 } as const;

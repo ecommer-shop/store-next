@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Button } from '@heroui/react';
 import { Loader2, MapPin, Truck, CreditCard, Edit } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
-import { placeOrder as placeOrderAction } from '../actions';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
@@ -21,21 +20,11 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
   const { selectedLineIds } = useSelectedItems();
 
   const handlePlaceOrder = async () => {
-    if (!selectedPaymentMethodCode) return;
-
+    // Solo avanzar al paso de pago; la orden se coloca en PaymentStep
+    if (!order.shippingAddress || !order.shippingLines?.length) return;
     setLoading(true);
-    onComplete()
-    try {
-      await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
-    } catch (error) {
-      // Check if this is a Next.js redirect (which is expected)
-      if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-        // This is a redirect, not an error - let it propagate
-        throw error;
-      }
-      console.error('Error placing order:', error);
-      setLoading(false);
-    }
+    onComplete();
+    setLoading(false);
   };
 
   return (
