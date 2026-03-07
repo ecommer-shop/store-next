@@ -150,7 +150,9 @@ export function NavbarUser() {
                     variant="primary"
                     onPress={() => {
                       onClose();
-                      openSignUp();
+                      openSignUp({
+                        
+                      });
                     }}
                     className="bg-[#6BB8FF]/60 hover:bg-[#6BB8FF] dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
                   >

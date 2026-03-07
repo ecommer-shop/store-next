@@ -15,21 +15,45 @@ import {
 } from '@/lib/vendure/shared/metadata';
 import { getTranslations, getLocale } from 'next-intl/server';
 
-const getCollectionProducts = (slug: string, searchParams: { [key: string]: string | string[] | undefined }, locale: string) => 
+const serializeSearchParams = (searchParams: { [key: string]: string | string[] | undefined }) => {
+    const entries: Array<[string, string]> = [];
+
+    for (const [key, value] of Object.entries(searchParams)) {
+        if (value === undefined) continue;
+        if (Array.isArray(value)) {
+            for (const v of value) entries.push([key, v]);
+        } else {
+            entries.push([key, value]);
+        }
+    }
+
+    // Sorting keeps the cache key stable regardless of param order
+    entries.sort(([aKey, aVal], [bKey, bVal]) =>
+        aKey === bKey ? aVal.localeCompare(bVal) : aKey.localeCompare(bKey)
+    );
+
+    return new URLSearchParams(entries).toString();
+};
+
+const getCollectionProducts = (
+    slug: string,
+    searchParams: { [key: string]: string | string[] | undefined },
+    locale: string
+) =>
     unstable_cache(
-    async () => {
-        return query(SearchProductsQuery, {
-        input: buildSearchInput({
-            searchParams,
-            collectionSlug: slug
-        })
-    });
-    },
-    [`collection-${slug}-${locale}`],
-    {
-        revalidate: 60 * 120
-    } 
-)()
+        async () => {
+            return query(SearchProductsQuery, {
+                input: buildSearchInput({
+                    searchParams,
+                    collectionSlug: slug,
+                }),
+            });
+        },
+        ['collection', slug, locale, serializeSearchParams(searchParams)],
+        {
+            revalidate: 60 * 120,
+        }
+    )();
 
 
 const getCollectionMetadata = (slug: string, locale: string) =>
