@@ -1,6 +1,4 @@
 export const dynamic = 'force-dynamic';
-
-import {cacheLife, cacheTag, unstable_cache} from 'next/cache';
 import {CartIcon} from './cart-icon';
 import {query} from '@/lib/vendure/server/api';
 import {GetActiveOrderQuery} from '@/lib/vendure/shared/queries';
@@ -9,11 +7,31 @@ import { getAuthToken } from '@/lib/vendure/server/auth';
 export async function NavbarCart() {
     const token = await getAuthToken();
 
-    const cart = token
-    ? await query(GetActiveOrderQuery, {}, {
-                useAuthToken: true,
-                tags: ['cart'],
-            }) : null;
+    let cart = null;
+
+    if (token) {
+        try {
+            cart = await query(
+                GetActiveOrderQuery,
+                {},
+                {
+                    useAuthToken: true,
+                    tags: ['cart'],
+                }
+            );
+        } catch (err) {
+            // Fallback to default language if the current locale lacks translations
+            cart = await query(
+                GetActiveOrderQuery,
+                {},
+                {
+                    useAuthToken: true,
+                    tags: ['cart'],
+                    languageCode: 'en',
+                }
+            );
+        }
+    }
 
     const cartItemCount = cart?.data.activeOrder?.totalQuantity || 0;
 

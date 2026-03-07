@@ -6,14 +6,14 @@ import { ProductGrid } from '@/components/commerce/product-grid';
 import { FacetFilters } from '@/components/commerce/facet-filters/facet-filters';
 import { ProductGridSkeleton } from '@/components/shared/product-grid-skeleton';
 import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
-import { unstable_cache } from 'next/cache';
+
 import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
-import { getTranslations, getLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 
 const serializeSearchParams = (searchParams: { [key: string]: string | string[] | undefined }) => {
     const entries: Array<[string, string]> = [];
@@ -39,38 +39,35 @@ const getCollectionProducts = (
     slug: string,
     searchParams: { [key: string]: string | string[] | undefined },
     locale: string
-) =>
-    unstable_cache(
-        async () => {
-            return query(SearchProductsQuery, {
-                input: buildSearchInput({
-                    searchParams,
-                    collectionSlug: slug,
-                }),
-            });
-        },
-        ['collection', slug, locale, serializeSearchParams(searchParams)],
+) => {
+    return query(
+        SearchProductsQuery,
         {
-            revalidate: 60 * 120,
+            input: buildSearchInput({
+                searchParams,
+                collectionSlug: slug,
+            }),
+        },
+        {
+            languageCode: locale,
         }
-    )();
+    );
+}
 
 
-const getCollectionMetadata = (slug: string, locale: string) =>
-  unstable_cache(
-    async () => {
-      return query(GetCollectionProductsQuery, {
+const getCollectionMetadata = (slug: string, locale: string) => {
+    return query(GetCollectionProductsQuery, {
         slug,
         input: {
-          take: 0,
-          collectionSlug: slug,
-          groupByProduct: true,
+            take: 0,
+            collectionSlug: slug,
+            groupByProduct: true,
         },
-      });
-    },
-    [`collection-meta-${slug}-${locale}`],
-    { revalidate: 60 * 120 }
-  );
+    }, {
+        languageCode: locale,
+    });
+}
+
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
@@ -81,7 +78,7 @@ export async function generateMetadata({
     params,
 }: Props): Promise<Metadata> {
     const { slug, locale } = await params;
-    const result = await getCollectionMetadata(slug, locale)();
+    const result = await getCollectionMetadata(slug, locale);
     const collection = result.data.collection;
 
     if (!collection) {
@@ -124,7 +121,7 @@ export default async function CollectionPage({params, searchParams}: Props) {
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved, locale);
-    const t = getTranslations()
+    const t = await getTranslations();
     return (
         <Suspense fallback={
             <p></p>
