@@ -72,7 +72,7 @@ export async function Footer() {
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/terminos_condiciones.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
@@ -82,7 +82,7 @@ export async function Footer() {
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/garantia.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=5"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
@@ -92,7 +92,7 @@ export async function Footer() {
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/retracto.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=9"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
@@ -102,7 +102,7 @@ export async function Footer() {
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/reversion_pago.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=10"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"

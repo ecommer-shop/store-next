@@ -21,7 +21,6 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
         input: buildSearchInput({ searchParams: searchParamsResolved })
     });
 
-
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filters Sidebar */}

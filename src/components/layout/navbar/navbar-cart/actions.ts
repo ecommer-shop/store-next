@@ -1,30 +1,26 @@
-export const dynamic = 'force-dynamic';
-import {CartIcon} from './cart-icon';
-import {query} from '@/lib/vendure/server/api';
-import {GetActiveOrderQuery} from '@/lib/vendure/shared/queries';
-import { getAuthToken } from '@/lib/vendure/server/auth';
+import { query } from "@/lib/vendure/server/api";
+import { GetActiveOrderQuery } from "@/lib/vendure/shared/queries";
 
-export async function NavbarCart() {
-    const token = await getAuthToken();
-
+export const getActiveOrderQueryForCart = async (token: string | undefined) => {
     let cart = null;
-
     if (token) {
         try {
-            cart = await query(
+            return cart = await query(
                 GetActiveOrderQuery,
                 {},
                 {
+                    token,
                     useAuthToken: true,
                     tags: ['cart'],
                 }
             );
         } catch (err) {
             // Fallback to default language if the current locale lacks translations
-            cart = await query(
+            return cart = await query(
                 GetActiveOrderQuery,
                 {},
                 {
+                    token,
                     useAuthToken: true,
                     tags: ['cart'],
                     languageCode: 'en',
@@ -32,8 +28,4 @@ export async function NavbarCart() {
             );
         }
     }
-
-    const cartItemCount = cart?.data.activeOrder?.totalQuantity || 0;
-
-    return <CartIcon cartItemCount={cartItemCount} />;
 }
