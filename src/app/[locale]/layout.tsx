@@ -7,6 +7,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SITE_NAME, SITE_URL } from "@/lib/vendure/shared/metadata";
 import {
@@ -114,7 +115,9 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                     {children}
                   </main>
                   <Footer />
+                  <ChatWidget />
                 </div>
+                
               </NextIntlClientProvider>
               <Toaster />
           </Providers>
