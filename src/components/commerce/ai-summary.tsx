@@ -68,9 +68,7 @@ export function AISummary({ productId, onToggleReviews, showReviews }: AISummary
       }
     } catch (error) {
       console.error('Error fetching AI summary:', error);
-      toast.error(t(I18N.Commerce.ReviewsSection.error.title), {
-        description: t(I18N.Commerce.ReviewsSection.error.fetchError),
-      });
+      
     } finally {
       setLoading(false);
     }

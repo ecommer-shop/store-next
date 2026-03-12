@@ -31,7 +31,7 @@ interface ProductPageParams {
     locale: string;
     slug: string;
 }
-
+/*
 const getProductData = (slug: string, locale: string) =>
   unstable_cache(
     async () => {
@@ -42,6 +42,10 @@ const getProductData = (slug: string, locale: string) =>
       revalidate: 300
     }
   )();
+*/
+const getProductData = (slug: string, locale: string) => {
+    return query(GetProductDetailQuery, { slug });
+}
 
 export async function generateMetadata({
     params,
@@ -81,7 +85,7 @@ export async function generateMetadata({
     };
 }
 
-export default async function ProductDetailPage({params, searchParams}: PageProps<ProductPageParams>) {
+export default async function ProductDetailPage({ params, searchParams }: PageProps<ProductPageParams>) {
     const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
 
@@ -181,12 +185,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                 <div className="container mx-auto px-4 max-w-3xl">
                     <h2 className="text-2xl font-bold text-center mb-8">{t(I18N.Product.faq)}</h2>
                     <Accordion lang="single" className="w-full">
-                        
+
                         <Accordion.Item key="returns">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.returnPolicy)}
-                                     <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
@@ -195,12 +199,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
                         <Accordion.Item key="tracking">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.trackOrder)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
@@ -209,12 +213,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
                         <Accordion.Item key="international">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.internationalShipping)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
@@ -223,7 +227,7 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
                     </Accordion>
                 </div>
             </section>

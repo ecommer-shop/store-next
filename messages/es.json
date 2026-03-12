@@ -552,5 +552,14 @@
       "withdrawal": "Retracto",
       "paymentReversal": "Reversión del pago"
     }
+  },
+
+  "Legal": {
+    "terms": {
+      "title": "Términos y Condiciones"
+    },
+    "privacy": {
+      "title": "Políticas de Privacidad"
+    }
   }
 }

@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { GetProductReviewsQuery, VoteOnReviewMutation } from '@/lib/vendure/shared/reviews';
 import { query } from '@/lib/vendure/client/api';
+import { getToken } from './getToken';
 
 interface ReviewsListProps {
   productId: string;
@@ -56,7 +57,7 @@ export function ReviewsList({
           skip: (page - 1) * limit,
           sort: { createdAt: 'DESC' },
         },
-      });
+      }, { authToken: await getToken() });
 
       if (result.data?.product?.reviews) {
         setReviews(result.data.product.reviews.items as Review[]);
@@ -64,9 +65,6 @@ export function ReviewsList({
       }
     } catch (error) {
       console.error('Error fetching reviews:', error);
-      toast.error(t(I18N.Commerce.ReviewsList.error.title), {
-        description: t(I18N.Commerce.ReviewsList.error.fetchError),
-      });
     } finally {
       setLoading(false);
     }
@@ -81,7 +79,7 @@ export function ReviewsList({
       const result = await query(VoteOnReviewMutation, {
         id: reviewId,
         vote: helpful,
-      });
+      }, { authToken: await getToken() });
 
       if (result.data?.voteOnReview) {
         setReviews(prevReviews =>
@@ -104,9 +102,6 @@ export function ReviewsList({
       }
     } catch (error: any) {
       console.error('Error voting on review:', error);
-      toast.error(t(I18N.Commerce.ReviewsList.vote.error.title), {
-        description: error?.message || t(I18N.Commerce.ReviewsList.vote.error.networkError),
-      });
     }
   };
 
