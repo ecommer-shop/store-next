@@ -29,7 +29,7 @@ export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: Del
 
   const handleContinue = async () => {
   if (!selectedMethodId) return;
-
+console.log('Selected Shipping Method ID:', shippingMethods.find(m => m.id === selectedMethodId)?.name || selectedMethodId);
   setSubmitting(true);
   try {
     await fetch('/api/checkout/shipping', {

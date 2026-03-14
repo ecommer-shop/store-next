@@ -1,6 +1,6 @@
 import 'server-only';
 import { getTopCollections } from '@/lib/vendure/cached';
-import { unstable_cache } from 'next/cache';
+
 import Image from "next/image";
 import Link from "next/link";
 import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText, UseAboutText } from './footer-content';
@@ -25,17 +25,6 @@ type TopCollection = {
     name: string;
     slug: string;
 };
-/*
-const getCachedTopCollections = unstable_cache(
-    async () => {
-        return getTopCollections();
-    },
-    ['top-collections'],
-    {
-        revalidate: 72 * 3600,
-    }
-);*/
-
 const getCachedTopCollections = async () => {
     return await getTopCollections();
 }
@@ -71,54 +60,54 @@ export async function Footer() {
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold mb-4"><UseLayoutText path={['footer','sections', 'about', 'title']}/></p>
+                        <p className="text-sm font-semibold mb-4"><UseLayoutText path={['footer', 'sections', 'about', 'title']} /></p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
                                 <Link
                                     href="/about-us"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseLayoutText path={['footer','sections', 'about', 'label']}/> 
+                                    <UseLayoutText path={['footer', 'sections', 'about', 'label']} />
                                 </Link>
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/terminos_condiciones.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents','terms']} />
+                                    <UseAboutText path={['documents', 'terms']} />
                                 </a>
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/garantia.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=5"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents','warranty']} />
+                                    <UseAboutText path={['documents', 'warranty']} />
                                 </a>
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/retracto.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=9"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents','withdrawal']} />
+                                    <UseAboutText path={['documents', 'withdrawal']} />
                                 </a>
                             </li>
                             <li>
                                 <a
-                                    href="/legal/Ley1480_de_2011/reversion_pago.pdf"
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=10"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents','paymentReversal']} />
+                                    <UseAboutText path={['documents', 'paymentReversal']} />
                                 </a>
                             </li>
                         </ul>

@@ -22,7 +22,6 @@ export function SortDropdown() {
 
   const [sort, setSort] = useState<Key | null>(null);
 
-  // 🔹 solo hidrata desde la URL
   useEffect(() => {
     setSort(searchParams.get("sort") ?? "name-asc");
   }, []);
