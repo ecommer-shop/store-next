@@ -9,7 +9,7 @@ import {
     Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
-import { unstable_cache } from 'next/cache';
+
 import {
     SITE_NAME,
     truncateDescription,
@@ -31,18 +31,6 @@ interface ProductPageParams {
     locale: string;
     slug: string;
 }
-/*
-const getProductData = (slug: string, locale: string) =>
-  unstable_cache(
-    async () => {
-      return query(GetProductDetailQuery, { slug });
-    },
-    [`product-${slug}-${locale}`],
-    {
-      revalidate: 300
-    }
-  )();
-*/
 const getProductData = (slug: string, locale: string) => {
     return query(GetProductDetailQuery, { slug });
 }
