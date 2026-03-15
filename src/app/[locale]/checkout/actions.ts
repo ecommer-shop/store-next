@@ -29,8 +29,6 @@ interface AddressInput {
     company?: string;
 }
 
-
-
 export async function setShippingAddress(
     shippingAddress: AddressInput,
     useSameForBilling: boolean

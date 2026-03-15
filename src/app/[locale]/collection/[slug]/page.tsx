@@ -1,52 +1,18 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { query } from '@/lib/vendure/server/api';
-import { SearchProductsQuery, GetCollectionProductsQuery } from '@/lib/vendure/shared/queries';
 import { ProductGrid } from '@/components/commerce/product-grid';
 import { FacetFilters } from '@/components/commerce/facet-filters/facet-filters';
 import { ProductGridSkeleton } from '@/components/shared/product-grid-skeleton';
-import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
-import { unstable_cache } from 'next/cache';
+import { getCurrentPage } from '@/lib/vendure/shared/search-helpers';
+
 import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
-import { getTranslations, getLocale } from 'next-intl/server';
-
-const getCollectionProducts = (slug: string, searchParams: { [key: string]: string | string[] | undefined }, locale: string) => 
-    unstable_cache(
-    async () => {
-        return query(SearchProductsQuery, {
-        input: buildSearchInput({
-            searchParams,
-            collectionSlug: slug
-        })
-    });
-    },
-    [`collection-${slug}-${locale}`],
-    {
-        revalidate: 60 * 120
-    } 
-)()
-
-
-const getCollectionMetadata = (slug: string, locale: string) =>
-  unstable_cache(
-    async () => {
-      return query(GetCollectionProductsQuery, {
-        slug,
-        input: {
-          take: 0,
-          collectionSlug: slug,
-          groupByProduct: true,
-        },
-      });
-    },
-    [`collection-meta-${slug}-${locale}`],
-    { revalidate: 60 * 120 }
-  );
+import { getTranslations } from 'next-intl/server';
+import { getCollectionMetadata, getCollectionProducts } from './actions';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
@@ -57,7 +23,7 @@ export async function generateMetadata({
     params,
 }: Props): Promise<Metadata> {
     const { slug, locale } = await params;
-    const result = await getCollectionMetadata(slug, locale)();
+    const result = await getCollectionMetadata(slug, locale);
     const collection = result.data.collection;
 
     if (!collection) {
@@ -100,7 +66,7 @@ export default async function CollectionPage({params, searchParams}: Props) {
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved, locale);
-    const t = getTranslations()
+    const t = await getTranslations();
     return (
         <Suspense fallback={
             <p></p>
