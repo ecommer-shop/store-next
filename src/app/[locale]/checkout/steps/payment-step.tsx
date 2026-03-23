@@ -72,7 +72,8 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: 'COP',
-        amountInCents: correctTotal,
+        //amountInCents: correctTotal,
+        amountInCents: Math.round(correctTotal * 100),
         reference: uniqueReference,
         publicKey: pb,
         redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
