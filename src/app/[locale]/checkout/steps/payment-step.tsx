@@ -64,6 +64,8 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
+      console.log(uniqueId,uniqueReference,"desde el frontend");
+      
 
       // Obtener la firma usando la referencia única
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
