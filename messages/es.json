@@ -561,5 +561,96 @@
     "privacy": {
       "title": "Políticas de Privacidad"
     }
+  },
+
+  "Vendedores": {
+    "hero": {
+      "badge": "La nueva era del B2B",
+      "title": "Evoluciona la forma en que el mundo ve tu negocio",
+      "subtitle": "La plataforma omnicanal diseñada para fabricantes y vendedores colombianos que buscan escalar globalmente.",
+      "demoButton": "Agendar una Demo",
+      "storeButton": "Crear mi Tienda Gratis"
+    },
+    "beneficios": {
+      "title": "Excelencia Operativa",
+      "subtitle": "Todo lo que necesitas para operar sin fricciones.",
+      "cards": {
+        "cumplimiento": {
+          "title": "Cumplimiento sin fricciones",
+          "description": "Integración total con la DIAN para facturación electrónica automatizada."
+        },
+        "confianza": {
+          "title": "Confianza que convierte",
+          "description": "Pagos seguros y rápidos a través de Wompi, integrados en tu checkout."
+        },
+        "presencia": {
+          "title": "Presencia nacional",
+          "description": "Logística simplificada con Servientrega para envíos a todo el país."
+        },
+        "control": {
+          "title": "El control en tus manos",
+          "description": "Dashboard ejecutivo para monitorear ventas, inventario y clientes en tiempo real."
+        }
+      }
+    },
+    "tienda": {
+      "title": "Tu tienda lista en minutos",
+      "subtitle": "Hemos simplificado la complejidad técnica para que te enfoques en lo que mejor sabes hacer: crear productos increíbles. Nuestra interfaz intuitiva te permite gestionar todo desde tu dispositivo móvil.",
+      "checklist": {
+        "sinCodigo": "Cero código requerido",
+        "posicionamiento": "Posicionamiento nacional",
+        "panel": "Panel de administración y métricas"
+      },
+      "buttonText": "Crear mi Tienda Gratis"
+    },
+    "aliados": {
+      "title": "Nuestros aliados estratégicos",
+      "dian": "DIAN",
+      "wompi": "wompi",
+      "servientrega": "SERVIENTREGA"
+    },
+    "sectores": {
+      "title": "Lo mejor de Colombia para el mundo",
+      "subtitle": "Diseñado para los sectores que mueven nuestra economía.",
+      "cafe": {
+        "title": "Café Especial",
+        "description": "Directo desde las fincas de Popayán y el Eje Cafetero."
+      },
+      "moda": {
+        "title": "Moda & Calzado",
+        "description": "Talento local con calidad de exportación internacional."
+      },
+      "artesanias": {
+        "title": "Artesanías",
+        "description": "Herencia cultural transformada en piezas de lujo contemporáneo."
+      }
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "questions": {
+        "tecnicos": {
+          "question": "¿Necesito conocimientos técnicos?",
+          "answer": "No. Ecommer está diseñada para que cualquier emprendedor pueda configurar su tienda en minutos, sin necesidad de saber programar. Nuestro equipo de soporte te acompaña en cada paso del proceso."
+        },
+        "envios": {
+          "question": "¿Cómo funcionan los envíos con Servientrega?",
+          "answer": "Tu tienda está integrada directamente con Servientrega. Cuando un cliente hace un pedido, el sistema genera automáticamente la guía de envío y puedes rastrear el estado en tiempo real desde tu panel de administración."
+        },
+        "comisiones": {
+          "question": "¿Qué comisiones cobran por venta?",
+          "answer": "Ecommer cobra una comisión competitiva solo cuando vendes — no pagas nada si no hay ventas. Agenda una demo y te explicamos el detalle del modelo de precios adaptado a tu volumen de negocio."
+        },
+        "movil": {
+          "question": "¿Puedo manejar mi tienda desde el celular?",
+          "answer": "Sí. El panel de administración está optimizado para móvil. Podés gestionar productos, ver pedidos, responder clientes y revisar métricas de ventas desde cualquier lugar."
+        }
+      }
+    },
+    "cta": {
+      "title": "¿Listo para llevar tu negocio al siguiente nivel?",
+      "subtitle": "Únete a cientos de fabricantes colombianos que ya están exportando y vendiendo más con Ecommer.",
+      "demoButton": "Agendar Demo",
+      "storeButton": "Crear mi Tienda"
+    }
   }
 }
