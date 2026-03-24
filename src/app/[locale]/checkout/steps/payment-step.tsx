@@ -69,7 +69,9 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
 
       // Obtener la firma usando la referencia única
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
-
+      console.log(signature, "signatiure front");
+      
+      
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: 'COP',
