@@ -6,7 +6,6 @@ import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
 import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
-import { v7 as uuid } from 'uuid'
 import { placeOrder as placeOrderAction } from '../actions';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 
@@ -61,19 +60,19 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     try {
       // Calculate the correct total based on selected items
       const correctTotal = getSelectedOrderTotal();
+      const amountInCents = Math.round(correctTotal);
 
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
 
       // Obtener la firma usando la referencia única
-      const signature = await getPaymentSignature(correctTotal, uniqueReference);
+      const signature = await getPaymentSignature(amountInCents, uniqueReference);
 
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: 'COP',
-        //amountInCents: correctTotal,
-        amountInCents: Math.round(correctTotal * 100),
+        amountInCents: correctTotal,
         reference: uniqueReference,
         publicKey: pb,
         redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
