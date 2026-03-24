@@ -7,6 +7,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { ChatWidget } from "@/components/chat/ChatWidget";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SITE_NAME, SITE_URL } from "@/lib/vendure/shared/metadata";
 import {
   ClerkProvider,
@@ -97,19 +99,25 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
       <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <Providers>
-              <Toaster position="bottom-right" richColors />
-              <WompiScrollGuard />
-              <div className="flex flex-col min-h-screen">
-                <Navbar />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-              </div>
-            </Providers>
-          </NextIntlClientProvider>
+          <Providers>
+            <NextIntlClientProvider
+                locale={locale}
+                messages={messages}
+              >
+                <Toaster position="bottom-right" richColors />
+                <WompiScrollGuard />
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                  <Footer />
+                  <ChatWidget />
+                </div>
+                
+              </NextIntlClientProvider>
+              <Toaster />
+          </Providers>
         </body>
       </html>
     </ClerkProvider>
