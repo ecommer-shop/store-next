@@ -23,7 +23,6 @@ export function setAuthTokenOnCookies(
 export function getAuthTokenFromCookies(
   cookiesStore: ReadonlyRequestCookies
 ) {
-  
   return cookiesStore.get(AUTH_TOKEN_COOKIE)?.value;
 }
 
@@ -37,4 +36,13 @@ export async function setJWT(token: string) {
 
 export async function removeAuthToken() {
   (await cookies()).delete(AUTH_TOKEN_COOKIE);
+}
+
+export async function removeJWT() {
+  (await cookies()).delete(TOKEN_COOKIE);
+}
+
+export async function clearVendureAuth() {
+  await removeAuthToken();
+  await removeJWT();
 }

@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     cacheComponents: false,
     output: 'standalone',
     productionBrowserSourceMaps: false,
+    allowedDevOrigins: [
+        'http://localhost:3001',
+        'https://bipyramidal-colby-preworthy.ngrok-free.dev',
+        'bipyramidal-colby-preworthy.ngrok-free.dev'],
     images: {
         // This is necessary to display images from your local Vendure instance
         

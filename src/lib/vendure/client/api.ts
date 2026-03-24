@@ -2,6 +2,7 @@
 
 import type { TadaDocumentNode } from 'gql.tada';
 import { print } from 'graphql';
+import { VENDURE_AUTH_TOKEN_HEADER } from '@/lib/vendure/core';
 
 const VENDURE_URL = process.env.NEXT_PUBLIC_VENDURE_SHOP_API_URL || '';
 
@@ -20,7 +21,7 @@ export async function query<T>(
     };
 
     if (options?.authToken) {
-      headers.Authorization = `Bearer ${options.authToken}`;
+      headers[VENDURE_AUTH_TOKEN_HEADER] = options.authToken;
     }
 
     const queryString = print(document);
