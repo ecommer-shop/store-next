@@ -40,7 +40,6 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     if (!selectedPaymentMethodCode) return;
 
     setLoading(true);
-    onComplete()
     try {
       await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
     } catch (error) {
@@ -72,7 +71,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: 'COP',
-        amountInCents: correctTotal,
+        amountInCents: amountInCents,
         reference: uniqueReference,
         publicKey: pb,
         redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
@@ -85,23 +84,17 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         },
       });
 
-      checkout.open(({ transaction }: any) => {
+      checkout.open(async ({ transaction }: any) => {
         console.log('Wompi transaction status:', transaction.status);
 
         // Verificar si el pago fue exitoso
         if (transaction.status === 'APPROVED' || transaction.status === 'approved') {
           console.log('Payment successful!', transaction.status);
-            handlePlaceOrder(); // Colocar la orden después de la aprobación del pago
           // Habilitar el método de pago seleccionado
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
+          await placeOrderAction('wompi', selectedLineIds); // Colocar la orden después de la aprobación del pago
           console.log('Selected payment method set:', selectedPaymentMethodCode);
-          // Llamar a onComplete para avanzar al siguiente paso
-          if (onComplete) {
-            setTimeout(() => {
-              onComplete();
-            }, 1500); // Pequeño delay para mostrar confirmación visual
-          }
         } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
           console.error('Payment declined');
           setLoading(false);
