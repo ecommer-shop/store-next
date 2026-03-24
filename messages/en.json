@@ -7,7 +7,7 @@
   "UserBar": {
     "menu": {
       "tittle": "Menu",
-      "close": "Close"
+      "close": "X"
     },
     "themeSwitcher": {
       "tittle": "Appearance",
