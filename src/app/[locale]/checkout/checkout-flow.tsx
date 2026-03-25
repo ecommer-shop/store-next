@@ -12,7 +12,19 @@ import { I18N } from '@/i18n/keys';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
-type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
+// Toggle this constant to hide/show the "delivery" step without deleting
+// any of the related code. When `false` the step is skipped entirely and the
+// flow jumps from shipping -> review -> payment. Keeping the component around
+// makes it easy to re-enable later.
+const showDeliveryStep = false;
+
+// define step names conditionally so helper functions adapt automatically
+// (type union covers both scenarios).
+type CheckoutStep =
+  | 'shipping'//(typeof showDeliveryStep extends true ? 'delivery' : never)
+  | 'delivery'
+  | 'payment'
+  | 'review';
 
 interface CheckoutFlowProps {
   onSetShippingMethod: (id: string) => Promise<void>;
@@ -32,26 +44,27 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
 
     return { completed, current };
   };
-  
-    
-    
+
   const initialState = getInitialState();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(initialState.current);
   const [completedSteps, setCompletedSteps] = useState<Set<CheckoutStep>>(initialState.completed);
 
+  // build the step order dynamically so we don't have to repeat the flag
+  const stepOrder: CheckoutStep[] = ['shipping'];
+  if (showDeliveryStep) stepOrder.push('delivery');
+  stepOrder.push('review', 'payment');
+
   const handleStepComplete = (step: CheckoutStep) => {
     setCompletedSteps(prev => new Set([...prev, step]));
 
-    const stepOrder: CheckoutStep[] = ['shipping', 'delivery', 'review', 'payment'];
-    const currentIndex = stepOrder.indexOf(step);
+    const currentIndex = stepOrder.indexOf(step as CheckoutStep);
     if (currentIndex < stepOrder.length - 1) {
       setCurrentStep(stepOrder[currentIndex + 1]);
     }
   };
 
   const canAccessStep = (step: CheckoutStep): boolean => {
-    const stepOrder: CheckoutStep[] = ['shipping', 'delivery', 'review', 'payment'];
-    const stepIndex = stepOrder.indexOf(step);
+    const stepIndex = stepOrder.indexOf(step as CheckoutStep);
 
     if (stepIndex === 0) return true;
 
@@ -94,40 +107,42 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
             </Accordion.Panel>
           </Accordion.Item>
 
-          <Accordion.Item
-            key="delivery"
-            className="border rounded-lg px-6"
-            isDisabled={!canAccessStep('delivery')}
-          >
-            <Accordion.Heading>
-              <Accordion.Trigger
-                className="hover:no-underline"
-                isDisabled={!canAccessStep('delivery')}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`text-foreground flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('delivery')
-                    ? 'bg-green-500 text-white'
-                    : currentStep === 'delivery'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
-                    }`}>
-                    {completedSteps.has('delivery') ? '✓' : '2'}
+          {showDeliveryStep && (
+            <Accordion.Item
+              key="delivery"
+              className="border rounded-lg px-6"
+              isDisabled={!canAccessStep('delivery')}
+            >
+              <Accordion.Heading>
+                <Accordion.Trigger
+                  className="hover:no-underline"
+                  isDisabled={!canAccessStep('delivery')}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`text-foreground flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('delivery')
+                      ? 'bg-green-500 text-white'
+                      : currentStep === 'delivery'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
+                      }`}>
+                      {completedSteps.has('delivery') ? '✓' : '2'}
+                    </div>
+                    <span className="text-lg font-semibold text-foreground">{t(I18N.Checkout.flow.deliveryMethod)}</span>
                   </div>
-                  <span className="text-lg font-semibold text-foreground">{t(I18N.Checkout.flow.deliveryMethod)}</span>
-                </div>
-                <Accordion.Indicator className='text-foreground' />
-              </Accordion.Trigger>
-            </Accordion.Heading>
-            <Accordion.Panel>
-              <Accordion.Body className="pt-4">
-                <DeliveryStep
-                  onComplete={() => handleStepComplete('delivery')}
-                  onSetShippingMethod={onSetShippingMethod}
-                  t={t}
-                />
-              </Accordion.Body>
-            </Accordion.Panel>
-          </Accordion.Item>
+                  <Accordion.Indicator className='text-foreground' />
+                </Accordion.Trigger>
+              </Accordion.Heading>
+              <Accordion.Panel>
+                <Accordion.Body className="pt-4">
+                  <DeliveryStep
+                    onComplete={() => handleStepComplete('delivery')}
+                    onSetShippingMethod={onSetShippingMethod}
+                    t={t}
+                  />
+                </Accordion.Body>
+              </Accordion.Panel>
+            </Accordion.Item>
+          )}
 
           <Accordion.Item
             key="review"

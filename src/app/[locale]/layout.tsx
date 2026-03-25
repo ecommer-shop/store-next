@@ -7,6 +7,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SITE_NAME, SITE_URL } from "@/lib/vendure/shared/metadata";
 import {
@@ -18,10 +19,7 @@ import { routing } from "@/i18n/routing";
 import { ReactNode } from "react";
 import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
-import { useTheme } from "next-themes";
-import { ThemeVariables } from "@/components/providers/theme-variables";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
-import { Toast } from "@heroui/react";
 import { Providers } from "@/components/providers/providers";
 
 const geistSans = Geist({
@@ -41,7 +39,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Shop the best products at Vendure Store. Quality products, competitive prices, and fast delivery.",
+    "Shop the best products at Ecommer. Quality products, competitive prices, and fast delivery.",
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -99,14 +97,14 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   const messages = await getMessages();
   return (
     <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
-      <html lang="en" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <Providers>
             <NextIntlClientProvider
                 locale={locale}
                 messages={messages}
               >
-                <Toast.Container className="bottom-8 right-8 rounded-md text-foreground" placement="bottom end"/>
+                <Toaster position="bottom-right" richColors />
                 <WompiScrollGuard />
                 <div className="flex flex-col min-h-screen">
                   <Navbar />
@@ -114,7 +112,9 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                     {children}
                   </main>
                   <Footer />
+                  <ChatWidget />
                 </div>
+                
               </NextIntlClientProvider>
               <Toaster />
           </Providers>

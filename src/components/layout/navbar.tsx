@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections/navbar-collections';
-import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
+import {NavbarCart} from '@/components/layout/navbar/navbar-cart/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
 import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
@@ -11,7 +11,15 @@ import {SearchInputSkeleton} from '@/components/shared/skeletons/search-input-sk
 
 export function Navbar() {
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background">
+        //<header className="fixed top-0 left-0 right-0 z-50 border-b bg-background">
+        <header className="
+            fixed top-0 left-0 right-0 z-50
+            border-b
+            bg-background/70
+            backdrop-blur-md
+            supports-[backdrop-filter]:bg-background/60
+        ">
+
             <div className="container mx-auto px-4">
                 
                 <div className="flex items-center h-16 gap-3 md:justify-between">

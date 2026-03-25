@@ -5,6 +5,7 @@ import {CartSkeleton} from "@/components/shared/skeletons/cart-skeleton";
 import {noIndexRobots} from '@/lib/vendure/shared/metadata';
 import { getTranslations } from 'next-intl/server';
 import { I18N } from '@/i18n/keys';
+import { CartProviders } from './cart-providers';
 
 export const metadata: Metadata = {
     title: 'Shopping Cart',
@@ -23,12 +24,14 @@ export default async function CartPage(_props: PageProps<'/cart'>) {
     const t = await getTranslations('Cart');
     
     return (
-        <div className="container mx-auto px-4 py-20">
-            <h1 className="text-3xl font-bold mb-8">{t(I18N.Cart.title)}</h1>
+        <CartProviders>
+            <div className="container mx-auto px-4 py-20">
+                <h1 className="text-3xl font-bold mb-8">{t(I18N.Cart.title)}</h1>
 
-            <Suspense fallback={<CartSkeleton />}>
-                <Cart/>
+                <Suspense fallback={<CartSkeleton />}>
+                    <Cart/>
             </Suspense>
         </div>
+        </CartProviders>
     );
 }

@@ -9,7 +9,7 @@ import {
     Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
-import { cacheLife, cacheTag, unstable_cache } from 'next/cache';
+
 import {
     SITE_NAME,
     truncateDescription,
@@ -20,6 +20,7 @@ import { ProductInfo } from '@/components/commerce/product-info';
 import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
+import { ReviewsSection } from '@/components/commerce/reviews-section-inline';
 
 interface PageProps<T = any> {
     params: Promise<T>;
@@ -30,24 +31,15 @@ interface ProductPageParams {
     locale: string;
     slug: string;
 }
-
-const getProductData = (slug: string) =>
-  unstable_cache(
-    async () => {
-      return query(GetProductDetailQuery, { slug });
-    },
-    [`product-${slug}`],
-    {
-      revalidate: 300
-    }
-  )();
-
+const getProductData = (slug: string, locale: string) => {
+    return query(GetProductDetailQuery, { slug });
+}
 
 export async function generateMetadata({
     params,
 }: PageProps<ProductPageParams>): Promise<Metadata> {
-    const { slug } = await params;
-    const result = await getProductData(slug);
+    const { slug, locale } = await params;
+    const result = await getProductData(slug, locale);
     const product = result.data.product;
 
     if (!product) {
@@ -81,17 +73,20 @@ export async function generateMetadata({
     };
 }
 
-export default async function ProductDetailPage({params, searchParams}: PageProps<ProductPageParams>) {
-    const { slug } = await params;
+export default async function ProductDetailPage({ params, searchParams }: PageProps<ProductPageParams>) {
+    const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
 
-    const result = await getProductData(slug);
+    const result = await getProductData(slug, locale);
 
     const product = result.data.product;
 
     if (!product) {
         notFound();
     }
+
+    const productId = product.id;
+    const variantId = product.variants[0]?.id;
 
     // Get the primary collection (prefer deepest nested / most specific)
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
@@ -128,6 +123,13 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                         </Suspense>
                     </div>
                 </div>
+            </div>
+
+            <div className="mt-16 container mx-auto px-4">
+                <ReviewsSection
+                    productId={productId}
+                    variantId={variantId}
+                />
             </div>
 
             {/* Product Benefits Section */}
@@ -171,12 +173,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                 <div className="container mx-auto px-4 max-w-3xl">
                     <h2 className="text-2xl font-bold text-center mb-8">{t(I18N.Product.faq)}</h2>
                     <Accordion lang="single" className="w-full">
-                        
+
                         <Accordion.Item key="returns">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.returnPolicy)}
-                                     <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
@@ -185,12 +187,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
                         <Accordion.Item key="tracking">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.trackOrder)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
@@ -199,12 +201,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
                         <Accordion.Item key="international">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.internationalShipping)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor'/>
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
@@ -213,7 +215,7 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]'/>
+                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
                     </Accordion>
                 </div>
             </section>

@@ -29,9 +29,12 @@ export function ProductCarousel({title, products}: ProductCarouselClientProps) {
   }, [api]);
 
     return (
-        <section className="mt-15 py-12 md:py-16">
+        <section className="mt- 6 py-6 md:py-8">
             <div className="container mx-auto px-4">
-                <h2 className="text-3xl md:text-4xl font-bold mb-8">{title}</h2>
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10">
+                 {title}
+                </h2>
+
                 <Carousel
                     setApi={setApi}
                     opts={{
@@ -50,24 +53,26 @@ export function ProductCarousel({title, products}: ProductCarouselClientProps) {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <CarouselPrevious className="hidden md:flex"/>
-                    <CarouselNext className="hidden md:flex"/>
+                    <CarouselPrevious className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-md shadow-md hover:bg-white transition-all duration-300" />
+                    <CarouselNext className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-md shadow-md hover:bg-white transition-all duration-300" />
+
                 </Carousel>
                 {/* Dots */}
-                <div className="flex justify-center gap-2 mt-4">
+                <div className="flex justify-center gap-2 mt-6">
                   {Array.from({ length: count }).map((_, index) => (
                     <button
                       key={index}
                       onClick={() => api?.scrollTo(index)}
-                      className={`h-2 w-2 rounded-full transition-all ${
+                      className={`h-2 rounded-full transition-all duration-300 ease-in-out ${
                         index === current
-                          ? "bg-primary w-4"
-                          : "bg-muted-foreground/40"
+                          ? "bg-primary w-6"
+                          : "bg-muted-foreground/30 w-2 hover:bg-muted-foreground/60"
                       }`}
                       aria-label={`Ir al slide ${index + 1}`}
                     />
                   ))}
                 </div>
+
             </div>
         </section>
     );

@@ -1,9 +1,9 @@
 import 'server-only';
 import { getTopCollections } from '@/lib/vendure/cached';
-import { unstable_cache } from 'next/cache';
+
 import Image from "next/image";
 import Link from "next/link";
-import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText } from './footer-content';
+import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText, UseAboutText } from './footer-content';
 
 function FooterBrandName() {
     // Can hardcode or translate - for now keep as is since it's brand name
@@ -25,17 +25,9 @@ type TopCollection = {
     name: string;
     slug: string;
 };
-
-const getCachedTopCollections = unstable_cache(
-    async () => {
-        return getTopCollections();
-    },
-    ['top-collections'],
-    {
-        revalidate: 72 * 3600,
-    }
-);
-
+const getCachedTopCollections = async () => {
+    return await getTopCollections();
+}
 export async function Footer() {
     /*'use cache'
     cacheLife('days');*/
@@ -68,15 +60,55 @@ export async function Footer() {
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold mb-4"><UseLayoutText path={['footer','sections', 'about', 'title']}/></p>
+                        <p className="text-sm font-semibold mb-4"><UseLayoutText path={['footer', 'sections', 'about', 'title']} /></p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
                                 <Link
                                     href="/about-us"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseLayoutText path={['footer','sections', 'about', 'label']}/> 
+                                    <UseLayoutText path={['footer', 'sections', 'about', 'label']} />
                                 </Link>
+                            </li>
+                            <li>
+                                <a
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents', 'terms']} />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=5"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents', 'warranty']} />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=9"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents', 'withdrawal']} />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="https://ecommer-stg-product-images.s3.us-east-2.amazonaws.com/TemsAndConds.pdf#page=10"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-foreground transition-colors"
+                                >
+                                    <UseAboutText path={['documents', 'paymentReversal']} />
+                                </a>
                             </li>
                         </ul>
                     </div>

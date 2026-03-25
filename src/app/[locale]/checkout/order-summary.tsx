@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { OrderLine } from './types';
 import { useCheckout } from './checkout-provider';
+import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { Price } from '@/components/commerce/price';
 import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react';
 import { I18N } from '@/i18n/keys';
@@ -14,6 +15,14 @@ interface OrderSummaryProps {
 }
 export default function OrderSummary({ t }: OrderSummaryProps) {
   const { order } = useCheckout();
+  const { selectedLineIds } = useSelectedItems();
+
+  // Filter lines to only those selected by the user
+  const displayedLines = order.lines.filter((l: OrderLine) => selectedLineIds.length === 0 ? true : selectedLineIds.includes(l.id));
+
+  const selectedLinesSubtotal = displayedLines.reduce((sum: number, line: OrderLine) => sum + (line.linePriceWithTax ?? 0), 0);
+  const discountTotal = order.discounts?.reduce((sum: number, d: { amountWithTax: number }) => sum + (d.amountWithTax ?? 0), 0) ?? 0;
+  const finalTotal = selectedLinesSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
   return (
     <Card className="sticky top-11
     rounded-md
@@ -24,7 +33,7 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
-          {order.lines.map((line: OrderLine) => (
+          {displayedLines.map((line: OrderLine) => (
             <div key={line.id} className="flex gap-3">
               {line.productVariant.product.featuredAsset && (
                 <div className="flex-shrink-0 w-15 h-15">
@@ -63,7 +72,7 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">{t(I18N.Checkout.summary.subtotal)}</span>
             <span>
-              <Price value={order.subTotalWithTax} currencyCode={order.currencyCode} />
+              <Price value={selectedLinesSubtotal} currencyCode={order.currencyCode} />
             </span>
           </div>
 
@@ -95,7 +104,7 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
         <div className="flex justify-between font-bold text-lg">
           <span>{t(I18N.Checkout.summary.total)}</span>
           <span>
-            <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
+            <Price value={finalTotal} currencyCode={order.currencyCode} />
           </span>
         </div>
       </CardContent>

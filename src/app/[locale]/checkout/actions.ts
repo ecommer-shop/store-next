@@ -7,9 +7,11 @@ import {
     SetOrderBillingAddressMutation,
     SetOrderShippingMethodMutation,
     AddPaymentToOrderMutation,
+    RemoveFromCartMutation,
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
 } from '@/lib/vendure/shared/mutations';
+import { GetActiveOrderQuery } from '@/lib/vendure/shared/queries';
 import { GetWompiSignatureQuery } from '@/lib/vendure/shared/queries';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -26,8 +28,6 @@ interface AddressInput {
     phoneNumber: string;
     company?: string;
 }
-
-
 
 export async function setShippingAddress(
     shippingAddress: AddressInput,
@@ -108,9 +108,31 @@ export async function transitionToArrangingPayment() {
     revalidatePath('/checkout');
 }
 
-export async function placeOrder(paymentMethodCode: string) {
+export async function placeOrder(paymentMethodCode: string, selectedLineIds?: string[]) {
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    // If selectedLineIds provided, remove unselected lines from the active order
+    if (Array.isArray(selectedLineIds)) {
+        if (selectedLineIds.length === 0) {
+            throw new Error('No items selected for the order');
+        }
+
+        // Fetch active order to know current lines
+        const activeOrderRes = await query(GetActiveOrderQuery, {}, { token, useAuthToken: true });
+        const activeOrder = activeOrderRes.data.activeOrder;
+        if (activeOrder && Array.isArray(activeOrder.lines)) {
+            const linesToRemove = activeOrder.lines.filter((l: any) => !selectedLineIds.includes(l.id));
+            for (const line of linesToRemove) {
+                try {
+                    await mutate(RemoveFromCartMutation, { lineId: line.id }, { token, useAuthToken: true });
+                } catch (err) {
+                    console.error('Failed to remove unselected line before placing order', line.id, err);
+                }
+            }
+        }
+    }
+
     // First, transition the order to ArrangingPayment state
     await transitionToArrangingPayment();
 
@@ -146,6 +168,24 @@ export async function placeOrder(paymentMethodCode: string) {
     const orderCode = result.data.addPaymentToOrder.code;
 
     // Update the cart tag to immediately invalidate cached cart data
+    // After placing the order, remove items from the active cart
+    try {
+        const activeOrderRes = await query(GetActiveOrderQuery, {}, { token, useAuthToken: true });
+        const activeOrder = activeOrderRes.data.activeOrder;
+        if (activeOrder && activeOrder.lines && activeOrder.lines.length > 0) {
+            for (const line of activeOrder.lines) {
+                try {
+                    await mutate(RemoveFromCartMutation, { lineId: line.id }, { token, useAuthToken: true });
+                } catch (err) {
+                    // ignore individual removal errors
+                    console.error('Failed to remove cart line', line.id, err);
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Failed to clear cart after order placement', err);
+    }
+
     updateTag('cart');
     updateTag('active-order');
 
