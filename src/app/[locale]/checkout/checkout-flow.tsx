@@ -161,7 +161,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                     }`}>
-                    {completedSteps.has('review') ? '✓' : '3'}
+                    {completedSteps.has('review') ? '✓' : '2'}
                   </div>
                   <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
                 </div>
@@ -196,7 +196,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                     }`}>
-                    {completedSteps.has('payment') ? '✓' : '4'}
+                    {completedSteps.has('payment') ? '✓' : '3'}
                   </div>
                   <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
                 </div>
