@@ -161,7 +161,20 @@ export const I18N = {
         }
       }
     },
-    profile: {}
+    profile: {
+      deleteAccount: {
+        title: 'deleteAccount.title',
+        description: 'deleteAccount.description',
+        warningTitle: 'deleteAccount.warningTitle',
+        warningDescription: 'deleteAccount.warningDescription',
+        action: 'deleteAccount.action',
+        confirm: 'deleteAccount.confirm',
+        cancel: 'deleteAccount.cancel',
+        deleting: 'deleteAccount.deleting',
+        successTitle: 'deleteAccount.successTitle',
+        errorTitle: 'deleteAccount.errorTitle'
+      }
+    }
   },
 
   Cart: {
@@ -551,4 +564,4 @@ export const I18N = {
       title: 'title'
     }
   }
-} as const;
+} as const

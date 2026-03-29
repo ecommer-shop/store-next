@@ -52,7 +52,8 @@ export async function executeVendureRequest<TResult, TVariables>(
   };
 
   if (authToken) {
-    headers.Authorization = `Bearer ${authToken}`;
+    // Shop API session tokens must be sent in the Vendure auth header.
+    headers[VENDURE_AUTH_TOKEN_HEADER] = authToken;
   }
 
   headers[VENDURE_CHANNEL_TOKEN_HEADER] =

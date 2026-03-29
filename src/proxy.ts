@@ -43,6 +43,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith(`/${locale}/_next`) ||
+    pathname.startsWith("/api") ||
     pathname.match(/\.(.*)$/)
   ) {
     return NextResponse.next();

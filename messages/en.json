@@ -12,9 +12,7 @@
     "themeSwitcher": {
       "tittle": "Appearance",
       "subtittle": "Change theme",
-      "light": "Light",
-      "dark": "Dark",
-      "system": "System"
+      "light": "Light"
     },
     "langSwitcher": {
       "tittle": "Language"
@@ -170,6 +168,18 @@
       "content": {
         "title": "Your profile",
         "description": "Manage your account information."
+      },
+      "deleteAccount": {
+        "title": "Delete account",
+        "description": "Delete your Ecommer account, this cannot be undone.",
+        "warningTitle": "This action is permanent",
+        "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
+        "action": "Delete my account",
+        "confirm": "Yes, delete account",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "successTitle": "Account deleted",
+        "errorTitle": "Could not delete account"
       }
     }
   },

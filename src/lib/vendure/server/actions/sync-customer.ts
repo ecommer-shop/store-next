@@ -22,6 +22,7 @@ export async function syncCustomerWithVendure() {
         sessionId!,
         "vendure"
     )
+    
     const result = await mutate(RegisterCustomerAccountMutation, {
         input:{
             emailAddress: email,
@@ -36,11 +37,10 @@ export async function syncCustomerWithVendure() {
     const login = await mutate(AuthenticateWithClerk, {
         token: token.jwt
     })
-
+    
     await setAuthToken(login.token!);
     await setJWT(token.jwt);
     setAuthTokenOnCookies(cookiesStore, login.token!)
-
     if (result.data.registerCustomerAccount.__typename !== 'Success') {
         if ('errorCode' in result.data.registerCustomerAccount && result.data.registerCustomerAccount.errorCode === 'EMAIL_ADDRESS_CONFLICT_ERROR') {
             return; // ya existe
