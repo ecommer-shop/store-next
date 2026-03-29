@@ -563,5 +563,96 @@ export const I18N = {
     privacy: {
       title: 'title'
     }
+  },
+
+  Vendedores: {
+    hero: {
+      badge: 'hero.badge',
+      title: 'hero.title',
+      subtitle: 'hero.subtitle',
+      demoButton: 'hero.demoButton',
+      storeButton: 'hero.storeButton'
+    },
+    beneficios: {
+      title: 'beneficios.title',
+      subtitle: 'beneficios.subtitle',
+      cards: {
+        cumplimiento: {
+          title: 'beneficios.cards.cumplimiento.title',
+          description: 'beneficios.cards.cumplimiento.description'
+        },
+        confianza: {
+          title: 'beneficios.cards.confianza.title',
+          description: 'beneficios.cards.confianza.description'
+        },
+        presencia: {
+          title: 'beneficios.cards.presencia.title',
+          description: 'beneficios.cards.presencia.description'
+        },
+        control: {
+          title: 'beneficios.cards.control.title',
+          description: 'beneficios.cards.control.description'
+        }
+      }
+    },
+    tienda: {
+      title: 'tienda.title',
+      subtitle: 'tienda.subtitle',
+      checklist: {
+        sinCodigo: 'tienda.checklist.sinCodigo',
+        posicionamiento: 'tienda.checklist.posicionamiento',
+        panel: 'tienda.checklist.panel'
+      },
+      buttonText: 'tienda.buttonText'
+    },
+    aliados: {
+      title: 'aliados.title',
+      dian: 'aliados.dian',
+      wompi: 'aliados.wompi',
+      servientrega: 'aliados.servientrega'
+    },
+    sectores: {
+      title: 'sectores.title',
+      subtitle: 'sectores.subtitle',
+      cafe: {
+        title: 'sectores.cafe.title',
+        description: 'sectores.cafe.description'
+      },
+      moda: {
+        title: 'sectores.moda.title',
+        description: 'sectores.moda.description'
+      },
+      artesanias: {
+        title: 'sectores.artesanias.title',
+        description: 'sectores.artesanias.description'
+      }
+    },
+    faq: {
+      title: 'Preguntas Frecuentes',
+      questions: {
+        tecnicos: {
+          question: '¿Necesito conocimientos técnicos?',
+          answer: 'No. Ecommer está diseñada para que cualquier emprendedor pueda configurar su tienda en minutos, sin necesidad de saber programar. Nuestro equipo de soporte te acompaña en cada paso del proceso.'
+        },
+        envios: {
+          question: '¿Cómo funcionan los envíos con Servientrega?',
+          answer: 'Tu tienda está integrada directamente con Servientrega. Cuando un cliente hace un pedido, el sistema genera automáticamente la guía de envío y puedes rastrear el estado en tiempo real desde tu panel de administración.'
+        },
+        comisiones: {
+          question: '¿Qué comisiones cobran por venta?',
+          answer: 'Ecommer cobra una comisión competitiva solo cuando vendes — no pagas nada si no hay ventas. Agenda una demo y te explicamos el detalle del modelo de precios adaptado a tu volumen de negocio.'
+        },
+        movil: {
+          question: '¿Puedo manejar mi tienda desde el celular?',
+          answer: 'Sí. El panel de administración está optimizado para móvil. Podés gestionar productos, ver pedidos, responder clientes y revisar métricas de ventas desde cualquier lugar.'
+        }
+      }
+    },
+    cta: {
+      title: 'cta.title',
+      subtitle: 'cta.subtitle',
+      demoButton: 'cta.demoButton',
+      storeButton: 'cta.storeButton'
+    }
   }
 } as const
