@@ -34,6 +34,7 @@ export function SearchInput() {
         className="
           pl-9
           w-full
+          text-ellipsis
           transition-all
         "
         value={searchValue}
