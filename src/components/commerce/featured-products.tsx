@@ -8,7 +8,7 @@ import { I18N } from "@/i18n/keys";
 
 const getFeaturedCollectionProducts = async (locale: string) => {
   const result = await query(GetCollectionProductsQuery, {
-    slug: 'home-garden',
+    slug: 'electronica',
     input: {
       take: 12,
       skip: 0,

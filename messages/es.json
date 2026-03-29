@@ -45,7 +45,6 @@
         "title": "Tus direcciones",
         "description": "Gestiona tus direcciones de envío y facturación."
       },
-
       "form": {
         "fields": {
           "fullName": {
@@ -170,6 +169,18 @@
       "content": {
         "title": "Tu perfil",
         "description": "Gestiona la información de tu cuenta."
+      },
+      "deleteAccount": {
+        "title": "Eliminar cuenta",
+        "description": "Elimina tu cuenta en Ecommer, esto no se puede deshacer.",
+        "warningTitle": "Esta acción es permanente",
+        "warningDescription": "Se anonimizarán tus datos en la tienda y luego se eliminará tu cuenta de Ecommer. No podrás recuperar el acceso.",
+        "action": "Eliminar mi cuenta",
+        "confirm": "Sí, eliminar cuenta",
+        "cancel": "Cancelar",
+        "deleting": "Eliminando...",
+        "successTitle": "Cuenta eliminada",
+        "errorTitle": "No se pudo eliminar la cuenta"
       }
     }
   },

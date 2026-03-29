@@ -98,7 +98,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   return (
     <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
       <html lang={locale} suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
           <Providers>
             <NextIntlClientProvider
                 locale={locale}

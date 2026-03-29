@@ -43,7 +43,7 @@ export async function OrderSummary({ activeOrder }: { activeOrder: ActiveOrder }
                 {/* This div is now handled by OrderSummaryClient - removing the duplicate total */}
             </div>
             
-                <CheckoutButtonClient label={t(I18N.Cart.summary.checkout)} />
+                <CheckoutButtonClient label={t(I18N.Cart.summary.checkout)} lines={activeOrder.lines} />
             
             <Link className='w-full' href="/">
                 <Button variant="ghost" className="w-full mt-2 rounded-md">

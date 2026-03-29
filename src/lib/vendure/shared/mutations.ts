@@ -391,6 +391,15 @@ export const LogoutMutation = graphql(`
     }
 `);
 
+export const DeleteMyAccountMutation = graphql(`
+    mutation DeleteMyAccount($input: DeleteMyAccountInput!) {
+        deleteMyAccount(input: $input) {
+            success
+            message
+        }
+    }
+`);
+
 export const UpdateCustomerMutation = graphql(`
     mutation UpdateCustomer($input: UpdateCustomerInput!) {
         updateCustomer(input: $input) {
