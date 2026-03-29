@@ -177,7 +177,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
                 />
               </Accordion.Body>
             </Accordion.Panel>
-          </Accordion.Item>          
+          </Accordion.Item>
 
           <Accordion.Item
             key="payment"
