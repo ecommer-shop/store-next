@@ -7,6 +7,11 @@ import './chat-widget.css';
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Ocultar el chat si no estamos en entorno de desarrollo
+  if (process.env.APP_ENV !== 'dev') {
+    return null;
+  }
+
   return (
     <>
       {/* Botón flotante */}
