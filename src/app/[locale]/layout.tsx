@@ -106,7 +106,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
               >
                 <Toaster position="bottom-right" richColors />
                 <WompiScrollGuard />
-                <div className="flex flex-col min-h-screen">
+                <div className="flex flex-col min-h-screen overflow-x-hidden">
                   <Navbar />
                   <main className="flex-1">
                     {children}
