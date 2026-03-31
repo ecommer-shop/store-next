@@ -116,7 +116,7 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   return (
     <div className={`chat-window ${theme}-theme ${isOpen ? 'open' : ''}`}>
       <ChatHeader onClose={onClose} />
-      <ChatMessages messages={messages} isTyping={isTyping} />
+      <ChatMessages messages={messages} isTyping={isTyping} onSendMessage={handleSendMessage} />
       <ChatInput onSendMessage={handleSendMessage} />
       <div className="powered-by">Powered by SimetrIA</div>
     </div>

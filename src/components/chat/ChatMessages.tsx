@@ -7,9 +7,10 @@ import type { ChatMessage } from '@/lib/chat/types';
 interface ChatMessagesProps {
   messages: ChatMessage[];
   isTyping: boolean;
+  onSendMessage?: (message: string) => void;
 }
 
-export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
+export function ChatMessages({ messages, isTyping, onSendMessage }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
         <div key={message.id}>
           <ChatMessageComponent message={message} />
           {/* Quick replies solo después del primer mensaje del bot */}
-          {index === 0 && showQuickReplies && <QuickReplies />}
+          {index === 0 && showQuickReplies && onSendMessage && <QuickReplies onSendMessage={onSendMessage} />}
         </div>
       ))}
       {isTyping && <TypingIndicator />}
