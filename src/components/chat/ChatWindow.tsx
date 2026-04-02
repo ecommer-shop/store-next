@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChatHeader } from './ChatHeader';
 import { ChatMessages } from './ChatMessages';
 import { ChatInput } from './ChatInput';
 import { ChatMessage as ChatMessageType } from './ChatMessage';
+import { ScrollButton } from './ScrollButton';
 import type { ChatMessage } from '@/lib/chat/types';
 
 interface ChatWindowProps {
@@ -16,6 +17,8 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isTyping, setIsTyping] = useState(false);
+  const [shouldScroll, setShouldScroll] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Detectar tema de la página web (no del sistema)
@@ -62,6 +65,9 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
       timestamp: new Date()
     };
     setMessages(prev => [...prev, newMessage]);
+    
+    // Activar scroll cuando el usuario envía mensaje
+    setShouldScroll(true);
 
     // Mostrar typing indicator
     setIsTyping(true);
@@ -102,6 +108,9 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         content: aiResponse || aiError || 'No se pudo obtener respuesta.',
         timestamp: new Date()
       }]);
+      
+      // Desactivar scroll automático después de recibir respuesta del bot
+      setShouldScroll(false);
     } catch (error) {
       setIsTyping(false);
       setMessages(prev => [...prev, {
@@ -116,8 +125,15 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   return (
     <div className={`chat-window ${theme}-theme ${isOpen ? 'open' : ''}`}>
       <ChatHeader onClose={onClose} />
-      <ChatMessages messages={messages} isTyping={isTyping} onSendMessage={handleSendMessage} />
+      <ChatMessages 
+        messages={messages} 
+        isTyping={isTyping} 
+        onSendMessage={handleSendMessage} 
+        shouldScroll={shouldScroll}
+        containerRef={messagesContainerRef}
+      />
       <ChatInput onSendMessage={handleSendMessage} />
+      <ScrollButton targetRef={messagesContainerRef} />
       <div className="powered-by">Powered by SimetrIA</div>
     </div>
   );
