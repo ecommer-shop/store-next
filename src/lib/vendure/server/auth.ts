@@ -23,6 +23,7 @@ export function setAuthTokenOnCookies(
 export function getAuthTokenFromCookies(
   cookiesStore: ReadonlyRequestCookies
 ) {
+  
   return cookiesStore.get(AUTH_TOKEN_COOKIE)?.value;
 }
 

@@ -1,5 +1,5 @@
 'use client';
-import {useState, useMemo, useTransition} from 'react';
+import {useState, useMemo} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {RadioGroup, Label, Button, Radio, toast, Link} from '@heroui/react';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
@@ -50,7 +50,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
     const pathname = usePathname();
     const router = useRouter();
     const currentSearchParams = useSearchParams();
-    const [isPending, startTransition] = useTransition();
+    const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
     const t = useTranslations('Commerce');
 
@@ -116,7 +116,8 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             return;
         }
 
-        startTransition(async () => {
+        setIsAdding(true);
+        try {
             const result = await addToCart(selectedVariant.id, 1);
 
             if (result.success) {
@@ -141,7 +142,13 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     description: result.error || t(I18N.Commerce.productInfo.toast.errorDescription),
                 });
             }
-        });
+        } catch {
+            toast.danger(t(I18N.Commerce.productInfo.toast.errorTitle), {
+                description: t(I18N.Commerce.productInfo.toast.errorDescription),
+            });
+        } finally {
+            setIsAdding(false);
+        }
     };
 
     const isInStock = selectedVariant && selectedVariant.stockLevel !== 'OUT_OF_STOCK';
@@ -236,10 +243,10 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     size="lg"
                     variant='primary'
                     className="w-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
-                    isDisabled={!canAddToCart || isPending}
+                    isDisabled={!canAddToCart || isAdding}
                     onPress={handleAddToCart}
                 >
-                    {isPending ? (
+                    {isAdding ? (
                         <>
                             <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                             {t(I18N.Commerce.productInfo.adding)}

@@ -146,17 +146,20 @@ async function updateVendureCustomerClerkId(customerId: string, clerkId: string)
 	const updateMutation = `
 		mutation UpdateCustomerClerkId($input: UpdateCustomerInput!) {
 			updateCustomer(input: $input) {
-				id
+				__typename
+				... on Customer {
+					id
+				}
 			}
 		}
 	`;
 
-	type UpdateResponse = { updateCustomer: { id: string } };
+	type UpdateResponse = { updateCustomer: { __typename: string; id?: string } };
 	return vendureAdminRequest<UpdateResponse>(updateMutation, {
 		input: {
 			id: customerId,
 			customFields: {
-				customFieldsClerkid: clerkId,
+				clerkId: clerkId,
 			},
 		},
 	});
@@ -180,7 +183,7 @@ async function createVendureCustomer(email: string, firstName: string, lastName:
 			firstName,
 			lastName,
 			customFields: {
-				customFieldsClerkid: clerkId,
+				clerkId: clerkId,
 			},
 		},
 	});

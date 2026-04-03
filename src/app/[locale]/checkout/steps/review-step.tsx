@@ -21,7 +21,8 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
 
   const handlePlaceOrder = async () => {
     // Solo avanzar al paso de pago; la orden se coloca en PaymentStep
-    if (!order.shippingAddress || !order.shippingLines?.length) return;
+    //if (!order.shippingAddress || !order.shippingLines?.length) return;
+    if (!order.shippingAddress) return;
     setLoading(true);
     onComplete();
     setLoading(false);
