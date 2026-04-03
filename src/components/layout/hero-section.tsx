@@ -8,7 +8,7 @@ import Link from "next/link";
 export function HeroSection() {
     const t = useTranslations("HeroSection");
     return (
-        <section className="relative bg-muted overflow-hidden mt-10 ">
+        <section className="relative bg-muted overflow-hidden mt-4 ">
             {/* Fondo LIGHT */}
             <Image
                 src="/bg-light.webp"
@@ -41,10 +41,17 @@ export function HeroSection() {
             />
 
             {/* Contenido */}
-            <div className="relative z-10 container mx-auto px-4 py-24 md:py-32">
-                <div className="max-w-4xl mx-auto text-center space-y-8">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight" translate="no">
-                    Ecommer!
+            <div className="relative z-10 container mx-auto px-4 py-6 md:py-10">
+                <div className="max-w-4xl mx-auto text-center space-y-4">
+                <h1 className="flex justify-center" translate="no">
+                    <Image
+                        src="/logo-vendedores-dark.png"
+                        alt="Ecommer!"
+                        width={600}
+                        height={150}
+                        className="max-w-full h-auto"
+                        priority
+                    />
                 </h1>
 
                 <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
@@ -53,7 +60,7 @@ export function HeroSection() {
                     {t(I18N.HeroSection.description)}
                 </p>
 
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center">
                     <Link className="rounded-md" href="/search">
                         <Button
                             size="lg"

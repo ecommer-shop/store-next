@@ -189,6 +189,7 @@ export function NavbarUser() {
             elements: {
               userButtonPopoverActionButton__manageAccount: "hidden!",
               userButtonPopoverActionButton__signOut: "hidden!",
+              userButtonOuterIdentifier: "max-md:hidden",
             },
             variables: {
               borderRadius: "2px",
