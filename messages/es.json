@@ -526,17 +526,21 @@
 
   "Home": {
     "features": {
-      "quality": {
-        "title": "Calidad Premium",
-        "description": "Productos cuidadosamente seleccionados para ti"
+      "servientrega": {
+        "title": "Servientrega",
+        "description": "Envíos rápidos y seguros a nivel nacional"
       },
-      "prices": {
-        "title": "Mejores Precios",
-        "description": "Precios competitivos en todos nuestros productos"
+      "cyc": {
+        "title": "Cámara de Comercio",
+        "description": "Empresas legalmente constituidas y verificadas"
       },
-      "delivery": {
-        "title": "Entrega Rápida",
-        "description": "Envío rápido y confiable en todo el mundo"
+      "dian": {
+        "title": "Facturación DIAN",
+        "description": "Cumplimiento total con facturación electrónica"
+      },
+      "wompi": {
+        "title": "Pagos Seguros Wompi",
+        "description": "Múltiples métodos de pago 100% confiables"
       }
     }
   },

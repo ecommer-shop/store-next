@@ -9,7 +9,7 @@ import {
     Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
-
+import Image from 'next/image';
 import {
     SITE_NAME,
     truncateDescription,
@@ -91,6 +91,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     // Get the primary collection (prefer deepest nested / most specific)
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
     const t = await getTranslations('Product');
+    const tHome = await getTranslations('Home');
     return (
         <Suspense fallback={
             <p>{I18N.Account.common.loading}</p>
@@ -136,33 +137,27 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             <section className="py-16 bg-muted/30 mt-12">
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl font-bold text-center mb-8">{t(I18N.Product.whyChooseUs)}</h2>
-                    <div className="grid md:grid-cols-3 gap-8 text-center">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                         <div className="space-y-3">
-                            <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                                </svg>
+                            <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center overflow-hidden">
+                                <Image src="/Icono-CyC.png" width={80} height={80} alt="Cámara de Comercio" className="object-contain" />
                             </div>
-                            <h3 className="text-xl font-semibold">{t(I18N.Product.premiumQuality)}</h3>
-                            <p className="text-muted-foreground">{t(I18N.Product.qualityDescription)}</p>
+                            <h3 className="text-xl font-semibold">{tHome(I18N.Home.features.cyc.title)}</h3>
+                            <p className="text-muted-foreground text-sm">{tHome(I18N.Home.features.cyc.description)}</p>
                         </div>
                         <div className="space-y-3">
-                            <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                </svg>
+                            <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center overflow-hidden">
+                                <Image src="/Icono-Dian.png" width={80} height={80} alt="DIAN" className="object-contain" />
                             </div>
-                            <h3 className="text-xl font-semibold">{t(I18N.Product.ecoFriendly)}</h3>
-                            <p className="text-muted-foreground">{t(I18N.Product.ecoDescription)}</p>
+                            <h3 className="text-xl font-semibold">{tHome(I18N.Home.features.dian.title)}</h3>
+                            <p className="text-muted-foreground text-sm">{tHome(I18N.Home.features.dian.description)}</p>
                         </div>
                         <div className="space-y-3">
-                            <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
+                            <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center">
+                                <Image src="/Icono-Wompi.png" width={80} height={80} alt="Wompi" className="object-contain scale-125" />
                             </div>
-                            <h3 className="text-xl font-semibold">{t(I18N.Product.satisfactionGuaranteed)}</h3>
-                            <p className="text-muted-foreground">{t(I18N.Product.satisfactionDescription)}</p>
+                            <h3 className="text-xl font-semibold">{tHome(I18N.Home.features.wompi.title)}</h3>
+                            <p className="text-muted-foreground text-sm">{tHome(I18N.Home.features.wompi.description)}</p>
                         </div>
                     </div>
                 </div>
