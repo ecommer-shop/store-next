@@ -525,17 +525,21 @@
 
   "Home": {
     "features": {
-      "quality": {
-        "title": "Premium Quality",
-        "description": "Carefully selected products for you"
+      "servientrega": {
+        "title": "Servientrega",
+        "description": "Fast and secure nationwide shipping"
       },
-      "prices": {
-        "title": "Best Prices",
-        "description": "Competitive prices on all our products"
+      "cyc": {
+        "title": "Chamber of Commerce",
+        "description": "Legally constituted and verified companies"
       },
-      "delivery": {
-        "title": "Fast Delivery",
-        "description": "Fast and reliable shipping worldwide"
+      "dian": {
+        "title": "DIAN Invoicing",
+        "description": "Full compliance with electronic invoicing"
+      },
+      "wompi": {
+        "title": "Wompi Secure Payments",
+        "description": "Multiple 100% reliable payment methods"
       }
     }
   },

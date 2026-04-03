@@ -516,17 +516,21 @@ export const I18N = {
 
   Home: {
     features: {
-      quality: {
-        title: 'features.quality.title',
-        description: 'features.quality.description'
+      servientrega: {
+        title: 'features.servientrega.title',
+        description: 'features.servientrega.description'
       },
-      prices: {
-        title: 'features.prices.title',
-        description: 'features.prices.description'
+      cyc: {
+        title: 'features.cyc.title',
+        description: 'features.cyc.description'
       },
-      delivery: {
-        title: 'features.delivery.title',
-        description: 'features.delivery.description'
+      dian: {
+        title: 'features.dian.title',
+        description: 'features.dian.description'
+      },
+      wompi: {
+        title: 'features.wompi.title',
+        description: 'features.wompi.description'
       }
     }
   },
