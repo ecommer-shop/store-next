@@ -14,6 +14,15 @@ export const AuthenticateWithClerk = graphql(`
     }
 `);
 
+export const DeleteMyAccountMutation = graphql(`
+    mutation DeleteMyAccount($input: DeleteMyAccountInput!) {
+        deleteMyAccount(input: $input) {
+            success
+            message
+        }
+    }
+`);
+
 export const LoginMutation = graphql(`
     mutation Login($username: String!, $password: String!) {
         login(username: $username, password: $password) {
@@ -387,15 +396,6 @@ export const LogoutMutation = graphql(`
             ... on Success {
                 success
             }
-        }
-    }
-`);
-
-export const DeleteMyAccountMutation = graphql(`
-    mutation DeleteMyAccount($input: DeleteMyAccountInput!) {
-        deleteMyAccount(input: $input) {
-            success
-            message
         }
     }
 `);
