@@ -448,6 +448,73 @@
     border-top: 1px solid var(--border-color);
 }
 
+/* SCROLL BUTTON */
+.scroll-button {
+    position: fixed;
+    bottom: 150px; /* Más arriba, cerca del input pero no dentro */
+    right: 20px; /* Más a la derecha para no tapar el chat */
+    width: 40px;
+    height: 40px;
+    background: var(--message-user-bg); /* Color que cambia según el tema */
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Borde sutil que funciona en ambos temas */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 50;
+    color: white;
+    animation: fadeIn 0.3s ease;
+    pointer-events: auto;
+}
+
+.scroll-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(107, 184, 255, 0.5);
+}
+
+.scroll-button:active {
+    transform: scale(0.95);
+}
+
+.scroll-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* LINKS EN MENSAJES */
+.message-text a {
+    color: #6BB8FF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    word-break: break-all;
+}
+
+.dark-theme .message-text a {
+    color: #9969F8;
+}
+
+.message-text a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.message.ai .message-text a {
+    color: #6BB8FF;
+}
+
+.dark-theme .message.ai .message-text a {
+    color: #9969F8;
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
     .chat-window {
