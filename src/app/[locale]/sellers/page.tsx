@@ -1,6 +1,11 @@
 import { Card } from '@heroui/react';
-import { FaqItem } from '@/components/vendedores/FaqItem';
-import { UseVendedoresText } from '@/components/vendedores/UseVendedoresText';
+import { FaqItem } from '@/components/sellers/FaqItem';
+import { UseVendedoresText } from '@/components/sellers/UseVendedoresText';
+import { LoginCardPreview } from '@/components/sellers/LoginCardPreview';
+import { AgendarDemoButton } from '@/components/sellers/AgendarDemoButton';
+import { Coffee, Shirt, Gem } from 'lucide-react';
+
+const ADMIN_URL = process.env.NEXT_PUBLIC_VENDEDORES_ADMIN_URL || '#';
 
 export default function VendedoresPage() {
   return (
@@ -22,7 +27,7 @@ export default function VendedoresPage() {
           {/* Logo visible */}
           <div className="mb-2">
             <img 
-              src="/logo-vendedores.png" 
+              src="/logo-vendedores-light.png" 
               alt="Ecommer Vendedores" 
               className="mx-auto"
               style={{ width: '500px' }}
@@ -42,15 +47,11 @@ export default function VendedoresPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <AgendarDemoButton />
             <a 
-              href="#cta"
-              className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all"
-              style={{ background: 'linear-gradient(135deg, #9969F8, #6BB8FF)' }}
-            >
-              <UseVendedoresText path={['hero', 'demoButton']} />
-            </a>
-            <a 
-              href="#cta"
+              href={ADMIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-all"
             >
               <UseVendedoresText path={['hero', 'storeButton']} />
@@ -193,7 +194,9 @@ export default function VendedoresPage() {
               </ul>
               
               <a 
-                href="#cta"
+                href={ADMIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all inline-block"
                 style={{ background: 'linear-gradient(135deg, #9969F8, #6BB8FF)' }}
               >
@@ -201,36 +204,8 @@ export default function VendedoresPage() {
               </a>
             </div>
             
-            <div className="bg-gradient-to-r from-red-100 to-red-200 rounded-2xl p-8" style={{ background: 'linear-gradient(145deg, #f5e8e8, #f0d8d8)' }}>
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-white/50" style={{ width: '260px', margin: '0 auto' }}>
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-                  <span className="text-purple-600 font-medium" style={{ color: '#9969F8' }}>← Tienda</span>
-                  <span className="text-lg font-bold">Mi Tienda</span>
-                  <svg className="w-4 h-4 text-purple-600" style={{ color: '#9969F8' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-                  </svg>
-                </div>
-                
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-xs text-gray-500 mb-1">Nombre del negocio</div>
-                    <div className="font-semibold border-b-2 border-purple-500 pb-1" style={{ borderColor: '#9969F8' }}>Don Mercam</div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-xs text-gray-500 mb-1">Email</div>
-                    <div className="text-sm border-b-2 border-blue-500 pb-1" style={{ borderColor: '#6BB8FF', fontSize: '12px' }}>donmercam@gmail.com</div>
-                  </div>
-                  
-                  <div className="text-sm">Categoría: Alimentos</div>
-                  <div className="text-sm">Ciudad: Popayán, Cauca</div>
-                  
-                  <div className="bg-gradient-to-r from-purple-100 to-blue-100 text-gray-800 font-semibold px-3 py-2 rounded" style={{ background: 'linear-gradient(135deg, rgba(153,105,248,0.15), rgba(107,184,255,0.15))', color: '#0D0D2B' }}>
-                    ✦ Tienda activa
-                  </div>
-                </div>
-              </div>
+            <div className="bg-gradient-to-r from-red-100 to-red-200 rounded-2xl p-8" style={{ background: 'linear-gradient(145deg, #080821, #111136)' }}>
+              <LoginCardPreview />
             </div>
           </div>
         </div>
@@ -273,21 +248,10 @@ export default function VendedoresPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Café */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ minHeight: '300px' }}>
-              <div className="absolute inset-0 bg-gradient-to-br from-red-800 via-red-600 to-red-400" style={{ background: 'linear-gradient(160deg, #8B4513 0%, #D2691E 40%, #A0522D 100%)' }}></div>
+            <div className="relative rounded-2xl overflow-hidden group flex flex-col" style={{ minHeight: '300px' }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #12123F 0%, #9969F8 100%)' }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/78 to-transparent"></div>
-              <div className="absolute inset-0 flex items-center justify-center p-8">
-                <svg className="w-24 h-24 opacity-45" viewBox="0 0 90 90" fill="none">
-                  <ellipse cx="45" cy="62" rx="28" ry="6" fill="rgba(255,255,255,0.3)"/>
-                  <path d="M20 40 Q20 72 45 72 Q70 72 70 40 Z" fill="rgba(255,255,255,0.25)"/>
-                  <ellipse cx="45" cy="40" rx="25" ry="10" fill="rgba(255,255,255,0.3)"/>
-                  <path d="M65 42 Q80 42 80 55 Q80 65 70 65" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round"/>
-                  <path d="M38 30 Q35 22 40 18" stroke="rgba(255,255,255,0.6)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                  <path d="M45 28 Q42 18 47 14" stroke="rgba(255,255,255,0.6)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                  <path d="M52 30 Q49 20 54 16" stroke="rgba(255,255,255,0.6)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div className="relative z-10 p-6">
+              <div className="relative z-10 p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold text-white mb-2">
                   <UseVendedoresText path={['sectores', 'cafe', 'title']} />
                 </h3>
@@ -295,19 +259,16 @@ export default function VendedoresPage() {
                   <UseVendedoresText path={['sectores', 'cafe', 'description']} />
                 </p>
               </div>
+              <div className="absolute inset-0 flex items-center justify-center p-8 pt-24">
+                <Coffee color="white" size={120} className="opacity-45" />
+              </div>
             </div>
 
             {/* Moda */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ minHeight: '300px' }}>
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-600 via-yellow-400 to-yellow-200" style={{ background: 'linear-gradient(160deg, #C4A882 0%, #E8D5B7 40%, #B8956A 100%)' }}></div>
+            <div className="relative rounded-2xl overflow-hidden group flex flex-col" style={{ minHeight: '300px' }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #12123F 0%, #6BB8FF 100%)' }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/78 to-transparent"></div>
-              <div className="absolute inset-0 flex items-center justify-center p-8">
-                <svg className="w-20 h-24 opacity-40" viewBox="0 0 80 100" fill="none">
-                  <path d="M20 20 L10 40 L25 38 L25 85 L55 85 L55 38 L70 40 L60 20 Q50 30 40 28 Q30 30 20 20Z" fill="rgba(255,255,255,0.4)"/>
-                  <ellipse cx="40" cy="18" rx="10" ry="10" fill="rgba(255,255,255,0.3)"/>
-                </svg>
-              </div>
-              <div className="relative z-10 p-6">
+              <div className="relative z-10 p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold text-white mb-2">
                   <UseVendedoresText path={['sectores', 'moda', 'title']} />
                 </h3>
@@ -315,28 +276,25 @@ export default function VendedoresPage() {
                   <UseVendedoresText path={['sectores', 'moda', 'description']} />
                 </p>
               </div>
+              <div className="absolute inset-0 flex items-center justify-center p-8 pt-24">
+                <Shirt color="white" size={120} className="opacity-45" />
+              </div>
             </div>
 
             {/* Artesanías */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ minHeight: '300px' }}>
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-800 via-yellow-600 to-yellow-400" style={{ background: 'linear-gradient(160deg, #7B6B4A 0%, #B8A07A 40%, #8B7355 100%)' }}></div>
+            <div className="relative rounded-2xl overflow-hidden group flex flex-col" style={{ minHeight: '300px' }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #9969F8 0%, #6BB8FF 100%)' }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/78 to-transparent"></div>
-              <div className="absolute inset-0 flex items-center justify-center p-8">
-                <svg className="w-24 h-24 opacity-40" viewBox="0 0 90 90" fill="none">
-                  <rect x="15" y="30" width="20" height="45" rx="3" fill="rgba(255,255,255,0.4)"/>
-                  <rect x="40" y="20" width="16" height="55" rx="3" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="62" y="35" width="14" height="40" rx="3" fill="rgba(255,255,255,0.35)"/>
-                  <ellipse cx="25" cy="22" rx="9" ry="12" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
-                  <path d="M35 15 Q48 8 55 15" stroke="rgba(255,255,255,0.5)" strokeWidth="2" fill="none"/>
-                </svg>
-              </div>
-              <div className="relative z-10 p-6">
+              <div className="relative z-10 p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold text-white mb-2">
                   <UseVendedoresText path={['sectores', 'artesanias', 'title']} />
                 </h3>
                 <p className="text-white/80 text-sm">
                   <UseVendedoresText path={['sectores', 'artesanias', 'description']} />
                 </p>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center p-8 pt-24">
+                <Gem color="white" size={120} className="opacity-45" />
               </div>
             </div>
           </div>
@@ -355,19 +313,23 @@ export default function VendedoresPage() {
           <div className="max-w-2xl mx-auto space-y-4">
             <FaqItem 
               question="¿Necesito conocimientos técnicos?"
-              answer="No. Ecommer está diseñada para que cualquier emprendedor pueda configurar su tienda en minutos, sin necesidad de saber programar. Nuestro equipo de soporte te acompaña en cada paso del proceso."
+              answer="Para nada. Si sabés usar WhatsApp o Instagram, sabés usar Ecommer. Subir un producto es tan fácil como publicar una foto."
             />
             <FaqItem 
-              question="¿Cómo funcionan los envíos con Servientrega?"
-              answer="Tu tienda está integrada directamente con Servientrega. Cuando un cliente hace un pedido, el sistema genera automáticamente la guía de envío y puedes rastrear el estado en tiempo real desde tu panel de administración."
+              question="¿Cuánto cuesta y qué comisiones cobran?"
+              answer="Los primeros 3 meses son gratis. Después pagás solo $29.900/mes. Ecommer no cobra comisión por venta — el 6.9% que ves es el costo de la pasarela de pagos (Wompi) por procesar tarjetas, PSE y Nequi."
             />
             <FaqItem 
-              question="¿Qué comisiones cobran por venta?"
-              answer="Ecommer cobra una comisión competitiva solo cuando vendes — no pagas nada si no hay ventas. Agenda una demo y te explicamos el detalle del modelo de precios adaptado a tu volumen de negocio."
+              question="¿Cómo recibo el dinero de mis ventas?"
+              answer="Aceptamos tarjetas débito y crédito (Visa, Mastercard, Amex), PSE, Nequi, Daviplata y corresponsales bancarios. Todo procesado por Wompi con certificación PCI-DSS."
+            />
+            <FaqItem 
+              question="¿Cómo funcionan los envíos?"
+              answer="Tenemos alianza con Messenger para entregas en Popayán. Cuando recibís un pedido, ellos recogen el paquete en tu local y lo llevan al cliente. El costo lo asume el comprador."
             />
             <FaqItem 
               question="¿Puedo manejar mi tienda desde el celular?"
-              answer="Sí. El panel de administración está optimizado para móvil. Podés gestionar productos, ver pedidos, responder clientes y revisar métricas de ventas desde cualquier lugar."
+              answer="Sí. El panel está optimizado para móvil — gestionás productos, revisás pedidos y consultás métricas desde cualquier lugar."
             />
           </div>
         </div>
@@ -385,15 +347,11 @@ export default function VendedoresPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <AgendarDemoButton />
               <a 
-                href="#"
-                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all"
-                style={{ background: 'linear-gradient(135deg, #9969F8, #6BB8FF)' }}
-              >
-                <UseVendedoresText path={['cta', 'demoButton']} />
-              </a>
-              <a 
-                href="#"
+                href={ADMIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-all"
               >
                 <UseVendedoresText path={['cta', 'storeButton']} />
