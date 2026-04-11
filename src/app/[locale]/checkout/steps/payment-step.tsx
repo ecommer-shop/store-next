@@ -42,6 +42,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
     try {
       await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
+        onComplete();
     } catch (error) {
       // Check if this is a Next.js redirect (which is expected)
       if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
@@ -98,6 +99,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
           await placeOrderAction('wompi', selectedLineIds); // Colocar la orden después de la aprobación del pago
+          await handlePlaceOrder()
           console.log('Selected payment method set:', selectedPaymentMethodCode);
         } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
           console.error('Payment declined');
