@@ -26,7 +26,9 @@ export default async function CartPage(_props: PageProps<'/cart'>) {
     return (
         <CartProviders>
             <div className="container mx-auto px-4 py-20">
-                <h1 className="text-3xl font-bold mb-8">{t(I18N.Cart.title)}</h1>
+                <h1 className="text-3xl font-bold mb-2">{t(I18N.Cart.title)}</h1>
+                <p className="text-muted-foreground mb-8">{t(I18N.Cart.subtitle)}</p>
+
 
                 <Suspense fallback={<CartSkeleton />}>
                     <Cart/>

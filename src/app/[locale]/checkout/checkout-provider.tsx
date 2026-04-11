@@ -76,7 +76,7 @@ export function CheckoutProvider({
   );
 
   return (
-    <SelectedItemsProvider orderId={order.id}>
+    <SelectedItemsProvider orderId={order.id} allLineIds={order.lines.map((l: any) => l.id)}>
       <CheckoutContext.Provider
         value={{
           order,

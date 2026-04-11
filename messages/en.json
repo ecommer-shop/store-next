@@ -186,6 +186,7 @@
 
   "Cart": {
     "title": "Shopping Cart",
+    "subtitle": "Choose the products you want and continue with your order",
     "empty": {
       "title": "Your cart is empty",
       "description": "Add some items to your cart to get started",

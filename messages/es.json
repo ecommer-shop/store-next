@@ -187,6 +187,7 @@
 
   "Cart": {
     "title": "Carrito de compras",
+    "subtitle": "Elige los productos que deseas y continúa con tu pedido",
     "empty": {
       "title": "Tu carrito está vacío",
       "description": "Agrega algunos artículos a tu carrito para comenzar",
