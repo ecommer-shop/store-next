@@ -10,13 +10,11 @@ import OrderSummary from './order-summary';
 import { useCheckout } from './checkout-provider';
 import { I18N } from '@/i18n/keys';
 import { useTranslations } from 'next-intl';
-import React from 'react';
-
 // Toggle this constant to hide/show the "delivery" step without deleting
 // any of the related code. When `false` the step is skipped entirely and the
 // flow jumps from shipping -> review -> payment. Keeping the component around
 // makes it easy to re-enable later.
-const showDeliveryStep = false;
+const showDeliveryStep = true;
 
 // define step names conditionally so helper functions adapt automatically
 // (type union covers both scenarios).
@@ -72,6 +70,8 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
     return completedSteps.has(previousStep);
   };
 
+  const getStepNumber = (step: CheckoutStep): string => String(stepOrder.indexOf(step) + 1);
+
   return (
     <div className="grid lg:grid-cols-3 gap-8 max-w-full relative">
       <Surface className="lg:col-span-2 rounded-md dark:bg-primary-foreground/60 shadow-2xl shadow-[#12123F]/90
@@ -90,7 +90,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                     }`}>
-                    {completedSteps.has('shipping') ? '✓' : '1'}
+                    {completedSteps.has('shipping') ? '✓' : getStepNumber('shipping')}
                   </div>
                   <span className="text-lg font-semibold">{t(I18N.Checkout.flow.shippingAddress)}</span>
                 </div>
@@ -107,42 +107,41 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
             </Accordion.Panel>
           </Accordion.Item>
 
-          {showDeliveryStep && (
-            <Accordion.Item
-              key="delivery"
-              className="border rounded-lg px-6"
-              isDisabled={!canAccessStep('delivery')}
-            >
-              <Accordion.Heading>
-                <Accordion.Trigger
-                  className="hover:no-underline"
-                  isDisabled={!canAccessStep('delivery')}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`text-foreground flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('delivery')
-                      ? 'bg-green-500 text-white'
-                      : currentStep === 'delivery'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-muted-foreground'
-                      }`}>
-                      {completedSteps.has('delivery') ? '✓' : '2'}
-                    </div>
-                    <span className="text-lg font-semibold text-foreground">{t(I18N.Checkout.flow.deliveryMethod)}</span>
+
+          <Accordion.Item
+            key="delivery"
+            className="border rounded-lg px-6"
+            isDisabled={!canAccessStep('delivery')}
+          >
+            <Accordion.Heading>
+              <Accordion.Trigger
+                className="hover:no-underline"
+                isDisabled={!canAccessStep('delivery')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`text-foreground flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${completedSteps.has('delivery')
+                    ? 'bg-green-500 text-white'
+                    : currentStep === 'delivery'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                    {completedSteps.has('delivery') ? '✓' : getStepNumber('delivery')}
                   </div>
-                  <Accordion.Indicator className='text-foreground' />
-                </Accordion.Trigger>
-              </Accordion.Heading>
-              <Accordion.Panel>
-                <Accordion.Body className="pt-4">
-                  <DeliveryStep
-                    onComplete={() => handleStepComplete('delivery')}
-                    onSetShippingMethod={onSetShippingMethod}
-                    t={t}
-                  />
-                </Accordion.Body>
-              </Accordion.Panel>
-            </Accordion.Item>
-          )}
+                  <span className="text-lg font-semibold text-foreground">{t(I18N.Checkout.flow.deliveryMethod)}</span>
+                </div>
+                <Accordion.Indicator className='text-foreground' />
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body className="pt-4">
+                <DeliveryStep
+                  onComplete={() => handleStepComplete('delivery')}
+                  t={t}
+                />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>
+
 
           <Accordion.Item
             key="review"
@@ -161,7 +160,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                     }`}>
-                    {completedSteps.has('review') ? '✓' : '2'}
+                    {completedSteps.has('review') ? '✓' : getStepNumber('review')}
                   </div>
                   <span className="text-lg font-semibold">{t(I18N.Checkout.flow.reviewPlaceOrder)}</span>
                 </div>
@@ -196,7 +195,7 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                     }`}>
-                    {completedSteps.has('payment') ? '✓' : '3'}
+                    {completedSteps.has('payment') ? '✓' : getStepNumber('payment')}
                   </div>
                   <span className="text-lg font-semibold">{t(I18N.Checkout.flow.paymentMethod)}</span>
                 </div>

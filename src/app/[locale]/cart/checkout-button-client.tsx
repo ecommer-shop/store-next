@@ -24,7 +24,7 @@ export default function CheckoutButtonClient({
       .reduce((sum, line) => sum + line.linePriceWithTax, 0);
 
     // Requiere un mínimo de $30000 COP (valor en centavos)
-    if (selectedLinesTotal <= 3000000) {
+    if (selectedLinesTotal <= 2999999) {
       isDisabled = true;
       isBelowMinimum = true;
     }
