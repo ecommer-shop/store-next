@@ -44,12 +44,22 @@ export function HeroSection() {
             <div className="relative z-10 container mx-auto px-4 py-6 md:py-10">
                 <div className="max-w-4xl mx-auto text-center space-y-4">
                 <h1 className="flex justify-center" translate="no">
+                    {/* Logo para modo claro (imagen oscura) */}
                     <Image
                         src="/logo-vendedores-dark.png"
                         alt="Ecommer!"
                         width={600}
                         height={150}
-                        className="max-w-full h-auto"
+                        className="w-[600px] max-w-full h-[150px] object-contain block dark:hidden scale-[1.5]"
+                        priority
+                    />
+                    {/* Logo para modo oscuro (imagen clara) */}
+                    <Image
+                        src="/logo-vendedores-light.png"
+                        alt="Ecommer!"
+                        width={600}
+                        height={150}
+                        className="w-[600px] max-w-full h-[150px] object-contain hidden dark:block"
                         priority
                     />
                 </h1>
