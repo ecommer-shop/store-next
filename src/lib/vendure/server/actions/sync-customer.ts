@@ -3,7 +3,7 @@
 import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { query } from '@/lib/vendure/server/api';
 import { AuthenticateWithClerk, RegisterCustomerAccountMutation } from '@/lib/vendure/shared/mutations';
-import { mutate } from '../../server/api';
+import { mutate } from '../api';
 import { setAuthToken, setAuthTokenOnCookies, setJWT } from '../auth';
 import { cookies } from 'next/headers';
 import { GetWompiSignatureQuery } from '../../shared/queries';

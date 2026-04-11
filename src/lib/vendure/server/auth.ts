@@ -38,3 +38,12 @@ export async function setJWT(token: string) {
 export async function removeAuthToken() {
   (await cookies()).delete(AUTH_TOKEN_COOKIE);
 }
+
+export async function removeJWT() {
+  (await cookies()).delete(TOKEN_COOKIE);
+}
+
+export async function clearVendureAuth() {
+  await removeAuthToken();
+  await removeJWT();
+}

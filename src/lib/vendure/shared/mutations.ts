@@ -14,6 +14,15 @@ export const AuthenticateWithClerk = graphql(`
     }
 `);
 
+export const DeleteMyAccountMutation = graphql(`
+    mutation DeleteMyAccount($input: DeleteMyAccountInput!) {
+        deleteMyAccount(input: $input) {
+            success
+            message
+        }
+    }
+`);
+
 export const LoginMutation = graphql(`
     mutation Login($username: String!, $password: String!) {
         login(username: $username, password: $password) {
@@ -233,6 +242,11 @@ export const SetOrderBillingAddressMutation = graphql(`
         }
     }
 `);
+
+export const SetOrderDynamicShippingMethod= graphql(`
+    mutation {
+  setDynamicShippingPrice(price: 8500)
+}`)
 
 export const SetOrderShippingMethodMutation = graphql(`
     mutation SetOrderShippingMethod($shippingMethodId: [ID!]!) {

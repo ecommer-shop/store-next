@@ -10,6 +10,7 @@ import {
     RemoveFromCartMutation,
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
+    SetOrderDynamicShippingMethod
 } from '@/lib/vendure/shared/mutations';
 import { GetActiveOrderQuery } from '@/lib/vendure/shared/queries';
 import { GetWompiSignatureQuery } from '@/lib/vendure/shared/queries';
@@ -64,10 +65,24 @@ export async function setShippingMethod(shippingMethodId: string) {
         { shippingMethodId: [shippingMethodId] },
         { token, useAuthToken: true }
     );
-
+    
     if (result.data.setOrderShippingMethod.__typename !== 'Order') {
         throw new Error('Failed to set shipping method');
     }
+
+    revalidatePath('/checkout');
+}
+
+export async function setDynamicShippingPrice(price: number) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+    const result = await mutate(
+        SetOrderDynamicShippingMethod,
+        { price },
+
+        { token, useAuthToken: true }
+    );
+    console.log('Set dynamic shipping price result:', result);
 
     revalidatePath('/checkout');
 }

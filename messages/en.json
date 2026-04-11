@@ -1,6 +1,6 @@
 {
   "ButtonLabels": {
-    "submit": "Accept",
+    "submit": "Submit",
     "cancel": "Cancel"
   },
 
@@ -12,9 +12,7 @@
     "themeSwitcher": {
       "tittle": "Appearance",
       "subtittle": "Change theme",
-      "light": "Light",
-      "dark": "Dark",
-      "system": "System"
+      "light": "Light"
     },
     "langSwitcher": {
       "tittle": "Language"
@@ -22,14 +20,14 @@
     "profile": "My Profile",
     "orders": "My Orders",
     "addresses": "My Addresses",
-    "logout": "Log out",
-    "login": "Log in",
-    "signup": "Sign up"
+    "logout": "Sign Out",
+    "login": "Sign In",
+    "signup": "Sign Up"
   },
 
   "HeroSection": {
-    "title": "Buy Local",
-    "description": "Discover and support local products, all in one place.",
+    "title": "Buy our products",
+    "description": "Discover and support national products, all in one place.",
     "shopButton": "Explore",
     "featuredProducts": "Featured Products"
   },
@@ -38,7 +36,7 @@
     "addresses": {
       "loading": {
         "tittle": "Addresses",
-        "loading": "Loading addresses…",
+        "loading": "Loading addresses...",
         "description": "Manage your shipping and billing addresses."
       },
       "content": {
@@ -67,8 +65,8 @@
             "requiredError": "City is required"
           },
           "province": {
-            "label": "State / Province",
-            "requiredError": "State or province is required"
+            "label": "Department / State",
+            "requiredError": "Department or state is required"
           },
           "postalCode": {
             "label": "Postal code",
@@ -77,7 +75,7 @@
           "countryCode": {
             "label": "Country",
             "requiredError": "Country is required",
-            "select": "Select country",
+            "select": "Select a country",
             "search": "Search country",
             "cancel": "Cancel",
             "save": "Confirm country"
@@ -93,19 +91,19 @@
           "update": "Update address",
           "cancel": "Cancel",
           "addFirstAddress": "Add your first address",
-          "noAddresses": "No Addresses saved yet",
-          "addAddress": "Add new address",
+          "noAddresses": "No addresses saved yet",
+          "addAddress": "Add an address",
           "edit": "Edit",
           "delete": "Delete",
-          "setAsShipping": "Set as Shipping",
-          "defaultShipping": "Default Shipping",
-          "setAsBilling": "Set as Billing",
-          "defaultBilling": "Default Billing",
+          "setAsShipping": "Set as shipping",
+          "defaultShipping": "Default shipping",
+          "setAsBilling": "Set as billing",
+          "defaultBilling": "Default billing",
           "deleting": "Deleting...",
           "editAddress": "Edit address",
           "addNewAddress": "Add new address",
-          "updateDetails": "Update the details of your address",
-          "fillForm": "Fill in the form below to add a new address",
+          "updateDetails": "Update your address details",
+          "fillForm": "Complete the form below to add a new address",
           "areYouSure": "Are you sure?",
           "deleteWarning": "This action cannot be undone. This will permanently delete this address."
         }
@@ -117,7 +115,7 @@
       "subtotal": "Subtotal",
       "shipping": "Shipping",
       "quantity": "Quantity",
-      "loading": "Loading…"
+      "loading": "Loading..."
     },
     "orders": {
       "list": {
@@ -164,39 +162,51 @@
     "profile": {
       "loading": {
         "title": "Profile",
-        "loading": "Loading profile…",
+        "loading": "Loading profile...",
         "description": "Manage your account information."
       },
       "content": {
         "title": "Your profile",
         "description": "Manage your account information."
+      },
+      "deleteAccount": {
+        "title": "Delete account",
+        "description": "Delete your Ecommer account, this cannot be undone.",
+        "warningTitle": "This action is permanent",
+        "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
+        "action": "Delete my account",
+        "confirm": "Yes, delete account",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "successTitle": "Account deleted",
+        "errorTitle": "Could not delete account"
       }
     }
   },
 
   "Cart": {
-    "title": "Shopping cart",
+    "title": "Shopping Cart",
     "empty": {
       "title": "Your cart is empty",
       "description": "Add some items to your cart to get started",
-      "continueShopping": "Continue shopping"
+      "continueShopping": "Continue Shopping"
     },
     "items": {
       "each": "each",
       "remove": "Remove"
     },
     "summary": {
-      "title": "Order summary",
+      "title": "Order Summary",
       "subtotal": "Subtotal (selected products)",
       "discount": "Discount",
       "shipping": "Shipping",
       "shippingCalculated": "Calculated at checkout",
       "total": "Total",
-      "checkout": "Proceed to checkout",
-      "continueShopping": "Continue shopping"
+      "checkout": "Proceed to Checkout",
+      "continueShopping": "Continue Shopping"
     },
     "promotionCode": {
-      "title": "Promotion code",
+      "title": "Promotion Code",
       "description": "Enter your discount code below",
       "placeholder": "Enter code",
       "apply": "Apply",
@@ -214,10 +224,10 @@
       "review": "Review"
     },
     "flow": {
-      "shippingAddress": "Shipping address",
-      "paymentMethod": "Payment method",
-      "deliveryMethod": "Delivery method",
-      "reviewPlaceOrder": "Review and place order"
+      "shippingAddress": "Shipping Address",
+      "paymentMethod": "Payment Method",
+      "deliveryMethod": "Delivery Method",
+      "reviewPlaceOrder": "Review and Place Order"
     },
     "shippingAddress": {
       "selectSaved": "Select a saved address",
@@ -225,14 +235,14 @@
       "continueWithSelected": "Continue with selected address",
       "addNew": "Add new address",
       "addShippingAddress": "Add shipping address",
-      "fillForm": "Fill out the form below to add a new shipping address",
+      "fillForm": "Complete the form below to add a new shipping address",
       "labels": {
         "fullName": "Full name",
         "company": "Company",
         "streetAddress": "Address *",
         "apartmentSuite": "Apartment, suite, etc.",
         "city": "City",
-        "state": "State / Province",
+        "state": "State/Province",
         "postalCode": "Postal code",
         "country": "Country *",
         "phoneNumber": "Phone number"
@@ -247,13 +257,13 @@
       }
     },
     "delivery": {
-      "selectMethod": "Select a delivery method",
+      "selectMethod": "Select delivery method",
       "noMethods": "No shipping methods available. Please check your address.",
       "free": "FREE",
       "continuePayment": "Continue to payment"
     },
     "payment": {
-      "selectMethod": "Select a payment method",
+      "selectMethod": "Select payment method",
       "noMethods": "No payment methods available.",
       "continueReview": "Continue to review",
       "payWompi": "Pay"
@@ -267,11 +277,11 @@
       "noMethodSet": "No delivery method selected",
       "noPaymentSet": "No payment method selected",
       "edit": "Edit",
-      "placeOrder": "Place order",
+      "placeOrder": "Place Order",
       "completeSteps": "Please complete all previous steps before placing your order"
     },
     "summary": {
-      "title": "Order summary",
+      "title": "Order Summary",
       "quantity": "Quantity",
       "subtotal": "Subtotal",
       "shipping": "Shipping",
@@ -282,32 +292,32 @@
   "Collection": {},
 
   "OrderConfirmation": {
-    "title": "Order confirmed!",
-    "orderNumber": "Order number",
+    "title": "Order Confirmed!",
+    "orderNumber": "Order Number",
     "thankYou": "Thank you for your order.",
-    "summary": "Order summary",
+    "summary": "Order Summary",
     "quantity": "Quantity",
     "total": "Total",
-    "shippingAddress": "Shipping address",
-    "continueShopping": "Continue shopping"
+    "shippingAddress": "Shipping Address",
+    "continueShopping": "Continue Shopping"
   },
 
   "Product": {
     "notFound": "Product not found",
-    "whyChooseUs": "Why choose us",
-    "premiumQuality": "Premium quality",
+    "whyChooseUs": "Why Choose Us",
+    "premiumQuality": "Premium Quality",
     "qualityDescription": "Carefully crafted using the finest materials",
-    "ecoFriendly": "Eco-friendly",
+    "ecoFriendly": "Eco-Friendly",
     "ecoDescription": "Sustainably sourced and environmentally conscious",
-    "satisfactionGuaranteed": "Satisfaction guaranteed",
-    "satisfactionDescription": "100% satisfaction or your money back",
-    "faq": "Frequently asked questions",
+    "satisfactionGuaranteed": "Satisfaction Guaranteed",
+    "satisfactionDescription": "100% satisfaction or money back",
+    "faq": "Frequently Asked Questions",
     "returnPolicy": "What is your return policy?",
     "returnDescription": "We accept returns within 30 days of purchase. Items must be unused and in their original packaging. Simply contact our support team to initiate a return and receive a prepaid shipping label.",
     "trackOrder": "How can I track my order?",
-    "trackDescription": "Once your order ships, you will receive an email with a tracking number. You can also view your order status anytime by logging into your account and visiting the order history section.",
+    "trackDescription": "Once your order ships, you'll receive an email with a tracking number. You can also view your order status at any time by logging into your account and visiting the order history section.",
     "internationalShipping": "Do you offer international shipping?",
-    "internationalDescription": "Yes! We ship to over 50 countries worldwide. International shipping times and costs vary by location. You can see the exact cost at checkout before completing your purchase."
+    "internationalDescription": "Yes! We ship to over 50 countries worldwide. International delivery times and shipping costs vary by location. You can see the exact cost at checkout before completing your purchase."
   },
 
   "Search": {
@@ -319,7 +329,7 @@
 
   "Commerce": {
     "ReviewForm": {
-      "title": "Write a review",
+      "title": "Write a Review",
       "subtitle": "Share your experience with this product",
       "success": {
         "title": "Thank you for your review!",
@@ -353,32 +363,31 @@
         }
       },
       "actions": {
-        "submit": "Post review",
+        "submit": "Post Review",
         "submitting": "Posting...",
         "cancel": "Cancel"
       },
       "writeReviewPlaceholder": "Write a review...",
       "yourRating": "Your rating:",
       "auth": {
-        "loginRequired": "You must log in",
+        "loginRequired": "You must be logged in",
         "loginDescription": "Log in to leave a review"
       }
-      
     },
     "ReviewsList": {
-      "title": "Customer reviews",
+      "title": "Customer Reviews",
       "empty": {
-        "title": "Be the first to review this product",
+        "title": "Be the first to rate this product",
         "description": "Your opinion helps other buyers make informed decisions."
       },
-      "verified": "Verified purchase",
+      "verified": "Verified Purchase",
       "count": "Based on {count} review",
       "count_plural": "Based on {count} reviews",
       "rating": "{rating} out of 5 stars",
       "helpful": "{count} person found this helpful",
       "helpful_plural": "{count} people found this helpful",
-      "totalHelpful": "out of {total} person",
-      "totalHelpful_plural": "out of {total} people",
+      "totalHelpful": "of {total} person",
+      "totalHelpful_plural": "of {total} people",
       "actions": {
         "helpful": "Was this helpful?",
         "notHelpful": "Not helpful"
@@ -389,7 +398,7 @@
       },
       "vote": {
         "success": {
-          "title": "Thanks for your vote",
+          "title": "Thank you for your vote",
           "helpful": "This review was helpful to you.",
           "notHelpful": "This review was not helpful to you."
         },
@@ -405,10 +414,10 @@
       }
     },
     "ReviewsSection": {
-      "title": "Customer reviews",
+      "title": "Customer Reviews",
       "totalReviews": "{count} review",
       "totalReviews_plural": "{count} reviews",
-      "ratingDistribution": "Rating distribution",
+      "ratingDistribution": "Rating Distribution",
       "error": {
         "title": "Error loading statistics",
         "fetchError": "Could not load review statistics."
@@ -418,16 +427,16 @@
         "description": "Thank you for sharing your experience. Your review will be reviewed."
       },
       "form": {
-        "writeReview": "Write review",
-        "alreadySubmitted": "Review submitted",
-        "title": "Write a review"
+        "writeReview": "Write Review",
+        "alreadySubmitted": "Review Submitted",
+        "title": "Write a Review"
       },
       "mustPurchaseFirst": "You must purchase this product before writing a review.",
       "aiSummary": {
         "badge": "AI • Smart Summary",
         "noReviewsTitle": "No analysis available yet 💬",
-        "noReviewsDescription": "Be among the first to share your opinion and help generate an intelligent summary.",
-        "basedOn": "Based on {count} verified reviews",
+        "noReviewsDescription": "Be part of the first opinions that will allow generating a smart summary.",
+        "basedOn": "Based on {count} verified opinions",
         "showMore": "Show more",
         "hide": "Hide"
       }
@@ -449,30 +458,30 @@
       "priceDesc": "Price: High to Low"
     },
     "productCard": {
-      "viewDetails": "View details"
+      "viewDetails": "View Details"
     },
     "productInfo": {
-      "addToCart": "Add to cart",
-      "addedToCart": "Added to cart",
-      "selectOptions": "Select options",
-      "outOfStock": "Out of stock",
-      "inStock": "In stock",
+      "addToCart": "Add to Cart",
+      "addedToCart": "Added to Cart",
+      "selectOptions": "Select Options",
+      "outOfStock": "Out of Stock",
+      "inStock": "In Stock",
       "sku": "SKU",
       "quantity": "Quantity",
       "adding": "Adding...",
       "toast": {
-        "addedTitle": "Added to cart",
+        "addedTitle": "Added to Cart",
         "addedDescription": "{product} has been added to your cart",
         "errorTitle": "Error",
         "errorDescription": "Could not add item to cart",
-        "goToCart": "Go to cart"
+        "goToCart": "Go to Cart"
       }
     },
     "relatedProducts": {
-      "title": "Related products"
+      "title": "Related Products"
     },
     "featuredProducts": {
-      "title": "Featured products",
+      "title": "Featured Products",
       "loading": "Loading featured products..."
     },
     "orderStatusBadge": {
@@ -491,9 +500,9 @@
       "search": "Search",
       "cart": "Cart",
       "account": "Account",
-      "signIn": "Sign in",
-      "signUp": "Sign up",
-      "signOut": "Sign out"
+      "signIn": "Sign In",
+      "signUp": "Sign Up",
+      "signOut": "Sign Out"
     },
     "searchInput": {
       "placeholder": "Search products..."
@@ -503,8 +512,8 @@
       "sections": {
         "categories": "Categories",
         "about": {
-          "label":"About us",
-          "title":"Who We Are"
+          "label": "About Us",
+          "title": "About Us"
         },
         "contact": "Contact"
       },
@@ -516,27 +525,30 @@
 
   "Home": {
     "features": {
-      "quality": {
-        "title": "Premium quality",
-        "description": "Carefully selected products just for you"
+      "servientrega": {
+        "title": "Servientrega",
+        "description": "Fast and secure nationwide shipping"
       },
-      "prices": {
-        "title": "Best prices",
-        "description": "Competitive pricing across all our products"
+      "cyc": {
+        "title": "Chamber of Commerce",
+        "description": "Legally constituted and verified companies"
       },
-      "delivery": {
-        "title": "Fast delivery",
-        "description": "Fast and reliable worldwide shipping"
+      "dian": {
+        "title": "DIAN Invoicing",
+        "description": "Full compliance with electronic invoicing"
+      },
+      "wompi": {
+        "title": "Wompi Secure Payments",
+        "description": "Multiple 100% reliable payment methods"
       }
     }
   },
-
   "About": {
-    "title": "About us",
-    "description": "Supplier information in accordance with Law 1480 of 2011, guaranteeing a clear and transparent shopping experience.",
+    "title": "About Us",
+    "description": "Provider information in accordance with Law 1480 of 2011, ensuring a clear and transparent shopping experience.",
     "legal":{
-      "label": "Legal information",
-      "rs": "Business name:",
+      "label": "Legal Information",
+      "rs": "Legal Name:",
       "address": "Address:"
     },
     "contact":{
@@ -544,15 +556,15 @@
       "phone":"Phone:"
     },
     "hours":{
-      "label":"Business hours",
+      "label":"Business Hours",
       "days":"Monday to Friday"
     },
     "documents": {
-      "label": "Legal documents",
+      "label": "Legal Documents",
       "terms": "Terms and Conditions",
       "warranty": "Warranty",
       "withdrawal": "Withdrawal",
-      "paymentReversal": "Payment reversal"
+      "paymentReversal": "Payment Reversal"
     }
   },
 
@@ -562,6 +574,97 @@
     },
     "privacy": {
       "title": "Privacy Policy"
+    }
+  },
+
+  "Vendedores": {
+    "hero": {
+      "badge": "The new era of B2B",
+      "title": "Evolve the way the world sees your business",
+      "subtitle": "The omnichannel platform designed for Colombian manufacturers and sellers looking to scale globally.",
+      "demoButton": "Schedule a Demo",
+      "storeButton": "Create My Store Free"
+    },
+    "beneficios": {
+      "title": "Operational Excellence",
+      "subtitle": "Everything you need to operate without friction.",
+      "cards": {
+        "cumplimiento": {
+          "title": "Frictionless Compliance",
+          "description": "Full integration with DIAN for automated electronic invoicing."
+        },
+        "confianza": {
+          "title": "Trust that Converts",
+          "description": "Secure and fast payments through Wompi, integrated into your checkout."
+        },
+        "presencia": {
+          "title": "National Presence",
+          "description": "Simplified logistics with Servientrega for shipping throughout the country."
+        },
+        "control": {
+          "title": "Control in Your Hands",
+          "description": "Executive dashboard to monitor sales, inventory, and customers in real-time."
+        }
+      }
+    },
+    "tienda": {
+      "title": "Your store ready in minutes",
+      "subtitle": "We have simplified the technical complexity so you can focus on what you do best: creating amazing products. Our intuitive interface allows you to manage everything from your mobile device.",
+      "checklist": {
+        "sinCodigo": "No code required",
+        "posicionamiento": "National positioning",
+        "panel": "Administration panel and metrics"
+      },
+      "buttonText": "Create My Store Free"
+    },
+    "aliados": {
+      "title": "Our Strategic Partners",
+      "dian": "DIAN",
+      "wompi": "wompi",
+      "servientrega": "SERVIENTREGA"
+    },
+    "sectores": {
+      "title": "The best of Colombia for the world",
+      "subtitle": "Designed for the sectors that drive our economy.",
+      "cafe": {
+        "title": "Specialty Coffee",
+        "description": "Direct from farms in Popayán and the Coffee Axis."
+      },
+      "moda": {
+        "title": "Fashion & Footwear",
+        "description": "Local talent with international export quality."
+      },
+      "artesanias": {
+        "title": "Handicrafts",
+        "description": "Cultural heritage transformed into contemporary luxury pieces."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "questions": {
+        "tecnicos": {
+          "question": "Do I need technical knowledge?",
+          "answer": "No. Ecommer is designed so that any entrepreneur can set up their store in minutes, without needing to know how to program. Our support team accompanies you at every step of the process."
+        },
+        "envios": {
+          "question": "How do shipments work with Servientrega?",
+          "answer": "Your store is directly integrated with Servientrega. When a customer places an order, the system automatically generates the shipping guide and you can track the status in real-time from your administration panel."
+        },
+        "comisiones": {
+          "question": "What commissions do you charge per sale?",
+          "answer": "Ecommer charges a competitive commission only when you sell — you don't pay anything if there are no sales. Schedule a demo and we'll explain the details of the pricing model adapted to your business volume."
+        },
+        "movil": {
+          "question": "Can I manage my store from my cellphone?",
+          "answer": "Yes. The administration panel is optimized for mobile. You can manage products, view orders, respond to customers, and review sales metrics from anywhere."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to take your business to the next level?",
+      "subtitle": "Join hundreds of Colombian manufacturers who are already exporting and selling more with Ecommer.",
+      "demoButton": "Schedule Demo",
+      "storeButton": "Create My Store"
     }
   }
 }

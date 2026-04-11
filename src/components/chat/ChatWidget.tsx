@@ -1,11 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChatWindow } from './ChatWindow';
 import './chat-widget.css';
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  // Verificar el entorno solo en el cliente para evitar errores de hidratación
+  useEffect(() => {
+    // Solo renderizar el chat si estamos en entorno de desarrollo
+    if (process.env.NEXT_PUBLIC_APP_ENV === 'dev') {
+      setShouldRender(true);
+    }
+  }, []);
+
+  // Si no estamos en desarrollo, no renderizar nada
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <>

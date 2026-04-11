@@ -98,7 +98,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   return (
     <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
       <html lang={locale} suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
           <Providers>
             <NextIntlClientProvider
                 locale={locale}
@@ -106,7 +106,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
               >
                 <Toaster position="bottom-right" richColors />
                 <WompiScrollGuard />
-                <div className="flex flex-col min-h-screen">
+                <div className="flex flex-col min-h-screen overflow-x-hidden">
                   <Navbar />
                   <main className="flex-1">
                     {children}

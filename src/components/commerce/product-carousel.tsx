@@ -53,8 +53,8 @@ export function ProductCarousel({title, products}: ProductCarouselClientProps) {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <CarouselPrevious className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-md shadow-md hover:bg-white transition-all duration-300" />
-                    <CarouselNext className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-md shadow-md hover:bg-white transition-all duration-300" />
+                    <CarouselPrevious className="flex h-10 w-10 rounded-full bg-white/80 backdrop-blur-md shadow-md hover:bg-white transition-all duration-300 left-2 md:-left-12 z-10" />
+                    <CarouselNext className="flex h-10 w-10 rounded-full bg-white/80 backdrop-blur-md shadow-md hover:bg-white transition-all duration-300 right-2 md:-right-12 z-10" />
 
                 </Carousel>
                 {/* Dots */}

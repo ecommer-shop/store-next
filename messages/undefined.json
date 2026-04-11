@@ -67,6 +67,15 @@
             "requiredError": "La ciudad es obligatoria"
           },
           "province": {
+            "loading": {
+              "title": "Perfil",
+              "loading": "Cargando perfil…",
+              "description": "Gestiona la información de tu cuenta."
+            },
+            "content": {
+              "title": "Tu perfil",
+              "description": "Gestiona la información de tu cuenta."
+            },
             "label": "Departamento / Estado",
             "requiredError": "El departamento o estado es obligatorio"
           },
@@ -170,6 +179,18 @@
       "content": {
         "title": "Tu perfil",
         "description": "Gestiona la información de tu cuenta."
+      },
+      "deleteAccount": {
+        "title": "Eliminar cuenta",
+        "description": "Elimina tu cuenta en Vendure usando el flujo del backend y después elimina tu usuario en Clerk.",
+        "warningTitle": "Esta acción es permanente",
+        "warningDescription": "Se anonimizarán tus datos en la tienda y luego se eliminará tu cuenta de Clerk. No podrás recuperar el acceso.",
+        "action": "Eliminar mi cuenta",
+        "confirm": "Sí, eliminar cuenta",
+        "cancel": "Cancelar",
+        "deleting": "Eliminando...",
+        "successTitle": "Cuenta eliminada",
+        "errorTitle": "No se pudo eliminar la cuenta"
       }
     }
   },

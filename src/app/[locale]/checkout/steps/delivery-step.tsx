@@ -7,14 +7,14 @@ import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
 import { I18N } from '@/i18n/keys';
 import clsx from 'clsx';
+import { setShippingMethod as setShippingMethodAction, setDynamicShippingPrice } from '../actions';
 
 interface DeliveryStepProps {
   onComplete: () => void;
-  onSetShippingMethod: (id: string) => Promise<void>;
   t: (key: string) => string;
 }
 
-export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: DeliveryStepProps) {
+export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
   const router = useRouter();
   const { shippingMethods, order } = useCheckout();
   const [selectedMethodId, setSelectedMethodId] = useState<string | null>(() => {
@@ -26,26 +26,23 @@ export default function DeliveryStep({ onComplete, onSetShippingMethod, t }: Del
     return shippingMethods.length === 1 ? shippingMethods[0].id : null;
   });
   const [submitting, setSubmitting] = useState(false);
-
+  
+   // Establece el precio dinámico para el método de envío (ejemplo: 8500 COP)
   const handleContinue = async () => {
-  if (!selectedMethodId) return;
-console.log('Selected Shipping Method ID:', shippingMethods.find(m => m.id === selectedMethodId)?.name || selectedMethodId);
-  setSubmitting(true);
-  try {
-    await fetch('/api/checkout/shipping', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ shippingMethodId: selectedMethodId }),
-    });
-
-    router.refresh();
-    onComplete();
-  } catch (error) {
-    console.error('Error setting shipping method:', error);
-  } finally {
-    setSubmitting(false);
-  }
-};
+    if (!selectedMethodId) return;
+   // await setDynamicShippingPrice(8000); // Ejemplo de precio dinámico, ajusta según tu lógica
+    setSubmitting(true);
+    try {
+      await setShippingMethodAction(selectedMethodId);
+      console.log('Shipping method set successfully', await setShippingMethodAction(selectedMethodId));
+      router.refresh();
+      onComplete();
+    } catch (error) {
+      console.error('Error setting shipping method:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
 
   if (shippingMethods.length === 0) {
@@ -84,13 +81,13 @@ console.log('Selected Shipping Method ID:', shippingMethods.find(m => m.id === s
                         )}
                       </div>
                     </div>
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right shrink-0">
                       <p className="font-semibold text-foreground">
                         {method.priceWithTax === 0
                           ? t(I18N.Checkout.delivery.free)
-                          : (method.priceWithTax / 100).toLocaleString('en-US', {
+                          : (method.priceWithTax / 100).toLocaleString('es-CO', {
                             style: 'currency',
-                            currency: 'USD',
+                            currency: 'COP',
                           })}
                       </p>
                     </div>
