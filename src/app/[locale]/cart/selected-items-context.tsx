@@ -18,7 +18,7 @@ function storageKeyForOrder(orderId: string | null | undefined) {
   return orderId ? `selected-lines:${orderId}` : 'selected-lines:unknown';
 }
 
-export function SelectedItemsProvider({ children, orderId, initialSelectedIds }: { children: ReactNode; orderId?: string | null; initialSelectedIds?: string[] | null }) {
+export function SelectedItemsProvider({ children, orderId, initialSelectedIds, allLineIds }: { children: ReactNode; orderId?: string | null; initialSelectedIds?: string[] | null; allLineIds?: string[] }) {
   const [selectedLineIds, setSelectedLineIds] = useState<string[]>(() => {
     try {
       if (Array.isArray(initialSelectedIds)) {
@@ -48,17 +48,31 @@ export function SelectedItemsProvider({ children, orderId, initialSelectedIds }:
     }
   });
 
-  // If orderId changes, reload selection for new orderId
+  // If orderId or allLineIds changes, reload selection
   useEffect(() => {
     if (!orderId) return;
     try {
+      if (allLineIds) {
+        const unselectedRaw = localStorage.getItem(`unselected-lines:${orderId}`);
+        if (unselectedRaw) {
+          const unselected = JSON.parse(unselectedRaw);
+          if (Array.isArray(unselected)) {
+            setSelectedLineIds(allLineIds.filter((lid) => !unselected.includes(lid)));
+            return;
+          }
+        }
+      }
       const raw = localStorage.getItem(storageKeyForOrder(orderId));
+      if (!raw && allLineIds) {
+        setSelectedLineIds(allLineIds);
+        return;
+      }
       const parsed = raw ? JSON.parse(raw) : null;
       setSelectedLineIds(Array.isArray(parsed) ? parsed : []);
     } catch (e) {
       setSelectedLineIds([]);
     }
-  }, [orderId]);
+  }, [orderId, allLineIds ? allLineIds.join(',') : undefined]);
 
   // Persist selection when it changes (localStorage, cookie)
   useEffect(() => {
@@ -72,6 +86,16 @@ export function SelectedItemsProvider({ children, orderId, initialSelectedIds }:
     }
     if (!id) return;
     try {
+      if (allLineIds) {
+        const unselectedLineIds = allLineIds.filter((lid) => !selectedLineIds.includes(lid));
+        localStorage.setItem(`unselected-lines:${id}`, JSON.stringify(unselectedLineIds));
+        if (typeof document !== 'undefined') {
+          const unselectedCookieName = `unselectedLines_${id}`;
+          const unselectedCookieValue = encodeURIComponent(JSON.stringify(unselectedLineIds));
+          document.cookie = `${unselectedCookieName}=${unselectedCookieValue}; path=/; max-age=${60 * 60 * 24 * 365}`;
+        }
+      }
+
       const key = storageKeyForOrder(id);
       localStorage.setItem(key, JSON.stringify(selectedLineIds));
       // also set a cookie so server-side code can read selection if needed
@@ -83,7 +107,7 @@ export function SelectedItemsProvider({ children, orderId, initialSelectedIds }:
     } catch (e) {
       // noop
     }
-  }, [orderId, selectedLineIds]);
+  }, [orderId, selectedLineIds, allLineIds]);
 
   const initializeDefaultSelection = (lineIds: string[]) => {
     try {
@@ -97,7 +121,15 @@ export function SelectedItemsProvider({ children, orderId, initialSelectedIds }:
         return;
       }
 
-      // Do not overwrite if already initialized or there is an existing selection
+      // We no longer strictly need to initialize default selection blindly,
+      // as `useEffect` automatically checks unselected lines logic.
+      // But we will respect the initialized flag just in case.
+      const unselectedRaw = localStorage.getItem(`unselected-lines:${id}`);
+      if (unselectedRaw) {
+        setInitialized(true);
+        return;
+      }
+
       const key = storageKeyForOrder(id);
       const existing = localStorage.getItem(key);
       if (existing) {

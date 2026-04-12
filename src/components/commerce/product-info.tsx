@@ -52,6 +52,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
     const currentSearchParams = useSearchParams();
     const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
+    const [showGoToCart, setShowGoToCart] = useState(false);
     const t = useTranslations('Commerce');
 
     // Initialize selected options from URL
@@ -122,6 +123,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
             if (result.success) {
                 setIsAdded(true);
+                setShowGoToCart(true);
                 toast.success(t(I18N.Commerce.productInfo.toast.addedTitle), {
                     actionProps:{
                         children: "Ir al carrito",
@@ -238,7 +240,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 </div>
             )}
 
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col items-center gap-3">
                 <Button
                     size="lg"
                     variant='primary'
@@ -274,6 +276,17 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                     )}
 
                 </Button>
+
+                {showGoToCart && (
+                    <Button
+                        size="lg"
+                        variant="primary"
+                        className="w-full rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                        onPress={() => router.push('/cart')}
+                    >
+                        Ir al carrito
+                    </Button>
+                )}
             </div>
 
             {/* SKU */}
