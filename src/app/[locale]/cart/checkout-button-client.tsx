@@ -38,7 +38,7 @@ export default function CheckoutButtonClient({
         </Link>
       </Button>
       {isBelowMinimum && (
-        <span className="text-xs text-red-600 text-center font-medium">
+        <span className="text-xs text-[color:var(--warning-text)] text-center font-medium">
           Haz tu pedido desde $30.000 COP y disfruta de nuestro servicio.
         </span>
       )}
