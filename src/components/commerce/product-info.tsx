@@ -279,9 +279,9 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
                 {showGoToCart && (
                     <Button
-                        size="md"
+                        size="lg"
                         variant="primary"
-                        className="w-4/5 rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                        className="w-full rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
                         onPress={() => router.push('/cart')}
                     >
                         Ir al carrito
