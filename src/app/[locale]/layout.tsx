@@ -9,13 +9,15 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SITE_NAME, SITE_URL } from "@/lib/vendure/shared/metadata";
+import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/vendure/shared/metadata";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+
+const clerkStorefrontFallbackUrl = buildCanonicalUrl(`/${routing.defaultLocale}`);
 import { ReactNode } from "react";
 import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
@@ -96,7 +98,13 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   const localClerk = locale === 'es' ? esMX : enUS;
   const messages = await getMessages();
   return (
-    <ClerkProvider dynamic afterSignOutUrl="/" localization={localClerk}>
+    <ClerkProvider
+      dynamic
+      afterSignOutUrl="/"
+      localization={localClerk}
+      signInFallbackRedirectUrl={clerkStorefrontFallbackUrl}
+      signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
+    >
       <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
           <Providers>
