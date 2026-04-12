@@ -24,7 +24,7 @@ export default function CheckoutButtonClient({
       .reduce((sum, line) => sum + line.linePriceWithTax, 0);
 
     // Requiere un mínimo de $30000 COP (valor en centavos)
-    if (selectedLinesTotal <= 3000000) {
+    if (selectedLinesTotal <= 2999999) {
       isDisabled = true;
       isBelowMinimum = true;
     }
@@ -38,7 +38,7 @@ export default function CheckoutButtonClient({
         </Link>
       </Button>
       {isBelowMinimum && (
-        <span className="text-xs text-blue-900 text-center font-medium">
+        <span className="text-xs text-red-600 text-center font-medium">
           Haz tu pedido desde $30.000 COP y disfruta de nuestro servicio.
         </span>
       )}

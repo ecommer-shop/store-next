@@ -179,6 +179,7 @@ export const I18N = {
 
   Cart: {
     title: 'title',
+    subtitle: 'subtitle',
     empty: {
       title: 'empty.title',
       description: 'empty.description',
