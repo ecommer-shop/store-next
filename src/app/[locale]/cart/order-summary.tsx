@@ -5,6 +5,7 @@ import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import { OrderSummaryClient } from './order-summary-client';
+import { ThemeButton } from '@/components/commerce/theme-button';
 
 type ActiveOrder = {
     id: string;
@@ -45,11 +46,11 @@ export async function OrderSummary({ activeOrder }: { activeOrder: ActiveOrder }
             
                 <CheckoutButtonClient label={t(I18N.Cart.summary.checkout)} lines={activeOrder.lines} />
             
-            <Link className='w-full' href="/">
-                <Button variant="ghost" className="w-full mt-2 rounded-md">
+            <div className="mt-2 w-full text-foreground">
+                <ThemeButton variant="accent" href="/" className="w-full rounded-md">
                     {t(I18N.Cart.summary.continueShopping)}
-                </Button>
-            </Link>
+                </ThemeButton>
+            </div>
         </div>
     );
 }
