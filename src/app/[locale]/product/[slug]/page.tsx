@@ -169,7 +169,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                     <h2 className="text-2xl font-bold text-center mb-8">{t(I18N.Product.faq)}</h2>
                     <Accordion lang="single" className="w-full">
 
-                        <Accordion.Item key="returns">
+                        <Accordion.Item key="returns" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.returnPolicy)}
@@ -182,8 +182,8 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
-                        <Accordion.Item key="tracking">
+
+                        <Accordion.Item key="tracking" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
                                     {t(I18N.Product.trackOrder)}
@@ -196,21 +196,76 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
-                        <Accordion.Item key="international">
+
+                        <Accordion.Item key="paymentMethods" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
-                                    {t(I18N.Product.internationalShipping)}
+                                    {t(I18N.Product.paymentMethods)}
                                     <Accordion.Indicator className='text-foreground' fill='currentColor' />
                                 </Accordion.Trigger>
                             </Accordion.Heading>
                             <Accordion.Panel>
                                 <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.internationalDescription)}
+                                    {t(I18N.Product.paymentDescription)}
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
-                        <Separator className='bg-[#12123F] dark:bg-[#F1F1F1]' />
+
+                        <Accordion.Item key="paymentSecurity" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.paymentSecurity)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.paymentSecurityDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item key="shippingCost" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.shippingCost)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.shippingCostDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item key="deliveryTime" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.deliveryTime)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.deliveryDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item key="invoice" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.invoice)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.invoiceDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
                     </Accordion>
                 </div>
             </section>

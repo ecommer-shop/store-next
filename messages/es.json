@@ -3,7 +3,6 @@
     "submit": "Aceptar",
     "cancel": "Cancelar"
   },
-
   "UserBar": {
     "menu": {
       "tittle": "Menú",
@@ -26,14 +25,12 @@
     "login": "Iniciar Sesión",
     "signup": "Registrarse"
   },
-
   "HeroSection": {
     "title": "Compra lo nuestro",
     "description": "Descubre y apoya el producto nacional, en un solo lugar.",
     "shopButton": "Explorar",
     "featuredProducts": "Productos Destacados"
   },
-
   "Account": {
     "addresses": {
       "loading": {
@@ -86,7 +83,6 @@
             "requiredError": "El número de teléfono es obligatorio"
           }
         },
-
         "actions": {
           "save": "Guardar dirección",
           "update": "Actualizar dirección",
@@ -137,7 +133,6 @@
         "back": "Volver a pedidos",
         "title": "Pedido {code}",
         "placedOn": "Realizado el {date}",
-
         "sections": {
           "items": "Artículos del pedido",
           "summary": "Resumen del pedido",
@@ -146,7 +141,6 @@
           "payment": "Pago",
           "shippingMethod": "Método de envío"
         },
-
         "labels": {
           "sku": "SKU",
           "qty": "Cantidad",
@@ -184,7 +178,6 @@
       }
     }
   },
-
   "Cart": {
     "title": "Carrito de compras",
     "subtitle": "Elige los productos que deseas y continúa con tu pedido",
@@ -215,7 +208,6 @@
       "remove": "Eliminar"
     }
   },
-
   "Checkout": {
     "title": "Pagar",
     "description": "Completa tu compra",
@@ -292,7 +284,6 @@
     }
   },
   "Collection": {},
-
   "OrderConfirmation": {
     "title": "¡Pedido confirmado!",
     "orderNumber": "Número de pedido",
@@ -303,7 +294,6 @@
     "shippingAddress": "Dirección de envío",
     "continueShopping": "Continuar comprando"
   },
-
   "Product": {
     "notFound": "Producto no encontrado",
     "whyChooseUs": "Por qué elegirnos",
@@ -319,16 +309,24 @@
     "trackOrder": "¿Cómo puedo rastrear mi pedido?",
     "trackDescription": "Una vez que tu pedido se envía, recibirás un correo electrónico con un número de rastreo. También puedes ver el estado de tu pedido en cualquier momento iniciando sesión en tu cuenta y visitando la sección de historial de pedidos.",
     "internationalShipping": "¿Ofrecen envío internacional?",
-    "internationalDescription": "¡Sí! Enviamos a más de 50 países en todo el mundo. Los tiempos de entrega y costos de envío internacional varían según la ubicación. Puedes ver el costo exacto en el pago antes de completar tu compra."
+    "internationalDescription": "¡Sí! Enviamos a más de 50 países en todo el mundo. Los tiempos de entrega y costos de envío internacional varían según la ubicación. Puedes ver el costo exacto en el pago antes de completar tu compra.",
+    "paymentMethods": "¿Qué métodos de pago puedo usar?",
+    "paymentDescription": "Aceptamos todos los medios de pago: tarjetas de crédito y débito (Visa, Mastercard, Amex), PSE (cualquier banco), Nequi, Daviplata y corresponsales bancarios. Elige el que más te convenga al momento de pagar.",
+    "paymentSecurity": "¿Es seguro pagar en la plataforma?",
+    "paymentSecurityDescription": "Totalmente seguro. Procesamos todos los pagos a través de Wompi (de Bancolombia), que cuenta con certificación PCI-DSS. Esto garantiza que tus datos bancarios estén protegidos en todo momento y nunca sean vulnerados.",
+    "shippingCost": "¿Cuánto cuesta el envío?",
+    "shippingCostDescription": "El costo de envío se calcula automáticamente según la distancia entre el vendedor y tu dirección de entrega. Podrás ver el valor exacto antes de confirmar tu compra.",
+    "deliveryTime": "¿Quién entrega mi pedido y cuánto tarda?",
+    "deliveryDescription": "Los pedidos en Popayán son entregados por MENSAJERÍA. Una vez que completas tu compra, el sistema avisa automáticamente al mensajero para que recoja el paquete en la tienda del vendedor y lo lleve a tu puerta.",
+    "invoice": "¿Recibiré una factura por mi compra?",
+    "invoiceDescription": "Sí. Los vendedores habilitados en la plataforma emiten facturas electrónicas válidas ante la DIAN, por lo que recibirás un comprobante legal de tu compra directamente."
   },
-
   "Search": {
     "title": "Buscar",
     "searchResults": "Resultados de búsqueda para",
     "noResults": "No se encontraron resultados",
     "filters": "Filtros"
   },
-
   "Commerce": {
     "ReviewForm": {
       "title": "Escribe una reseña",
@@ -495,7 +493,6 @@
       "returned": "Devuelto"
     }
   },
-
   "Layout": {
     "navbar": {
       "home": "Inicio",
@@ -524,7 +521,6 @@
       }
     }
   },
-
   "Home": {
     "features": {
       "servientrega": {
@@ -548,18 +544,18 @@
   "About": {
     "title": "Quiénes somos",
     "description": "Información del proveedor conforme a la Ley 1480 de 2011, garantizando una experiencia de compra clara y transparente.",
-    "legal":{
+    "legal": {
       "label": "Información legal",
       "rs": "Razón social:",
       "address": "Dirección:"
     },
-    "contact":{
-      "label":"Contacto",
-      "phone":"Teléfono:"
+    "contact": {
+      "label": "Contacto",
+      "phone": "Teléfono:"
     },
-    "hours":{
-      "label":"Horarios de atención",
-      "days":"Lunes a Viernes"
+    "hours": {
+      "label": "Horarios de atención",
+      "days": "Lunes a Viernes"
     },
     "documents": {
       "label": "Documentos legales",
@@ -569,7 +565,6 @@
       "paymentReversal": "Reversión del pago"
     }
   },
-
   "Legal": {
     "terms": {
       "title": "Términos y Condiciones"
@@ -578,7 +573,6 @@
       "title": "Políticas de Privacidad"
     }
   },
-
   "Vendedores": {
     "hero": {
       "badge": "La nueva era del B2B",
