@@ -42,7 +42,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
     try {
       await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
-        onComplete();
+      onComplete();
     } catch (error) {
       // Check if this is a Next.js redirect (which is expected)
       if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
@@ -65,14 +65,14 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
-      console.log(uniqueId,uniqueReference,"desde el frontend");
-      
+      console.log(uniqueId, uniqueReference, "desde el frontend");
+
 
       // Obtener la firma usando la referencia única
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
       console.log(signature, "signatiure front");
-      
-      
+
+
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: 'COP',
@@ -95,12 +95,9 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         // Verificar si el pago fue exitoso
         if (transaction.status === 'APPROVED' || transaction.status === 'approved') {
           console.log('Payment successful!', transaction.status);
-          // Habilitar el método de pago seleccionado
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
-          await placeOrderAction('wompi', selectedLineIds); // Colocar la orden después de la aprobación del pago
-          await handlePlaceOrder()
-          console.log('Selected payment method set:', selectedPaymentMethodCode);
+          await placeOrderAction('wompi', selectedLineIds);
         } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
           console.error('Payment declined');
           setLoading(false);
