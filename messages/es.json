@@ -24,7 +24,8 @@
     "addresses": "Mis Direcciones",
     "logout": "Cerrar Sesión",
     "login": "Iniciar Sesión",
-    "signup": "Registrarse"
+    "signup": "Registrarse",
+    "wantToSell": "Quiero vender"
   },
 
   "HeroSection": {

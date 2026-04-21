@@ -22,7 +22,8 @@
     "addresses": "My Addresses",
     "logout": "Sign Out",
     "login": "Sign In",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "wantToSell": "I want to sell"
   },
 
   "HeroSection": {
