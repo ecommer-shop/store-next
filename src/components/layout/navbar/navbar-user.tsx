@@ -16,7 +16,8 @@ import { dark } from "@clerk/themes";
 import { SyncCustomer } from "@/lib/vendure/client/sync-customer";
 import { useTranslations } from "next-intl";
 import { I18N } from "@/i18n/keys";
-import { Check, Globe, LogIn, Menu, Moon, Power, Sun, UserPlus } from "lucide-react";
+import { Check, Globe, LogIn, Menu, Moon, Power, Store, Sun, UserPlus } from "lucide-react";
+import { getSellersLandingUrl } from "@/lib/sellers-landing-url";
 import { ThemeModal } from "./theme-switcher/theme-switcher";
 import { LocaleModal } from "../locale-modal";
 import {
@@ -34,6 +35,7 @@ export function NavbarUser() {
   const [themeOpen, setThemeOpen] = useState(false);
   const [localeOpen, setLocaleOpen] = useState(false);
   const { openSignIn, openSignUp } = useClerk();
+  const sellersLandingUrl = getSellersLandingUrl();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -129,6 +131,19 @@ export function NavbarUser() {
                     className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
                   >
                     <Globe className="size-5" />{t(I18N.UserBar.langSwitcher.tittle)}
+                  </Button>
+
+                  {/* Landing vendedores / onboarding */}
+                  <Button
+                    variant="ghost"
+                    onPress={() => {
+                      onClose();
+                      window.location.assign(sellersLandingUrl);
+                    }}
+                    className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
+                  >
+                    <Store className="size-5" />
+                    {t(I18N.UserBar.wantToSell)}
                   </Button>
 
                   {/* Sign In */}
