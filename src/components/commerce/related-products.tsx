@@ -1,53 +1,77 @@
-import { ProductCarousel } from "@/components/commerce/product-carousel";
-import { query } from "@/lib/vendure/server/api";
-import { GetCollectionProductsQuery } from "@/lib/vendure/shared/queries";
-import { readFragment } from "@/graphql";
-import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
-import { RelatedProductsTitle, RelatedProductsTitleAsync } from './related-products-title';
-import { getTranslations, getLocale } from "next-intl/server";
+'use client';
+import { useEffect, useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { FacetFilters } from "./facet-filters/facet-filters";
+import { RelatedProductsGrid } from './related-products-grid';
 
 interface RelatedProductsProps {
     collectionSlug: string;
     currentProductId: string;
+    locale?: string;
 }
 
-const getRelatedProducts = async (collectionSlug: string, currentProductId: string, locale: string) => {
-    const result = await query(
-        GetCollectionProductsQuery,
-        {
-            slug: collectionSlug,
-            input: {
-                collectionSlug: collectionSlug,
-                take: 13, // Fetch extra to account for filtering out current product
-                skip: 0,
-                groupByProduct: true
-            }
-        },
-        {
-            languageCode: locale,
-        }
-    );
+export function RelatedProducts({ collectionSlug, currentProductId, locale: localeProp }: RelatedProductsProps) {
+    const searchParams = useSearchParams();
+    const [initial, setInitial] = useState<{ items: any[]; totalItems: number } | null>(null);
+    const [loading, setLoading] = useState(true);
+    const locale = localeProp || 'es';
 
-    // Filter out the current product and limit to 12
-    return result.data.search.items
-        .filter(item => {
-            const product = readFragment(ProductCardFragment, item);
-            return product.productId !== currentProductId;
-        })
-        .slice(0, 12);
-}
+    // Leer los filtros activos de la URL
+    const facets = useMemo(() => searchParams.getAll('facets'), [searchParams]);
 
-export async function RelatedProducts({ collectionSlug, currentProductId }: RelatedProductsProps) {
-    const locale = await getLocale();
-    const products = await getRelatedProducts(collectionSlug, currentProductId, locale);
-    if (products.length === 0) {
+    // Promise para FacetFilters (SSR-like, usando fetch seguro)
+    const facetDataPromise = useMemo(() => {
+        const params = new URLSearchParams({
+            collectionSlug,
+            take: '12',
+            skip: '0',
+            groupByProduct: 'true',
+            facets: facets.join(','),
+        });
+        return fetch(`/api/related-products?${params.toString()}`).then(res => res.json());
+    }, [collectionSlug, facets]);
+
+    // Obtener la primera página para hidratar el infinite scroll
+    useEffect(() => {
+        let ignore = false;
+        setLoading(true);
+        const params = new URLSearchParams({
+            collectionSlug,
+            currentProductId,
+            locale,
+            take: '12',
+            page: '1',
+            facets: facets.join(','),
+        });
+        fetch(`/api/related-products?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => { if (!ignore) setInitial({ items: data.items, totalItems: data.totalItems }); })
+            .finally(() => { if (!ignore) setLoading(false); });
+        return () => { ignore = true; };
+    }, [collectionSlug, facets, locale, currentProductId]);
+
+    if (loading || !initial) {
+        return <div className="py-10 text-center text-muted-foreground">Cargando productos relacionados...</div>;
+    }
+    if (!initial.items.length) {
         return null;
     }
 
     return (
-        <ProductCarousel
-            title={(await RelatedProductsTitleAsync()).toString()}
-            products={products}
-        />
+        <div className="space-y-8">
+            <div className="max-w-5xl mx-auto">
+                <FacetFilters productDataPromise={facetDataPromise} />
+            </div>
+            <RelatedProductsGrid
+                collectionSlug={collectionSlug}
+                currentProductId={currentProductId}
+                locale={locale}
+                facets={facets}
+                take={12}
+                initialItems={initial.items}
+                initialTotalItems={initial.totalItems}
+                title={"Productos relacionados"}
+            />
+        </div>
     );
 }

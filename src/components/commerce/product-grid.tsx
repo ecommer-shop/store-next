@@ -62,7 +62,7 @@ export function ProductGrid({ productDataPromise, currentPage, take }: ProductGr
                 pageStart={1}
                 loadMore={() => { if (!isFetchingNextPage) fetchNextPage(); }}
                 hasMore={!!hasNextPage}
-                threshold={2000}
+                threshold={4000}
                 useWindow={true}
                 loader={
                     <div key="loader" className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 mt-4">
