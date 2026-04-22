@@ -85,32 +85,38 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
         return null;
     }
 
+    // Header solo con texto, sin botón
     const FiltersHeader = (
         <div className="flex items-center justify-between w-full gap-2">
             <h2 className="font-semibold text-lg text-foreground">
                 {t(I18N.Commerce.facetFilters.filters)}
             </h2>
-
-            {hasActiveFilters && (
-                <Button
-                    className="bg-accent text-accent-foreground rounded-md"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        clearFilters();
-                    }}
-                >
-                    {t(I18N.Commerce.facetFilters.clearFilters)}
-                </Button>
-            )}
         </div>
     );
 
     return (
         <div className="space-y-6">
+            {/* Desktop header con botón */}
             <div className="hidden md:flex items-center text-foreground justify-between">
-                {FiltersHeader}
+                <div className="flex items-center justify-between w-full gap-2">
+                    <h2 className="font-semibold text-lg text-foreground">
+                        {t(I18N.Commerce.facetFilters.filters)}
+                    </h2>
+                    {hasActiveFilters && (
+                        <Button
+                            className="bg-accent text-accent-foreground rounded-md"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                clearFilters();
+                            }}
+                        >
+                            {t(I18N.Commerce.facetFilters.clearFilters)}
+                        </Button>
+                    )}
+                </div>
             </div>
 
+            {/* Desktop filtros */}
             <div className="hidden md:block">
                 <FacetsAccordionContent
                     facetGroups={facetGroups}
@@ -119,13 +125,23 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
                 />
             </div>
 
-            {/* sm accordion contenedor */}
-            <div className="md:hidden">
+            {/* Mobile: botón limpiar fuera del trigger */}
+            <div className="md:hidden space-y-2">
+                {hasActiveFilters && (
+                    <Button
+                        className="bg-accent text-accent-foreground rounded-md w-full"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            clearFilters();
+                        }}
+                    >
+                        {t(I18N.Commerce.facetFilters.clearFilters)}
+                    </Button>
+                )}
                 <Accordion>
                     <Accordion.Item key="filters">
                         <Accordion.Heading>
                             <Accordion.Trigger className="w-full gap-3">
-                                
                                 <Accordion.Indicator>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                                         <path
@@ -137,7 +153,9 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
                                         />
                                     </svg>
                                 </Accordion.Indicator>
-                                {FiltersHeader}
+                                <h2 className="font-semibold text-lg text-foreground">
+                                    {t(I18N.Commerce.facetFilters.filters)}
+                                </h2>
                             </Accordion.Trigger>
                         </Accordion.Heading>
 
