@@ -1,10 +1,11 @@
 'use client';
-import {useState, useMemo} from 'react';
+import {useState, useMemo, useEffect} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {RadioGroup, Label, Button, Radio, toast, Link} from '@heroui/react';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
-import {addToCart} from '@/app/[locale]/product/[slug]/actions';
+import {addToCart, checkProductInCart} from '@/app/[locale]/product/[slug]/actions';
 import {Price} from '@/components/commerce/price';
+import {ContinueShoppingButton} from '@/components/commerce/continue-shopping-button';
 import clsx from "clsx";
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
@@ -54,6 +55,14 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
     const [isAdded, setIsAdded] = useState(false);
     const [showGoToCart, setShowGoToCart] = useState(false);
     const t = useTranslations('Commerce');
+
+    useEffect(() => {
+        checkProductInCart(product.id).then((isInCart) => {
+            if (isInCart) {
+                setShowGoToCart(true);
+            }
+        });
+    }, [product.id]);
 
     // Initialize selected options from URL
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -278,14 +287,17 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 </Button>
 
                 {showGoToCart && (
-                    <Button
-                        size="lg"
-                        variant="primary"
-                        className="w-full rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
-                        onPress={() => router.push('/cart')}
-                    >
-                        Ir al carrito
-                    </Button>
+                    <div className="flex flex-row gap-2 w-full text-foreground">
+                        <ContinueShoppingButton size="lg" className="flex-1 min-w-0" />
+                        <Button
+                            size="lg"
+                            variant="primary"
+                            className="flex-1 min-w-0 rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                            onPress={() => router.push('/cart')}
+                        >
+                            Ir al carrito
+                        </Button>
+                    </div>
                 )}
             </div>
 

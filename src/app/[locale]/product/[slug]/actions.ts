@@ -1,7 +1,8 @@
 'use server';
 
-import { mutate } from '@/lib/vendure/server/api';
+import { mutate, query } from '@/lib/vendure/server/api';
 import { AddToCartMutation } from '@/lib/vendure/shared/mutations';
+import { GetActiveOrderQuery } from '@/lib/vendure/shared/queries';
 import { updateTag } from 'next/cache';
 import { setAuthToken, getAuthToken, getAuthTokenFromCookies } from '@/lib/vendure/server/auth';
 import { cookies } from 'next/headers';
@@ -30,5 +31,32 @@ export async function addToCart(variantId: string, quantity: number = 1) {
     }
   } catch {
     return { success: false, error: 'Failed to add item to cart' };
+  }
+}
+
+export async function checkProductInCart(productId: string) {
+  try {
+    const cookiesStore = await cookies();
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) return false;
+
+    const cart = await query(
+      GetActiveOrderQuery,
+      {},
+      {
+        token,
+        useAuthToken: true,
+        tags: ['cart'],
+      }
+    );
+
+    if (cart.data.activeOrder) {
+      return cart.data.activeOrder.lines.some(
+        (line) => line.productVariant.product.id === productId
+      );
+    }
+    return false;
+  } catch (error) {
+    return false;
   }
 }
