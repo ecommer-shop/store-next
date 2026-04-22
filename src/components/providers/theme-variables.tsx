@@ -25,6 +25,7 @@ export function ThemeVariables({ children }: { children: React.ReactNode }) {
               "--border-width": "2px",
                "--border-width-field": "2px",
                 "--focus": "#9969F8",
+                "--warning-text": "#F1F1F1",
         }
       : {
           "--accent": "#12123F",
@@ -33,6 +34,7 @@ export function ThemeVariables({ children }: { children: React.ReactNode }) {
               "--border-width": "2px",
                "--border-width-field": "2px",
                 "--focus": "#006FEE",
+                "--warning-text": "#dc2626",
         };
 
   return (
