@@ -83,11 +83,10 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
     const page = getCurrentPage(searchParamsResolved);
+    const result = await getProductData(slug, locale);
     const productDataPromise = query(SearchProductsQuery, {
         input: buildSearchInput({ searchParams: searchParamsResolved })
     });
-    const result = await getProductData(slug, locale);
-
     const product = result.data.product;
 
     if (!product) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ import { Icon, } from "@iconify/react";
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { FacetsAccordionContent } from './facet-filters-responsive';
+
 
 interface FacetFiltersProps {
     productDataPromise: Promise<{
@@ -23,7 +24,7 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     const result = use(productDataPromise);
     const searchResult = result.data.search;
     const pathname = usePathname();
-    const searchParams = useSearchParams();
+    const urlSearchParams = useSearchParams();
     const router = useRouter();
     const t = useTranslations('Commerce');
 
@@ -53,10 +54,17 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
 
 
 
-    const selectedFacets = searchParams.getAll('facets');
+    const selectedFacets = urlSearchParams.getAll('facets');
 
     const toggleFacet = (facetId: string) => {
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams();
+        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v));
+            } else if (value !== undefined) {
+                params.append(key, value);
+            }
+        });
         const current = params.getAll('facets');
 
         if (current.includes(facetId)) {
@@ -73,7 +81,14 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     };
 
     const clearFilters = () => {
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams();
+        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v));
+            } else if (value !== undefined) {
+                params.append(key, value);
+            }
+        });
         params.delete('facets');
         params.delete('page');
         router.push(`${pathname}?${params.toString()}`);

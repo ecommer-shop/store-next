@@ -1,12 +1,13 @@
 'use client'
-import { use } from 'react';
-import { ResultOf } from '@/graphql';
+import { use, useEffect, useState } from 'react';
 import { ProductCard } from './product-card';
 import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
 import { ProductGridNoProducts, ProductCount } from './product-grid-content';
 import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { useInfiniteProducts } from './use-infinite-products';
 import InfiniteScroll from 'react-infinite-scroller';
+
+import { ResultOf } from '@/graphql';
 
 interface ProductGridProps {
     productDataPromise: Promise<{

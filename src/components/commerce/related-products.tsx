@@ -9,7 +9,7 @@ interface RelatedProductsProps {
     currentProductId: string;
     locale?: string;
 }
-
+// no integrado, se puede usar en un futuro para SSR o como fallback
 export function RelatedProducts({ collectionSlug, currentProductId, locale: localeProp }: RelatedProductsProps) {
     const searchParams = useSearchParams();
     const [initial, setInitial] = useState<{ items: any[]; totalItems: number } | null>(null);
@@ -19,17 +19,11 @@ export function RelatedProducts({ collectionSlug, currentProductId, locale: loca
     // Leer los filtros activos de la URL
     const facets = useMemo(() => searchParams.getAll('facets'), [searchParams]);
 
-    // Promise para FacetFilters (SSR-like, usando fetch seguro)
-    const facetDataPromise = useMemo(() => {
-        const params = new URLSearchParams({
-            collectionSlug,
-            take: '12',
-            skip: '0',
-            groupByProduct: 'true',
-            facets: facets.join(','),
-        });
-        return fetch(`/api/related-products?${params.toString()}`).then(res => res.json());
-    }, [collectionSlug, facets]);
+    // Construir searchParams para FacetFilters
+    const facetSearchParams: Record<string, string | string[]> = {
+        collectionSlug,
+        facets,
+    };
 
     // Obtener la primera página para hidratar el infinite scroll
     useEffect(() => {
@@ -56,11 +50,11 @@ export function RelatedProducts({ collectionSlug, currentProductId, locale: loca
     if (!initial.items.length) {
         return null;
     }
-
+    // <FacetFilters productDataPromise={null} />
     return (
         <div className="space-y-8">
             <div className="max-w-5xl mx-auto">
-                <FacetFilters productDataPromise={facetDataPromise} />
+                
             </div>
             <RelatedProductsGrid
                 collectionSlug={collectionSlug}

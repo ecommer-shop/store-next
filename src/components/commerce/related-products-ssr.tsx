@@ -2,12 +2,13 @@ import { FacetFilters } from "./facet-filters/facet-filters";
 import { RelatedProductsGrid } from './related-products-grid';
 
 interface RelatedProductsProps {
+    searchParams: Record<string, string | string[]>;
     productDataPromise: Promise<any>;
     currentProductId: string;
     take: number;
 }
 
-export async function RelatedProducts({ productDataPromise, currentProductId, take }: RelatedProductsProps) {
+export async function RelatedProducts({ searchParams, productDataPromise, currentProductId, take }: RelatedProductsProps) {
     const result = await productDataPromise;
     const searchResult = result.data.search;
     const initialItems = searchResult.items.filter((item: any) => item.productId !== currentProductId).slice(0, take);
