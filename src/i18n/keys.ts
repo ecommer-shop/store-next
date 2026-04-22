@@ -31,7 +31,8 @@ export const I18N = {
     addresses: 'addresses',
     logout: 'logout',
     login: 'login',
-    signup: 'signup'
+    signup: 'signup',
+    wantToSell: 'wantToSell'
   },
 
   Account: {
