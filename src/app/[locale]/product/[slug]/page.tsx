@@ -197,34 +197,6 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                             </Accordion.Panel>
                         </Accordion.Item>
 
-                        <Accordion.Item key="paymentMethods" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.paymentMethods)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.paymentDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="paymentSecurity" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.paymentSecurity)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.paymentSecurityDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
                         <Accordion.Item key="shippingCost" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
@@ -253,6 +225,34 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                             </Accordion.Panel>
                         </Accordion.Item>
 
+                        <Accordion.Item key="paymentMethods" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.paymentMethods)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.paymentDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item key="paymentSecurity" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.paymentSecurity)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.paymentSecurityDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
                         <Accordion.Item key="invoice" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
                             <Accordion.Heading>
                                 <Accordion.Trigger>
@@ -266,10 +266,24 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                                 </Accordion.Body>
                             </Accordion.Panel>
                         </Accordion.Item>
+
+                        <Accordion.Item key="support" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
+                            <Accordion.Heading>
+                                <Accordion.Trigger>
+                                    {t(I18N.Product.support)}
+                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
+                                </Accordion.Trigger>
+                            </Accordion.Heading>
+                            <Accordion.Panel>
+                                <Accordion.Body className='text-foreground'>
+                                    {t(I18N.Product.supportDescription)}
+                                </Accordion.Body>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
                     </Accordion>
                 </div>
             </section>
-
             {primaryCollection && (
                 <RelatedProducts
                     collectionSlug={primaryCollection.slug}

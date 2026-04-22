@@ -319,7 +319,9 @@ export const I18N = {
     deliveryTime: 'deliveryTime',
     deliveryDescription: 'deliveryDescription',
     invoice: 'invoice',
-    invoiceDescription: 'invoiceDescription'
+    invoiceDescription: 'invoiceDescription',
+    support: "support",
+    supportDescription: "supportDescription",
   },
 
   Search: {

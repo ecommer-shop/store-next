@@ -30,7 +30,7 @@ export default function VendedoresPage() {
               src="/logo-vendedores-light.png"
               alt="Ecommer Vendedores"
               className="mx-auto"
-              style={{ width: '300px' }}
+              style={{ width: '250px' }}
             />
           </div>
 
@@ -308,33 +308,36 @@ export default function VendedoresPage() {
 
           <div className="max-w-2xl mx-auto space-y-4">
             <FaqItem
-              question="¿Necesito conocimientos técnicos?"
-              answer="Para nada. Si sabés usar WhatsApp o Instagram, sabés usar Ecommer. Subir un producto es tan fácil como publicar una foto."
+              question="¿Realmente es gratis al principio?"
+              answer="Sí. Los primeros 3 meses no pagas mensualidad. El único costo son las comisiones de la pasarela de pagos (Wompi): 6.9% por transacción, que cubre tarjetas, PSE y corresponsales. Después, la suscripción es de solo $29.900/mes."
             />
             <FaqItem
-              question="¿Cuánto cuesta y qué comisiones cobran?"
-              answer="Los primeros 3 meses son gratis. Después pagás solo $29.900/mes. Ecommer no cobra comisión por venta — el 6.9% que ves es el costo de la pasarela de pagos (Wompi) por procesar tarjetas, PSE y Nequi."
+              question="¿Necesito conocimientos técnicos para usar la plataforma?"
+              answer="Para nada. Si sabés usar WhatsApp o Instagram, sabés usar Ecommer. Subir un producto es tan fácil como publicar una foto en redes sociales."
             />
             <FaqItem
-              question="¿Cómo recibo el dinero de mis ventas?"
-              answer="Aceptamos tarjetas débito y crédito (Visa, Mastercard, Amex), PSE, Nequi, Daviplata y corresponsales bancarios. Todo procesado por Wompi con certificación PCI-DSS."
-            /*answer="Usamos Wompi (de Bancolombia). con el objetivo de optimizar los costos operativos te enviaremos los."*/
+              question="¿Cómo y cuándo recibo el dinero de mis ventas?"
+              answer="Recibes el dinero cada 15 días. Si usas Nequi, Bancolombia o un banco con llave BRE-B registrada, no hay costos adicionales. Si eliges otro banco sin llave, los costos de la transacción los asume la tienda."
             />
             <FaqItem
-              question="¿Cómo funcionan los envíos?"
-              answer="Tenemos alianza con Messenger para entregas en Popayán. Cuando recibís un pedido, ellos recogen el paquete en tu local y lo llevan al cliente. El costo lo asume el comprador."
+              question="¿Cómo funcionan los envíos en Popayán?"
+              answer="Tenemos alianza con MESSENGER. Cuando recibes un pedido, el sistema les notifica automáticamente para que recojan el paquete en tu local y lo entreguen al cliente. El costo del envío lo asume el comprador y se calcula según la distancia."
             />
             <FaqItem
-              question="¿Puedo manejar mi tienda desde el celular?"
-              answer="Sí. El panel está optimizado para móvil — gestionás productos, revisás pedidos y consultás métricas desde cualquier lugar."
+              question="¿Es obligatorio facturar electrónicamente?"
+              answer="No para comenzar. Si eres persona natural en régimen no responsable de IVA, puedes vender sin facturación electrónica. Las personas jurídicas sí están obligadas por ley. Para ellas, ofrecemos el servicio de facturación electrónica con Certificado Digital DIAN desde $199.900/año."
             />
             <FaqItem
               question="¿Ecommer me ayuda con la contabilidad?"
-              answer="La plataforma registra todas tus ventas y genera los reportes necesarios para que tu contador solo tenga que descargarlos. Cumplimos con los estándares para que estés al día con la DIAN sin esfuerzo"
+              answer="Sí. La plataforma registra todas tus ventas y genera reportes listos para descargar, para que tu contador no tenga que hacer trabajo extra. Cumplimos los estándares para que estés al día con la DIAN sin esfuerzo."
             />
             <FaqItem
-              question="¿Quién entrega mis productos en Popayán?"
-              answer="La funcionalidad está actualmente en desarrollo. Tenemos una alianza estratégica con MESSENGER. Cuando recibes un pedido, el sistema les notifica automáticamente para que recojan el paquete en tu local y lo entreguen al cliente final."
+              question="¿Cómo protegen mi dinero ante reclamos o contracargos?"
+              answer="Wompi monitorea los pagos 24/7 y el dinero solo se retira con una segunda clave. Ante reclamos en ventas de productos físicos, te notifican y tienes 7 días para demostrar la entrega. Se recomienda guardar toda la documentación de ventas por al menos un año."
+            />
+            <FaqItem
+              question="¿Existe un número de atención al cliente?"
+              answer="Sí, contamos con un número de atención al cliente. Puedes comunicarte al 314 851 8961, donde con gusto te brindaremos asistencia, inicialmente el soporte  te conecta con un Bot de IA el cual te redirecciona a un asistente real si es necesario. "
             />
           </div>
         </div>
