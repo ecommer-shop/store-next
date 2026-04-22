@@ -4,13 +4,15 @@ import { ProductCard } from './product-card';
 import { useInfiniteRelatedProducts } from './use-infinite-related-products';
 
 interface RelatedProductsGridProps {
-  collectionSlug: string;
+  productDataPromise?: Promise<any>;
   currentProductId: string;
-  locale: string;
-  facets: string[];
   take: number;
-  initialItems: any[];
-  initialTotalItems: number;
+  // Opcionales para fallback/compatibilidad
+  collectionSlug?: string;
+  locale?: string;
+  facets?: string[];
+  initialItems?: any[];
+  initialTotalItems?: number;
   title?: string;
 }
 
@@ -29,22 +31,36 @@ function ProductSkeleton({ i }: { i: number }) {
 }
 
 export function RelatedProductsGrid({
-  collectionSlug,
+  productDataPromise,
   currentProductId,
+  take,
+  collectionSlug,
   locale,
   facets,
-  take,
   initialItems,
   initialTotalItems,
   title,
 }: RelatedProductsGridProps) {
+  // Si viene productDataPromise (SSR pattern), hidratar con esos datos
+  let ssrItems: any[] | undefined = undefined;
+  let ssrTotal: number | undefined = undefined;
+  if (productDataPromise) {
+    // Solo en server, use() está disponible
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const result = typeof window === 'undefined' ? require('react').use(productDataPromise) : undefined;
+    if (result) {
+      const searchResult = result.data.search;
+      ssrItems = searchResult.items.filter((item: any) => item.productId !== currentProductId).slice(0, take);
+      ssrTotal = searchResult.totalItems;
+    }
+  }
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteRelatedProducts({
-    collectionSlug,
+    collectionSlug: collectionSlug || '',
     currentProductId,
-    locale,
-    facets,
+    locale: locale || 'es',
+    facets: facets || [],
     take,
-    initialData: { items: initialItems, totalItems: initialTotalItems },
+    initialData: ssrItems && ssrTotal ? { items: ssrItems, totalItems: ssrTotal } : initialItems && initialTotalItems ? { items: initialItems, totalItems: initialTotalItems } : undefined,
   });
 
   const allItems = data?.pages.flatMap(p => p.items) ?? [];

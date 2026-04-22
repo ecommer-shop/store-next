@@ -43,6 +43,7 @@ async function fetchRelatedProductsPage({
     facets: facets.join(','),
   });
   const res = await fetch(`/api/related-products?${params.toString()}`);
+  console.log('Fetching related products page', { collectionSlug, currentProductId, locale, facets, page, take });
   if (!res.ok) throw new Error('Failed to fetch related products');
   return res.json();
 }
