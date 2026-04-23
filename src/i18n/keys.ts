@@ -11,8 +11,8 @@ export const I18N = {
     featuredProducts: 'featuredProducts'
   },
 
-  UserBar:{
-    menu:{
+  UserBar: {
+    menu: {
       tittle: 'menu.tittle',
       close: 'menu.close'
     },
@@ -245,10 +245,10 @@ export const I18N = {
       },
     },
     flow: {
-        shippingAddress: 'flow.shippingAddress',
-        paymentMethod: 'flow.paymentMethod',
-        deliveryMethod: 'flow.deliveryMethod',
-        reviewPlaceOrder: 'flow.reviewPlaceOrder'
+      shippingAddress: 'flow.shippingAddress',
+      paymentMethod: 'flow.paymentMethod',
+      deliveryMethod: 'flow.deliveryMethod',
+      reviewPlaceOrder: 'flow.reviewPlaceOrder'
     },
     delivery: {
       selectMethod: 'delivery.selectMethod',
@@ -310,7 +310,19 @@ export const I18N = {
     trackOrder: 'trackOrder',
     trackDescription: 'trackDescription',
     internationalShipping: 'internationalShipping',
-    internationalDescription: 'internationalDescription'
+    internationalDescription: 'internationalDescription',
+    paymentMethods: 'paymentMethods',
+    paymentDescription: 'paymentDescription',
+    paymentSecurity: 'paymentSecurity',
+    paymentSecurityDescription: 'paymentSecurityDescription',
+    shippingCost: 'shippingCost',
+    shippingCostDescription: 'shippingCostDescription',
+    deliveryTime: 'deliveryTime',
+    deliveryDescription: 'deliveryDescription',
+    invoice: 'invoice',
+    invoiceDescription: 'invoiceDescription',
+    support: "support",
+    supportDescription: "supportDescription",
   },
 
   Search: {
@@ -505,7 +517,7 @@ export const I18N = {
       sections: {
         categories: 'footer.sections.categories',
         about: {
-          label:'footer.sections.about.label',
+          label: 'footer.sections.about.label',
           title: 'footer.sections.about.title',
         },
         contact: 'footer.sections.contact'
@@ -536,16 +548,16 @@ export const I18N = {
       }
     }
   },
-  
+
   About: {
     title: 'title',
     description: 'description',
-    legal:{
+    legal: {
       label: 'legal.label',
       rs: 'legal.rs',
       address: 'legal.address',
     },
-    contact:{
+    contact: {
       label: 'contact.label',
       phone: 'contact.phone',
     },
