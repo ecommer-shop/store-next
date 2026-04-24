@@ -15,6 +15,7 @@ const getFeaturedCollectionProducts = async () => {
       groupByProduct: true,
     },
   });
+  
 
   const searchItems = result.data.search.items ?? [];
   if (searchItems.length > 0) {
