@@ -2,10 +2,15 @@ import type { Metadata } from 'next';
 import { query } from '@/lib/vendure/server/api';
 import { GetProductDetailQuery } from '@/lib/vendure/shared/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
-import { RelatedProducts } from '@/components/commerce/related-products';
+// import { RelatedProducts } from '@/components/commerce/related-products';
+import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
+import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
+import { FacetFilters } from '@/components/commerce/facet-filters/facet-filters';
+import { RelatedProductsGrid } from '@/components/commerce/related-products-grid';
 import {
     Accordion,
     Separator,
+    Spinner,
     Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
@@ -21,6 +26,7 @@ import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import { ReviewsSection } from '@/components/commerce/reviews-section-inline';
+import { ProductGrid } from '@/components/commerce/product-grid';
 
 interface PageProps<T = any> {
     params: Promise<T>;
@@ -76,9 +82,11 @@ export async function generateMetadata({
 export default async function ProductDetailPage({ params, searchParams }: PageProps<ProductPageParams>) {
     const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
-
+    const page = getCurrentPage(searchParamsResolved);
     const result = await getProductData(slug, locale);
-
+    const productDataPromise = query(SearchProductsQuery, {
+        input: buildSearchInput({ searchParams: searchParamsResolved })
+    });
     const product = result.data.product;
 
     if (!product) {
@@ -92,6 +100,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
     const t = await getTranslations('Product');
     const tHome = await getTranslations('Home');
+
     return (
         <Suspense fallback={
             <p>{I18N.Account.common.loading}</p>
@@ -284,12 +293,26 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                     </Accordion>
                 </div>
             </section>
-            {primaryCollection && (
-                <RelatedProducts
-                    collectionSlug={primaryCollection.slug}
-                    currentProductId={product.id}
-                />
-            )}
+
+            <div className="p-20 grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {/* Filters Sidebar */}
+                <aside className="lg:col-span-1">
+                    <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                        <FacetFilters productDataPromise={productDataPromise} />
+                    </Suspense>
+                </aside>
+
+                {/* Product Grid */}
+                <div className="lg:col-span-3">
+                    <Suspense fallback={
+                        <div className="flex flex-col mt-17 items-center gap-2">
+                            <Spinner color="current" />
+                        </div>
+                    }>
+                        <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
+                    </Suspense>
+                </div>
+            </div>
         </Suspense>
     );
 }
