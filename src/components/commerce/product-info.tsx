@@ -42,6 +42,10 @@ interface ProductInfoProps {
                 name: string;
             }>;
         }>;
+        store?: {
+            name: string;
+            slug: string;
+        };
     };
     searchParams: { [key: string]: string | string[] | undefined };
 }
@@ -278,8 +282,18 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
             {/* SKU */}
             {selectedVariant && (
-                <div className="text-xs text-foreground">
-                    {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
+                <div className="space-y-1 text-xs text-foreground">
+                    <div>
+                        {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
+                    </div>
+                    {product.store && (
+                        <div>
+                            Tienda:{' '}
+                            <Link href={`/store/${product.store.slug}`} className="font-semibold underline underline-offset-2">
+                                {product.store.name}
+                            </Link>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
