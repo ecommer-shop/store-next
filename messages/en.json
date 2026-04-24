@@ -3,7 +3,6 @@
     "submit": "Submit",
     "cancel": "Cancel"
   },
-
   "UserBar": {
     "menu": {
       "tittle": "Menu",
@@ -25,14 +24,12 @@
     "signup": "Sign Up",
     "wantToSell": "I want to sell"
   },
-
   "HeroSection": {
     "title": "Buy our products",
     "description": "Discover and support national products, all in one place.",
     "shopButton": "Explore",
     "featuredProducts": "Featured Products"
   },
-
   "Account": {
     "addresses": {
       "loading": {
@@ -44,7 +41,6 @@
         "title": "Your addresses",
         "description": "Manage your shipping and billing addresses."
       },
-
       "form": {
         "fields": {
           "fullName": {
@@ -86,7 +82,6 @@
             "requiredError": "Phone number is required"
           }
         },
-
         "actions": {
           "save": "Save address",
           "update": "Update address",
@@ -137,7 +132,6 @@
         "back": "Back to orders",
         "title": "Order {code}",
         "placedOn": "Placed on {date}",
-
         "sections": {
           "items": "Order items",
           "summary": "Order summary",
@@ -146,7 +140,6 @@
           "payment": "Payment",
           "shippingMethod": "Shipping method"
         },
-
         "labels": {
           "sku": "SKU",
           "qty": "Quantity",
@@ -184,7 +177,6 @@
       }
     }
   },
-
   "Cart": {
     "title": "Shopping Cart",
     "subtitle": "Choose the products you want and continue with your order",
@@ -215,7 +207,6 @@
       "remove": "Remove"
     }
   },
-
   "Checkout": {
     "title": "Checkout",
     "description": "Complete your purchase",
@@ -292,7 +283,6 @@
     }
   },
   "Collection": {},
-
   "OrderConfirmation": {
     "title": "Order Confirmed!",
     "orderNumber": "Order Number",
@@ -303,7 +293,6 @@
     "shippingAddress": "Shipping Address",
     "continueShopping": "Continue Shopping"
   },
-
   "Product": {
     "notFound": "Product not found",
     "whyChooseUs": "Why Choose Us",
@@ -314,21 +303,29 @@
     "satisfactionGuaranteed": "Satisfaction Guaranteed",
     "satisfactionDescription": "100% satisfaction or money back",
     "faq": "Frequently Asked Questions",
-    "returnPolicy": "What is your return policy?",
-    "returnDescription": "We accept returns within 30 days of purchase. Items must be unused and in their original packaging. Simply contact our support team to initiate a return and receive a prepaid shipping label.",
-    "trackOrder": "How can I track my order?",
-    "trackDescription": "Once your order ships, you'll receive an email with a tracking number. You can also view your order status at any time by logging into your account and visiting the order history section.",
-    "internationalShipping": "Do you offer international shipping?",
-    "internationalDescription": "Yes! We ship to over 50 countries worldwide. International delivery times and shipping costs vary by location. You can see the exact cost at checkout before completing your purchase."
+    "returnPolicy": "How does a return work?",
+    "returnDescription": "Return requests must be submitted by email to legal@ecommer.shop. Once received, Ecommer reviews the case according to applicable regulations and, if approved, forwards it to the seller to process the corresponding refund.",
+    "trackOrder": "Can I track my order?",
+    "trackDescription": "Yes. Once your order is dispatched, you will receive a notification. You can also check the status of your purchase at any time from your account on the platform.",
+    "shippingCost": "How much does shipping cost?",
+    "shippingCostDescription": "Shipping costs are calculated automatically based on the distance between the seller's store and your delivery address. You will see the exact amount before confirming your purchase.",
+    "deliveryTime": "Who delivers my order?",
+    "deliveryDescription": "Orders in Popayán are delivered by MESSENGER. Once you complete your purchase, the system automatically notifies the courier to pick up the package from the seller's store and bring it straight to your door.",
+    "paymentMethods": "What payment methods can I use?",
+    "paymentDescription": "We accept all payment methods: credit and debit cards (Visa, Mastercard, Amex), PSE (any bank), Nequi, Daviplata, and banking correspondents. Choose the one that works best for you at checkout.",
+    "paymentSecurity": "Is it safe to pay on the platform?",
+    "paymentSecurityDescription": "Completely safe. All payments are processed through Wompi, certified with PCI-DSS — the most rigorous international security standard for banking data, the same level used by traditional banking systems. Your information is encrypted and never exposed.",
+    "invoice": "Will I receive an invoice for my purchase?",
+    "invoiceDescription": "Yes. Sellers enabled on the platform issue electronic invoices validated by the DIAN (Colombian Tax Authority), so you will receive a legal proof of purchase directly.",
+    "support": "How do I get help if I have a problem?",
+    "supportDescription": "You can reach our customer support team at 314 851 8961. An AI Bot will initially assist you and redirect you to a real advisor if needed. You can also email us at legal@ecommer.shop for return-related inquiries."
   },
-
   "Search": {
     "title": "Search",
     "searchResults": "Search results for",
     "noResults": "No results found",
     "filters": "Filters"
   },
-
   "Commerce": {
     "ReviewForm": {
       "title": "Write a Review",
@@ -495,7 +492,6 @@
       "returned": "Returned"
     }
   },
-
   "Layout": {
     "navbar": {
       "home": "Home",
@@ -524,7 +520,6 @@
       }
     }
   },
-
   "Home": {
     "features": {
       "servientrega": {
@@ -548,18 +543,18 @@
   "About": {
     "title": "About Us",
     "description": "Provider information in accordance with Law 1480 of 2011, ensuring a clear and transparent shopping experience.",
-    "legal":{
+    "legal": {
       "label": "Legal Information",
       "rs": "Legal Name:",
       "address": "Address:"
     },
-    "contact":{
-      "label":"Contact",
-      "phone":"Phone:"
+    "contact": {
+      "label": "Contact",
+      "phone": "Phone:"
     },
-    "hours":{
-      "label":"Business Hours",
-      "days":"Monday to Friday"
+    "hours": {
+      "label": "Business Hours",
+      "days": "Monday to Friday"
     },
     "documents": {
       "label": "Legal Documents",
@@ -569,7 +564,6 @@
       "paymentReversal": "Payment Reversal"
     }
   },
-
   "Legal": {
     "terms": {
       "title": "Terms and Conditions"
@@ -578,7 +572,6 @@
       "title": "Privacy Policy"
     }
   },
-
   "Vendedores": {
     "hero": {
       "badge": "The new era of B2B",

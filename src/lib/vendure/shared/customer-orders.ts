@@ -8,7 +8,7 @@ export const CheckUserPurchasedProductQuery = graphql(`
       id
       orders(options: { 
         filter: { 
-          state: { in: ["Delivered", "Shipped", "PartiallyDelivered"] }
+          state: { in: ["PaymentSettled", "Delivered", "Shipped", "PartiallyDelivered"] }
         }
       }) {
         items {
