@@ -95,6 +95,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
 
     const productId = product.id;
     const variantId = product.variants[0]?.id;
+    const storeCollection = product.collections?.[0];
 
     // Get the primary collection (prefer deepest nested / most specific)
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
@@ -129,7 +130,18 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                                 </svg>
                             </div>
                         }>
-                            <ProductInfo product={product} searchParams={searchParamsResolved} />
+                            <ProductInfo
+                                product={{
+                                    ...product,
+                                    store: storeCollection
+                                        ? {
+                                            name: storeCollection.name,
+                                            slug: storeCollection.slug,
+                                        }
+                                        : undefined,
+                                }}
+                                searchParams={searchParamsResolved}
+                            />
                         </Suspense>
                     </div>
                 </div>
