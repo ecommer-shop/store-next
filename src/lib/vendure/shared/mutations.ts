@@ -243,7 +243,7 @@ export const SetOrderBillingAddressMutation = graphql(`
     }
 `);
 
-export const SetOrderDynamicShippingMethod= graphql(`
+export const SetOrderDynamicShippingMethod = graphql(`
     mutation {
   setDynamicShippingPrice(price: 8500)
 }`)

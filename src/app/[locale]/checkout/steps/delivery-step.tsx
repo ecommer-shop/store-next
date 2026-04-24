@@ -26,15 +26,14 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     return shippingMethods.length === 1 ? shippingMethods[0].id : null;
   });
   const [submitting, setSubmitting] = useState(false);
-  
-   // Establece el precio dinámico para el método de envío (ejemplo: 8500 COP)
+
+  // Establece el precio dinámico para el método de envío (ejemplo: 8500 COP)
   const handleContinue = async () => {
     if (!selectedMethodId) return;
-   // await setDynamicShippingPrice(8000); // Ejemplo de precio dinámico, ajusta según tu lógica
+    // await setDynamicShippingPrice(8000); // Ejemplo de precio dinámico, ajusta según tu lógica
     setSubmitting(true);
     try {
       await setShippingMethodAction(selectedMethodId);
-      console.log('Shipping method set successfully', await setShippingMethodAction(selectedMethodId));
       router.refresh();
       onComplete();
     } catch (error) {

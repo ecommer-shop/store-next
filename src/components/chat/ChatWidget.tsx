@@ -1,23 +1,28 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { ChatWindow } from './ChatWindow';
+// @ts-ignore - TypeScript no necesita tipos para archivo CSS global
 import './chat-widget.css';
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Verificar el entorno solo en el cliente para evitar errores de hidratación
+  // ✅ Esperar hidratación completa del cliente antes de evaluar entorno
+  // Esto soluciona el bug del parpadeo y desaparición
   useEffect(() => {
-    // Solo renderizar el chat si estamos en entorno de desarrollo
-    if (process.env.NEXT_PUBLIC_APP_ENV === 'dev') {
-      setShouldRender(true);
-    }
+    setIsHydrated(true);
   }, []);
 
-  // Si no estamos en desarrollo, no renderizar nada
-  if (!shouldRender) {
+  // Solo evaluar la condición DESPUES de estar hidratado en el cliente
+  if (!isHydrated) {
+    return null;
+  }
+
+  const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV;
+  
+  // Mostrar chat en dev y stage, ocultar solo en producción
+  if (APP_ENV === 'prod') {
     return null;
   }
 
@@ -35,7 +40,6 @@ export function ChatWidget() {
           style={{ width: '70%', height: '70%', objectFit: 'contain' }}
         />
       </button>
-
       {/* Ventana del chat */}
       <ChatWindow isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
