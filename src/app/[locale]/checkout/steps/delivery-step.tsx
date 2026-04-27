@@ -34,7 +34,6 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     setSubmitting(true);
     try {
       await setShippingMethodAction(selectedMethodId);
-      console.log('Shipping method set successfully', await setShippingMethodAction(selectedMethodId));
       router.refresh();
       onComplete();
     } catch (error) {

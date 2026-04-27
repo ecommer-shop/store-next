@@ -65,12 +65,8 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
-      console.log(uniqueId,uniqueReference,"desde el frontend");
-      
-
       // Obtener la firma usando la referencia única
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
-      console.log(signature, "signatiure front");
       
       
       // @ts-ignore
@@ -90,22 +86,17 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       });
 
       checkout.open(async ({ transaction }: any) => {
-        console.log('Wompi transaction status:', transaction.status);
-
         // Verificar si el pago fue exitoso
         if (transaction.status === 'APPROVED' || transaction.status === 'approved') {
-          console.log('Payment successful!', transaction.status);
           // Habilitar el método de pago seleccionado
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
           await placeOrderAction('wompi', selectedLineIds); // Colocar la orden después de la aprobación del pago
           await handlePlaceOrder()
-          console.log('Selected payment method set:', selectedPaymentMethodCode);
         } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
           console.error('Payment declined');
           setLoading(false);
         } else if (transaction.status === 'PENDING' || transaction.status === 'pending') {
-          console.log('Payment pending');
           setLoading(false);
         }
       });
