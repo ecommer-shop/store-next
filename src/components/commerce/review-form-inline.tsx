@@ -94,7 +94,6 @@ export function ReviewFormInline({ productId, variantId, onSuccess }: ReviewForm
           authorName,
         },
       }, { authToken: await getToken() });
-      console.log('submit review result:', result);
       if (result.data?.submitProductReview) {
         toast.success(t(I18N.Commerce.ReviewForm.success.title), {
           description: t(I18N.Commerce.ReviewForm.success.description),

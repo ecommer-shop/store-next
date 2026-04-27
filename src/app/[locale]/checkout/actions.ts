@@ -82,8 +82,6 @@ export async function setDynamicShippingPrice(price: number) {
 
         { token, useAuthToken: true }
     );
-    console.log('Set dynamic shipping price result:', result);
-
     revalidatePath('/checkout');
 }
 
