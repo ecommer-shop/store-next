@@ -8,6 +8,7 @@ import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
 import { placeOrder as placeOrderAction } from '../actions';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
+import { CurrencyCode, TransactionStatus } from '@/models/payment';
 
 interface PaymentStepProps {
   onComplete: () => void;
@@ -42,7 +43,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
     try {
       await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
-        onComplete();
+      onComplete();
     } catch (error) {
       // Check if this is a Next.js redirect (which is expected)
       if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
@@ -65,17 +66,14 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
-      console.log(uniqueId,uniqueReference,"desde el frontend");
-      
+
 
       // Obtener la firma usando la referencia única
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
-      console.log(signature, "signatiure front");
-      
-      
+
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
-        currency: 'COP',
+        currency: CurrencyCode.COP,
         amountInCents: amountInCents,
         reference: uniqueReference,
         publicKey: pb,
@@ -90,22 +88,17 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       });
 
       checkout.open(async ({ transaction }: any) => {
-        console.log('Wompi transaction status:', transaction.status);
+        
 
         // Verificar si el pago fue exitoso
-        if (transaction.status === 'APPROVED' || transaction.status === 'approved') {
-          console.log('Payment successful!', transaction.status);
-          // Habilitar el método de pago seleccionado
+        if (transaction.status === TransactionStatus.APPROVED || transaction.status === TransactionStatus.APPROVED.toLowerCase()) {
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
-          await placeOrderAction('wompi', selectedLineIds); // Colocar la orden después de la aprobación del pago
-          await handlePlaceOrder()
-          console.log('Selected payment method set:', selectedPaymentMethodCode);
+          await placeOrderAction('wompi', selectedLineIds);
         } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
           console.error('Payment declined');
           setLoading(false);
         } else if (transaction.status === 'PENDING' || transaction.status === 'pending') {
-          console.log('Payment pending');
           setLoading(false);
         }
       });

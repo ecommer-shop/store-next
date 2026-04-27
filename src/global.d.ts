@@ -9,4 +9,7 @@ declare module '*.css' {
   export default content;
 }
 
+declare module 'react-infinite-scroller';
+
+
 export {};

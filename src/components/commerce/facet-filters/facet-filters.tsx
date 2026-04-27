@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ import { Icon, } from "@iconify/react";
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { FacetsAccordionContent } from './facet-filters-responsive';
+
 
 interface FacetFiltersProps {
     productDataPromise: Promise<{
@@ -23,7 +24,7 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     const result = use(productDataPromise);
     const searchResult = result.data.search;
     const pathname = usePathname();
-    const searchParams = useSearchParams();
+    const urlSearchParams = useSearchParams();
     const router = useRouter();
     const t = useTranslations('Commerce');
 
@@ -53,10 +54,17 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
 
 
 
-    const selectedFacets = searchParams.getAll('facets');
+    const selectedFacets = urlSearchParams.getAll('facets');
 
     const toggleFacet = (facetId: string) => {
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams();
+        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v));
+            } else if (value !== undefined) {
+                params.append(key, value);
+            }
+        });
         const current = params.getAll('facets');
 
         if (current.includes(facetId)) {
@@ -73,7 +81,14 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     };
 
     const clearFilters = () => {
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams();
+        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v));
+            } else if (value !== undefined) {
+                params.append(key, value);
+            }
+        });
         params.delete('facets');
         params.delete('page');
         router.push(`${pathname}?${params.toString()}`);
@@ -85,32 +100,38 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
         return null;
     }
 
+    // Header solo con texto, sin botón
     const FiltersHeader = (
         <div className="flex items-center justify-between w-full gap-2">
             <h2 className="font-semibold text-lg text-foreground">
                 {t(I18N.Commerce.facetFilters.filters)}
             </h2>
-
-            {hasActiveFilters && (
-                <Button
-                    className="bg-accent text-accent-foreground rounded-md"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        clearFilters();
-                    }}
-                >
-                    {t(I18N.Commerce.facetFilters.clearFilters)}
-                </Button>
-            )}
         </div>
     );
 
     return (
         <div className="space-y-6">
+            {/* Desktop header con botón */}
             <div className="hidden md:flex items-center text-foreground justify-between">
-                {FiltersHeader}
+                <div className="flex items-center justify-between w-full gap-2">
+                    <h2 className="font-semibold text-lg text-foreground">
+                        {t(I18N.Commerce.facetFilters.filters)}
+                    </h2>
+                    {hasActiveFilters && (
+                        <Button
+                            className="bg-accent text-accent-foreground rounded-md"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                clearFilters();
+                            }}
+                        >
+                            {t(I18N.Commerce.facetFilters.clearFilters)}
+                        </Button>
+                    )}
+                </div>
             </div>
 
+            {/* Desktop filtros */}
             <div className="hidden md:block">
                 <FacetsAccordionContent
                     facetGroups={facetGroups}
@@ -119,13 +140,23 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
                 />
             </div>
 
-            {/* sm accordion contenedor */}
-            <div className="md:hidden">
+            {/* Mobile: botón limpiar fuera del trigger */}
+            <div className="md:hidden space-y-2">
+                {hasActiveFilters && (
+                    <Button
+                        className="bg-accent text-accent-foreground rounded-md w-full"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            clearFilters();
+                        }}
+                    >
+                        {t(I18N.Commerce.facetFilters.clearFilters)}
+                    </Button>
+                )}
                 <Accordion>
                     <Accordion.Item key="filters">
                         <Accordion.Heading>
                             <Accordion.Trigger className="w-full gap-3">
-                                
                                 <Accordion.Indicator>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                                         <path
@@ -137,7 +168,9 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
                                         />
                                     </svg>
                                 </Accordion.Indicator>
-                                {FiltersHeader}
+                                <h2 className="font-semibold text-lg text-foreground">
+                                    {t(I18N.Commerce.facetFilters.filters)}
+                                </h2>
                             </Accordion.Trigger>
                         </Accordion.Heading>
 
