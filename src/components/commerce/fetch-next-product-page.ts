@@ -2,14 +2,16 @@
 import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { query } from '@/lib/vendure/server/api';
 import { ResultOf } from '@/graphql';
+import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
 
 interface FetchNextPageArgs {
   page: number;
   take: number;
   token?: string;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export async function fetchNextProductPage({ page, take, token }: FetchNextPageArgs): Promise<{
+export async function fetchNextProductPage({ page, take, token, searchParams = {} }: FetchNextPageArgs): Promise<{
   items: ResultOf<typeof SearchProductsQuery>["search"]["items"];
   totalItems: number;
   token?: string;
@@ -17,13 +19,18 @@ export async function fetchNextProductPage({ page, take, token }: FetchNextPageA
   // Limit token usage for security
   if (token && token.length > 128) throw new Error('Token too long');
 
-  // Calcula el skip para la página
-  const skip = (page - 1) * take;
+  // Build the search input from params
+  const input = buildSearchInput({ 
+    searchParams: {
+      ...searchParams,
+      page: String(page),
+    }
+  });
 
   // Realiza la consulta real
   const result = await query(
     SearchProductsQuery,
-    { input: { take, skip, groupByProduct: true } },
+    { input },
     { token }
   );
 

@@ -3,6 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchNextProductPage } from './fetch-next-product-page';
 import { ResultOf } from '@/graphql';
 import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
+import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
 
 export type ProductItem = ResultOf<typeof SearchProductsQuery>['search']['items'][number];
 
@@ -13,6 +14,7 @@ interface UseInfiniteProductsOptions {
     totalItems: number;
     token?: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 interface PageData {
@@ -22,9 +24,17 @@ interface PageData {
   page: number;
 }
 
-export function useInfiniteProducts({ take, initialData }: UseInfiniteProductsOptions) {
+export function useInfiniteProducts({ take, initialData, searchParams = {} }: UseInfiniteProductsOptions) {
+  // Create a search params key for the query cache
+  const searchParamsKey = JSON.stringify({
+    facets: searchParams.facets || [],
+    q: searchParams.q || '',
+    sort: searchParams.sort || 'name-asc',
+  });
+
   return useInfiniteQuery<PageData>({
-    queryKey: ['products', take],
+    // Include search params in the query key so filters/search trigger new queries
+    queryKey: ['products', take, searchParamsKey],
     queryFn: async ({ pageParam }) => {
       const page = (pageParam as number) ?? 1;
       // Página 1 ya viene del servidor como initialData, no se re-fetcha
@@ -32,6 +42,7 @@ export function useInfiniteProducts({ take, initialData }: UseInfiniteProductsOp
         page,
         take,
         token: undefined,
+        searchParams, // Pass search params to the fetch function
       });
       return { ...result, page };
     },
