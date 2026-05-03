@@ -54,14 +54,7 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
     const selectedFacets = urlSearchParams.getAll('facets');
 
     const toggleFacet = (facetId: string) => {
-        const params = new URLSearchParams();
-        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach(v => params.append(key, v));
-            } else if (value !== undefined) {
-                params.append(key, value);
-            }
-        });
+        const params = new URLSearchParams(urlSearchParams);
         const current = params.getAll('facets');
 
         if (current.includes(facetId)) {
@@ -78,14 +71,7 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
     };
 
     const clearFilters = () => {
-        const params = new URLSearchParams();
-        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach(v => params.append(key, v));
-            } else if (value !== undefined) {
-                params.append(key, value);
-            }
-        });
+        const params = new URLSearchParams(urlSearchParams);
         params.delete('facets');
         params.delete('page');
         router.push(`${pathname}?${params.toString()}`);
