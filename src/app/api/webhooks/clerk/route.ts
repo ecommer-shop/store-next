@@ -12,11 +12,7 @@ const VENDURE_SUPERADMIN_USERNAME = process.env.VENDURE_SUPERADMIN_USERNAME!;
 const VENDURE_SUPERADMIN_PASSWORD = process.env.VENDURE_SUPERADMIN_PASSWORD!;
 const WEBHOOK_DEBUG = process.env.NODE_ENV !== 'production' || process.env.CLERK_WEBHOOK_DEBUG === 'true';
 
-function logDebug(...args: unknown[]) {
-	if (WEBHOOK_DEBUG) {
-		console.log('[Clerk Webhook]', ...args);
-	}
-}
+function logDebug(..._args: unknown[]) {}
 
 async function getVendureAdminToken() {
 	if (!VENDURE_ADMIN_API_URL) {

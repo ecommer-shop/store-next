@@ -1,44 +1,67 @@
+import { ProductCarousel } from "@/components/commerce/product-carousel";
 import { query } from "@/lib/vendure/server/api";
-import { GetCollectionProductsQuery } from "@/lib/vendure/shared/queries";
+import { GetProductsFallbackQuery, SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { Suspense } from "react";
 import { FeaturedProductsLoading } from './featured-products-loading';
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { I18N } from "@/i18n/keys";
-import { FeaturedProductsGrid } from "./featured-products-grid";
+import { CurrencyCode } from "@/graphql/generated";
 
-const COLLECTION_SLUG = 'electronica';
-const COLLECTION_ID = '5';
-const TAKE = 20;
-
-const getFeaturedCollectionProducts = async (locale: string) => {
-  const result = await query(GetCollectionProductsQuery, {
-    slug: COLLECTION_SLUG,
+const getFeaturedCollectionProducts = async () => {
+  const result = await query(SearchProductsQuery, {
     input: {
-      take: TAKE,
+      take: 12,
       skip: 0,
       groupByProduct: true,
     },
   });
+  
 
-  return result.data.search;
+  const searchItems = result.data.search.items ?? [];
+  if (searchItems.length > 0) {
+    return searchItems;
+  }
+
+  const fallback = await query(GetProductsFallbackQuery, {
+    options: {
+      take: 12,
+      skip: 0,
+      filter: { enabled: { eq: true } },
+      sort: { createdAt: "DESC" },
+    },
+  });
+
+  return (fallback.data.products.items ?? []).map((product) => {
+    const firstVariant = product.variants?.[0];
+    return {
+      productId: product.id,
+      productName: product.name,
+      slug: product.slug,
+      productAsset: product.featuredAsset
+        ? {
+            id: product.featuredAsset.id,
+            preview: product.featuredAsset.preview,
+          }
+        : null,
+      priceWithTax: {
+        __typename: "SinglePrice",
+        value: firstVariant?.priceWithTax ?? 0,
+      },
+      currencyCode: (firstVariant?.currencyCode ?? CurrencyCode.Cop) as CurrencyCode,
+    };
+  }) as any[];
 }
 
 export async function FeaturedProducts() {
-  const locale = await getLocale();
-  const search = await getFeaturedCollectionProducts(locale);
+  const products = await getFeaturedCollectionProducts();
   const t = await getTranslations("HeroSection");
 
   return (
     <Suspense fallback={<FeaturedProductsLoading />}>
-      <FeaturedProductsGrid
-        slug={COLLECTION_SLUG}
-        collectionId={COLLECTION_ID}
-        take={TAKE}
-        initialItems={search.items}
-        initialTotalItems={search.totalItems}
+      <ProductCarousel
         title={t(I18N.HeroSection.featuredProducts)}
+        products={products}
       />
     </Suspense>
-  );
+  )
 }
-

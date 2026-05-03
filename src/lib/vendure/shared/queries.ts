@@ -44,6 +44,26 @@ export const SearchProductsQuery = graphql(`
     }
 `, [ProductCardFragment]);
 
+export const GetProductsFallbackQuery = graphql(`
+    query GetProductsFallback($options: ProductListOptions) {
+        products(options: $options) {
+            items {
+                id
+                name
+                slug
+                featuredAsset {
+                    id
+                    preview
+                }
+                variants {
+                    priceWithTax
+                    currencyCode
+                }
+            }
+        }
+    }
+`);
+
 export const GetProductDetailQuery = graphql(`
     query GetProductDetail($slug: String!) {
         product(slug: $slug) {
