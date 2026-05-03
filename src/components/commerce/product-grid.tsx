@@ -1,12 +1,13 @@
 'use client'
 import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ProductCard } from './product-card';
 import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
 import { ProductGridNoProducts, ProductCount } from './product-grid-content';
 import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { useInfiniteProducts } from './use-infinite-products';
 import InfiniteScroll from 'react-infinite-scroller';
-
+import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
 import { ResultOf } from '@/graphql';
 
 interface ProductGridProps {
@@ -16,21 +17,36 @@ interface ProductGridProps {
     }>;
     currentPage: number;
     take: number;
+    searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 // C: Vendure I: Infinite scroll with useInfiniteQuery + react-infinite-scroller
-export function ProductGrid({ productDataPromise, currentPage, take }: ProductGridProps) {
+export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams }: ProductGridProps) {
     // Unwrap server data (initial page from SSR)
     const initialResult = use(productDataPromise);
     const initialSearch = initialResult.data.search;
+    const clientSearchParams = useSearchParams();
+    
+    // Convert client search params to object for comparison
+    const currentSearchParamsObj = Object.fromEntries(clientSearchParams);
+    const [prevSearchParamsObj, setPrevSearchParamsObj] = useState(serverSearchParams || currentSearchParamsObj);
 
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts({
+    // Detect when search params change (filters, sort, etc.)
+    useEffect(() => {
+        const paramsChanged = JSON.stringify(prevSearchParamsObj) !== JSON.stringify(currentSearchParamsObj);
+        if (paramsChanged) {
+            setPrevSearchParamsObj(currentSearchParamsObj);
+        }
+    }, [clientSearchParams, prevSearchParamsObj, currentSearchParamsObj]);
+
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isRefetching } = useInfiniteProducts({
         take,
         initialData: {
             items: initialSearch.items,
             totalItems: initialSearch.totalItems,
             token: initialResult.token,
         },
+        searchParams: currentSearchParamsObj,
     });
 
     const allItems = data?.pages.flatMap(p => p.items) ?? [];
