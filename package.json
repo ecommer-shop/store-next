@@ -85,7 +85,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/react-infinite-scroller": "^1.2.5",
-    "baseline-browser-mapping": "^2.9.19",
+    "baseline-browser-mapping": "^2.10.27",
     "dotenv": "^17.2.3",
     "eslint": "9.39.1",
     "eslint-config-next": "16.0.0",
