@@ -9,7 +9,7 @@ import { Spinner } from "@heroui/react";
 
 interface SearchResultsProps {
     searchParams: Promise<{
-        page?: string
+        [key: string]: string | string[] | undefined
     }>
 }
 
