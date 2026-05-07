@@ -85,16 +85,17 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     const page = getCurrentPage(searchParamsResolved);
     const result = await getProductData(slug, locale);
     const productDataPromise = query(SearchProductsQuery, {
-        input: buildSearchInput({ searchParams: searchParamsResolved })
+        input: buildSearchInput({ searchParams: searchParamsResolved },
+        )
     });
     const product = result.data.product;
-
     if (!product) {
         notFound();
     }
 
+    
     const productId = product.id;
-    const variantId = product.variants[0]?.id;
+    const variantId = product.variants[0]!.id;
     const storeCollection = product.collections?.[0];
 
     // Get the primary collection (prefer deepest nested / most specific)

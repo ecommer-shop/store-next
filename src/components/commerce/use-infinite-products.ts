@@ -4,6 +4,8 @@ import { fetchNextProductPage } from './fetch-next-product-page';
 import { ResultOf } from '@/graphql';
 import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
+import duration from 'dayjs/plugin/duration'
+import dayjs from 'dayjs';
 
 export type ProductItem = ResultOf<typeof SearchProductsQuery>['search']['items'][number];
 
@@ -23,15 +25,16 @@ interface PageData {
   token?: string;
   page: number;
 }
-
 export function useInfiniteProducts({ take, initialData, searchParams = {} }: UseInfiniteProductsOptions) {
   // Create a search params key for the query cache
   const searchParamsKey = JSON.stringify({
     facets: searchParams.facets || [],
     q: searchParams.q || '',
     sort: searchParams.sort || 'name-asc',
+    collection: searchParams.collection || '',
   });
 
+  dayjs.extend(duration);
   return useInfiniteQuery<PageData>({
     // Include search params in the query key so filters/search trigger new queries
     queryKey: ['products', take, searchParamsKey],
@@ -58,6 +61,6 @@ export function useInfiniteProducts({ take, initialData, searchParams = {} }: Us
           pageParams: [1],
         }
       : undefined,
-    staleTime: 1000 * 60 * 5, // 5 minutos de caché para evitar refetch frecuente al volver a la página
+    staleTime: dayjs.duration(5, 'minutes').asMilliseconds(), // 5 minutos de caché para evitar refetch frecuente al volver a la página
   });
 }
