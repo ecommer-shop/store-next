@@ -11,7 +11,13 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
-import { getStoreFeaturedProductIds, getStoreMetadata, getStoreProducts, getStoreProfile } from './actions';
+import {
+    channelCodeMatchesStoreSlug,
+    getStoreFeaturedProductIds,
+    getStoreMetadata,
+    getStoreProducts,
+    getStoreProfile,
+} from './actions';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
@@ -23,30 +29,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         getStoreMetadata(slug, locale),
         getStoreProfile(slug, locale),
     ]);
-    const store = result.data.collection;
+    const channel = result.data.activeChannel;
 
-    if (!store) {
+    if (!channelCodeMatchesStoreSlug(slug, channel?.code) || !profile?.storeName?.trim()) {
         return {
             title: 'Tienda no encontrada',
         };
     }
 
+    const title = profile.storeName;
     const description =
-        truncateDescription(profile?.storeDescription || store.description) ||
-        `Conoce la tienda ${profile?.storeName || store.name} en ${SITE_NAME}`;
+        truncateDescription(profile.storeDescription) || `Conoce la tienda ${title} en ${SITE_NAME}`;
 
     return {
-        title: profile?.storeName || store.name,
+        title,
         description,
         alternates: {
-            canonical: buildCanonicalUrl(`/store/${store.slug}`),
+            canonical: buildCanonicalUrl(`/store/${slug}`),
         },
         openGraph: {
-            title: profile?.storeName || store.name,
+            title,
             description,
             type: 'website',
-            url: buildCanonicalUrl(`/store/${store.slug}`),
-            images: buildOgImages(profile?.storeBannerUrl || store.featuredAsset?.preview, profile?.storeName || store.name),
+            url: buildCanonicalUrl(`/store/${slug}`),
+            images: buildOgImages(profile.storeBannerUrl, title),
         },
     };
 }
@@ -60,16 +66,16 @@ export default async function StorePage({ params }: Props) {
         getStoreFeaturedProductIds(slug, locale),
     ]);
 
-    const store = metadataResult.data.collection;
+    const channel = metadataResult.data.activeChannel;
     const allProducts = productsResult.data.search.items;
 
-    if (!store) {
+    if (!channelCodeMatchesStoreSlug(slug, channel?.code) || !profile?.storeName?.trim()) {
         notFound();
     }
 
-    const storeName = profile?.storeName || store.name;
-    const storeDescription = profile?.storeDescription || store.description || 'Sin descripcion de la tienda.';
-    const storeBannerUrl = profile?.storeBannerUrl || store.featuredAsset?.preview;
+    const storeName = profile.storeName;
+    const storeDescription = profile.storeDescription || 'Sin descripcion de la tienda.';
+    const storeBannerUrl = profile.storeBannerUrl;
     const featuredSet = new Set(featuredProductIds.slice(0, 3));
     const featuredProducts = allProducts.filter(product =>
         featuredSet.has(readFragment(ProductCardFragment, product).productId),

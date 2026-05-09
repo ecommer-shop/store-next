@@ -471,6 +471,7 @@ export const I18N = {
       selectOptions: 'productInfo.selectOptions',
       outOfStock: 'productInfo.outOfStock',
       inStock: 'productInfo.inStock',
+      storeLabel: 'productInfo.storeLabel',
       sku: 'productInfo.sku',
       quantity: 'productInfo.quantity',
       adding: 'productInfo.adding',

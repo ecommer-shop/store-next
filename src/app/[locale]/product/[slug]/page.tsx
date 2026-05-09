@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { isLegacyProductDetailWithoutSellerShopError } from '@/lib/vendure/graphql-validation-fallback';
 import { query } from '@/lib/vendure/server/api';
-import { GetProductDetailQuery } from '@/lib/vendure/shared/queries';
+import { GetProductDetailLegacyQuery, GetProductDetailQuery } from '@/lib/vendure/shared/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
 // import { RelatedProducts } from '@/components/commerce/related-products';
 import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
@@ -37,15 +38,27 @@ interface ProductPageParams {
     locale: string;
     slug: string;
 }
-const getProductData = (slug: string, locale: string) => {
-    return query(GetProductDetailQuery, { slug });
+
+const vendureProductDetailFetch = { cache: 'no-store' as const };
+
+export const dynamic = 'force-dynamic';
+
+async function getProductData(slug: string) {
+    try {
+        return await query(GetProductDetailQuery, { slug }, { fetch: vendureProductDetailFetch });
+    } catch (error) {
+        if (!isLegacyProductDetailWithoutSellerShopError(error)) {
+            throw error;
+        }
+        return query(GetProductDetailLegacyQuery, { slug }, { fetch: vendureProductDetailFetch });
+    }
 }
 
 export async function generateMetadata({
     params,
 }: PageProps<ProductPageParams>): Promise<Metadata> {
     const { slug, locale } = await params;
-    const result = await getProductData(slug, locale);
+    const result = await getProductData(slug);
     const product = result.data.product;
 
     if (!product) {
@@ -82,22 +95,28 @@ export async function generateMetadata({
 export default async function ProductDetailPage({ params, searchParams }: PageProps<ProductPageParams>) {
     const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
+
     const page = getCurrentPage(searchParamsResolved);
-    const result = await getProductData(slug, locale);
+    const result = await getProductData(slug);
     const productDataPromise = query(SearchProductsQuery, {
-        input: buildSearchInput({ searchParams: searchParamsResolved })
+        input: buildSearchInput({ searchParams: searchParamsResolved }),
     });
+
     const product = result.data.product;
 
     if (!product) {
         notFound();
     }
 
+    const sellerShop = (product as { sellerShop?: { channelCode: string; sellerName: string } | null })
+        .sellerShop;
+    const storeLink =
+        sellerShop?.channelCode && sellerShop?.sellerName
+            ? { name: sellerShop.sellerName, href: `/${locale}/store/${sellerShop.channelCode}` }
+            : undefined;
+
     const productId = product.id;
     const variantId = product.variants[0]?.id;
-    const storeCollection = product.collections?.[0];
-
-    // Get the primary collection (prefer deepest nested / most specific)
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
     const t = await getTranslations('Product');
     const tHome = await getTranslations('Home');
@@ -131,15 +150,8 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                             </div>
                         }>
                             <ProductInfo
-                                product={{
-                                    ...product,
-                                    store: storeCollection
-                                        ? {
-                                            name: storeCollection.name,
-                                            slug: storeCollection.slug,
-                                        }
-                                        : undefined,
-                                }}
+                                product={{ ...product }}
+                                storeLink={storeLink}
                                 searchParams={searchParamsResolved}
                             />
                         </Suspense>

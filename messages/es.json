@@ -467,6 +467,7 @@
       "selectOptions": "Seleccionar opciones",
       "outOfStock": "Agotado",
       "inStock": "En stock",
+      "storeLabel": "Tienda",
       "sku": "SKU",
       "quantity": "Cantidad",
       "adding": "Agregando...",

@@ -74,11 +74,25 @@ export async function executeVendureRequest<TResult, TVariables>(
     ...(options.tags && { next: { tags: options.tags } }),
   });
 
+  const responseText = await response.text();
+
   if (!response.ok) {
-    throw new Error(`Vendure HTTP ${response.status}`);
+    const snippet = responseText.replace(/\s+/g, ' ').trim().slice(0, 800);
+    throw new Error(
+      snippet
+        ? `Vendure HTTP ${response.status}: ${snippet}`
+        : `Vendure HTTP ${response.status} ${response.statusText}`.trim(),
+    );
   }
 
-  const result: VendureResponse<TResult> = await response.json();
+  let result: VendureResponse<TResult>;
+  try {
+    result = responseText ? (JSON.parse(responseText) as VendureResponse<TResult>) : {};
+  } catch {
+    throw new Error(
+      `Vendure devolvió un cuerpo no JSON (HTTP ${response.status}): ${responseText.slice(0, 300)}`,
+    );
+  }
 
   if (result.errors?.length) {
     throw new Error(result.errors.map(e => e.message).join(', '));

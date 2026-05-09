@@ -1,21 +1,77 @@
+import type { VendureRequestOptions } from '@/lib/vendure/core';
+import { isLegacyShopStoreSchemaError } from '@/lib/vendure/graphql-validation-fallback';
 import { query } from '@/lib/vendure/server/api';
-import { VENDURE_API_URL, VENDURE_CHANNEL_TOKEN, VENDURE_CHANNEL_TOKEN_HEADER, VENDURE_LANGUAGE_CODE_HEADER } from '@/lib/vendure/core';
-import { GetCollectionProductsQuery, SearchProductsQuery } from '@/lib/vendure/shared/queries';
+import {
+    GetActiveChannelQuery,
+    GetSellerStoreFeaturedProductIdsQuery,
+    GetSellerStoreProfileQuery,
+    SearchProductsQuery,
+} from '@/lib/vendure/shared/queries';
+import { channelTokenFromStoreSlug, storePathSlugToChannelCode } from '@/lib/vendure/shared/seller-store-channel';
 import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
+
+function vendureMessage(error: unknown): string {
+    if (typeof error === 'string') {
+        return error;
+    }
+    if (error instanceof Error) {
+        return error.message;
+    }
+    return '';
+}
+
+/** Perfilar tienda cuando el servidor no expone bien storePageProfile (API vieja o proceso sin reiniciar). */
+function fallbackStoreProfileFromSlug(slug: string): StoreProfileData {
+    const code = storePathSlugToChannelCode(slug);
+    const storeName =
+        code
+            .split(/[-_]+/)
+            .filter(Boolean)
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .join(' ') || code;
+    return {
+        storeName,
+        storeDescription: null,
+        storeBannerUrl: null,
+    };
+}
+
+/** Errores que indican resolver/schema antiguo: no repetir queries legacy que disparan SQL roto en el servidor. */
+function storeProfileUnavailableFromApiError(error: unknown): boolean {
+    const msg = vendureMessage(error);
+    return (
+        isLegacyShopStoreSchemaError(error) ||
+        msg.includes('collection.slug') ||
+        msg.includes('column collection.slug')
+    );
+}
+
+function storeFeaturedUnavailableFromApiError(error: unknown): boolean {
+    const msg = vendureMessage(error);
+    return (
+        isLegacyShopStoreSchemaError(error) ||
+        msg.includes('collection.slug') ||
+        msg.includes('column collection.slug') ||
+        msg.includes('Relation with property path collections') ||
+        msg.includes('collections in entity was not found')
+    );
+}
+
+function sellerStoreRequestOptions(slug: string, locale: string): VendureRequestOptions & { languageCode: string } {
+    return {
+        languageCode: locale,
+        channelToken: channelTokenFromStoreSlug(slug),
+    };
+}
+
+export { channelCodeMatchesStoreSlug, storePathSlugToChannelCode } from '@/lib/vendure/shared/seller-store-channel';
 
 export const getStoreMetadata = (slug: string, locale: string) => {
     return query(
-        GetCollectionProductsQuery,
+        GetActiveChannelQuery,
+        {},
         {
-            slug,
-            input: {
-                take: 0,
-                collectionSlug: slug,
-                groupByProduct: true,
-            },
-        },
-        {
-            languageCode: locale,
+            ...sellerStoreRequestOptions(slug, locale),
         },
     );
 };
@@ -26,12 +82,9 @@ export const getStoreProducts = (slug: string, locale: string) => {
         {
             input: buildSearchInput({
                 searchParams: {},
-                collectionSlug: slug,
             }),
         },
-        {
-            languageCode: locale,
-        },
+        sellerStoreRequestOptions(slug, locale),
     );
 };
 
@@ -42,69 +95,36 @@ export interface StoreProfileData {
 }
 
 export async function getStoreProfile(slug: string, locale: string): Promise<StoreProfileData | null> {
-    const response = await fetch(VENDURE_API_URL!, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            [VENDURE_CHANNEL_TOKEN_HEADER]: VENDURE_CHANNEL_TOKEN,
-            [VENDURE_LANGUAGE_CODE_HEADER]: locale,
-        },
-        body: JSON.stringify({
-            query: `
-                query GetStoreProfile($collectionSlug: String!) {
-                    storePageProfile(collectionSlug: $collectionSlug) {
-                        storeName
-                        storeDescription
-                        storeBannerUrl
-                    }
-                }
-            `,
-            variables: { collectionSlug: slug },
-        }),
-        cache: 'no-store',
-    });
-
-    if (!response.ok) {
-        return null;
+    const opts = { ...sellerStoreRequestOptions(slug, locale), fetch: { cache: 'no-store' as const } };
+    try {
+        const { data } = await query(GetSellerStoreProfileQuery, {}, opts);
+        return (data.storePageProfile ?? null) as StoreProfileData | null;
+    } catch (e1) {
+        if (storeProfileUnavailableFromApiError(e1)) {
+            console.warn(
+                '[store] storePageProfile no disponible con este backend; usando nombre derivado del slug. Reinicia el servidor `shop` con el código actual (StorePagePlugin).',
+                vendureMessage(e1).slice(0, 300),
+            );
+            return fallbackStoreProfileFromSlug(slug);
+        }
+        throw e1;
     }
-    const payload = (await response.json()) as {
-        data?: { storePageProfile?: StoreProfileData | null };
-        errors?: Array<{ message: string }>;
-    };
-    if (payload.errors?.length) {
-        return null;
-    }
-    return payload.data?.storePageProfile ?? null;
 }
 
 export async function getStoreFeaturedProductIds(slug: string, locale: string): Promise<string[]> {
-    const response = await fetch(VENDURE_API_URL!, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            [VENDURE_CHANNEL_TOKEN_HEADER]: VENDURE_CHANNEL_TOKEN,
-            [VENDURE_LANGUAGE_CODE_HEADER]: locale,
-        },
-        body: JSON.stringify({
-            query: `
-                query GetStoreFeaturedProductIds($collectionSlug: String!) {
-                    storeFeaturedProductIds(collectionSlug: $collectionSlug)
-                }
-            `,
-            variables: { collectionSlug: slug },
-        }),
-        cache: 'no-store',
-    });
-
-    if (!response.ok) {
+    const opts = { ...sellerStoreRequestOptions(slug, locale), fetch: { cache: 'no-store' as const } };
+    try {
+        const { data } = await query(GetSellerStoreFeaturedProductIdsQuery, {}, opts);
+        return (data.storeFeaturedProductIds ?? []) as string[];
+    } catch (e1) {
+        if (storeFeaturedUnavailableFromApiError(e1)) {
+            console.warn(
+                '[store] storeFeaturedProductIds omitido — actualiza/reinicia el servidor `shop` (StorePagePlugin).',
+                vendureMessage(e1).slice(0, 300),
+            );
+            return [];
+        }
+        console.warn('[store] storeFeaturedProductIds:', vendureMessage(e1));
         return [];
     }
-    const payload = (await response.json()) as {
-        data?: { storeFeaturedProductIds?: string[] };
-        errors?: Array<{ message: string }>;
-    };
-    if (payload.errors?.length) {
-        return [];
-    }
-    return payload.data?.storeFeaturedProductIds ?? [];
 }
