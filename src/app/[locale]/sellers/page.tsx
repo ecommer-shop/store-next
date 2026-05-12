@@ -23,26 +23,25 @@ export default function VendedoresPage() {
           backgroundRepeat: 'no-repeat'
         }}
       >
-        <div className="relative container mx-auto px-4 pt-32 pb-20 text-center max-w-2x1">
+        <div className="relative container mx-auto px-4 pt-16 sm:pt-24 pb-12 sm:pb-20 text-center max-w-2x1">
           {/* Logo visible */}
-          <div className="mb-2">
+          <div className="mb-2 sm:mb-3">
             <img
               src="/logo-vendedores-light.png"
               alt="Ecommer Vendedores"
-              className="mx-auto"
-              style={{ width: '250px' }}
+              className="mx-auto w-[180px] sm:w-[220px] md:w-[250px]"
             />
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight">
             <UseVendedoresText path={['hero', 'title']} />
           </h1>
 
-          <p className="text-white/80 max-w-2xl mx-auto text-lg mb-8">
+          <p className="text-white/80 max-w-2xl mx-auto text-base sm:text-lg mb-6 sm:mb-8">
             <UseVendedoresText path={['hero', 'subtitle']} />
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <AgendarDemoButton />
             <a
               href={ADMIN_URL}

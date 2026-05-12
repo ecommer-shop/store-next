@@ -1,13 +1,11 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
-import { Label } from '@/components/ui/label';
 import { Button } from '@heroui/react';
 import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
-import { Accordion, Checkbox } from '@heroui/react';
-import { Icon, } from "@iconify/react";
+import { Accordion } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { FacetsAccordionContent } from './facet-filters-responsive';
@@ -18,9 +16,10 @@ interface FacetFiltersProps {
         data: ResultOf<typeof SearchProductsQuery>;
         token?: string;
     }>;
+    searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
+export function FacetFilters({ productDataPromise, searchParams: serverSearchParams }: FacetFiltersProps) {
     const result = use(productDataPromise);
     const searchResult = result.data.search;
     const pathname = usePathname();
@@ -52,19 +51,10 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
         return acc;
     }, {});
 
-
-
     const selectedFacets = urlSearchParams.getAll('facets');
 
     const toggleFacet = (facetId: string) => {
-        const params = new URLSearchParams();
-        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach(v => params.append(key, v));
-            } else if (value !== undefined) {
-                params.append(key, value);
-            }
-        });
+        const params = new URLSearchParams(urlSearchParams);
         const current = params.getAll('facets');
 
         if (current.includes(facetId)) {
@@ -81,14 +71,7 @@ export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     };
 
     const clearFilters = () => {
-        const params = new URLSearchParams();
-        Object.entries(urlSearchParams || {}).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach(v => params.append(key, v));
-            } else if (value !== undefined) {
-                params.append(key, value);
-            }
-        });
+        const params = new URLSearchParams(urlSearchParams);
         params.delete('facets');
         params.delete('page');
         router.push(`${pathname}?${params.toString()}`);

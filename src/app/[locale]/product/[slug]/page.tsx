@@ -103,7 +103,6 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     });
 
     const product = result.data.product;
-
     if (!product) {
         notFound();
     }

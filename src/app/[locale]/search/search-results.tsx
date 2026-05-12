@@ -9,7 +9,7 @@ import { Spinner } from "@heroui/react";
 
 interface SearchResultsProps {
     searchParams: Promise<{
-        page?: string
+        [key: string]: string | string[] | undefined
     }>
 }
 
@@ -26,7 +26,7 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
             {/* Filters Sidebar */}
             <aside className="lg:col-span-1">
                 <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-                    <FacetFilters productDataPromise={productDataPromise} />
+                    <FacetFilters productDataPromise={productDataPromise} searchParams={searchParamsResolved} />
                 </Suspense>
             </aside>
 
@@ -37,7 +37,7 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
                         <Spinner color="current" />
                     </div>
                 }>
-                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
+                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} searchParams={searchParamsResolved} />
                 </Suspense>
             </div>
         </div>
