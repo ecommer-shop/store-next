@@ -1,7 +1,8 @@
 'use client';
 import {useState, useMemo, useEffect} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {RadioGroup, Label, Button, Radio, toast, Link} from '@heroui/react';
+import NextLink from 'next/link';
+import {RadioGroup, Label, Button, Radio, toast} from '@heroui/react';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
 import {addToCart, checkProductInCart} from '@/app/[locale]/product/[slug]/actions';
 import {Price} from '@/components/commerce/price';
@@ -43,15 +44,12 @@ interface ProductInfoProps {
                 name: string;
             }>;
         }>;
-        store?: {
-            name: string;
-            slug: string;
-        };
     };
     searchParams: { [key: string]: string | string[] | undefined };
+    storeLink?: { name: string; href: string };
 }
 
-export function ProductInfo({product, searchParams}: ProductInfoProps) {
+export function ProductInfo({ product, searchParams, storeLink }: ProductInfoProps) {
     const pathname = usePathname();
     const router = useRouter();
     const currentSearchParams = useSearchParams();
@@ -306,17 +304,22 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             </div>
 
             {/* SKU */}
-            {selectedVariant && (
+            {(selectedVariant || storeLink) && (
                 <div className="space-y-1 text-xs text-foreground">
-                    <div>
-                        {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
-                    </div>
-                    {product.store && (
+                    {selectedVariant && (
                         <div>
-                            Tienda:{' '}
-                            <Link href={`/store/${product.store.slug}`} className="font-semibold underline underline-offset-2">
-                                {product.store.name}
-                            </Link>
+                            {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
+                        </div>
+                    )}
+                    {storeLink && (
+                        <div>
+                            {t(I18N.Commerce.productInfo.storeLabel)}:{` `}
+                            <NextLink
+                                href={storeLink.href}
+                                className="font-semibold underline underline-offset-2"
+                            >
+                                {storeLink.name}
+                            </NextLink>
                         </div>
                     )}
                 </div>
