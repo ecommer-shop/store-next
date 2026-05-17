@@ -1,10 +1,9 @@
-// navbar-collections.tsx
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
 } from '@/components/ui/navigation-menu';
-import { NavbarLink } from '@/components/layout/navbar/navbar-link';
+import { NavbarCollectionsClient } from './navbar-collections-client';
 import { getNavbarCollections } from './navbar-collections.data';
 
 export async function NavbarCollections() {
@@ -15,9 +14,7 @@ export async function NavbarCollections() {
       <NavigationMenuList>
         {collections.map((collection) => (
           <NavigationMenuItem key={collection.slug}>
-            <NavbarLink href={`/collection/${collection.slug}`}>
-              {collection.name}
-            </NavbarLink>
+            <NavbarCollectionsClient name={collection.name} slug={collection.slug} />
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>

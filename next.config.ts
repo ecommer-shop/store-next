@@ -1,4 +1,4 @@
-import {NextConfig} from 'next';
+import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
         'bipyramidal-colby-preworthy.ngrok-free.dev'],
     images: {
         // This is necessary to display images from your local Vendure instance
-        
+
         remotePatterns: [
             {
                 hostname: 'localhost'
@@ -51,6 +51,20 @@ const nextConfig: NextConfig = {
         resolveAlias: {
             '@': './src',
         },
+    },
+    async headers() {
+        return [
+            {
+                // Apply to all routes
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'Cross-Origin-Opener-Policy',
+                        value: 'same-origin-allow-popups', // Required for Clerk Google OAuth popup
+                    },
+                ],
+            },
+        ];
     },
 };
 

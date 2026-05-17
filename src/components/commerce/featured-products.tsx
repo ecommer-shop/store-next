@@ -31,7 +31,9 @@ const getFeaturedCollectionProducts = async () => {
     },
   });
 
-  return (fallback.data.products.items ?? []).map((product) => {
+  const filteredProducts = (fallback.data.products.items ?? []).filter(product => product.variants && product.variants.length > 0);
+
+  return filteredProducts.map((product) => {
     const firstVariant = product.variants?.[0];
     return {
       productId: product.id,

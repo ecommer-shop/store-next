@@ -6,6 +6,7 @@ export interface SearchInputParams {
     groupByProduct: boolean;
     sort: { name?: 'ASC' | 'DESC'; price?: 'ASC' | 'DESC' };
     facetValueFilters?: Array<{ and: string }>;
+    inStock?: boolean;
 }
 
 interface BuildSearchInputOptions {
@@ -19,7 +20,11 @@ export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchIn
     const skip = (page - 1) * take;
     const sort = (searchParams.sort as string) || 'name-asc';
     const searchTerm = searchParams.q as string;
+    
+    // Get collection slug from searchParams if provided
+    const collectionSlugFromParams = searchParams.collection as string;
 
+    
     // Extract facet value IDs from search params
     const facetValueIds = searchParams.facets
         ? Array.isArray(searchParams.facets)
@@ -37,6 +42,7 @@ export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchIn
 
     return {
         ...(searchTerm && { term: searchTerm }),
+        ...(collectionSlugFromParams && { collectionSlug: collectionSlugFromParams }),
         ...(collectionSlug && { collectionSlug }),
         take,
         skip,
@@ -44,7 +50,8 @@ export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchIn
         sort: sortMapping[sort] || sortMapping['name-asc'],
         ...(facetValueIds.length > 0 && {
             facetValueFilters: facetValueIds.map(id => ({ and: id }))
-        })
+        }),
+        inStock: true,
     };
 }
 

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
 export default function GoPage() {
-    redirect("/sellers");
+    const target = process.env.REDIRECT_GO || "/sellers";
+    redirect(target);
 }

@@ -1,5 +1,7 @@
 'use client';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import duration from 'dayjs/plugin/duration'
+import dayjs from 'dayjs';
 
 interface UseInfiniteRelatedProductsOptions {
   collectionSlug: string;
@@ -56,6 +58,7 @@ export function useInfiniteRelatedProducts({
   take,
   initialData,
 }: UseInfiniteRelatedProductsOptions) {
+  dayjs.extend(duration);
   return useInfiniteQuery<PageData>({
     queryKey: ['related-products', collectionSlug, currentProductId, locale, facets, take],
     queryFn: async ({ pageParam }) => {
@@ -80,6 +83,6 @@ export function useInfiniteRelatedProducts({
           pageParams: [1],
         }
       : undefined,
-    staleTime: 1000 * 60 * 5,
+    staleTime: dayjs.duration(5, 'minutes').asMilliseconds(),
   });
 }
