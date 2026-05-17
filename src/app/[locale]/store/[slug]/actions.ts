@@ -57,10 +57,13 @@ function storeFeaturedUnavailableFromApiError(error: unknown): boolean {
     );
 }
 
+const vendureStoreFetch = { cache: 'no-store' as const };
+
 function sellerStoreRequestOptions(slug: string, locale: string): VendureRequestOptions & { languageCode: string } {
     return {
         languageCode: locale,
         channelToken: channelTokenFromStoreSlug(slug),
+        fetch: vendureStoreFetch,
     };
 }
 
@@ -95,9 +98,8 @@ export interface StoreProfileData {
 }
 
 export async function getStoreProfile(slug: string, locale: string): Promise<StoreProfileData | null> {
-    const opts = { ...sellerStoreRequestOptions(slug, locale), fetch: { cache: 'no-store' as const } };
     try {
-        const { data } = await query(GetSellerStoreProfileQuery, {}, opts);
+        const { data } = await query(GetSellerStoreProfileQuery, {}, sellerStoreRequestOptions(slug, locale));
         return (data.storePageProfile ?? null) as StoreProfileData | null;
     } catch (e1) {
         if (storeProfileUnavailableFromApiError(e1)) {
@@ -112,9 +114,12 @@ export async function getStoreProfile(slug: string, locale: string): Promise<Sto
 }
 
 export async function getStoreFeaturedProductIds(slug: string, locale: string): Promise<string[]> {
-    const opts = { ...sellerStoreRequestOptions(slug, locale), fetch: { cache: 'no-store' as const } };
     try {
-        const { data } = await query(GetSellerStoreFeaturedProductIdsQuery, {}, opts);
+        const { data } = await query(
+            GetSellerStoreFeaturedProductIdsQuery,
+            {},
+            sellerStoreRequestOptions(slug, locale),
+        );
         return (data.storeFeaturedProductIds ?? []) as string[];
     } catch (e1) {
         if (storeFeaturedUnavailableFromApiError(e1)) {
