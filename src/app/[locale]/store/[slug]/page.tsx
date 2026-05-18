@@ -14,7 +14,7 @@ import {
 import { isDisplayableImageUrl, normalizeVendureAssetUrl } from '@/lib/vendure/shared/asset-url';
 import {
     channelCodeMatchesStoreSlug,
-    getStoreFeaturedProductIds,
+    getStoreFeaturedProducts,
     getStoreMetadata,
     getStoreProducts,
     getStoreProfile,
@@ -62,15 +62,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StorePage({ params }: Props) {
     const { slug, locale } = await params;
-    const [metadataResult, productsResult, profile, featuredProductIds] = await Promise.all([
+    const [metadataResult, allProducts, profile, featuredProducts] = await Promise.all([
         getStoreMetadata(slug, locale),
         getStoreProducts(slug, locale),
         getStoreProfile(slug, locale),
-        getStoreFeaturedProductIds(slug, locale),
+        getStoreFeaturedProducts(slug, locale),
     ]);
 
     const channel = metadataResult.data.activeChannel;
-    const allProducts = productsResult.data.search.items;
 
     if (!channelCodeMatchesStoreSlug(slug, channel?.code) || !profile?.storeName?.trim()) {
         notFound();
@@ -80,9 +79,8 @@ export default async function StorePage({ params }: Props) {
     const storeDescription = profile.storeDescription || 'Sin descripcion de la tienda.';
     const storeBannerUrl = normalizeVendureAssetUrl(profile.storeBannerUrl);
     const storeBannerDisplayable = isDisplayableImageUrl(storeBannerUrl);
-    const featuredSet = new Set(featuredProductIds.slice(0, 3));
-    const featuredProducts = allProducts.filter(product =>
-        featuredSet.has(readFragment(ProductCardFragment, product).productId),
+    const featuredSet = new Set(
+        featuredProducts.map(p => readFragment(ProductCardFragment, p).productId),
     );
     const remainingProducts = allProducts.filter(
         product => !featuredSet.has(readFragment(ProductCardFragment, product).productId),
