@@ -464,3 +464,16 @@ export const GetWompiSignatureQuery = graphql(`
     `
 )
 
+export const GetProductVariantStockQuery = graphql(`
+    query GetProductStock($id: ID!) {
+        productVariant(id: $id) {
+            id
+            stockLevels {
+                stockOnHand
+                stockAllocated
+                stockLocationId
+            }
+        }
+    }
+
+`)

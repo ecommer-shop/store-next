@@ -476,7 +476,10 @@
         "errorTitle": "Error",
         "errorDescription": "No se pudo agregar el artículo al carrito",
         "goToCart": "Ir al carrito"
-      }
+      },
+      "IN_STOCK": "Disponible",
+      "LOW_STOCK": "¡Pocas unidades disponibles!",
+      "OUT_OF_STOCK": "Agotado"
     },
     "relatedProducts": {
       "title": "Productos relacionados"
