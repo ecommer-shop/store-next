@@ -472,6 +472,7 @@ export const I18N = {
       OUT_OF_STOCK: 'productInfo.outOfStock',
       IN_STOCK: 'productInfo.inStock',
       LOW_STOCK: 'productInfo.lowStock',
+      storeLabel: 'productInfo.storeLabel',
       sku: 'productInfo.sku',
       quantity: 'productInfo.quantity',
       adding: 'productInfo.adding',

@@ -71,6 +71,63 @@ export const GetProductDetailQuery = graphql(`
             name
             description
             slug
+            sellerShop {
+                channelCode
+                sellerName
+            }
+            assets {
+                id
+                preview
+                source
+            }
+            variants {
+                id
+                name
+                sku
+                priceWithTax
+                stockLevel
+                options {
+                    id
+                    code
+                    name
+                    groupId
+                    group {
+                        id
+                        code
+                        name
+                    }
+                }
+            }
+            optionGroups {
+                id
+                code
+                name
+                options {
+                    id
+                    code
+                    name
+                }
+            }
+            collections {
+                id
+                name
+                slug
+                parent {
+                    id
+                }
+            }
+        }
+    }
+`);
+
+/** Misma query que {@link GetProductDetailQuery}, sin campo `sellerShop`, para backends sin plugin store-page nuevo. */
+export const GetProductDetailLegacyQuery = graphql(`
+    query GetProductDetailLegacy($slug: String!) {
+        product(slug: $slug) {
+            id
+            name
+            description
+            slug
             assets {
                 id
                 preview
@@ -433,6 +490,22 @@ export const GetActiveChannelQuery = graphql(`
             defaultCurrencyCode
             availableCurrencyCodes
         }
+    }
+`);
+
+export const GetSellerStoreProfileQuery = graphql(`
+    query GetSellerStoreProfile {
+        storePageProfile {
+            storeName
+            storeDescription
+            storeBannerUrl
+        }
+    }
+`);
+
+export const GetSellerStoreFeaturedProductIdsQuery = graphql(`
+    query GetSellerStoreFeaturedProductIds {
+        storeFeaturedProductIds
     }
 `);
 
