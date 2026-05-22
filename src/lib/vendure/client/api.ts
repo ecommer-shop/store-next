@@ -25,11 +25,6 @@ export async function query<T>(
 
     const queryString = print(document);
     
-    // Debug - ver qué se está enviando
-    console.log('🔍 Query:', queryString.substring(0, 100) + '...');
-    console.log('🔍 Variables:', variables);
-    console.log('🔍 URL:', VENDURE_URL);
-
     const response = await fetch(VENDURE_URL, {
       method: 'POST',
       headers,
@@ -54,7 +49,6 @@ export async function query<T>(
       throw new Error(result.errors[0]?.message || 'GraphQL error');
     }
 
-    console.log('✅ Query exitoso');
     return result;
 
   } catch (error) {

@@ -1,5 +1,11 @@
-import {NextConfig} from 'next';
+import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/** Forzar la raíz del workspace al directorio de este config para que Next no
+ *  agarre el `package-lock.json` que vive en `C:\Users\Usuario`. */
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
     cacheComponents: false,
@@ -11,7 +17,7 @@ const nextConfig: NextConfig = {
         'bipyramidal-colby-preworthy.ngrok-free.dev'],
     images: {
         // This is necessary to display images from your local Vendure instance
-        
+
         remotePatterns: [
             {
                 hostname: 'localhost'
@@ -41,9 +47,24 @@ const nextConfig: NextConfig = {
         rootParams: true
     },
     turbopack: {
+        root: projectRoot,
         resolveAlias: {
             '@': './src',
         },
+    },
+    async headers() {
+        return [
+            {
+                // Apply to all routes
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'Cross-Origin-Opener-Policy',
+                        value: 'same-origin-allow-popups', // Required for Clerk Google OAuth popup
+                    },
+                ],
+            },
+        ];
     },
 };
 

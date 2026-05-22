@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import {FragmentOf, readFragment} from '@/graphql';
 import {ProductCardFragment} from '@/lib/vendure/shared/fragments';
-import {Price} from '@/components/commerce/price'; 
+import {Price} from '@/components/commerce/price';
+import { normalizeVendureAssetUrl } from '@/lib/vendure/shared/asset-url'; 
 import {Suspense} from "react"; 
 import Link from "next/link"; 
 import {Avatar, Button, Card, CloseButton, Link as HLink} from "@heroui/react";
@@ -17,6 +18,7 @@ interface ProductCardProps { product: FragmentOf<typeof ProductCardFragment>; }
 export function ProductCard({ product: productProp }: ProductCardProps) {
   const router = useRouter();
   const product = readFragment(ProductCardFragment, productProp);
+  const previewSrc = normalizeVendureAssetUrl(product.productAsset?.preview) ?? '';
 
   return (
     <div className="relative group">
@@ -39,13 +41,23 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
           xl:h-[320px]
         "
       >
-        <Image
-          alt={product.productName}
-          className="absolute inset-0 h-full w-full object-cover"
-          src={product.productAsset?.preview!}
-          width={500}
-          height={500}
-        />
+        {previewSrc ? (
+          <Image
+            alt={product.productName}
+            className="absolute inset-0 h-full w-full object-cover"
+            src={previewSrc}
+            width={500}
+            height={500}
+            unoptimized
+          />
+        ) : (
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-muted px-3 text-center text-xs text-muted-foreground"
+            aria-hidden
+          >
+            Sin imagen
+          </div>
+        )}
 
         <Card.Footer
           className="

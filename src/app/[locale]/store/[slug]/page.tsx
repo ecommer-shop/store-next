@@ -11,7 +11,16 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
-import { getStoreFeaturedProductIds, getStoreMetadata, getStoreProducts, getStoreProfile } from './actions';
+import { isDisplayableImageUrl, normalizeVendureAssetUrl } from '@/lib/vendure/shared/asset-url';
+import {
+    channelCodeMatchesStoreSlug,
+    getStoreFeaturedProducts,
+    getStoreMetadata,
+    getStoreProducts,
+    getStoreProfile,
+} from './actions';
+
+export const dynamic = 'force-dynamic';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
@@ -23,123 +32,174 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         getStoreMetadata(slug, locale),
         getStoreProfile(slug, locale),
     ]);
-    const store = result.data.collection;
+    const channel = result.data.activeChannel;
 
-    if (!store) {
+    if (!channelCodeMatchesStoreSlug(slug, channel?.code) || !profile?.storeName?.trim()) {
         return {
             title: 'Tienda no encontrada',
         };
     }
 
+    const title = profile.storeName;
     const description =
-        truncateDescription(profile?.storeDescription || store.description) ||
-        `Conoce la tienda ${profile?.storeName || store.name} en ${SITE_NAME}`;
+        truncateDescription(profile.storeDescription) || `Conoce la tienda ${title} en ${SITE_NAME}`;
 
     return {
-        title: profile?.storeName || store.name,
+        title,
         description,
         alternates: {
-            canonical: buildCanonicalUrl(`/store/${store.slug}`),
+            canonical: buildCanonicalUrl(`/store/${slug}`),
         },
         openGraph: {
-            title: profile?.storeName || store.name,
+            title,
             description,
             type: 'website',
-            url: buildCanonicalUrl(`/store/${store.slug}`),
-            images: buildOgImages(profile?.storeBannerUrl || store.featuredAsset?.preview, profile?.storeName || store.name),
+            url: buildCanonicalUrl(`/store/${slug}`),
+            images: buildOgImages(profile.storeBannerUrl, title),
         },
     };
 }
 
 export default async function StorePage({ params }: Props) {
     const { slug, locale } = await params;
-    const [metadataResult, productsResult, profile, featuredProductIds] = await Promise.all([
+    const [metadataResult, allProducts, profile, featuredProducts] = await Promise.all([
         getStoreMetadata(slug, locale),
         getStoreProducts(slug, locale),
         getStoreProfile(slug, locale),
-        getStoreFeaturedProductIds(slug, locale),
+        getStoreFeaturedProducts(slug, locale),
     ]);
 
-    const store = metadataResult.data.collection;
-    const allProducts = productsResult.data.search.items;
+    const channel = metadataResult.data.activeChannel;
 
-    if (!store) {
+    if (!channelCodeMatchesStoreSlug(slug, channel?.code) || !profile?.storeName?.trim()) {
         notFound();
     }
 
-    const storeName = profile?.storeName || store.name;
-    const storeDescription = profile?.storeDescription || store.description || 'Sin descripcion de la tienda.';
-    const storeBannerUrl = profile?.storeBannerUrl || store.featuredAsset?.preview;
-    const featuredSet = new Set(featuredProductIds.slice(0, 3));
-    const featuredProducts = allProducts.filter(product =>
-        featuredSet.has(readFragment(ProductCardFragment, product).productId),
+    const storeName = profile.storeName;
+    const storeDescription = profile.storeDescription || 'Sin descripcion de la tienda.';
+    const storeBannerUrl = normalizeVendureAssetUrl(profile.storeBannerUrl);
+    const storeBannerDisplayable = isDisplayableImageUrl(storeBannerUrl);
+    const featuredSet = new Set(
+        featuredProducts.map(p => readFragment(ProductCardFragment, p).productId),
     );
     const remainingProducts = allProducts.filter(
         product => !featuredSet.has(readFragment(ProductCardFragment, product).productId),
     );
 
     return (
-        <main className="container mx-auto px-4 py-8 mt-16 space-y-10">
-            <section className="overflow-hidden rounded-xl bg-muted/40 border">
-                <div className="relative h-56 md:h-72">
-                    {storeBannerUrl ? (
+        <main className="mt-16 space-y-10 pb-10">
+            {/* Hero a ancho completo con fondo light/dark estilo home */}
+            <section className="relative overflow-hidden">
+                <Image
+                    src="/bg-light.webp"
+                    alt=""
+                    aria-hidden
+                    width={1600}
+                    height={500}
+                    className="absolute inset-0 h-full w-full object-cover block dark:hidden"
+                />
+                <Image
+                    src="/bg-dark.webp"
+                    alt=""
+                    aria-hidden
+                    width={1600}
+                    height={500}
+                    className="absolute inset-0 h-full w-full object-cover hidden dark:block"
+                />
+                <div className="absolute inset-0 backdrop-blur-2xl bg-[#f1f1f1]/40 dark:bg-[#12123f]/40 pointer-events-none" />
+
+                <div className="relative z-10 container mx-auto px-4 py-10 md:py-14">
+                    <Link
+                        href={`/${locale}`}
+                        className="flex items-center justify-center gap-2 text-foreground"
+                    >
                         <Image
-                            src={storeBannerUrl}
-                            alt={storeName}
-                            fill
-                            className="object-cover"
+                            src="/logo-dark.webp"
+                            alt="Ecommer"
+                            width={60}
+                            height={60}
+                            className="h-8 sm:h-10 w-auto block dark:hidden"
+                            priority
                         />
+                        <Image
+                            src="/logo-light.webp"
+                            alt="Ecommer"
+                            width={60}
+                            height={60}
+                            className="h-8 sm:h-10 w-auto hidden dark:block"
+                            priority
+                        />
+                        <span className="text-xl sm:text-2xl font-semibold tracking-tight">
+                            Ecommer
+                        </span>
+                    </Link>
+                </div>
+            </section>
+
+            <div className="container mx-auto px-4 space-y-10">
+                <section className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    {storeBannerDisplayable && storeBannerUrl ? (
+                        <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden ring-2 ring-border shadow-md flex-shrink-0">
+                            <Image
+                                src={storeBannerUrl}
+                                alt={storeName}
+                                fill
+                                className="object-cover"
+                                sizes="80px"
+                                unoptimized
+                            />
+                        </div>
+                    ) : null}
+                    <div className="space-y-2">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
+                            {storeName}
+                        </h1>
+                        <div
+                            className="text-muted-foreground prose prose-sm max-w-2xl"
+                            dangerouslySetInnerHTML={{ __html: storeDescription }}
+                        />
+                    </div>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
+                    {featuredProducts.length ? (
+                        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+                            {featuredProducts.map((product, index) => (
+                                <ProductCard key={`featured-product-${index}`} product={product} />
+                            ))}
+                        </div>
                     ) : (
-                        <div className="h-full w-full bg-gradient-to-r from-[#12123F] to-[#6BB8FF]" />
+                        <p className="text-muted-foreground">Esta tienda no tiene productos destacados por ahora.</p>
                     )}
-                </div>
-                <div className="p-6">
-                    <h1 className="text-3xl font-bold">{storeName}</h1>
-                    <div
-                        className="mt-3 text-muted-foreground prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: storeDescription }}
-                    />
-                </div>
-            </section>
+                </section>
 
-            <section>
-                <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
-                {featuredProducts.length ? (
-                    <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                        {featuredProducts.map((product, index) => (
-                            <ProductCard key={`featured-product-${index}`} product={product} />
-                        ))}
+                <section>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-2xl font-semibold">Todos los productos</h2>
+                        <p className="text-sm text-muted-foreground">{allProducts.length} productos</p>
                     </div>
-                ) : (
-                    <p className="text-muted-foreground">Esta tienda no tiene productos destacados por ahora.</p>
-                )}
-            </section>
+                    {remainingProducts.length ? (
+                        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+                            {remainingProducts.map((product, index) => (
+                                <ProductCard key={`store-product-${index}`} product={product} />
+                            ))}
+                        </div>
+                    ) : featuredProducts.length === 0 ? (
+                        <div className="rounded-md border p-6 text-sm text-muted-foreground">
+                            Aun no hay productos publicados para esta tienda.
+                        </div>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No hay más productos en esta tienda.</p>
+                    )}
+                </section>
 
-            <section>
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-semibold">Todos los productos</h2>
-                    <p className="text-sm text-muted-foreground">{allProducts.length} productos</p>
-                </div>
-                {remainingProducts.length ? (
-                    <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                        {remainingProducts.map((product, index) => (
-                            <ProductCard key={`store-product-${index}`} product={product} />
-                        ))}
-                    </div>
-                ) : featuredProducts.length === 0 ? (
-                    <div className="rounded-md border p-6 text-sm text-muted-foreground">
-                        Aun no hay productos publicados para esta tienda.
-                    </div>
-                ) : (
-                    <p className="text-sm text-muted-foreground">No hay más productos en esta tienda.</p>
-                )}
-            </section>
-
-            <section>
-                <Link href="/" className="text-sm underline underline-offset-2">
-                    Volver al inicio
-                </Link>
-            </section>
+                <section>
+                    <Link href={`/${locale}`} className="text-sm underline underline-offset-2">
+                        Volver al inicio
+                    </Link>
+                </section>
+            </div>
         </main>
     );
 }
