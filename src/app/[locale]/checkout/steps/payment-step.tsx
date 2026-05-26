@@ -56,6 +56,11 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
   };
 
   const openWompi = async () => {
+    if (!pb) {
+      console.error('[Wompi] PAYMENT_PUBLIC_KEY no está definida. Verifica las variables de entorno.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -67,10 +72,9 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
       const uniqueReference = `${order.code}-${uniqueId}`;
 
-
       // Obtener la firma usando la referencia única
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
-
+      
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: CurrencyCode.COP,

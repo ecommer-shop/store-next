@@ -152,6 +152,12 @@ export const CreateCustomerAddressMutation = graphql(`
                 name
             }
             phoneNumber
+            customFields {
+                latitude
+                longitude
+                neighborhood
+                googlePlaceId
+            }
             defaultShippingAddress
             defaultBillingAddress
         }
@@ -175,6 +181,12 @@ export const UpdateCustomerAddressMutation = graphql(`
                 name
             }
             phoneNumber
+            customFields {
+                latitude
+                longitude
+                neighborhood
+                googlePlaceId
+            }
             defaultShippingAddress
             defaultBillingAddress
         }
@@ -206,6 +218,12 @@ export const SetOrderShippingAddressMutation = graphql(`
                     postalCode
                     country
                     phoneNumber
+                    customFields {
+                        latitude
+                        longitude
+                        neighborhood
+                        googlePlaceId
+                    }
                 }
             }
             ... on ErrorResult {
@@ -233,6 +251,12 @@ export const SetOrderBillingAddressMutation = graphql(`
                     postalCode
                     country
                     phoneNumber
+                    customFields {
+                        latitude
+                        longitude
+                        neighborhood
+                        googlePlaceId
+                    }
                 }
             }
             ... on ErrorResult {
@@ -244,9 +268,24 @@ export const SetOrderBillingAddressMutation = graphql(`
 `);
 
 export const SetOrderDynamicShippingMethod = graphql(`
-    mutation {
-  setDynamicShippingPrice(price: 8500)
-}`)
+    mutation SetDynamicShippingPrice($price: Int!) {
+        setDynamicShippingPrice(price: $price)
+    }
+`)
+
+export const CreateDeliveryOrderMutation = graphql(`
+    mutation CreateDeliveryOrder($input: CreateDeliveryOrderInput!) {
+        createDeliveryOrder(input: $input) {
+            success
+            message
+            id_documento
+            fecha_creacion
+            error
+            missing_fields
+            required_fields
+        }
+    }
+`)
 
 export const SetOrderShippingMethodMutation = graphql(`
     mutation SetOrderShippingMethod($shippingMethodId: [ID!]!) {
