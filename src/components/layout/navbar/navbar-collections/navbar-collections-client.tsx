@@ -32,11 +32,11 @@ export function NavbarCollectionsClient({ collections }: NavbarCollectionsClient
           <ul className="grid grid-cols-2 gap-1 p-3 w-[320px]">
             {rest.map((collection) => (
               <li key={collection.slug}>
-                <Link href={`/collection/${collection.slug}`} legacyBehavior passHref>
-                  <NavigationMenuLink className="block rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <NavigationMenuLink asChild className="block rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <Link href={`/collection/${collection.slug}`}>
                     {collection.name}
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </li>
             ))}
           </ul>
@@ -45,11 +45,11 @@ export function NavbarCollectionsClient({ collections }: NavbarCollectionsClient
 
       {featured.map((collection) => (
         <NavigationMenuItem key={collection.slug}>
-          <Link href={`/collection/${collection.slug}`} legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href={`/collection/${collection.slug}`}>
               {collection.name}
-            </NavigationMenuLink>
-          </Link>
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
       ))}
     </>

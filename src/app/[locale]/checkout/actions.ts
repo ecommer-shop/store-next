@@ -182,6 +182,25 @@ interface CustomerAddressWithGeo {
     customFields?: AddressGeoCustomFields | null;
 }
 
+const POST_PAYMENT_DELIVERY_TIMEOUT_MS = 15000;
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    try {
+        return await Promise.race([
+            promise,
+            new Promise<T>((_, reject) => {
+                timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+            }),
+        ]);
+    } finally {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    }
+}
+
 function toFiniteNumber(value: unknown) {
     const numberValue = typeof value === 'string' ? Number(value) : value;
     return typeof numberValue === 'number' && Number.isFinite(numberValue) ? numberValue : null;
@@ -327,9 +346,7 @@ async function calculateDeliveryQuotesForGroups(
     destination: string,
     token: string,
 ) {
-    const quotes: Array<{ group: DeliveryOriginGroup; quote: DeliveryCostQuote }> = [];
-
-    for (const group of groups) {
+    return Promise.all(groups.map(async (group) => {
         const result = await query(
             CalculateDeliveryCostQuery as any,
             {
@@ -346,10 +363,8 @@ async function calculateDeliveryQuotesForGroups(
             throw new Error(quote.error || `No se pudo calcular el costo de envio para ${group.sellerName}`);
         }
 
-        quotes.push({ group, quote });
-    }
-
-    return quotes;
+        return { group, quote };
+    }));
 }
 
 export async function setShippingAddress(
@@ -405,6 +420,36 @@ export async function setDynamicShippingPrice(price: number) {
         { token, useAuthToken: true }
     );
     revalidatePath('/checkout');
+}
+
+async function reapplyShippingSelection(
+    token: string,
+    shippingMethodIds?: string[],
+    shippingPriceWithTax?: number,
+) {
+    const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
+
+    if (uniqueShippingMethodIds.length === 0) {
+        return;
+    }
+
+    const result = await mutate(
+        SetOrderShippingMethodMutation,
+        { shippingMethodId: uniqueShippingMethodIds },
+        { token, useAuthToken: true }
+    );
+
+    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
+        throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
+    }
+
+    if (typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+        await mutate(
+            SetOrderDynamicShippingMethod,
+            { price: Math.round(shippingPriceWithTax) },
+            { token, useAuthToken: true }
+        );
+    }
 }
 
 export async function calculateDeliveryCostQuote() {
@@ -464,7 +509,7 @@ async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, 
     const customFields = destinationGeo.customFields as AddressGeoCustomFields | undefined;
     const customerName = [order.customer?.firstName, order.customer?.lastName].filter(Boolean).join(' ');
 
-    for (const { group, quote } of quotes) {
+    const deliveryOrderResults = await Promise.allSettled(quotes.map(async ({ group, quote }) => {
         const serviceValue = quote.price?.value ?? 0;
         const deliveryOrderResult = await mutate(
             CreateDeliveryOrderMutation as any,
@@ -499,6 +544,13 @@ async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, 
                 `No se pudo crear el domicilio externo para ${group.sellerName}`
             );
         }
+    }));
+
+    const failedResult = deliveryOrderResults.find(result => result.status === 'rejected');
+    if (failedResult?.status === 'rejected') {
+        throw failedResult.reason instanceof Error
+            ? failedResult.reason
+            : new Error('No se pudo crear uno de los domicilios externos');
     }
 }
 
@@ -530,15 +582,21 @@ export async function transitionToArrangingPayment() {
 
     if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
         const errorResult = result.data.transitionOrderToState;
+        const reason = errorResult.transitionError || errorResult.message;
         throw new Error(
-            `Failed to transition order state: ${errorResult.errorCode} - ${errorResult.message}`
+            `No se pudo preparar la orden para pago: ${errorResult.errorCode} - ${reason}`
         );
     }
 
     revalidatePath('/checkout');
 }
 
-export async function placeOrder(paymentMethodCode: string, selectedLineIds?: string[]) {
+export async function placeOrder(
+    paymentMethodCode: string,
+    selectedLineIds?: string[],
+    shippingMethodIds?: string[],
+    shippingPriceWithTax?: number,
+) {
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
@@ -562,6 +620,8 @@ export async function placeOrder(paymentMethodCode: string, selectedLineIds?: st
             }
         }
     }
+
+    await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
 
     const orderForDelivery = await getActiveOrderDeliveryContext(token);
 
@@ -600,7 +660,11 @@ export async function placeOrder(paymentMethodCode: string, selectedLineIds?: st
     const orderCode = result.data.addPaymentToOrder.code;
 
     try {
-        await createExternalDeliveryOrders(orderForDelivery, paymentMethodCode, token);
+        await withTimeout(
+            createExternalDeliveryOrders(orderForDelivery, paymentMethodCode, token),
+            POST_PAYMENT_DELIVERY_TIMEOUT_MS,
+            'La creacion de domicilios externos tardo demasiado y continuara fuera del flujo de pago',
+        );
     } catch (err) {
         console.error('Failed to create external delivery order', err);
     }

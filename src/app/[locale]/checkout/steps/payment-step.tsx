@@ -21,6 +21,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
   const { selectedLineIds } = useSelectedItems();
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Calculate total based on selected lines from context
   const getSelectedOrderTotal = () => {
@@ -37,12 +38,22 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     return total;
   };
 
-  const handlePlaceOrder = async () => {
-    if (!selectedPaymentMethodCode) return;
+  const selectedShippingMethodIds = () => (
+    order.shippingLines
+      ?.map((line) => line.shippingMethod?.id)
+      .filter((id): id is string => Boolean(id)) ?? []
+  );
 
+  const finalizeOrder = async (paymentMethodCode: string) => {
     setLoading(true);
+    setErrorMessage(null);
     try {
-      await placeOrderAction(selectedPaymentMethodCode, selectedLineIds);
+      await placeOrderAction(
+        paymentMethodCode,
+        selectedLineIds,
+        selectedShippingMethodIds(),
+        order.shippingWithTax,
+      );
       onComplete();
     } catch (error) {
       // Check if this is a Next.js redirect (which is expected)
@@ -50,9 +61,19 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         // This is a redirect, not an error - let it propagate
         throw error;
       }
-      console.error('Error placing order:', error);
+      console.error('Error finalizing order:', error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'El pago fue aprobado, pero no se pudo finalizar el pedido. Intenta finalizarlo de nuevo.',
+      );
       setLoading(false);
     }
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!selectedPaymentMethodCode) return;
+    await finalizeOrder(selectedPaymentMethodCode);
   };
 
   const openWompi = async () => {
@@ -62,6 +83,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     }
 
     setLoading(true);
+    setErrorMessage(null);
 
     try {
       // Calculate the correct total based on selected items
@@ -98,18 +120,30 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         if (transaction.status === TransactionStatus.APPROVED || transaction.status === TransactionStatus.APPROVED.toLowerCase()) {
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
-          await placeOrderAction('wompi', selectedLineIds);
+          await finalizeOrder('wompi');
         } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
           console.error('Payment declined');
+          setErrorMessage('El pago fue rechazado. Intenta con otro metodo de pago.');
           setLoading(false);
         } else if (transaction.status === 'PENDING' || transaction.status === 'pending') {
+          setErrorMessage('El pago quedo pendiente. Revisa el estado antes de intentar nuevamente.');
           setLoading(false);
         }
       });
     } catch (error) {
       console.error('Error opening Wompi checkout:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'No se pudo abrir Wompi.');
       setLoading(false);
     }
+  };
+
+  const handleButtonClick = () => {
+    if (paymentSuccess) {
+      void finalizeOrder('wompi');
+      return;
+    }
+
+    void openWompi();
   };
 
   return (
@@ -126,12 +160,18 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         </div>
       </Card>
 
+      {errorMessage && (
+        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {errorMessage}
+        </p>
+      )}
+
       <Button
-        onClick={openWompi}
-        isDisabled={loading || paymentSuccess}
+        onClick={handleButtonClick}
+        isDisabled={loading}
         className="w-full sticky bottom-0"
       >
-        {loading ? 'Cargando...' : paymentSuccess ? 'Pago completado' : 'Pagar con Wompi'}
+        {loading ? 'Cargando...' : paymentSuccess ? 'Finalizar pedido' : 'Pagar con Wompi'}
       </Button>
 
       <Script
