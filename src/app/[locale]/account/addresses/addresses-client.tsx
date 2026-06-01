@@ -14,7 +14,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, MoreVertical, Home, CreditCard, Edit2, Trash2 } from 'lucide-react';
-import { AddressForm, AddressFormData } from './address-form';
+import { AddressForm, AddressFormData, AddressGeoCustomFields } from './address-form';
 import { createAddress, updateAddress, deleteAddress, setDefaultShippingAddress, setDefaultBillingAddress } from './actions';
 import { useRouter } from 'next/navigation';
 import { I18N } from '@/i18n/keys';
@@ -36,6 +36,7 @@ export interface CustomerAddress {
     postalCode?: string | null;
     country: { id: string; code: string; name: string };
     phoneNumber?: string | null;
+    customFields?: AddressGeoCustomFields | null;
     defaultShippingAddress?: boolean | null;
     defaultBillingAddress?: boolean | null;
 }
@@ -55,6 +56,7 @@ export type CreateAddressPayload = {
     postalCode?: string;
     phoneNumber?: string;
     countryCode: string;
+    customFields?: AddressGeoCustomFields;
 };
 
 export type UpdateAddressPayload = CreateAddressPayload & {
@@ -135,7 +137,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
         setIsSubmitting(true);
 
         try {
-            const country = countries.find(c => c.id === data.countryCode);
+            const country = countries.find(c => c.id === data.countryCode || c.code === data.countryCode);
             if (!country) throw new Error('Invalid country');
 
             const baseInput: CreateAddressPayload = {
@@ -148,6 +150,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                 postalCode: data.postalCode,
                 phoneNumber: data.phoneNumber,
                 countryCode: country.code,
+                customFields: data.customFields,
             };
 
             if (editingAddress) {
@@ -287,6 +290,18 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                     </DialogHeader>
                     <AddressForm
                         countries={countries}
+                        defaultValues={editingAddress ? {
+                            fullName: editingAddress.fullName || '',
+                            company: editingAddress.company || '',
+                            streetLine1: editingAddress.streetLine1,
+                            streetLine2: editingAddress.streetLine2 || '',
+                            city: editingAddress.city || '',
+                            province: editingAddress.province || '',
+                            postalCode: editingAddress.postalCode || '',
+                            phoneNumber: editingAddress.phoneNumber || '',
+                            countryCode: editingAddress.country.id,
+                            customFields: editingAddress.customFields || undefined,
+                        } : undefined}
                         labels={{
                             fullName: t(I18N.Account.addresses.form.fields.fullName.label),
                             company: t(I18N.Account.addresses.form.fields.company.label),

@@ -3,6 +3,7 @@
 import { createContext, useContext, ReactNode, useState } from 'react';
 import { CheckoutOrder } from './types';
 import { SelectedItemsProvider } from '@/app/[locale]/cart/selected-items-context';
+import { AddressGeoCustomFields } from '../account/addresses/address-form';
 
 interface CustomerAddress {
   id: string;
@@ -15,6 +16,7 @@ interface CustomerAddress {
   postalCode?: string | null;
   country: { id: string; code: string; name: string };
   phoneNumber?: string | null;
+  customFields?: AddressGeoCustomFields | null;
   defaultShippingAddress?: boolean | null;
   defaultBillingAddress?: boolean | null;
 }
