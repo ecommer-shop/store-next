@@ -4,7 +4,7 @@ import { ActiveCustomerFragment, ProductCardFragment } from './fragments';
 export const GetTopCollectionsQuery = graphql(`
     query GetTopCollections {
         collections(options: { filter: { parentId: { eq: "1" } }, 
-            take: 3 }) {
+            take: 50 }) {
             items {
                 id
                 name
@@ -247,6 +247,12 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             billingAddress {
                 fullName
@@ -258,6 +264,12 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             shippingLines {
                 shippingMethod {
@@ -314,6 +326,12 @@ export const GetCustomerAddressesQuery = graphql(`
                     name
                 }
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
                 defaultShippingAddress
                 defaultBillingAddress
             }
@@ -424,6 +442,12 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             billingAddress {
                 fullName
@@ -435,6 +459,12 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             shippingLines {
                 shippingMethod {
@@ -536,4 +566,27 @@ export const GetWompiSignatureQuery = graphql(`
     }
     `
 )
+
+export const CalculateDeliveryCostQuery = graphql(`
+    query CalculateDeliveryCost($input: DeliveryCostInput!) {
+        calculateDeliveryCost(input: $input) {
+            success
+            price {
+                value
+                currency
+            }
+            distance {
+                value
+                unit
+                text
+            }
+            duration {
+                value
+                unit
+                text
+            }
+            error
+        }
+    }
+`);
 

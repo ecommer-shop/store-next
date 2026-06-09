@@ -1,28 +1,57 @@
+
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { NavbarLink } from '../navbar-link';
-import { Button } from '@heroui/react';
+import Link from 'next/link';
+import {
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
 
-interface NavbarCollectionsClientProps {
+interface Collection {
+  id: string;
   name: string;
   slug: string;
 }
 
-export function NavbarCollectionsClient({ name, slug }: NavbarCollectionsClientProps) {
-  const router = useRouter();
+interface NavbarCollectionsClientProps {
+  collections: Collection[];
+}
 
-  const handleCollectionClick = () => {
-    // Redirect to search page with collection filter
-    router.push(`/search?collection=${slug}`);
-  };
+export function NavbarCollectionsClient({ collections }: NavbarCollectionsClientProps) {
+  const featured = collections.slice(0, 3);
+  const rest = collections.slice(3);
 
   return (
-    <button
-      onClick={handleCollectionClick}
-      className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1"
-    >
-      {name}
-    </button>
+    <>
+      <NavigationMenuItem>
+        <NavigationMenuTrigger>Categorías</NavigationMenuTrigger>
+        <NavigationMenuContent>
+          <ul className="grid grid-cols-2 gap-1 p-3 w-[320px]">
+            {rest.map((collection) => (
+              <li key={collection.slug}>
+                <NavigationMenuLink asChild className="block rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <Link href={`/collection/${collection.slug}`}>
+                    {collection.name}
+                  </Link>
+                </NavigationMenuLink>
+              </li>
+            ))}
+          </ul>
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+
+      {featured.map((collection) => (
+        <NavigationMenuItem key={collection.slug}>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href={`/collection/${collection.slug}`}>
+              {collection.name}
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      ))}
+    </>
   );
 }
