@@ -92,6 +92,7 @@ export function AddressForm({
   const geoFields = watch('customFields');
   const selectedStreetLine = watch('streetLine1');
   const [geoError, setGeoError] = useState<string | null>(null);
+  const hasGoogleMapsApiKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
   const handleGoogleAddressSelect = useCallback((selection: GoogleAddressSelection) => {
     const selectedAddress = selection.formattedAddress || selection.streetLine1;
@@ -131,6 +132,22 @@ export function AddressForm({
     setGeoError(null);
   }, [countries, getValues, setValue]);
 
+  const handleStreetLineManualChange = useCallback((value: string) => {
+    setValue('streetLine1', value, { shouldDirty: true, shouldValidate: true });
+    setValue(
+      'customFields',
+      {
+        ...getValues('customFields'),
+        latitude: null,
+        longitude: null,
+        neighborhood: null,
+        googlePlaceId: null,
+      },
+      { shouldDirty: true, shouldValidate: true },
+    );
+    setGeoError(null);
+  }, [getValues, setValue]);
+
   const latitude = normalizeCoordinate(geoFields?.latitude);
   const longitude = normalizeCoordinate(geoFields?.longitude);
   const hasValidCoordinates = hasUsableCoordinates(latitude, longitude);
@@ -160,7 +177,6 @@ export function AddressForm({
   return (
     <Form onSubmit={submitForm}>
       <div className="grid grid-cols-2 gap-4">
-        <GoogleAddressAutocomplete onSelect={handleGoogleAddressSelect} />
         <input type="hidden" {...register('customFields.latitude')} />
         <input type="hidden" {...register('customFields.longitude')} />
         <input type="hidden" {...register('customFields.neighborhood')} />
@@ -194,15 +210,43 @@ export function AddressForm({
           <Input {...register('company')} />
         </TextField>
 
-        <TextField className="col-span-2">
-          <Label>{labels.streetLine1} *</Label>
-          <Input
-            autoComplete="address-line1"
-            placeholder="Se completa al seleccionar una direccion en Google Maps"
-            {...register('streetLine1', { required: labels.streetLine1 })}
-          />
-          <FieldError>{errors.streetLine1?.message}</FieldError>
-        </TextField>
+        {hasGoogleMapsApiKey ? (
+          <div className="col-span-2">
+            <Controller
+              name="streetLine1"
+              control={control}
+              rules={{ required: labels.streetLine1 }}
+              render={({ field }) => (
+                <GoogleAddressAutocomplete
+                  label={`${labels.streetLine1} *`}
+                  placeholder="Escribe y selecciona una direccion de Google Maps"
+                  value={field.value ?? ''}
+                  inputName={field.name}
+                  className=""
+                  onValueChange={handleStreetLineManualChange}
+                  onSelect={handleGoogleAddressSelect}
+                />
+              )}
+            />
+            <FieldError>{errors.streetLine1?.message}</FieldError>
+          </div>
+        ) : (
+          <>
+            {requireGoogleCoordinates && (
+              <div className="col-span-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                Configura NEXT_PUBLIC_GOOGLE_MAPS_API_KEY en el front para seleccionar direcciones con Google Maps y guardar coordenadas.
+              </div>
+            )}
+            <TextField className="col-span-2">
+              <Label>{labels.streetLine1} *</Label>
+              <Input
+                autoComplete="address-line1"
+                {...register('streetLine1', { required: labels.streetLine1 })}
+              />
+              <FieldError>{errors.streetLine1?.message}</FieldError>
+            </TextField>
+          </>
+        )}
 
         <TextField className="col-span-2">
           <Label>{labels.streetLine2}</Label>
