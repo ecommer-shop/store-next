@@ -17,9 +17,13 @@ interface FacetFiltersProps {
         token?: string;
     }>;
     searchParams?: { [key: string]: string | string[] | undefined };
+    activeCollectionSlug?: string;
+    activeCollectionName?: string;
 }
 
-export function FacetFilters({ productDataPromise, searchParams: serverSearchParams }: FacetFiltersProps) {
+const COLLECTION_SENTINEL = '__collection__';
+
+export function FacetFilters({ productDataPromise, searchParams: serverSearchParams, activeCollectionSlug, activeCollectionName }: FacetFiltersProps) {
     const result = use(productDataPromise);
     const searchResult = result.data.search;
     const pathname = usePathname();
@@ -52,10 +56,63 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
     }, {});
 
     const selectedFacets = urlSearchParams.getAll('facets');
+    if (activeCollectionSlug) {
+        selectedFacets.push(COLLECTION_SENTINEL);
+    }
+
+    // Build all groups, merging collection into existing Categoría if present
+    const allGroups: Record<string, FacetGroup> = {};
+
+    Object.entries(facetGroups).forEach(([key, group]) => {
+        allGroups[key] = group;
+    });
+
+    if (activeCollectionSlug) {
+        const categoriaGroup = Object.values(allGroups).find(
+            g => g.name.localeCompare('Categoría', 'es', { sensitivity: 'base' }) === 0
+        );
+
+        const collectionName = activeCollectionName || activeCollectionSlug;
+
+        const matchingValue = categoriaGroup?.values.find(
+            v => v.name.localeCompare(collectionName, 'es', { sensitivity: 'base' }) === 0
+        );
+
+        const collectionEntry = {
+            id: COLLECTION_SENTINEL,
+            name: collectionName,
+            count: searchResult.totalItems,
+        };
+
+        if (matchingValue) {
+            const idx = categoriaGroup!.values.indexOf(matchingValue);
+            categoriaGroup!.values[idx] = collectionEntry;
+        } else if (categoriaGroup) {
+            categoriaGroup.values.unshift(collectionEntry);
+        } else {
+            allGroups[COLLECTION_SENTINEL] = {
+                id: COLLECTION_SENTINEL,
+                name: 'Categoría',
+                values: [collectionEntry],
+            };
+        }
+    }
 
     const toggleFacet = (facetId: string) => {
         const params = new URLSearchParams(urlSearchParams);
         const current = params.getAll('facets');
+
+        if (facetId === COLLECTION_SENTINEL) {
+            const hasOtherFacets = current.length > 0;
+            params.delete('page');
+
+            if (hasOtherFacets) {
+                router.push(`${pathname}?${params.toString()}`);
+            } else {
+                router.push(pathname);
+            }
+            return;
+        }
 
         if (current.includes(facetId)) {
             params.delete('facets');
@@ -74,12 +131,13 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
         const params = new URLSearchParams(urlSearchParams);
         params.delete('facets');
         params.delete('page');
-        router.push(`${pathname}?${params.toString()}`);
+        const qs = params.toString();
+        router.push(qs ? `${pathname}?${qs}` : pathname);
     };
 
     const hasActiveFilters = selectedFacets.length > 0;
 
-    if (Object.keys(facetGroups).length === 0) {
+    if (Object.keys(allGroups).length === 0) {
         return null;
     }
 
@@ -117,7 +175,7 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
             {/* Desktop filtros */}
             <div className="hidden md:block">
                 <FacetsAccordionContent
-                    facetGroups={facetGroups}
+                    facetGroups={allGroups}
                     selectedFacets={selectedFacets}
                     toggleFacet={toggleFacet}
                 />
@@ -159,7 +217,7 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
 
                         <Accordion.Panel>
                             <FacetsAccordionContent
-                                facetGroups={facetGroups}
+                                facetGroups={allGroups}
                                 selectedFacets={selectedFacets}
                                 toggleFacet={toggleFacet}
                             />
