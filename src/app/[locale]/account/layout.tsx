@@ -19,7 +19,7 @@ export default async function AccountLayout({ children }: LayoutProps<'/account'
   const navItems: NavItem[] = [
     { href: '/account/orders', label: tr(I18N.UserBar.orders), icon: 'package' },
     { href: '/account/addresses', label: tr(I18N.UserBar.addresses), icon: 'mapPin' },
-    { href: '/account/billing', label: tr(I18N.UserBar.billing), icon: 'creditCard' },
+    //{ href: '/account/billing', label: tr(I18N.UserBar.billing), icon: 'creditCard' },
     { href: '/account/profile', label: tr(I18N.UserBar.profile), icon: 'user' },
   ];
 
