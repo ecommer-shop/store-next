@@ -41,6 +41,7 @@ export interface AddressFormData {
 interface AddressFormProps {
   countries: Country[];
   defaultValues?: Partial<AddressFormData>;
+  googleMapsApiKey?: string;
   onSubmit: (data: AddressFormData) => Promise<void>;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -76,6 +77,7 @@ function hasUsableCoordinates(latitude: number | null, longitude: number | null)
 export function AddressForm({
   countries,
   defaultValues,
+  googleMapsApiKey,
   onSubmit,
   onCancel,
   isSubmitting = false,
@@ -92,7 +94,7 @@ export function AddressForm({
   const geoFields = watch('customFields');
   const selectedStreetLine = watch('streetLine1');
   const [geoError, setGeoError] = useState<string | null>(null);
-  const hasGoogleMapsApiKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+  const hasGoogleMapsApiKey = Boolean(googleMapsApiKey || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
   const handleGoogleAddressSelect = useCallback((selection: GoogleAddressSelection) => {
     const selectedAddress = selection.formattedAddress || selection.streetLine1;
@@ -220,6 +222,7 @@ export function AddressForm({
                 <GoogleAddressAutocomplete
                   label={`${labels.streetLine1} *`}
                   placeholder="Escribe y selecciona una direccion de Google Maps"
+                  apiKey={googleMapsApiKey}
                   value={field.value ?? ''}
                   inputName={field.name}
                   className=""

@@ -71,6 +71,7 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
         .slice(0, 1);
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
+    const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
     return (
         <Suspense fallback={
@@ -88,6 +89,7 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
                     countries={countries}
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
+                    googleMapsApiKey={googleMapsApiKey}
                 >
                     <CheckoutFlow onSetShippingMethod={setShippingMethod} pb={pb} uri={uri}/>
                 </CheckoutProvider>

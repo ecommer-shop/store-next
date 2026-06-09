@@ -26,6 +26,7 @@ export interface GoogleAddressSelection {
 interface GoogleAddressAutocompleteProps {
   label?: string;
   placeholder?: string;
+  apiKey?: string;
   value?: string;
   inputName?: string;
   countryCode?: string;
@@ -123,6 +124,7 @@ function parsePlace(place: any): GoogleAddressSelection | null {
 export function GoogleAddressAutocomplete({
   label = 'Buscar direccion con Google Maps',
   placeholder = 'Escribe y selecciona una direccion',
+  apiKey: apiKeyProp,
   value,
   inputName = 'google-maps-address-search',
   countryCode = 'co',
@@ -143,7 +145,7 @@ export function GoogleAddressAutocomplete({
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isMapsReady, setIsMapsReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = apiKeyProp || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const inputValue = value ?? internalInputValue;
 
   const updateInputValue = useCallback((nextValue: string) => {

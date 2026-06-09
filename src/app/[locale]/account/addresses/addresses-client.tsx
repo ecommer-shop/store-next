@@ -44,6 +44,7 @@ export interface CustomerAddress {
 interface AddressesClientProps {
     addresses: CustomerAddress[];
     countries: Country[];
+    googleMapsApiKey?: string;
 }
 
 export type CreateAddressPayload = {
@@ -64,7 +65,7 @@ export type UpdateAddressPayload = CreateAddressPayload & {
 };
 
 
-export function AddressesClient({ addresses, countries }: AddressesClientProps) {
+export function AddressesClient({ addresses, countries, googleMapsApiKey }: AddressesClientProps) {
     const t = useTranslations('Account.addresses');
     const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -290,6 +291,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                     </DialogHeader>
                     <AddressForm
                         countries={countries}
+                        googleMapsApiKey={googleMapsApiKey}
                         defaultValues={editingAddress ? {
                             fullName: editingAddress.fullName || '',
                             company: editingAddress.company || '',
