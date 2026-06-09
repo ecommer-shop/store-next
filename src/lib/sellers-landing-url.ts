@@ -18,3 +18,16 @@ export function getSellersLandingUrl(): string {
     return PROD_SELLERS;
   }
 }
+
+const BILLING_STG = 'https://admin-stg.ecommer.shop/dashboard/billing';
+const BILLING_PROD = 'https://admin.ecommer.shop/dashboard/billing';
+
+export function getBillingAdminUrl(): string {
+  const site = process.env.NEXT_PUBLIC_SITE_URL || '';
+  try {
+    const host = new URL(site).hostname;
+    return host.includes('stg') ? BILLING_STG : BILLING_PROD;
+  } catch {
+    return BILLING_PROD;
+  }
+}

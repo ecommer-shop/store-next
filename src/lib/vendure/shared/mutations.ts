@@ -244,8 +244,8 @@ export const SetOrderBillingAddressMutation = graphql(`
 `);
 
 export const SetOrderDynamicShippingMethod = graphql(`
-    mutation {
-  setDynamicShippingPrice(price: 8500)
+    mutation SetDynamicShippingPrice($price: Int!) {
+  setDynamicShippingPrice(price: $price)
 }`)
 
 export const SetOrderShippingMethodMutation = graphql(`
@@ -443,6 +443,52 @@ export const UpdateCustomerEmailAddressMutation = graphql(`
                 errorCode
                 message
             }
+        }
+    }
+`);
+
+export const CreateSubscriptionMutation = graphql(`
+    mutation CreateSubscription($token: String!, $planId: Int!, $paymentMethod: String!) {
+        createSubscriptionWithPayment(token: $token, planId: $planId, paymentMethod: $paymentMethod) {
+            id
+            status
+            plan { name }
+            productLimit
+            hasAIAccess
+            hasElectronicBilling
+        }
+    }
+`);
+
+export const CreatePendingSubscriptionMutation = graphql(`
+    mutation CreatePendingPayment($planId: Int!, $paymentMethod: String!) {
+        createPendingSubscription(planId: $planId, paymentMethod: $paymentMethod) {
+            id
+            status
+            asyncPaymentUrl
+            qrImage
+            transactionId
+            plan { name }
+        }
+    }
+`);
+
+export const StopAutoRenewMutation = graphql(`
+    mutation StopAutoRenew($subscriptionId: Int!) {
+        stopAutoRenew(subscriptionId: $subscriptionId) {
+            id
+            autoRenew
+            status
+        }
+    }
+`);
+
+export const CancelSubscriptionMutation = graphql(`
+    mutation CancelSubscriptionBack($subscriptionId: Int!) {
+        cancelSubscription(subscriptionId: $subscriptionId) {
+            id
+            status
+            plan { name }
         }
     }
 `);

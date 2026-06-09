@@ -550,3 +550,65 @@ export const GetProductVariantStockQuery = graphql(`
     }
 
 `)
+
+export const GetMySubscriptionQuery = graphql(`
+    query GetMySubscription {
+        mySubscription {
+            id
+            status
+            startsAt
+            endsAt
+            autoRenew
+            plan {
+                id
+                name
+                price
+                billingInterval
+                description
+            }
+            paymentMethodType
+            paymentFlowType
+            productLimit
+            variationLimit
+            hasAIAccess
+            hasElectronicBilling
+        }
+    }
+`)
+
+export const GetAllPlansQuery = graphql(`
+    query GetAllPlans {
+        allPlans {
+            id
+            name
+            price
+            billingInterval
+            description
+            planFeatures {
+                id
+                feature {
+                    code
+                    name
+                    type
+                }
+                value
+            }
+        }
+    }
+`)
+
+export const CheckProductLimitQuery = graphql(`
+    query CheckProductLimit {
+        checkProductLimit {
+            allowed
+            current
+            limit
+        }
+    }
+`)
+
+export const CheckFeatureAccessQuery = graphql(`
+    query CheckFeatureAccess($featureCode: String!) {
+        checkFeatureAccess(featureCode: $featureCode)
+    }
+`)

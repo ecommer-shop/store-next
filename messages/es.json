@@ -21,6 +21,7 @@
     "profile": "Mi Perfil",
     "orders": "Mis Pedidos",
     "addresses": "Mis Direcciones",
+    "billing": "Facturación",
     "logout": "Cerrar Sesión",
     "login": "Iniciar Sesión",
     "signup": "Registrarse",
@@ -176,6 +177,35 @@
         "deleting": "Eliminando...",
         "successTitle": "Cuenta eliminada",
         "errorTitle": "No se pudo eliminar la cuenta"
+      }
+    },
+    "billing": {
+      "loading": {
+        "title": "Facturación",
+        "loading": "Cargando facturación…",
+        "description": "Gestiona tu plan y métodos de pago."
+      },
+      "content": {
+        "title": "Facturación / Plan",
+        "currentPlan": "Plan actual",
+        "status": "Estado",
+        "paymentMethod": "Método de pago",
+        "nextBilling": "Próxima facturación",
+        "endsAt": "Finaliza el",
+        "autoRenew": "Renovación automática",
+        "productsUsed": "{current}/{limit} productos usados",
+        "variationsUsed": "{current}/{limit} variaciones usadas",
+        "changePlan": "Cambiar plan",
+        "cancelSubscription": "Cancelar suscripción",
+        "stopAutoRenew": "Detener renovación automática",
+        "reactivate": "Reactivar"
+      },
+      "statusLabels": {
+        "ACTIVE": "Activo",
+        "PENDING_PAYMENT": "Pago pendiente",
+        "GRACE_PERIOD": "Período de gracia",
+        "SUSPENDED": "Suspendido",
+        "CANCELLED": "Cancelado"
       }
     }
   },
@@ -578,6 +608,22 @@
       "title": "Políticas de Privacidad"
     }
   },
+  "Planes": {
+    "free": "Free",
+    "tienda": "Tienda",
+    "omnichannel": "Omnichannel",
+    "cta": "Perfecto para empezar",
+    "products": "{count} productos",
+    "variations": "{count} variaciones",
+    "aiAccess": "Acceso a IA",
+    "electronicBilling": "Facturación electrónica",
+    "currentPlan": "Plan actual",
+    "selectPlan": "Seleccionar plan",
+    "subscribe": "Suscribirse",
+    "cancel": "Cancelar",
+    "perMonth": "/mes"
+  },
+
   "Vendedores": {
     "hero": {
       "badge": "La nueva era del B2B",
