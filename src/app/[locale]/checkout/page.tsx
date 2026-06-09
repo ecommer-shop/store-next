@@ -24,8 +24,12 @@ interface PageProps {
 }
 
 export default function CheckoutPage(props: PageProps) {
-  const PUBLIC_KEY = process.env.PAYMENT_PUBLIC_KEY!
-  const APP_URI = process.env.NEXT_PUBLIC_SITE_URL!
+  const PUBLIC_KEY = process.env.PAYMENT_PUBLIC_KEY ?? process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY ?? '';
+  const APP_URI = process.env.NEXT_PUBLIC_SITE_URL ?? '';
+
+  if (!PUBLIC_KEY) {
+    console.error('[Checkout] PAYMENT_PUBLIC_KEY no está definida en las variables de entorno. El widget de Wompi no funcionará correctamente.');
+  }
   
   return (
     <Suspense fallback={
@@ -33,14 +37,12 @@ export default function CheckoutPage(props: PageProps) {
         <Spinner color="current" />
       </div>
     }>
-      
         <CheckoutContent
           params={props.params}
           searchParams={props.searchParams}
           pb={PUBLIC_KEY}
           uri={APP_URI}
         />
-      
     </Suspense>
   );
 }

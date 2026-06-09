@@ -511,8 +511,14 @@ export const I18N = {
         addedDescription: 'productInfo.toast.addedDescription',
         errorTitle: 'productInfo.toast.errorTitle',
         errorDescription: 'productInfo.toast.errorDescription',
-        goToCart: 'productInfo.toast.goToCart'
-      }
+        goToCart: 'productInfo.toast.goToCart',
+        shareSuccess: 'productInfo.toast.shareSuccess',
+        shareError: 'productInfo.toast.shareError',
+        copyLinkSuccess: 'productInfo.toast.copyLinkSuccess',
+        copyLinkError: 'productInfo.toast.copyLinkError'
+      },
+      shareProduct: 'productInfo.shareProduct',
+      shareText: 'productInfo.shareText'
     },
     relatedProducts: {
       title: 'relatedProducts.title'

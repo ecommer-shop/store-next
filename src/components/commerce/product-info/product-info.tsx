@@ -3,7 +3,7 @@ import {useState, useMemo, useEffect} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import NextLink from 'next/link';
 import {RadioGroup, Label, Button, Radio, toast} from '@heroui/react';
-import {ShoppingCart, CheckCircle2} from 'lucide-react';
+import {ShoppingCart, CheckCircle2, Share2, Download} from 'lucide-react';
 import {addToCart, checkProductInCart} from '@/app/[locale]/product/[slug]/actions';
 import {Price} from '@/components/commerce/price';
 import {ContinueShoppingButton} from '@/components/commerce/continue-shopping-button';
@@ -49,9 +49,10 @@ interface ProductInfoProps {
     };
     searchParams: { [key: string]: string | string[] | undefined };
     storeLink?: { name: string; href: string };
+    productImageUrl?: string | null;
 }
 
-export function ProductInfo({ product, searchParams, storeLink }: ProductInfoProps) {
+export function ProductInfo({ product, searchParams, storeLink, productImageUrl }: ProductInfoProps) {
     const pathname = usePathname();
     const router = useRouter();
     const currentSearchParams = useSearchParams();
@@ -171,6 +172,36 @@ export function ProductInfo({ product, searchParams, storeLink }: ProductInfoPro
     const stockStatus = selectedVariant?.stockLevel as ProductInfoStockStatus;
     console.log('Stock status for selected variant:', selectedVariant?.stockLevel);
     const statusColorClass = STOCK_STATUS_COLORS[stockStatus] || "text-muted-foreground";
+    const handleShare = async () => {
+        const shareData = {
+            title: product.name,
+            text: t(I18N.Commerce.productInfo.shareText),
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+                toast.success(t(I18N.Commerce.productInfo.toast.shareSuccess));
+            } catch (error) {
+                if (error instanceof Error && error.name !== 'AbortError') {
+                    console.error('Error al compartir:', error);
+                    toast.danger(t(I18N.Commerce.productInfo.toast.shareError));
+                }
+            }
+        }
+    };
+
+    const handleDownloadQR = () => {
+        const params = new URLSearchParams({ slug: product.name });
+        // usar slug del producto desde la URL actual
+        const slugFromUrl = window.location.pathname.split('/').pop() ?? '';
+        const url = `/api/product-qr?slug=${slugFromUrl}${productImageUrl ? `&image=${encodeURIComponent(productImageUrl)}` : ''}`;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `producto-${slugFromUrl}.png`;
+        a.click();
+    };
 
     return (
         <div className="space-y-6">
@@ -304,6 +335,26 @@ export function ProductInfo({ product, searchParams, storeLink }: ProductInfoPro
                         </Button>
                     </div>
                 )}
+
+                <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full text-foreground"
+                    onPress={handleShare}
+                >
+                    <Share2 className="mr-2 h-5 w-5" />
+                    {t(I18N.Commerce.productInfo.shareProduct)}
+                </Button>
+
+                <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full text-foreground"
+                    onPress={handleDownloadQR}
+                >
+                    <Download className="mr-2 h-5 w-5" />
+                    Descargar imagen con QR
+                </Button>
             </div>
 
             {/* SKU */}

@@ -47,7 +47,8 @@ export default async function OrdersContent(props: PageProps) {
             options: {
                 take: ITEMS_PER_PAGE,
                 skip,
-                sort: { createdAt: 'DESC' }
+                sort: { createdAt: 'DESC' },
+                filter: { type: { notEq: 'Seller' } }
             },
         },
         {

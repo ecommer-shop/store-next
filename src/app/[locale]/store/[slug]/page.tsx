@@ -11,13 +11,16 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
+import { isDisplayableImageUrl, normalizeVendureAssetUrl } from '@/lib/vendure/shared/asset-url';
 import {
     channelCodeMatchesStoreSlug,
-    getStoreFeaturedProductIds,
+    getStoreFeaturedProducts,
     getStoreMetadata,
     getStoreProducts,
     getStoreProfile,
 } from './actions';
+
+export const dynamic = 'force-dynamic';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
@@ -59,15 +62,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StorePage({ params }: Props) {
     const { slug, locale } = await params;
-    const [metadataResult, productsResult, profile, featuredProductIds] = await Promise.all([
+    const [metadataResult, allProducts, profile, featuredProducts] = await Promise.all([
         getStoreMetadata(slug, locale),
         getStoreProducts(slug, locale),
         getStoreProfile(slug, locale),
-        getStoreFeaturedProductIds(slug, locale),
+        getStoreFeaturedProducts(slug, locale),
     ]);
 
     const channel = metadataResult.data.activeChannel;
-    const allProducts = productsResult.data.search.items;
 
     if (!channelCodeMatchesStoreSlug(slug, channel?.code) || !profile?.storeName?.trim()) {
         notFound();
@@ -75,12 +77,10 @@ export default async function StorePage({ params }: Props) {
 
     const storeName = profile.storeName;
     const storeDescription = profile.storeDescription || 'Sin descripcion de la tienda.';
-    const rawBanner = profile.storeBannerUrl?.trim();
-    /** next/image solo acepta URL absolutas (`http(s)://`) o paths que empiecen con `/`. */
-    const storeBannerUrl = rawBanner && /^(https?:\/\/|\/)/i.test(rawBanner) ? rawBanner : null;
-    const featuredSet = new Set(featuredProductIds.slice(0, 3));
-    const featuredProducts = allProducts.filter(product =>
-        featuredSet.has(readFragment(ProductCardFragment, product).productId),
+    const storeBannerUrl = normalizeVendureAssetUrl(profile.storeBannerUrl);
+    const storeBannerDisplayable = isDisplayableImageUrl(storeBannerUrl);
+    const featuredSet = new Set(
+        featuredProducts.map(p => readFragment(ProductCardFragment, p).productId),
     );
     const remainingProducts = allProducts.filter(
         product => !featuredSet.has(readFragment(ProductCardFragment, product).productId),
@@ -138,7 +138,7 @@ export default async function StorePage({ params }: Props) {
 
             <div className="container mx-auto px-4 space-y-10">
                 <section className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    {storeBannerUrl ? (
+                    {storeBannerDisplayable && storeBannerUrl ? (
                         <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden ring-2 ring-border shadow-md flex-shrink-0">
                             <Image
                                 src={storeBannerUrl}
@@ -146,6 +146,7 @@ export default async function StorePage({ params }: Props) {
                                 fill
                                 className="object-cover"
                                 sizes="80px"
+                                unoptimized
                             />
                         </div>
                     ) : null}

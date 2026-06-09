@@ -24,6 +24,11 @@ interface ShippingAddressStepProps {
   t: (key: string) => string;
 }
 
+function hasGoogleCoordinates(address?: CustomerAddress | null) {
+  const latitude = Number(address?.customFields?.latitude);
+  const longitude = Number(address?.customFields?.longitude);
+  return Number.isFinite(latitude) && Number.isFinite(longitude);
+}
 
 export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
   const td = useTranslations('Account.addresses');
@@ -49,6 +54,8 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   const [saving, setSaving] = useState(false);
   const [useSameForBilling, setUseSameForBilling] = useState(true);
   const [address, seetAddress] = useState<CustomerAddress | null>(null);
+  const selectedAddress = addresses.find(a => a.id === selectedAddressId);
+  const selectedAddressHasCoordinates = hasGoogleCoordinates(selectedAddress);
   const { register, handleSubmit, formState: { errors }, reset, control } = useForm<AddressFormData>({
     defaultValues: address ? {
       fullName: address.fullName || '',
@@ -58,10 +65,11 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       city: address.city || '',
       province: address.province || '',
       postalCode: address.postalCode || '',
-      countryCode: address.country.code,
+      countryCode: address.country.id,
       phoneNumber: address.phoneNumber || '',
+      customFields: address.customFields || undefined,
     } : {
-      countryCode: countries[0]?.code || 'CO',
+      countryCode: countries[0]?.id || 'CO',
     }
   });
 
@@ -83,6 +91,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
         postalCode: selectedAddress.postalCode || '',
         countryCode: selectedAddress.country.code,
         phoneNumber: selectedAddress.phoneNumber || '',
+        customFields: selectedAddress.customFields || undefined,
       }, useSameForBilling);
 
       router.refresh();
@@ -97,7 +106,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   const onSaveNewAddress = async (data: AddressFormData) => {
     setSaving(true);
     try {
-      const country = countries.find(c => c.id === data.countryCode);
+      const country = countries.find(c => c.id === data.countryCode || c.code === data.countryCode);
       if (!country) throw new Error('Invalid country');
       // First create the address in Vendure
       const newAddress = await createCustomerAddress({
@@ -154,6 +163,14 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                         </p>
                         <p className="text-sm text-muted-foreground">{address.country.name}</p>
                         <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
+                        <p className={clsx(
+                          'text-xs font-medium',
+                          hasGoogleCoordinates(address) ? 'text-emerald-600' : 'text-destructive',
+                        )}>
+                          {hasGoogleCoordinates(address)
+                            ? 'Coordenadas de Google Maps guardadas'
+                            : 'Sin coordenadas de Google Maps'}
+                        </p>
                       </div>
                     </Card>
                   </Radio.Content>
@@ -179,11 +196,16 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
               </label>
             </Checkbox.Content>
           </Checkbox>
+          {selectedAddressId && !selectedAddressHasCoordinates && (
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              Esta direccion no tiene coordenadas. Agrega una nueva direccion seleccionandola desde Google Maps.
+            </div>
+          )}
 
           <div className="grid lg:grid-cols-3 gap-3 max-w-full">
             <Button
               onClick={handleSelectExistingAddress}
-              isDisabled={!selectedAddressId || loading}
+              isDisabled={!selectedAddressId || loading || !selectedAddressHasCoordinates}
               className="flex-1 rounded-md"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -206,6 +228,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                 <AddressForm
                   countries={countries}
                   isSubmitting={saving}
+                  requireGoogleCoordinates
                   onSubmit={onSaveNewAddress}
                   onCancel={() => setDialogOpen(false)}
                   labels={{
