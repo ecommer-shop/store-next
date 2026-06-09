@@ -26,8 +26,13 @@ export interface GoogleAddressSelection {
 interface GoogleAddressAutocompleteProps {
   label?: string;
   placeholder?: string;
+  apiKey?: string;
+  value?: string;
+  inputName?: string;
   countryCode?: string;
+  className?: string;
   onSelect: (selection: GoogleAddressSelection) => void;
+  onValueChange?: (value: string) => void;
 }
 
 interface GooglePlacePrediction {
@@ -119,8 +124,13 @@ function parsePlace(place: any): GoogleAddressSelection | null {
 export function GoogleAddressAutocomplete({
   label = 'Buscar direccion con Google Maps',
   placeholder = 'Escribe y selecciona una direccion',
+  apiKey: apiKeyProp,
+  value,
+  inputName = 'google-maps-address-search',
   countryCode = 'co',
+  className = 'col-span-2',
   onSelect,
+  onValueChange,
 }: GoogleAddressAutocompleteProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const placesServiceNodeRef = useRef<HTMLDivElement | null>(null);
@@ -129,13 +139,21 @@ export function GoogleAddressAutocomplete({
   const sessionTokenRef = useRef<any>(null);
   const predictionsRequestRef = useRef(0);
   const blurTimeoutRef = useRef<number | null>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [internalInputValue, setInternalInputValue] = useState('');
   const [predictions, setPredictions] = useState<GooglePlacePrediction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isMapsReady, setIsMapsReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = apiKeyProp || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const inputValue = value ?? internalInputValue;
+
+  const updateInputValue = useCallback((nextValue: string) => {
+    if (value === undefined) {
+      setInternalInputValue(nextValue);
+    }
+    onValueChange?.(nextValue);
+  }, [onValueChange, value]);
 
   useEffect(() => {
     if (!apiKey || !placesServiceNodeRef.current || autocompleteServiceRef.current) return;
@@ -204,7 +222,7 @@ export function GoogleAddressAutocomplete({
       window.clearTimeout(blurTimeoutRef.current);
     }
 
-    setInputValue(prediction.description);
+    updateInputValue(prediction.description);
     setIsOpen(false);
     setPredictions([]);
     setIsLoadingDetails(true);
@@ -233,7 +251,7 @@ export function GoogleAddressAutocomplete({
         }
 
         const selectedAddress = parsed.formattedAddress || prediction.description;
-        setInputValue(selectedAddress);
+        updateInputValue(selectedAddress);
         onSelect({
           ...parsed,
           formattedAddress: selectedAddress,
@@ -241,7 +259,7 @@ export function GoogleAddressAutocomplete({
         });
       },
     );
-  }, [onSelect]);
+  }, [onSelect, updateInputValue]);
 
   if (!apiKey) {
     return (
@@ -252,19 +270,19 @@ export function GoogleAddressAutocomplete({
   }
 
   return (
-    <div className="relative col-span-2">
+    <div className={`relative ${className}`}>
       <TextField>
         <Label>{label}</Label>
         <Input
           ref={inputRef}
-          name="google-maps-address-search"
+          name={inputName}
           placeholder={placeholder}
           value={inputValue}
           autoComplete="new-password"
           autoCorrect="off"
           spellCheck={false}
           onChange={(event) => {
-            setInputValue(event.target.value);
+            updateInputValue(event.target.value);
             setLoadError(null);
           }}
           onFocus={() => {

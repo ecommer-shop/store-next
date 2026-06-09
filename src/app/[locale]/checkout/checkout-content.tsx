@@ -19,6 +19,8 @@ import { setShippingMethod } from './actions';
 import { getAuthToken } from '@/lib/vendure/server/auth';
 import { Spinner } from '@heroui/react';
 
+const MESSENGER_DOMIS_SHIPPING_METHOD_CODE = 'messenger-domis-shipping';
+
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -64,9 +66,12 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
     }
 
     const addresses = addressesRes.data.activeCustomer?.addresses || [];
-    const shippingMethods = shippingMethodsRes.data.eligibleShippingMethods || [];
+    const shippingMethods = (shippingMethodsRes.data.eligibleShippingMethods || [])
+        .filter(method => method.code === MESSENGER_DOMIS_SHIPPING_METHOD_CODE)
+        .slice(0, 1);
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
+    const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
     return (
         <Suspense fallback={
@@ -84,6 +89,7 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
                     countries={countries}
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
+                    googleMapsApiKey={googleMapsApiKey}
                 >
                     <CheckoutFlow onSetShippingMethod={setShippingMethod} pb={pb} uri={uri}/>
                 </CheckoutProvider>

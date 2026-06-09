@@ -50,6 +50,7 @@ interface CheckoutContextType {
   countries: Country[];
   shippingMethods: ShippingMethod[];
   paymentMethods: PaymentMethod[];
+  googleMapsApiKey?: string;
   selectedPaymentMethodCode: string | null;
   setSelectedPaymentMethodCode: (code: string | null) => void;
 }
@@ -63,6 +64,7 @@ interface CheckoutProviderProps {
   countries: Country[];
   shippingMethods: ShippingMethod[];
   paymentMethods: PaymentMethod[];
+  googleMapsApiKey?: string;
 }
 
 export function CheckoutProvider({
@@ -72,6 +74,7 @@ export function CheckoutProvider({
   countries,
   shippingMethods,
   paymentMethods,
+  googleMapsApiKey,
 }: CheckoutProviderProps) {
   const [selectedPaymentMethodCode, setSelectedPaymentMethodCode] = useState<string | null>(
     paymentMethods.length === 1 ? paymentMethods[0].code : null
@@ -86,6 +89,7 @@ export function CheckoutProvider({
           countries,
           shippingMethods,
           paymentMethods,
+          googleMapsApiKey,
           selectedPaymentMethodCode,
           setSelectedPaymentMethodCode,
         }}
