@@ -18,10 +18,11 @@ interface ProductGridProps {
     currentPage: number;
     take: number;
     searchParams?: { [key: string]: string | string[] | undefined };
+    collectionSlug?: string;
 }
 
 // C: Vendure I: Infinite scroll with useInfiniteQuery + react-infinite-scroller
-export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams }: ProductGridProps) {
+export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams, collectionSlug }: ProductGridProps) {
     // Unwrap server data (initial page from SSR)
     const initialResult = use(productDataPromise);
     const initialSearch = initialResult.data.search;
@@ -47,6 +48,7 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
             token: initialResult.token,
         },
         searchParams: currentSearchParamsObj,
+        collectionSlug,
     });
 
     const allItems = data?.pages.flatMap(p => p.items) ?? [];
