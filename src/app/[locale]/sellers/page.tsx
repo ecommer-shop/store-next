@@ -310,8 +310,8 @@ export default function VendedoresPage() {
 
           <div className="max-w-2xl mx-auto space-y-4">
             <FaqItem
-              question="¿Realmente es gratis al principio?"
-              answer="Sí. Los primeros 3 meses no pagas mensualidad. El único costo son las comisiones de la pasarela de pagos (Wompi): 6.9% por transacción, que cubre tarjetas, PSE y corresponsales. Después, la suscripción es de solo $29.900/mes."
+              question="¿Realmente es gratis usar la plataforma?"
+              answer="Sí. El único costo son las comisiones de la pasarela de pagos (Wompi): 7.9% por transacción, que cubre tarjetas, PSE y corresponsales. Si deseas funcionalidades adicionales, puedes revisar nuestros paquetes."
             />
             <FaqItem
               question="¿Necesito conocimientos técnicos para usar la plataforma?"
