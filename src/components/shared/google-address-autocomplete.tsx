@@ -26,8 +26,21 @@ export interface GoogleAddressSelection {
 interface GoogleAddressAutocompleteProps {
   label?: string;
   placeholder?: string;
+  apiKey?: string;
+  value?: string;
+  inputName?: string;
   countryCode?: string;
+  className?: string;
   onSelect: (selection: GoogleAddressSelection) => void;
+  onValueChange?: (value: string) => void;
+}
+
+interface GoogleLocationMapPreviewProps {
+  apiKey?: string;
+  latitude: number;
+  longitude: number;
+  address?: string | null;
+  className?: string;
 }
 
 interface GooglePlacePrediction {
@@ -116,11 +129,108 @@ function parsePlace(place: any): GoogleAddressSelection | null {
   };
 }
 
+export function GoogleLocationMapPreview({
+  apiKey: apiKeyProp,
+  latitude,
+  longitude,
+  address,
+  className = '',
+}: GoogleLocationMapPreviewProps) {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const apiKey = apiKeyProp || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const hasCoordinates =
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    !(latitude === 0 && longitude === 0);
+
+  useEffect(() => {
+    if (!apiKey || !hasCoordinates || !mapContainerRef.current) {
+      return;
+    }
+
+    let active = true;
+    const position = { lat: latitude, lng: longitude };
+
+    loadGoogleMapsPlaces(apiKey)
+      .then(() => {
+        if (!active || !mapContainerRef.current || !window.google?.maps) {
+          return;
+        }
+
+        const maps = window.google.maps;
+
+        if (!mapRef.current) {
+          mapRef.current = new maps.Map(mapContainerRef.current, {
+            center: position,
+            zoom: 17,
+            clickableIcons: false,
+            fullscreenControl: false,
+            mapTypeControl: false,
+            streetViewControl: false,
+            gestureHandling: 'cooperative',
+          });
+        } else {
+          mapRef.current.setCenter(position);
+          mapRef.current.setZoom(17);
+        }
+
+        markerRef.current?.setMap?.(null);
+        markerRef.current = new maps.Marker({
+          map: mapRef.current,
+          position,
+          title: address || 'Direccion seleccionada',
+        });
+        setLoadError(null);
+      })
+      .catch((error) => {
+        setLoadError(error instanceof Error ? error.message : 'No se pudo cargar el mapa');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [address, apiKey, hasCoordinates, latitude, longitude]);
+
+  if (!hasCoordinates) {
+    return null;
+  }
+
+  return (
+    <div className={`mt-3 ${className}`}>
+      <div className="relative h-44 w-full overflow-hidden rounded-md border border-emerald-200 bg-white">
+        <div ref={mapContainerRef} className="h-full w-full" aria-label="Mapa de la direccion seleccionada" />
+        {!apiKey && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/90 px-4 text-center text-sm text-muted-foreground">
+            Configura NEXT_PUBLIC_GOOGLE_MAPS_API_KEY para ver el mapa.
+          </div>
+        )}
+      </div>
+      {loadError && <p className="mt-2 text-xs text-destructive">{loadError}</p>}
+      <a
+        href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 inline-flex text-xs font-medium text-emerald-700 underline underline-offset-2 hover:text-emerald-900"
+      >
+        Abrir en Google Maps
+      </a>
+    </div>
+  );
+}
+
 export function GoogleAddressAutocomplete({
   label = 'Buscar direccion con Google Maps',
   placeholder = 'Escribe y selecciona una direccion',
+  apiKey: apiKeyProp,
+  value,
+  inputName = 'google-maps-address-search',
   countryCode = 'co',
+  className = 'col-span-2',
   onSelect,
+  onValueChange,
 }: GoogleAddressAutocompleteProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const placesServiceNodeRef = useRef<HTMLDivElement | null>(null);
@@ -129,13 +239,21 @@ export function GoogleAddressAutocomplete({
   const sessionTokenRef = useRef<any>(null);
   const predictionsRequestRef = useRef(0);
   const blurTimeoutRef = useRef<number | null>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [internalInputValue, setInternalInputValue] = useState('');
   const [predictions, setPredictions] = useState<GooglePlacePrediction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isMapsReady, setIsMapsReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = apiKeyProp || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const inputValue = value ?? internalInputValue;
+
+  const updateInputValue = useCallback((nextValue: string) => {
+    if (value === undefined) {
+      setInternalInputValue(nextValue);
+    }
+    onValueChange?.(nextValue);
+  }, [onValueChange, value]);
 
   useEffect(() => {
     if (!apiKey || !placesServiceNodeRef.current || autocompleteServiceRef.current) return;
@@ -204,7 +322,7 @@ export function GoogleAddressAutocomplete({
       window.clearTimeout(blurTimeoutRef.current);
     }
 
-    setInputValue(prediction.description);
+    updateInputValue(prediction.description);
     setIsOpen(false);
     setPredictions([]);
     setIsLoadingDetails(true);
@@ -233,7 +351,7 @@ export function GoogleAddressAutocomplete({
         }
 
         const selectedAddress = parsed.formattedAddress || prediction.description;
-        setInputValue(selectedAddress);
+        updateInputValue(selectedAddress);
         onSelect({
           ...parsed,
           formattedAddress: selectedAddress,
@@ -241,7 +359,7 @@ export function GoogleAddressAutocomplete({
         });
       },
     );
-  }, [onSelect]);
+  }, [onSelect, updateInputValue]);
 
   if (!apiKey) {
     return (
@@ -252,19 +370,19 @@ export function GoogleAddressAutocomplete({
   }
 
   return (
-    <div className="relative col-span-2">
+    <div className={`relative ${className}`}>
       <TextField>
         <Label>{label}</Label>
         <Input
           ref={inputRef}
-          name="google-maps-address-search"
+          name={inputName}
           placeholder={placeholder}
           value={inputValue}
           autoComplete="new-password"
           autoCorrect="off"
           spellCheck={false}
           onChange={(event) => {
-            setInputValue(event.target.value);
+            updateInputValue(event.target.value);
             setLoadError(null);
           }}
           onFocus={() => {

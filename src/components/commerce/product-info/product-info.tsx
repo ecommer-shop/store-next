@@ -10,6 +10,8 @@ import {ContinueShoppingButton} from '@/components/commerce/continue-shopping-bu
 import clsx from "clsx";
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
+import { GetProductVariantStock } from './actions';
+import { ProductInfoStockStatus, STOCK_STATUS_COLORS } from './constants';
 
 interface ProductInfoProps {
     product: {
@@ -119,7 +121,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             // Update URL with option code
             const params = new URLSearchParams(currentSearchParams);
             params.set(group.code, option.code);
-            router.push(`${pathname}?${params.toString()}`, {scroll: false});
+            router.push(`${pathname}?${params.toString()}`, { scroll: false });
         }
     };
 
@@ -137,14 +139,14 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 setIsAdded(true);
                 setShowGoToCart(true);
                 toast.success(t(I18N.Commerce.productInfo.toast.addedTitle), {
-                    actionProps:{
+                    actionProps: {
                         children: "Ir al carrito",
                         className: "text-foreground bg-success",
                         onPress: () => {
                             router.push('/cart')
                             toast.clear()
                         },
-                        
+
                     },
                     description: t(I18N.Commerce.productInfo.toast.addedDescription, { product: product.name }),
                 });
@@ -164,10 +166,12 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             setIsAdding(false);
         }
     };
-
     const isInStock = selectedVariant && selectedVariant.stockLevel !== 'OUT_OF_STOCK';
     const canAddToCart = selectedVariant && isInStock;
 
+    const stockStatus = selectedVariant?.stockLevel as ProductInfoStockStatus;
+    console.log('Stock status for selected variant:', selectedVariant?.stockLevel);
+    const statusColorClass = STOCK_STATUS_COLORS[stockStatus] || "text-muted-foreground";
     const handleShare = async () => {
         const shareData = {
             title: product.name,
@@ -206,15 +210,15 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 <h1 className="text-3xl font-bold">{product.name}</h1>
                 {selectedVariant && (
                     <p className="text-2xl font-bold mt-2">
-                        <Price value={selectedVariant.priceWithTax}/>
+                        <Price value={selectedVariant.priceWithTax} />
                     </p>
                 )}
             </div>
 
             {/* Product Description */}
             <div className="prose prose-sm max-w-none">
-                <div dangerouslySetInnerHTML={{__html: product.description}}/>
-                
+                <div dangerouslySetInnerHTML={{ __html: product.description }} />
+                <p className="text-lg font-bold">${selectedVariant?.priceWithTax.toFixed(2)}</p>
             </div>
 
             {/* Option Groups */}
@@ -228,13 +232,13 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                         "--border-width": "2px",
                         "--border-width-field": "2px",
                         "--focus": "#6BB8FF",
-                }}>
+                    }}>
                     {product.optionGroups.map((group) => (
                         <section key={group.id} className="flex w-full max-w-lg flex-col gap-4">
                             <RadioGroup
                                 value={selectedOptions[group.id] || ''}
                                 onChange={(value) => handleOptionChange(group.id, value)}
-                            >   
+                            >
                                 <div className="flex flex-wrap items-center justify-between gap-4">
                                     <Label className="text-base font-semibold">
                                         {group.name}
@@ -256,7 +260,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                                                 <Radio.Content className="flex flex-row items-start justify-start gap-4">
                                                     <div className="flex flex-col gap-1">
                                                         <Label
-                                                        htmlFor={option.id}
+                                                            htmlFor={option.id}
                                                         >
                                                             {option.name}
                                                         </Label>
@@ -273,13 +277,11 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             )}
 
             {/* Stock Status */}
-            {selectedVariant && (
+            {selectedVariant && stockStatus && (
                 <div className="text-sm">
-                    {isInStock ? (
-                        <span className="text-green-600 font-semibold">{t(I18N.Commerce.productInfo.inStock)}</span>
-                    ) : (
-                        <span className="text-destructive font-semibold">{t(I18N.Commerce.productInfo.outOfStock)}</span>
-                    )}
+                    <span className={`${statusColorClass} font-semibold`}>
+                        {t(I18N.Commerce.productInfo[stockStatus])}
+                    </span>
                 </div>
             )}
 
@@ -309,7 +311,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     ) : !isInStock ? (
                         <>
                             <ShoppingCart className="mr-2 h-5 w-5" />
-                            {t(I18N.Commerce.productInfo.outOfStock)}
+                            {t(I18N.Commerce.productInfo.OUT_OF_STOCK)}
                         </>
                     ) : (
                         <>

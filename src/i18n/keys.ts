@@ -29,6 +29,7 @@ export const I18N = {
     profile: 'profile',
     orders: 'orders',
     addresses: 'addresses',
+    billing: 'billing',
     logout: 'logout',
     login: 'login',
     signup: 'signup',
@@ -174,6 +175,35 @@ export const I18N = {
         deleting: 'deleteAccount.deleting',
         successTitle: 'deleteAccount.successTitle',
         errorTitle: 'deleteAccount.errorTitle'
+      }
+    },
+    billing: {
+      loading: {
+        title: 'billing.loading.title',
+        loading: 'billing.loading.loading',
+        description: 'billing.loading.description'
+      },
+      content: {
+        title: 'billing.content.title',
+        currentPlan: 'billing.content.currentPlan',
+        status: 'billing.content.status',
+        paymentMethod: 'billing.content.paymentMethod',
+        nextBilling: 'billing.content.nextBilling',
+        endsAt: 'billing.content.endsAt',
+        autoRenew: 'billing.content.autoRenew',
+        productsUsed: 'billing.content.productsUsed',
+        variationsUsed: 'billing.content.variationsUsed',
+        changePlan: 'billing.content.changePlan',
+        cancelSubscription: 'billing.content.cancelSubscription',
+        stopAutoRenew: 'billing.content.stopAutoRenew',
+        reactivate: 'billing.content.reactivate'
+      },
+      statusLabels: {
+        ACTIVE: 'billing.statusLabels.ACTIVE',
+        PENDING_PAYMENT: 'billing.statusLabels.PENDING_PAYMENT',
+        GRACE_PERIOD: 'billing.statusLabels.GRACE_PERIOD',
+        SUSPENDED: 'billing.statusLabels.SUSPENDED',
+        CANCELLED: 'billing.statusLabels.CANCELLED'
       }
     }
   },
@@ -469,8 +499,9 @@ export const I18N = {
       addToCart: 'productInfo.addToCart',
       addedToCart: 'productInfo.addedToCart',
       selectOptions: 'productInfo.selectOptions',
-      outOfStock: 'productInfo.outOfStock',
-      inStock: 'productInfo.inStock',
+      OUT_OF_STOCK: 'productInfo.OUT_OF_STOCK',
+      IN_STOCK: 'productInfo.IN_STOCK',
+      LOW_STOCK: 'productInfo.LOW_STOCK',
       storeLabel: 'productInfo.storeLabel',
       sku: 'productInfo.sku',
       quantity: 'productInfo.quantity',
@@ -588,6 +619,22 @@ export const I18N = {
     privacy: {
       title: 'title'
     }
+  },
+
+  Planes: {
+    free: 'Planes.free',
+    tienda: 'Planes.tienda',
+    omnichannel: 'Planes.omnichannel',
+    cta: 'Planes.cta',
+    products: 'Planes.products',
+    variations: 'Planes.variations',
+    aiAccess: 'Planes.aiAccess',
+    electronicBilling: 'Planes.electronicBilling',
+    currentPlan: 'Planes.currentPlan',
+    selectPlan: 'Planes.selectPlan',
+    subscribe: 'Planes.subscribe',
+    cancel: 'Planes.cancel',
+    perMonth: 'Planes.perMonth'
   },
 
   Vendedores: {

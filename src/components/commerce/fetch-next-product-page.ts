@@ -9,9 +9,10 @@ interface FetchNextPageArgs {
   take: number;
   token?: string;
   searchParams?: { [key: string]: string | string[] | undefined };
+  collectionSlug?: string;
 }
 
-export async function fetchNextProductPage({ page, take, token, searchParams = {} }: FetchNextPageArgs): Promise<{
+export async function fetchNextProductPage({ page, take, token, searchParams = {}, collectionSlug }: FetchNextPageArgs): Promise<{
   items: ResultOf<typeof SearchProductsQuery>["search"]["items"];
   totalItems: number;
   token?: string;
@@ -24,7 +25,8 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
     searchParams: {
       ...searchParams,
       page: String(page),
-    }
+    },
+    collectionSlug,
   });
 
   // Realiza la consulta real

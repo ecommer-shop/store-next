@@ -19,6 +19,7 @@
     "profile": "My Profile",
     "orders": "My Orders",
     "addresses": "My Addresses",
+    "billing": "Billing",
     "logout": "Sign Out",
     "login": "Sign In",
     "signup": "Sign Up",
@@ -159,6 +160,52 @@
         "loading": "Loading profile...",
         "description": "Manage your account information."
       },
+      "content": {
+        "title": "Your profile",
+        "description": "Manage your account information."
+      },
+      "deleteAccount": {
+        "title": "Delete account",
+        "description": "Delete your Ecommer account, this cannot be undone.",
+        "warningTitle": "This action is permanent",
+        "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
+        "action": "Delete my account",
+        "confirm": "Yes, delete account",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "successTitle": "Account deleted",
+        "errorTitle": "Could not delete account"
+      }
+    },
+    "billing": {
+      "loading": {
+        "title": "Billing",
+        "loading": "Loading billing info…",
+        "description": "Manage your plan and payment methods."
+      },
+      "content": {
+        "title": "Billing / Plan",
+        "currentPlan": "Current plan",
+        "status": "Status",
+        "paymentMethod": "Payment method",
+        "nextBilling": "Next billing",
+        "endsAt": "Ends at",
+        "autoRenew": "Auto-renew",
+        "productsUsed": "{current}/{limit} products used",
+        "variationsUsed": "{current}/{limit} variations used",
+        "changePlan": "Change plan",
+        "cancelSubscription": "Cancel subscription",
+        "stopAutoRenew": "Stop auto-renew",
+        "reactivate": "Reactivate"
+      },
+      "statusLabels": {
+        "ACTIVE": "Active",
+        "PENDING_PAYMENT": "Pending payment",
+        "GRACE_PERIOD": "Grace period",
+        "SUSPENDED": "Suspended",
+        "CANCELLED": "Cancelled"
+      }
+    },
       "content": {
         "title": "Your profile",
         "description": "Manage your account information."
@@ -573,6 +620,22 @@
       "title": "Privacy Policy"
     }
   },
+  "Planes": {
+    "free": "Free",
+    "tienda": "Tienda",
+    "omnichannel": "Omnichannel",
+    "cta": "Perfect to get started",
+    "products": "{count} products",
+    "variations": "{count} variations",
+    "aiAccess": "AI Access",
+    "electronicBilling": "Electronic invoicing",
+    "currentPlan": "Current plan",
+    "selectPlan": "Select plan",
+    "subscribe": "Subscribe",
+    "cancel": "Cancel",
+    "perMonth": "/month"
+  },
+
   "Vendedores": {
     "hero": {
       "badge": "The new era of B2B",

@@ -4,6 +4,7 @@ import { UseVendedoresText } from '@/components/sellers/UseVendedoresText';
 import { LoginCardPreview } from '@/components/sellers/LoginCardPreview';
 import { AgendarDemoButton } from '@/components/sellers/AgendarDemoButton';
 import { Coffee, Shirt, Gem } from 'lucide-react';
+import BillingCard from '@/components/sellers/billing/BillingCard';
 
 const ADMIN_URL = process.env.NEXT_PUBLIC_VENDEDORES_ADMIN_URL || '#';
 
@@ -295,7 +296,9 @@ export default function VendedoresPage() {
           </div>
         </div>
       </section>
-
+      <section className="py-16">
+        <BillingCard />  
+      </section>
       {/* FAQ */}
       <section className="bg-gray-100 py-16" style={{ backgroundColor: '#F1F1F1' }}>
         <div className="container mx-auto px-4">

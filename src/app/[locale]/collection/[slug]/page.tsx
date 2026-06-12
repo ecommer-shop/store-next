@@ -11,7 +11,6 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
-import { getTranslations } from 'next-intl/server';
 import { getCollectionMetadata, getCollectionProducts } from './actions';
 
 type Props = {
@@ -61,33 +60,39 @@ export async function generateMetadata({
 }
 
 export default async function CollectionPage({params, searchParams}: Props) {
+    return (
+        <div className="container mx-auto px-4 py-8 mt-16">
+            <Suspense fallback={<p></p>}>
+                <CollectionContent params={params} searchParams={searchParams} />
+            </Suspense>
+        </div>
+    );
+}
+
+async function CollectionContent({params, searchParams}: Props) {
     const { slug, locale } = await params;
     const searchParamsResolved = await searchParams;
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved, locale);
-    const t = await getTranslations();
-    return (
-        <Suspense fallback={
-            <p></p>
-        }>
-            <div className="container mx-auto px-4 py-8 mt-16">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    {/* Filters Sidebar */}
-                    <aside className="lg:col-span-1">
-                        <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-                            <FacetFilters productDataPromise={productDataPromise} />
-                        </Suspense>
-                    </aside>
+    const collectionMeta = await getCollectionMetadata(slug, locale);
+    const collectionName = collectionMeta.data.collection?.name || slug;
 
-                    {/* Product Grid */}
-                    <div className="lg:col-span-3">
-                        <Suspense fallback={<ProductGridSkeleton />}>
-                            <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
-                        </Suspense>
-                    </div>
-                </div>
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Filters Sidebar */}
+            <aside className="lg:col-span-1">
+                <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                    <FacetFilters productDataPromise={productDataPromise} activeCollectionSlug={slug} activeCollectionName={collectionName} />
+                </Suspense>
+            </aside>
+
+            {/* Product Grid */}
+            <div className="lg:col-span-3">
+                <Suspense fallback={<ProductGridSkeleton />}>
+                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} searchParams={searchParamsResolved} collectionSlug={slug} />
+                </Suspense>
             </div>
-        </Suspense>
+        </div>
     );
 }

@@ -22,7 +22,7 @@ import {
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
-import { ProductInfo } from '@/components/commerce/product-info';
+import { ProductInfo } from '@/components/commerce/product-info/product-info';
 import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
