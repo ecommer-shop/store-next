@@ -8,6 +8,7 @@ import { CountrySelect } from '@/components/shared/country-select';
 import {
   GoogleAddressAutocomplete,
   GoogleAddressSelection,
+  GoogleLocationMapPreview,
 } from '@/components/shared/google-address-autocomplete';
 import { useCallback, useState } from 'react';
 
@@ -183,18 +184,6 @@ export function AddressForm({
         <input type="hidden" {...register('customFields.longitude')} />
         <input type="hidden" {...register('customFields.neighborhood')} />
         <input type="hidden" {...register('customFields.googlePlaceId')} />
-        {hasValidCoordinates && latitude !== null && longitude !== null && (
-          <div className="col-span-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
-            <p className="font-medium">Direccion seleccionada desde Google Maps</p>
-            {selectedStreetLine && (
-              <p className="mt-1 text-muted-foreground">{selectedStreetLine}</p>
-            )}
-            <p className="mt-1 text-xs text-emerald-700">
-              {geoFields?.neighborhood && <span>Barrio: {geoFields.neighborhood}. </span>}
-              Coordenadas guardadas: {latitude.toFixed(6)}, {longitude.toFixed(6)}
-            </p>
-          </div>
-        )}
         {geoError && (
           <div className="col-span-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {geoError}
@@ -249,6 +238,25 @@ export function AddressForm({
               <FieldError>{errors.streetLine1?.message}</FieldError>
             </TextField>
           </>
+        )}
+
+        {hasValidCoordinates && latitude !== null && longitude !== null && (
+          <div className="col-span-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-900">
+            <p className="font-medium">Direccion seleccionada desde Google Maps</p>
+            {selectedStreetLine && (
+              <p className="mt-1 text-muted-foreground">{selectedStreetLine}</p>
+            )}
+            <p className="mt-1 text-xs text-emerald-700">
+              {geoFields?.neighborhood && <span>Barrio: {geoFields.neighborhood}. </span>}
+              Coordenadas guardadas: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+            </p>
+            <GoogleLocationMapPreview
+              apiKey={googleMapsApiKey}
+              latitude={latitude}
+              longitude={longitude}
+              address={selectedStreetLine}
+            />
+          </div>
         )}
 
         <TextField className="col-span-2">
