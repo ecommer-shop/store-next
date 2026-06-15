@@ -3,7 +3,20 @@
 import { Users } from 'lucide-react';
 import { UseAboutText } from './UseAboutText';
 
-const teamMembers = ['ceo', 'accountant', 'serverLead', 'eiaLead', 'lawyer'] as const;
+const groups = [
+  {
+    key: 'leadership',
+    members: ['ceo', 'accountant', 'serverLead', 'eiaLead', 'lawyer'],
+  },
+  {
+    key: 'server',
+    members: ['mary', 'brayan', 'juanFelipe', 'william', 'darwin'],
+  },
+  {
+    key: 'eia',
+    members: ['javier', 'kevin', 'ivan'],
+  },
+] as const;
 
 export function TeamSection() {
   return (
@@ -16,15 +29,22 @@ export function TeamSection() {
           </h2>
         </div>
 
-        <div className="max-w-xl mx-auto divide-y border rounded-lg bg-background">
-          {teamMembers.map((member, i) => (
-            <div key={member} className="flex items-center gap-4 px-6 py-4">
-              <span className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span className="font-medium">
-                <UseAboutText path={['team', 'members', member]} />
-              </span>
+        <div className="max-w-xl mx-auto space-y-8">
+          {groups.map((group) => (
+            <div key={group.key}>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                <UseAboutText path={['team', group.key, 'label']} />
+              </h3>
+              <div className="divide-y border rounded-lg bg-background">
+                {group.members.map((member) => (
+                  <div key={member} className="flex items-center gap-4 px-6 py-4">
+                    <div className="size-2 rounded-full bg-primary shrink-0" />
+                    <span className="font-medium">
+                      <UseAboutText path={['team', group.key, member]} />
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

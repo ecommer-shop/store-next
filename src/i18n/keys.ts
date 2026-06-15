@@ -608,12 +608,27 @@ export const I18N = {
     },
     team: {
       title: 'team.title',
-      members: {
-        ceo: 'team.members.ceo',
-        accountant: 'team.members.accountant',
-        serverLead: 'team.members.serverLead',
-        eiaLead: 'team.members.eiaLead',
-        lawyer: 'team.members.lawyer',
+      leadership: {
+        label: 'team.leadership.label',
+        ceo: 'team.leadership.ceo',
+        accountant: 'team.leadership.accountant',
+        serverLead: 'team.leadership.serverLead',
+        eiaLead: 'team.leadership.eiaLead',
+        lawyer: 'team.leadership.lawyer',
+      },
+      server: {
+        label: 'team.server.label',
+        mary: 'team.server.mary',
+        brayan: 'team.server.brayan',
+        juanFelipe: 'team.server.juanFelipe',
+        william: 'team.server.william',
+        darwin: 'team.server.darwin',
+      },
+      eia: {
+        label: 'team.eia.label',
+        javier: 'team.eia.javier',
+        kevin: 'team.eia.kevin',
+        ivan: 'team.eia.ivan',
       },
     },
     location: {
