@@ -585,7 +585,63 @@
   },
   "About": {
     "title": "Quiénes somos",
-    "description": "Información del proveedor conforme a la Ley 1480 de 2011, garantizando una experiencia de compra clara y transparente.",
+    "description": "Conectamos a los emprendedores y comerciantes de la región con sus clientes. Sin complicaciones. Sin barreras tecnológicas. Con orgullo caucano.",
+    "history": "Ecommer nació de una observación concreta: mientras las grandes empresas dominan el comercio digital, la mayoría de los micro-empresarios colombianos siguen al margen. Herramientas fragmentadas, costos altos, barreras técnicas y un mercado donde el 96% de los negocios en Cauca son microempresas, con más del 56% operando en la informalidad. No había una solución construida para ellos. Decidimos construirla.",
+    "mission": "Empoderar a los microempresarios colombianos con tecnología de e-commerce accesible, integrada y escalable — para que vendan online con la misma fuerza que las grandes marcas.",
+    "vision": "Ser la plataforma de referencia para el comercio digital de las MiPyMEs en LATAM — habilitando a miles de negocios locales para digitalizar sus ventas, escalar sus operaciones y conectar con clientes en cualquier canal. Empezamos en Popayán. Escalamos por métricas, no por mapas.",
+    "audience": {
+      "title": "¿A quién le servimos?",
+      "description": "Si tienes un negocio en Popayán o en cualquier municipio del Cauca, Ecommer es tu plataforma. Crea tu tienda en minutos, sube tus productos y llega a más clientes sin necesitar conocimientos de tecnología.",
+      "securePayments": "Pagos seguros procesados por Wompi (Bancolombia)",
+      "localDelivery": "Entregas locales con MESSENGER",
+      "alwaysOpen": "Tu tienda disponible las 24 horas",
+      "cta": "Quiero vender en Ecommer"
+    },
+    "team": {
+      "title": "El equipo detrás de Ecommer",
+      "members": {
+        "ceo": "Ronnovic Rigel Toth — CEO",
+        "accountant": "Luz Carime Ruiz Gómez — Contadora",
+        "serverLead": "William Fernando Sevilla Palechor — Líder de Server",
+        "eiaLead": "Juan Carlos Martínez Fernández — Líder de EIA",
+        "lawyer": "Daniel Mateo Campo Nuñez — Abogado"
+      }
+    },
+    "location": {
+      "title": "¿Dónde estamos?",
+      "text": "Ecommer opera desde Popayán, Cauca, Colombia."
+    },
+    "differentiators": {
+      "title": "Por qué somos diferentes",
+      "description": "Ecommer no es una herramienta más de e-commerce. Es una empresa de integración y orquestación: combinamos los mejores proveedores del mercado (Vendure, Wompi, Clerk, Azure, DIAN) en una experiencia unificada, adaptada al contexto colombiano.",
+      "simetria": "SimetrIA — agente de IA propio que vende desde WhatsApp, Instagram y Facebook, sin sacar al comprador del chat.",
+      "messenger": "Messenger como aliado preferente — acceso a 15.000+ entregas mensuales en Popayán desde el día uno.",
+      "compliance": "Cumplimiento nativo — PCI DSS, DIAN (Resolución 0227/2025), Ley 1581, Estatuto del Consumidor — integrado por defecto, no como add-on.",
+      "incentives": "Modelo que alinea incentivos — la plataforma solo gana cuando el vendedor vende."
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "q1": {
+        "q": "¿Realmente es gratis por 3 meses?",
+        "a": "Sí. Durante los primeros 3 meses no pagas mensualidad por el uso de la plataforma. El único costo que asumes son las comisiones por transacción, las cuales son cobradas directamente por nuestra pasarela de pagos Wompi."
+      },
+      "q2": {
+        "q": "¿Qué necesito para registrarme como vendedor?",
+        "a": "Solo necesitas tu correo electrónico. Si quieres operar como empresa, puedes agregar tus datos fiscales más adelante."
+      },
+      "q3": {
+        "q": "¿Es seguro? Mi cliente tiene miedo de poner la tarjeta.",
+        "a": "Totalmente. Los pagos en Ecommer se procesan a través de Wompi, una pasarela certificada con PCI-DSS, el estándar internacional de seguridad más exigente. La información de tus clientes viaja encriptada y nunca queda expuesta."
+      },
+      "q4": {
+        "q": "¿Necesito saber programar para usar Ecommer?",
+        "a": "Para nada. Si sabes usar Facebook o WhatsApp, sabes usar Ecommer. Subir un producto es tan fácil como subir una foto a Instagram."
+      },
+      "q5": {
+        "q": "¿Qué es eso del Certificado Digital y por qué cuesta $199.900?",
+        "a": "Es tu firma digital ante la DIAN — el mecanismo legal que valida tus facturas electrónicas en Colombia. Sin él, tus facturas no tienen validez tributaria. Puedes adquirirlo anualmente por $199.900 o en cuotas mensuales con permanencia."
+      }
+    },
     "legal": {
       "label": "Información legal",
       "rs": "Razón social:",
@@ -605,6 +661,11 @@
       "warranty": "Garantía",
       "withdrawal": "Retracto",
       "paymentReversal": "Reversión del pago"
+    },
+    "cta": {
+      "title": "¿Listo para ser parte del comercio digital del Cauca?",
+      "register": "Registra tu tienda y empieza a vender",
+      "discover": "Descubre productos de tu región"
     }
   },
   "Legal": {
