@@ -1,5 +1,6 @@
 'use client';
 import {useState, useMemo, useEffect} from 'react';
+import { trackViewItem, trackAddToCart } from '@/lib/analytics/events';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import NextLink from 'next/link';
 import {RadioGroup, Label, Button, Radio, toast} from '@heroui/react';
@@ -69,6 +70,13 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
         });
     }, [product.id]);
 
+    useEffect(() => {
+        const variant = selectedVariant ?? product.variants[0];
+        if (variant) {
+            trackViewItem({ item_id: variant.id, item_name: product.name, price: variant.priceWithTax });
+        }
+    }, [product.id, selectedVariant]);
+
     // Initialize selected options from URL
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
         const initialOptions: Record<string, string> = {};
@@ -136,6 +144,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             const result = await addToCart(selectedVariant.id, 1);
 
             if (result.success) {
+                trackAddToCart({ item_id: selectedVariant.id, item_name: product.name, price: selectedVariant.priceWithTax });
                 setIsAdded(true);
                 setShowGoToCart(true);
                 toast.success(t(I18N.Commerce.productInfo.toast.addedTitle), {
