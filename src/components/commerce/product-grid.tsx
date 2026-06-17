@@ -1,5 +1,6 @@
 'use client'
 import { use, useEffect, useState } from 'react';
+import { trackSearchResults } from '@/lib/analytics/events';
 import { useSearchParams } from 'next/navigation';
 import { ProductCard } from './product-card';
 import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
@@ -19,10 +20,11 @@ interface ProductGridProps {
     take: number;
     searchParams?: { [key: string]: string | string[] | undefined };
     collectionSlug?: string;
+    trackAsSearch?: boolean;
 }
 
 // C: Vendure I: Infinite scroll with useInfiniteQuery + react-infinite-scroller
-export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams, collectionSlug }: ProductGridProps) {
+export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams, collectionSlug, trackAsSearch }: ProductGridProps) {
     // Unwrap server data (initial page from SSR)
     const initialResult = use(productDataPromise);
     const initialSearch = initialResult.data.search;
@@ -53,6 +55,13 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
 
     const allItems = data?.pages.flatMap(p => p.items) ?? [];
     const totalItems = data?.pages[0]?.totalItems ?? 0;
+
+    useEffect(() => {
+        if (!trackAsSearch) return;
+        const term = (clientSearchParams.get('q') ?? '').trim();
+        if (!term) return;
+        trackSearchResults({ search_term: term, results_count: totalItems });
+    }, [trackAsSearch, clientSearchParams, totalItems]);
 
     if (!allItems.length) {
         return <ProductGridNoProducts />;
