@@ -75,7 +75,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
         if (variant) {
             trackViewItem({ item_id: variant.id, item_name: product.name, price: variant.priceWithTax });
         }
-    }, [product.id, selectedVariant]);
+    }, [product.id]);
 
     // Initialize selected options from URL
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
