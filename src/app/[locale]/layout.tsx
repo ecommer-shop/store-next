@@ -2,6 +2,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import type { Metadata, Viewport } from "next";
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -97,6 +98,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   }
   const localClerk = locale === 'es' ? esMX : enUS;
   const messages = await getMessages();
+  const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   return (
     <ClerkProvider
       dynamic
@@ -107,6 +109,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
+          {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}
           <Providers>
             <NextIntlClientProvider
                 locale={locale}
