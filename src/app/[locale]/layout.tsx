@@ -1,8 +1,7 @@
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
 import type { Metadata, Viewport } from "next";
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,24 +16,20 @@ import {
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-
 const clerkStorefrontFallbackUrl = buildCanonicalUrl(`/${routing.defaultLocale}`);
 import { ReactNode } from "react";
 import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -75,7 +70,6 @@ export const metadata: Metadata = {
     ],
   }
 };
-
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -85,12 +79,10 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "#12123F" },
   ],
 };
-
 type Props<T> = {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 };
-
 export default async function LocaleLayout({ children, params }: Props<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
@@ -98,7 +90,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   }
   const localClerk = locale === 'es' ? esMX : enUS;
   const messages = await getMessages();
-  const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
   return (
     <ClerkProvider
       dynamic
@@ -109,7 +101,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
-          {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}
+          {gtmId && <GoogleTagManager gtmId={gtmId} />}
           <Providers>
             <NextIntlClientProvider
                 locale={locale}

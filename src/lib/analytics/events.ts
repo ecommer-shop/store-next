@@ -1,3 +1,5 @@
+import { sendGTMEvent } from '@next/third-parties/google';
+
 type GtagItem = {
   item_id: string;
   item_name: string;
@@ -5,17 +7,20 @@ type GtagItem = {
   quantity?: number;
 };
 
-function sendEvent(eventName: string, params: Record<string, unknown>) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
-  window.gtag('event', eventName, params);
+function pushEcommerceEvent(eventName: string, ecommerce: Record<string, unknown>) {
+  sendGTMEvent({ event: eventName, ecommerce });
+}
+
+function pushEvent(eventName: string, params: Record<string, unknown> = {}) {
+  sendGTMEvent({ event: eventName, ...params });
 }
 
 export function trackViewItem(item: GtagItem) {
-  sendEvent('view_item', { currency: 'COP', value: item.price, items: [item] });
+  pushEcommerceEvent('view_item', { currency: 'COP', value: item.price, items: [item] });
 }
 
 export function trackAddToCart(item: GtagItem) {
-  sendEvent('add_to_cart', {
+  pushEcommerceEvent('add_to_cart', {
     currency: 'COP',
     value: item.price,
     items: [{ ...item, quantity: item.quantity ?? 1 }],
@@ -23,7 +28,7 @@ export function trackAddToCart(item: GtagItem) {
 }
 
 export function trackSearchResults(params: { search_term: string; results_count: number }) {
-  sendEvent('view_search_results', params);
+  pushEvent('view_search_results', params);
 }
 
 export function trackPurchase(params: {
@@ -32,5 +37,5 @@ export function trackPurchase(params: {
   currency: string;
   items: GtagItem[];
 }) {
-  sendEvent('purchase', params);
+  pushEcommerceEvent('purchase', params);
 }
