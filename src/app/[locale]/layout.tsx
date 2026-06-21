@@ -22,6 +22,8 @@ import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
+import Script from 'next/script';
+import { ConsentBanner } from '@/components/providers/consent-banner';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -101,6 +103,19 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
+          <Script id="consent-default" strategy="beforeInteractive">
+              {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('consent', 'default', {
+                      ad_storage: 'denied',
+                      ad_user_data: 'denied',
+                      ad_personalization: 'denied',
+                      analytics_storage: 'denied',
+                      wait_for_update: 500
+                  });
+              `}
+          </Script>
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
           <Providers>
             <NextIntlClientProvider
@@ -117,7 +132,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                   <Footer />
                   <ChatWidget />
                 </div>
-                
+                <ConsentBanner />
               </NextIntlClientProvider>
               <Toaster />
           </Providers>
