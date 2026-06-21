@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {ChevronLeft} from 'lucide-react';
+import {ChevronLeft, Truck} from 'lucide-react';
 import {query} from '@/lib/vendure/server/api';
 import {GetOrderDetailQuery} from '@/lib/vendure/shared/queries';
 import {Badge} from '@/components/ui/badge';
@@ -17,6 +17,86 @@ import Link from 'next/link';
 import {I18N} from '../../../../../i18n/keys';
 import {getTranslations} from 'next-intl/server';
 import { getAuthToken } from '@/lib/vendure/server/auth';
+import {parse} from 'graphql';
+
+const GetDeliveryOrdersByOrderCodeDocument = parse(`
+  query GetDeliveryOrdersByOrderCode($orderCode: String!) {
+    deliveryOrdersByOrderCode(orderCode: $orderCode) {
+      id
+      orderCode
+      sellerName
+      provider
+      providerDocumentId
+      status
+      statusLabel
+      trackingUrl
+      statusUpdatedAt
+      createdAt
+      updatedAt
+    }
+  }
+`);
+
+interface ExternalDeliveryOrderStatus {
+  id: string;
+  orderCode?: string | null;
+  sellerName?: string | null;
+  provider: string;
+  providerDocumentId?: string | null;
+  status: string;
+  statusLabel?: string | null;
+  trackingUrl?: string | null;
+  statusUpdatedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const DELIVERY_STATUS_LABELS: Record<string, string> = {
+  CREATED: 'Domicilio creado',
+  REQUESTED: 'Domicilio solicitado',
+  PENDING: 'Pendiente',
+  ASSIGNED: 'Asignado',
+  PICKED_UP: 'Recogido',
+  EN_CAMINO: 'En camino',
+  IN_TRANSIT: 'En camino',
+  DELIVERED: 'Entregado',
+  COMPLETED: 'Entregado',
+  CANCELLED: 'Cancelado',
+  CANCELED: 'Cancelado',
+  FAILED: 'Con novedad',
+};
+
+function formatDeliveryStatus(status: string, statusLabel?: string | null) {
+  if (statusLabel) return statusLabel;
+
+  const normalizedStatus = status.trim().toUpperCase();
+  return DELIVERY_STATUS_LABELS[normalizedStatus] ?? status.replace(/_/g, ' ');
+}
+
+function getDeliveryStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+  const normalizedStatus = status.trim().toUpperCase();
+
+  if (['DELIVERED', 'COMPLETED'].includes(normalizedStatus)) return 'default';
+  if (['CANCELLED', 'CANCELED', 'FAILED'].includes(normalizedStatus)) return 'destructive';
+  if (['CREATED', 'REQUESTED', 'PENDING'].includes(normalizedStatus)) return 'secondary';
+
+  return 'outline';
+}
+
+async function getDeliveryOrdersByOrderCode(orderCode: string, token?: string | null) {
+  try {
+    const {data} = await query(
+      GetDeliveryOrdersByOrderCodeDocument as any,
+      {orderCode},
+      {useAuthToken: true, token: token ?? undefined, fetch: {}}
+    ) as {data: {deliveryOrdersByOrderCode?: ExternalDeliveryOrderStatus[] | null}};
+
+    return data.deliveryOrdersByOrderCode ?? [];
+  } catch (error) {
+    console.error('Failed to load external delivery orders', error);
+    return [];
+  }
+}
 
 export interface PageProps {
   params: Promise<{
@@ -50,6 +130,7 @@ export default async function OrderDetailContent({params}: PageProps) {
   }
 
   const order = data.orderByCode;
+  const deliveryOrders = await getDeliveryOrdersByOrderCode(order.code, token);
 
   return (
     <div>
@@ -168,6 +249,60 @@ export default async function OrderDetailContent({params}: PageProps) {
 
         {/* RIGHT */}
         <div className="space-y-6">
+          {deliveryOrders.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Truck className="h-5 w-5" />
+                  Estado del domicilio
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm">
+                {deliveryOrders.map(deliveryOrder => (
+                  <div
+                    key={deliveryOrder.id}
+                    className="space-y-2 border-b pb-4 last:border-b-0 last:pb-0"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium">
+                          {deliveryOrder.sellerName || 'Domicilio Messenger Domis'}
+                        </p>
+                        <p className="text-muted-foreground">Messenger Domis</p>
+                      </div>
+                      <Badge variant={getDeliveryStatusBadgeVariant(deliveryOrder.status)}>
+                        {formatDeliveryStatus(deliveryOrder.status, deliveryOrder.statusLabel)}
+                      </Badge>
+                    </div>
+
+                    {deliveryOrder.statusUpdatedAt && (
+                      <p className="text-muted-foreground">
+                        Actualizado: {formatDate(deliveryOrder.statusUpdatedAt)}
+                      </p>
+                    )}
+
+                    {deliveryOrder.providerDocumentId && (
+                      <p className="text-muted-foreground">
+                        Código domicilio: {deliveryOrder.providerDocumentId}
+                      </p>
+                    )}
+
+                    {deliveryOrder.trackingUrl && (
+                      <Link
+                        href={deliveryOrder.trackingUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex text-primary hover:underline"
+                      >
+                        Ver seguimiento
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
           {order.shippingAddress && (
             <Card>
               <CardHeader>
