@@ -590,6 +590,62 @@ export const I18N = {
   About: {
     title: 'title',
     description: 'description',
+    history: 'history',
+    mission: 'mission',
+    vision: 'vision',
+    audience: {
+      title: 'audience.title',
+      description: 'audience.description',
+      securePayments: 'audience.securePayments',
+      localDelivery: 'audience.localDelivery',
+      alwaysOpen: 'audience.alwaysOpen',
+      cta: 'audience.cta',
+    },
+    team: {
+      title: 'team.title',
+      members: {
+        ceo: 'team.members.ceo',
+        accountant: 'team.members.accountant',
+        serverLead: 'team.members.serverLead',
+        eiaLead: 'team.members.eiaLead',
+        lawyer: 'team.members.lawyer',
+      },
+    },
+    location: {
+      title: 'location.title',
+      text: 'location.text',
+    },
+    differentiators: {
+      title: 'differentiators.title',
+      description: 'differentiators.description',
+      simetria: 'differentiators.simetria',
+      messenger: 'differentiators.messenger',
+      compliance: 'differentiators.compliance',
+      incentives: 'differentiators.incentives',
+    },
+    faq: {
+      title: 'faq.title',
+      q1: {
+        q: 'faq.q1.q',
+        a: 'faq.q1.a',
+      },
+      q2: {
+        q: 'faq.q2.q',
+        a: 'faq.q2.a',
+      },
+      q3: {
+        q: 'faq.q3.q',
+        a: 'faq.q3.a',
+      },
+      q4: {
+        q: 'faq.q4.q',
+        a: 'faq.q4.a',
+      },
+      q5: {
+        q: 'faq.q5.q',
+        a: 'faq.q5.a',
+      },
+    },
     legal: {
       label: 'legal.label',
       rs: 'legal.rs',
@@ -609,7 +665,12 @@ export const I18N = {
       warranty: 'documents.warranty',
       withdrawal: 'documents.withdrawal',
       paymentReversal: 'documents.paymentReversal',
-    }
+    },
+    cta: {
+      title: 'cta.title',
+      register: 'cta.register',
+      discover: 'cta.discover',
+    },
   },
 
   Legal: {

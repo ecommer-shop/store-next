@@ -590,7 +590,63 @@
   },
   "About": {
     "title": "About Us",
-    "description": "Provider information in accordance with Law 1480 of 2011, ensuring a clear and transparent shopping experience.",
+    "description": "We connect entrepreneurs and merchants from the region with their customers. No complications. No technological barriers. With Cauca pride.",
+    "history": "Ecommer was born from a concrete observation: while large companies dominate digital commerce, most Colombian micro-entrepreneurs remain on the sidelines. Fragmented tools, high costs, technical barriers, and a market where 96% of businesses in Cauca are micro-enterprises, with over 56% operating informally. There was no solution built for them. We decided to build it.",
+    "mission": "To empower Colombian micro-entrepreneurs with accessible, integrated, and scalable e-commerce technology — so they can sell online with the same power as big brands.",
+    "vision": "To be the reference platform for digital commerce for MSMEs in LATAM — enabling thousands of local businesses to digitize their sales, scale their operations, and connect with customers on any channel. We start in Popayán. We scale by metrics, not by maps.",
+    "audience": {
+      "title": "Who we serve",
+      "description": "If you have a business in Popayán or any municipality in Cauca, Ecommer is your platform. Create your store in minutes, upload your products, and reach more customers without needing technical knowledge.",
+      "securePayments": "Secure payments processed by Wompi (Bancolombia)",
+      "localDelivery": "Local deliveries with MESSENGER",
+      "alwaysOpen": "Your store available 24/7",
+      "cta": "I want to sell on Ecommer"
+    },
+    "team": {
+      "title": "The team behind Ecommer",
+      "members": {
+        "ceo": "Ronnovic Rigel Toth — CEO",
+        "accountant": "Luz Carime Ruiz Gómez — Accountant",
+        "serverLead": "William Fernando Sevilla Palechor — Server Lead",
+        "eiaLead": "Juan Carlos Martínez Fernández — EIA Lead",
+        "lawyer": "Daniel Mateo Campo Nuñez — Lawyer"
+      }
+    },
+    "location": {
+      "title": "Where we are",
+      "text": "Ecommer operates from Popayán, Cauca, Colombia."
+    },
+    "differentiators": {
+      "title": "Why we are different",
+      "description": "Ecommer is not just another e-commerce tool. It is an integration and orchestration company: we combine the best market providers (Vendure, Wompi, Clerk, Azure, DIAN) into a unified experience, adapted to the Colombian context.",
+      "simetria": "SimetrIA — our own AI agent that sells from WhatsApp, Instagram, and Facebook, without taking the buyer out of the chat.",
+      "messenger": "Messenger as preferred partner — access to 15,000+ monthly deliveries in Popayán from day one.",
+      "compliance": "Native compliance — PCI DSS, DIAN (Resolution 0227/2025), Law 1581, Consumer Statute — built in by default, not as an add-on.",
+      "incentives": "Incentive-aligned model — the platform only earns when the seller sells."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "q": "Is it really free for 3 months?",
+        "a": "Yes. For the first 3 months you pay no monthly fee for using the platform. The only cost you assume are the transaction fees, which are charged directly by our payment gateway Wompi."
+      },
+      "q2": {
+        "q": "What do I need to register as a seller?",
+        "a": "You only need your email address. If you want to operate as a company, you can add your tax information later."
+      },
+      "q3": {
+        "q": "Is it safe? My customer is afraid to enter their card.",
+        "a": "Absolutely. Payments on Ecommer are processed through Wompi, a gateway certified with PCI-DSS, the most demanding international security standard. Your customers' information is encrypted and never exposed."
+      },
+      "q4": {
+        "q": "Do I need to know how to code to use Ecommer?",
+        "a": "Not at all. If you know how to use Facebook or WhatsApp, you know how to use Ecommer. Uploading a product is as easy as uploading a photo to Instagram."
+      },
+      "q5": {
+        "q": "What is the Digital Certificate and why does it cost $199,900 COP?",
+        "a": "It is your digital signature before DIAN — the legal mechanism that validates your electronic invoices in Colombia. Without it, your invoices have no tax validity. You can purchase it annually for $199,900 COP or in monthly installments with a commitment period."
+      }
+    },
     "legal": {
       "label": "Legal Information",
       "rs": "Legal Name:",
@@ -610,6 +666,11 @@
       "warranty": "Warranty",
       "withdrawal": "Withdrawal",
       "paymentReversal": "Payment Reversal"
+    },
+    "cta": {
+      "title": "Ready to be part of Cauca's digital commerce?",
+      "register": "Register your store and start selling",
+      "discover": "Discover products from your region"
     }
   },
   "Legal": {
