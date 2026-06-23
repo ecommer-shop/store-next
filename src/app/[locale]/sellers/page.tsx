@@ -5,14 +5,16 @@ import { LoginCardPreview } from '@/components/sellers/LoginCardPreview';
 import { AgendarDemoButton } from '@/components/sellers/AgendarDemoButton';
 import { Coffee, Shirt, Gem } from 'lucide-react';
 import BillingCard from '@/components/sellers/billing/BillingCard';
+import { PdfDownloadButton } from '@/components/sellers/PdfDownloadButton';
 
 const ADMIN_URL = process.env.NEXT_PUBLIC_VENDEDORES_ADMIN_URL || '#';
 
 export default function VendedoresPage() {
   return (
+    <>
     <main className="flex flex-col">
       {/* HERO SECTION */}
-      <section
+      <section data-pdf-section="hero"
         className="relative overflow-hidden"
         style={{
           backgroundImage: `
@@ -57,7 +59,7 @@ export default function VendedoresPage() {
       </section>
 
       {/* BENEFICIOS */}
-      <section className="bg-gray-100 py-16" style={{ backgroundColor: '#F1F1F1' }}>
+      <section data-pdf-section="beneficios" className="bg-gray-100 py-16" style={{ backgroundColor: '#F1F1F1' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <span className="text-purple-600 text-sm font-semibold uppercase tracking-wider" style={{ color: '#9969F8' }}>
@@ -142,7 +144,7 @@ export default function VendedoresPage() {
       </section>
 
       {/* TIENDA LISTA */}
-      <section className="py-16" style={{ backgroundColor: '#FFFFFF' }}>
+      <section data-pdf-section="tienda" className="py-16" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -208,7 +210,7 @@ export default function VendedoresPage() {
       </section>
 
       {/* ALIADOS */}
-      <section className="bg-gray-100 py-12" style={{ backgroundColor: '#F1F1F1' }}>
+      <section data-pdf-section="aliados" className="bg-gray-100 py-12" style={{ backgroundColor: '#F1F1F1' }}>
         <div className="container mx-auto px-4 text-center">
           <span className="text-gray-500 text-sm font-semibold uppercase tracking-wider">
             Nuestros aliados estratégicos
@@ -228,7 +230,7 @@ export default function VendedoresPage() {
       </section>
 
       {/* SECTORES */}
-      <section className="py-16" style={{ backgroundColor: '#FFFFFF' }}>
+      <section data-pdf-section="sectores" className="py-16" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <span className="text-purple-600 text-sm font-semibold uppercase tracking-wider" style={{ color: '#9969F8' }}>
@@ -296,11 +298,11 @@ export default function VendedoresPage() {
           </div>
         </div>
       </section>
-      <section className="py-16">
+      <section data-pdf-section="billing" className="py-16">
         <BillingCard />  
       </section>
       {/* FAQ */}
-      <section className="bg-gray-100 py-16" style={{ backgroundColor: '#F1F1F1' }}>
+      <section data-pdf-section="faq" className="bg-gray-100 py-16" style={{ backgroundColor: '#F1F1F1' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <span className="text-purple-600 text-sm font-semibold uppercase tracking-wider" style={{ color: '#9969F8' }}>
@@ -346,7 +348,7 @@ export default function VendedoresPage() {
       </section>
 
       {/* CTA FINAL */}
-      <section className="relative overflow-hidden py-20" style={{ backgroundColor: '#12123F' }}>
+      <section data-pdf-section="cta" className="relative overflow-hidden py-20" style={{ backgroundColor: '#12123F' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="bg-white/6 backdrop-blur-sm border border-white/20 rounded-3xl p-12 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
@@ -371,5 +373,7 @@ export default function VendedoresPage() {
         </div>
       </section>
     </main>
+      <PdfDownloadButton />
+    </>
   );
 }
