@@ -5,13 +5,17 @@ import { LoginCardPreview } from '@/components/sellers/LoginCardPreview';
 import { AgendarDemoButton } from '@/components/sellers/AgendarDemoButton';
 import { PdfDownloadButton } from '@/components/sellers/PdfDownloadButton';
 import BillingCard from '@/components/sellers/billing/BillingCard';
+import { InteractiveBackground } from '@/components/sellers/InteractiveBackground';
+import Image from 'next/image';
 
 const ADMIN_URL = process.env.NEXT_PUBLIC_VENDEDORES_ADMIN_URL || '#';
 
 export default function VendedoresPage() {
   return (
-    <>
-      <main className="relative min-h-screen overflow-hidden bg-[#121414] bg-[radial-gradient(ellipse_at_top,rgba(33,0,81,0.4)_0%,#121414_100%)]">
+    <div className="sellers-page">
+      <InteractiveBackground />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(33,0,81,0.4)_0%,transparent_100%)]" />
+      <main className="relative min-h-screen overflow-hidden bg-transparent">
         {/* ===== 1. HERO SECTION ===== */}
         <section className="relative min-h-screen flex items-center overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(153,105,248,0.08)_0%,_transparent_70%)]" />
@@ -20,7 +24,7 @@ export default function VendedoresPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
               {/* LEFT COLUMN */}
               <div className="space-y-8">
-                <div className="inline-flex items-start gap-3 bg-[#12123F]/80 border border-[#9969F8]/30 rounded-full px-5 py-3">
+                <div className="inline-flex rounded-xl items-start gap-3 bg-[#12123F]/80 border border-[#9969F8]/30 rounded-full px-5 py-3">
                   <Megaphone className="w-5 h-5 text-[#9969F8] mt-0.5 flex-shrink-0" />
                   <span className="text-sm text-[#F1F1F1]/80 leading-relaxed">
                     <UseVendedoresText path={['hero', 'badge']} />
@@ -48,10 +52,12 @@ export default function VendedoresPage() {
                 </div>
               </div>
               {/* RIGHT COLUMN */}
-              <div className="relative h-[500px] hidden lg:block">
+              <div className="relative h-[500px] mt-10 hidden lg:block">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-96 h-96 rounded-full bg-[#9969F8]/5 blur-3xl absolute" />
                   <div className="w-72 h-72 rounded-full bg-[#6BB8FF]/5 blur-3xl absolute -top-10 -right-10" />
+                  <Image className='left-70 top-10 opacity-30' 
+                  src="/logo-light.webp" alt='logo' width={600} height={30} />
                   <div className="absolute top-12 right-12 transform rotate-[-6deg]">
                     <div className="flex items-center gap-3 backdrop-blur-xl bg-[#12123F]/60 border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-full px-5 py-3 shadow-lg">
                       <div className="w-6 h-6 rounded-full bg-[#6BB8FF]/20 flex items-center justify-center">
@@ -486,6 +492,6 @@ export default function VendedoresPage() {
         </section>
       </main>
       <PdfDownloadButton />
-    </>
+    </div>
   );
 }

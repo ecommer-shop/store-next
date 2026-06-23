@@ -113,7 +113,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       signInFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
     >
-      <html lang={locale} suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
         <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
           <Providers>
             <NextIntlClientProvider

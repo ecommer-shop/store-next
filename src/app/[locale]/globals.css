@@ -142,6 +142,10 @@ body {
   @apply text-foreground;
 }
 
+body:has(.sellers-page) {
+  background-color: transparent;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
