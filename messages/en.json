@@ -699,10 +699,15 @@
 
   "Vendedores": {
     "hero": {
-      "badge": "The new era of B2B",
-      "title": "Evolve the way the world sees your business",
-      "subtitle": "The omnichannel platform designed for Colombian manufacturers and sellers looking to scale globally.",
-      "demoButton": "Schedule a Demo",
+      "badge": "REMEMBER: Take Colombian talent to every corner of the planet. Your factory, connected to the global market. Technology that scales the pride of our heritage.",
+      "title": {
+        "prefix": "Evolve the way the ",
+        "highlight": "world sees your business"
+      },
+      "description": "Comprehensive platform designed exclusively for Colombian manufacturers, artisans, and entrepreneurs. Scale your international sales with enterprise-level tools adapted to your reality.",
+      "demoButton": "Start Free Trial →",
+      "secondaryButton": "Watch Demo",
+      "floatingCard": "International Sales $1,240 USD",
       "storeButton": "Create My Store Free"
     },
     "beneficios": {
@@ -743,6 +748,28 @@
       "wompi": "wompi",
       "servientrega": "SERVIENTREGA"
     },
+    "valorOperativo": {
+      "title": "Real Operational Value",
+      "subtitle": "Native local integrations to solve the true bottlenecks of Colombian commerce.",
+      "cards": {
+        "dian": {
+          "title": "DIAN Invoicing",
+          "description": "Automatic sales synchronization with electronic invoicing complying with DIAN regulations."
+        },
+        "wompi": {
+          "title": "Wompi Payments",
+          "description": "Native integration with Bancolombia gateway, high approval rate and robust fraud prevention."
+        },
+        "logistica": {
+          "title": "Connected Logistics",
+          "description": "Automated shipping labels and real-time tracking with Servientrega and major carriers."
+        },
+        "panel": {
+          "title": "Executive Dashboard",
+          "description": "Real-time analytics of inventory, omnichannel sales, and campaign performance."
+        }
+      }
+    },
     "sectores": {
       "title": "The best of Colombia for the world",
       "subtitle": "Designed for the sectors that drive our economy.",
@@ -757,6 +784,68 @@
       "artesanias": {
         "title": "Handicrafts",
         "description": "Cultural heritage transformed into contemporary luxury pieces."
+      }
+    },
+    "enfoqueSectorial": {
+      "title": "Regional Sector Focus",
+      "subtitle": "Specialized solutions for the sectors driving the Colombian economy.",
+      "buttonText": "Explore Success Stories",
+      "items": {
+        "cafe": {
+          "badge": "Coffee Axis",
+          "title": "Specialty Coffees",
+          "description": "Traceability from farm to cup, international subscriptions, and batch management with precise roasting dates."
+        },
+        "moda": {
+          "badge": "Medellín & Bucaramanga",
+          "title": "Fashion & Footwear",
+          "description": "Advanced management of sizes, colors, and multi-warehouse inventory."
+        },
+        "artesanias": {
+          "badge": "National Identity",
+          "title": "Luxury Handicrafts",
+          "description": "Digital certificates of origin, artisan narratives integrated into checkout, and secure shipping for unique irreplaceable pieces.",
+          "link": "Learn More →"
+        }
+      }
+    },
+    "planes": {
+      "title": "Plans Designed to Scale",
+      "subtitle": "No hidden fees. Grow at your own pace with world-class technology designed for sellers.",
+      "popular": "MOST POPULAR",
+      "cards": {
+        "free": {
+          "name": "Free",
+          "price": "FREE / forever",
+          "description": "Perfect to start your digital transformation",
+          "features": {
+            "products": "15 Products",
+            "variations": "250 Variations"
+          },
+          "buttonText": "Create Free Account"
+        },
+        "tienda": {
+          "name": "Store",
+          "price": "$29,900 COP / month",
+          "description": "For actively growing businesses",
+          "features": {
+            "products": "500 Products",
+            "variations": "5,000 Variants",
+            "simetria": "Full access to Simetría"
+          },
+          "buttonText": "Select Plan"
+        },
+        "omnichannel": {
+          "name": "Omnichannel",
+          "price": "$99,900 COP / month",
+          "description": "Complete multi-channel operation",
+          "features": {
+            "products": "1,500 Products",
+            "variations": "15,000 Variants",
+            "simetria": "Full access to Simetría"
+          },
+          "buttonText": "Contact Sales"
+        }
       }
     },
     "faq": {

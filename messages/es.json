@@ -694,10 +694,15 @@
 
   "Vendedores": {
     "hero": {
-      "badge": "La nueva era del B2B",
-      "title": "Evoluciona la forma en que el mundo ve tu negocio",
-      "subtitle": "La plataforma omnicanal diseñada para fabricantes y vendedores colombianos que buscan escalar globalmente.",
-      "demoButton": "Agendar una Demo",
+      "badge": "RECUERDA: Lleva el talento colombiano a cada rincón del planeta. Tu fábrica, conectada con el mercado global. La tecnología que escala el orgullo de lo nuestro.",
+      "title": {
+        "prefix": "Evoluciona la forma en que el ",
+        "highlight": "mundo ve tu negocio"
+      },
+      "description": "Plataforma integral diseñada exclusivamente para fabricantes, artesanos y emprendedores colombianos. Escala tus ventas internacionales con herramientas de nivel corporativo adaptadas a tu realidad.",
+      "demoButton": "Comenzar Prueba Gratuita →",
+      "secondaryButton": "Ver Demo",
+      "floatingCard": "Venta Internacional $1,240 USD",
       "storeButton": "Crear mi Tienda Gratis"
     },
     "beneficios": {
@@ -738,6 +743,28 @@
       "wompi": "wompi",
       "servientrega": "SERVIENTREGA"
     },
+    "valorOperativo": {
+      "title": "Valor Operativo Real",
+      "subtitle": "Integraciones locales nativas para resolver los verdaderos cuellos de botella del comercio colombiano.",
+      "cards": {
+        "dian": {
+          "title": "Facturación DIAN",
+          "description": "Sincronización automática de ventas con facturación electrónica cumpliendo normativa DIAN."
+        },
+        "wompi": {
+          "title": "Pagos Wompi",
+          "description": "Integración nativa con pasarela de Bancolombia, alta tasa de aprobación y antifraude robusto."
+        },
+        "logistica": {
+          "title": "Logística Conectada",
+          "description": "Guías automatizadas y rastreo en tiempo real con Servientrega y principales transportadoras."
+        },
+        "panel": {
+          "title": "Panel Ejecutivo",
+          "description": "Analíticas en tiempo real de inventario, ventas omnicanal y rendimiento de campañas."
+        }
+      }
+    },
     "sectores": {
       "title": "Lo mejor de Colombia para el mundo",
       "subtitle": "Diseñado para los sectores que mueven nuestra economía.",
@@ -752,6 +779,68 @@
       "artesanias": {
         "title": "Artesanías",
         "description": "Herencia cultural transformada en piezas de lujo contemporáneo."
+      }
+    },
+    "enfoqueSectorial": {
+      "title": "Enfoque Sectorial Regional",
+      "subtitle": "Soluciones especializadas para los sectores que impulsan la economía colombiana.",
+      "buttonText": "Explorar Casos de Éxito",
+      "items": {
+        "cafe": {
+          "badge": "Eje Cafetero",
+          "title": "Cafés Especiales",
+          "description": "Trazabilidad desde la finca hasta la taza, suscripciones internacionales y gestión de lotes con fechas de tostado precisas."
+        },
+        "moda": {
+          "badge": "Medellín & Bucaramanga",
+          "title": "Moda & Calzado",
+          "description": "Gestión avanzada de tallas, colores e inventarios multialmacén."
+        },
+        "artesanias": {
+          "badge": "Identidad Nacional",
+          "title": "Artesanías de Lujo",
+          "description": "Certificados de origen digitales, narrativas de artesanos integradas al checkout y envíos seguros para piezas únicas irrepetibles.",
+          "link": "Conocer Módulo →"
+        }
+      }
+    },
+    "planes": {
+      "title": "Planes diseñados para escalar",
+      "subtitle": "Sin comisiones ocultas. Crece a tu propio ritmo con tecnología de clase mundial diseñada para vendedores.",
+      "popular": "MÁS POPULAR",
+      "cards": {
+        "free": {
+          "name": "Free",
+          "price": "GRATIS / para siempre",
+          "description": "Perfecto para empezar tu transformación digital",
+          "features": {
+            "products": "15 Productos",
+            "variations": "250 Variaciones"
+          },
+          "buttonText": "Crear Cuenta Gratis"
+        },
+        "tienda": {
+          "name": "Tienda",
+          "price": "$29.900 COP /mes",
+          "description": "Para negocios en crecimiento activo",
+          "features": {
+            "products": "500 Productos",
+            "variations": "5000 Variantes de Producto",
+            "simetria": "Acceso completo a Simetría"
+          },
+          "buttonText": "Seleccionar Plan"
+        },
+        "omnichannel": {
+          "name": "Omnichannel",
+          "price": "$99.900 COP /mes",
+          "description": "Operación completa multicanal",
+          "features": {
+            "products": "1500 Productos",
+            "variations": "15000 Variantes de Producto",
+            "simetria": "Acceso completo a Simetría"
+          },
+          "buttonText": "Contactar Ventas"
+        }
       }
     },
     "faq": {

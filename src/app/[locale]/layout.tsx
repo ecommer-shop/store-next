@@ -2,7 +2,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
@@ -24,14 +24,22 @@ import { getMessages } from "next-intl/server";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const poppins = localFont({
+  src: [
+    { path: "../../../public/fonts/Poppins-Regular.ttf", weight: "400" },
+    { path: "../../../public/fonts/Poppins-SemiBold.ttf", weight: "600" },
+  ],
+  variable: "--font-poppins",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const gilroy = localFont({
+  src: [
+    { path: "../../../public/fonts/Gilroy-Light.otf", weight: "300" },
+    { path: "../../../public/fonts/Gilroy-ExtraBold.otf", weight: "800" },
+  ],
+  variable: "--font-gilroy",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -106,7 +114,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
     >
       <html lang={locale} suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
+        <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
           <Providers>
             <NextIntlClientProvider
                 locale={locale}

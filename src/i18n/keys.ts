@@ -701,9 +701,14 @@ export const I18N = {
   Vendedores: {
     hero: {
       badge: 'hero.badge',
-      title: 'hero.title',
-      subtitle: 'hero.subtitle',
+      title: {
+        prefix: 'hero.title.prefix',
+        highlight: 'hero.title.highlight'
+      },
+      description: 'hero.description',
       demoButton: 'hero.demoButton',
+      secondaryButton: 'hero.secondaryButton',
+      floatingCard: 'hero.floatingCard',
       storeButton: 'hero.storeButton'
     },
     beneficios: {
@@ -744,6 +749,28 @@ export const I18N = {
       wompi: 'aliados.wompi',
       servientrega: 'aliados.servientrega'
     },
+    valorOperativo: {
+      title: 'valorOperativo.title',
+      subtitle: 'valorOperativo.subtitle',
+      cards: {
+        dian: {
+          title: 'valorOperativo.cards.dian.title',
+          description: 'valorOperativo.cards.dian.description'
+        },
+        wompi: {
+          title: 'valorOperativo.cards.wompi.title',
+          description: 'valorOperativo.cards.wompi.description'
+        },
+        logistica: {
+          title: 'valorOperativo.cards.logistica.title',
+          description: 'valorOperativo.cards.logistica.description'
+        },
+        panel: {
+          title: 'valorOperativo.cards.panel.title',
+          description: 'valorOperativo.cards.panel.description'
+        }
+      }
+    },
     sectores: {
       title: 'sectores.title',
       subtitle: 'sectores.subtitle',
@@ -760,8 +787,70 @@ export const I18N = {
         description: 'sectores.artesanias.description'
       }
     },
+    enfoqueSectorial: {
+      title: 'enfoqueSectorial.title',
+      subtitle: 'enfoqueSectorial.subtitle',
+      buttonText: 'enfoqueSectorial.buttonText',
+      items: {
+        cafe: {
+          badge: 'enfoqueSectorial.items.cafe.badge',
+          title: 'enfoqueSectorial.items.cafe.title',
+          description: 'enfoqueSectorial.items.cafe.description'
+        },
+        moda: {
+          badge: 'enfoqueSectorial.items.moda.badge',
+          title: 'enfoqueSectorial.items.moda.title',
+          description: 'enfoqueSectorial.items.moda.description'
+        },
+        artesanias: {
+          badge: 'enfoqueSectorial.items.artesanias.badge',
+          title: 'enfoqueSectorial.items.artesanias.title',
+          description: 'enfoqueSectorial.items.artesanias.description',
+          link: 'enfoqueSectorial.items.artesanias.link'
+        }
+      }
+    },
+    planes: {
+      title: 'planes.title',
+      subtitle: 'planes.subtitle',
+      popular: 'planes.popular',
+      cards: {
+        free: {
+          name: 'planes.cards.free.name',
+          price: 'planes.cards.free.price',
+          description: 'planes.cards.free.description',
+          features: {
+            products: 'planes.cards.free.features.products',
+            variations: 'planes.cards.free.features.variations'
+          },
+          buttonText: 'planes.cards.free.buttonText'
+        },
+        tienda: {
+          name: 'planes.cards.tienda.name',
+          price: 'planes.cards.tienda.price',
+          description: 'planes.cards.tienda.description',
+          features: {
+            products: 'planes.cards.tienda.features.products',
+            variations: 'planes.cards.tienda.features.variations',
+            simetria: 'planes.cards.tienda.features.simetria'
+          },
+          buttonText: 'planes.cards.tienda.buttonText'
+        },
+        omnichannel: {
+          name: 'planes.cards.omnichannel.name',
+          price: 'planes.cards.omnichannel.price',
+          description: 'planes.cards.omnichannel.description',
+          features: {
+            products: 'planes.cards.omnichannel.features.products',
+            variations: 'planes.cards.omnichannel.features.variations',
+            simetria: 'planes.cards.omnichannel.features.simetria'
+          },
+          buttonText: 'planes.cards.omnichannel.buttonText'
+        }
+      }
+    },
     faq: {
-      title: 'Preguntas Frecuentes',
+      title: 'faq.title',
       questions: {
         tecnicos: {
           question: '¿Necesito conocimientos técnicos?',
