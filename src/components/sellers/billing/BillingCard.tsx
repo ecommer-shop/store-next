@@ -134,8 +134,8 @@ export default function BillingCard({ plans, currentPlanName }: BillingCardProps
                 return (
                     <TiltCard key={plan.id} onClick={current ? undefined : handleRedirect}>
                         <Card
-                            className={`h-100 relative border border-[#F1F1F1]/10 overflow-hidden bg-[#12123F]/60 backdrop-blur-md ${meta.shadow} 
-                                ${current ? 'ring-2 ring-[#9969F8]' : 'hover:border-[#9969F8]/40 hover:shadow-[0_0_20px_rgba(153,105,248,0.15)]'}
+                            className={`h-100 relative border border-black/10 dark:border-[#F1F1F1]/10 overflow-hidden bg-white/80 dark:bg-[#12123F]/60 backdrop-blur-md ${meta.shadow} 
+                                ${current ? 'ring-2 ring-[#6BB8FF] dark:ring-[#9969F8]' : 'hover:border-[#9969F8]/40 hover:shadow-[0_0_20px_rgba(107,184,255,0.15)] dark:hover:shadow-[0_0_20px_rgba(153,105,248,0.15)]'}
                                 transition-all duration-200`}
                         >
                             {current && (
@@ -148,18 +148,18 @@ export default function BillingCard({ plans, currentPlanName }: BillingCardProps
                                 <div className="flex justify-center mb-2">
                                     {meta.icon}
                                 </div>
-                                <CardTitle className="text-xl text-[#F1F1F1]">{plan.name}</CardTitle>
+                                <CardTitle className="text-xl text-[#12123F] dark:text-[#F1F1F1]">{plan.name}</CardTitle>
                                 {plan.description && (
-                                    <p className="text-sm text-[#F1F1F1]/70">{plan.description}</p>
+                                    <p className="text-sm text-[#12123F]/70 dark:text-[#F1F1F1]/70">{plan.description}</p>
                                 )}
                             </CardHeader>
 
                             <CardContent className="text-center space-y-6 h-10">
-                                <p className="text-3xl font-bold text-[#F1F1F1]">
+                                <p className="text-3xl font-bold text-[#12123F] dark:text-[#F1F1F1]">
                                     {plan.price === 0 ? 'Gratis' : (
                                         <>
                                             ${plan.price.toLocaleString('es-CO')}
-                                            <span className="text-sm font-normal text-[#F1F1F1]/50">{t('Planes.perMonth')}</span>
+                                            <span className="text-sm font-normal text-[#12123F]/50 dark:text-[#F1F1F1]/50">{t('Planes.perMonth')}</span>
                                         </>
                                     )}
                                 </p>
@@ -168,7 +168,7 @@ export default function BillingCard({ plans, currentPlanName }: BillingCardProps
                                     {plan.planFeatures.map((pf: any) => (
                                         <li key={pf.id} className="flex items-center gap-2">
                                             <Check className="h-4 w-4 text-[#6BB8FF] shrink-0" />
-                                            <span className="text-[#F1F1F1]/70">
+                                            <span className="text-[#12123F]/70 dark:text-[#F1F1F1]/70">
                                                 {pf.feature.type === 'numeric'
                                                     ? `${pf.value} ${pf.feature.name.toLowerCase()}`
                                                     : pf.feature.name

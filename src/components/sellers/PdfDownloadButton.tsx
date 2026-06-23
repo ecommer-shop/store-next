@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { useTheme } from 'next-themes'
 import { toCanvas } from 'html-to-image'
 import jsPDF from 'jspdf'
 
 export function PdfDownloadButton() {
+  const { resolvedTheme } = useTheme()
   const [loading, setLoading] = useState(false)
 
   const downloadPdf = async () => {
@@ -12,7 +14,7 @@ export function PdfDownloadButton() {
     setLoading(true)
 
     try {
-      const element = document.querySelector('main.flex-col')
+      const element = document.querySelector('[data-pdf-content]')
       if (!element) return
 
       const canvas = await toCanvas(element as HTMLElement, {
@@ -42,7 +44,11 @@ export function PdfDownloadButton() {
       onClick={downloadPdf}
       disabled={loading}
       className="fixed bottom-6 right-30 z-50 flex items-center gap-2 text-white px-5 py-3 rounded-full shadow-2xl hover:opacity-90 transition-all font-semibold text-sm disabled:opacity-60"
-      style={{ background: 'linear-gradient(135deg, #9969F8, #6BB8FF)' }}
+      style={{
+        background: resolvedTheme === 'light'
+          ? 'linear-gradient(135deg, #6BB8FF, #9969F8)'
+          : 'linear-gradient(135deg, #9969F8, #6BB8FF)',
+      }}
     >
       {loading ? (
         <>

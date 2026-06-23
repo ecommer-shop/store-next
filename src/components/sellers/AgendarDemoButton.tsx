@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
 type Step = 'calendar' | 'time';
 
@@ -69,6 +70,7 @@ function isDisabled(date: Date): boolean {
 }
 
 export function AgendarDemoButton() {
+  const { resolvedTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('calendar');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -176,8 +178,12 @@ export function AgendarDemoButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all"
-        style={{ background: 'linear-gradient(135deg, #9969F8, #6BB8FF)' }}
+        className="text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all"
+        style={{
+          background: resolvedTheme === 'light'
+            ? 'linear-gradient(135deg, #6BB8FF, #9969F8)'
+            : 'linear-gradient(135deg, #9969F8, #6BB8FF)',
+        }}
       >
         Agendar una Demo
       </button>
