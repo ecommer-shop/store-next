@@ -107,11 +107,14 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
               {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
-                  gtag('consent', 'default', {
-                      ad_storage: 'denied',
-                      ad_user_data: 'denied',
-                      ad_personalization: 'denied',
-                      analytics_storage: 'denied',
+                  
+                  const isLocalhost = typeof window !== \'undefined\' && (window.location.hostname === \'localhost\' || window.location.hostname === \'127.0.0.1\');
+                  
+                  gtag(\'consent\', \'default\', {
+                      ad_storage: isLocalhost ? \'granted\' : \'denied\',
+                      ad_user_data: isLocalhost ? \'granted\' : \'denied\',
+                      ad_personalization: isLocalhost ? \'granted\' : \'denied\',
+                      analytics_storage: isLocalhost ? \'granted\' : \'denied\',
                       wait_for_update: 500
                   });
               `}

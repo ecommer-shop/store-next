@@ -39,3 +39,31 @@ export function trackPurchase(params: {
 }) {
   pushEcommerceEvent('purchase', params);
 }
+
+export function trackSearch(params: { search_term: string }) {
+  pushEvent('search', params);
+}
+
+export function trackClickExplore() {
+  pushEvent('click_explore');
+}
+
+export function trackClickCategory(params: { category_name: string }) {
+  pushEvent('click_category', params);
+}
+
+export function trackClickSellerProfile(params: { seller_name: string }) {
+  pushEvent('click_seller_profile', params);
+}
+
+export function trackShareProduct(params: { item_id: string; share_method: string }) {
+  pushEvent('share_product', params);
+}
+
+export function trackLogin(params: { method: 'Google' | 'email' | string }) {
+  pushEvent('login', params);
+}
+
+export function trackSignup(params: { method: 'Google' | 'email' | string }) {
+  pushEvent('signup', params);
+}

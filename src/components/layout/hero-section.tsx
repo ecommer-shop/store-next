@@ -5,6 +5,7 @@ import {Button} from "@heroui/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
+import { trackClickExplore } from "@/lib/analytics/events";
 export function HeroSection() {
     const t = useTranslations("HeroSection");
     return (
@@ -75,6 +76,7 @@ export function HeroSection() {
                         <Button
                             size="lg"
                             className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8] rounded-md"
+                            onPress={() => trackClickExplore()}
                         >
                             {t(I18N.HeroSection.shopButton)}
                         </Button>
