@@ -41,7 +41,7 @@ export function PdfDownloadButton() {
     <button
       onClick={downloadPdf}
       disabled={loading}
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 text-white px-5 py-3 rounded-full shadow-2xl hover:opacity-90 transition-all font-semibold text-sm disabled:opacity-60"
+      className="fixed bottom-6 right-30 z-50 flex items-center gap-2 text-white px-5 py-3 rounded-full shadow-2xl hover:opacity-90 transition-all font-semibold text-sm disabled:opacity-60"
       style={{ background: 'linear-gradient(135deg, #9969F8, #6BB8FF)' }}
     >
       {loading ? (
@@ -60,7 +60,7 @@ export function PdfDownloadButton() {
             <line x1="16" y1="13" x2="8" y2="13" />
             <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
-          Descargar PDF
+          Comparte la página!
         </>
       )}
     </button>
