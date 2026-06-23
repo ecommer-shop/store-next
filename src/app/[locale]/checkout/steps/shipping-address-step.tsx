@@ -33,7 +33,7 @@ function hasGoogleCoordinates(address?: CustomerAddress | null) {
 export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
   const td = useTranslations('Account.addresses');
   const router = useRouter();
-  const { addresses, countries, order } = useCheckout();
+  const { addresses, countries, order, googleMapsApiKey } = useCheckout();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
     // If order already has a shipping address, try to match it with saved addresses
     if (order.shippingAddress) {
@@ -227,6 +227,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                 </DialogHeader>
                 <AddressForm
                   countries={countries}
+                  googleMapsApiKey={googleMapsApiKey}
                   isSubmitting={saving}
                   requireGoogleCoordinates
                   onSubmit={onSaveNewAddress}
