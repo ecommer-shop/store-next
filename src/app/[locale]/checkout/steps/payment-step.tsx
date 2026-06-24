@@ -4,6 +4,7 @@ import { Button, Card } from '@heroui/react';
 import { CreditCard } from 'lucide-react';
 import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
+import { trackAddPaymentInfo } from '@/lib/analytics/events';
 import { getPaymentSignature } from '../actions';
 import { useEffect, useState } from 'react';
 import { placeOrder as placeOrderAction } from '../actions';
@@ -45,6 +46,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
   );
 
   const finalizeOrder = async (paymentMethodCode: string) => {
+    trackAddPaymentInfo({ payment_type: paymentMethodCode });
     setLoading(true);
     setErrorMessage(null);
     try {
