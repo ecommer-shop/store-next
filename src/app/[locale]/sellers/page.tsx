@@ -13,21 +13,23 @@ import { PdfDownloadButton } from '@/components/sellers/PdfDownloadButton';
 
 export default function VendedoresPage() {
   return (
-    <div className="sellers-page">
-      <ScrollProgressBar />
-      <InteractiveBackground />
-      <ParallaxOverlay />
-      <main data-pdf-content className="relative min-h-screen overflow-hidden bg-transparent">
-        <HeroSection />
-        <ValorOperativoSection />
-        <TiendaListaSection />
-        <AliadosSection />
-        <EnfoqueSectorialSection />
-        <PlanesSection />
-        <FaqSection />
-        <CtaSection />
-      </main>
+    <>
+      <div data-pdf-content className="sellers-page">
+        <ScrollProgressBar />
+        <InteractiveBackground />
+        <ParallaxOverlay />
+        <main className="relative min-h-screen overflow-hidden bg-transparent">
+          <HeroSection />
+          <ValorOperativoSection />
+          <TiendaListaSection />
+          <AliadosSection />
+          <EnfoqueSectorialSection />
+          <PlanesSection />
+          <FaqSection />
+          <CtaSection />
+        </main>
+      </div>
       <PdfDownloadButton />
-    </div>
+    </>
   );
 }

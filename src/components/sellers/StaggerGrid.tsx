@@ -53,6 +53,7 @@ export function StaggerItem({
 }) {
   return (
     <motion.div
+      data-pdf-stagger
       variants={item}
       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       className={className}>

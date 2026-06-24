@@ -218,7 +218,6 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             {/* Product Description */}
             <div className="prose prose-sm max-w-none">
                 <div dangerouslySetInnerHTML={{ __html: product.description }} />
-                <p className="text-lg font-bold">${selectedVariant?.priceWithTax.toFixed(2)}</p>
             </div>
 
             {/* Option Groups */}

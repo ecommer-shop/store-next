@@ -1,43 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useTheme } from 'next-themes'
-import { toCanvas } from 'html-to-image'
-import jsPDF from 'jspdf'
+import { PdfCapture } from '@/lib/pdf-capture'
 
 export function PdfDownloadButton() {
   const { resolvedTheme } = useTheme()
   const [loading, setLoading] = useState(false)
 
-  const downloadPdf = async () => {
+  const downloadPdf = useCallback(async () => {
     if (loading) return
     setLoading(true)
 
     try {
-      const element = document.querySelector('[data-pdf-content]')
-      if (!element) return
-
-      const canvas = await toCanvas(element as HTMLElement, {
-        pixelRatio: 2,
-        backgroundColor: '#ffffff',
+      const capture = new PdfCapture({
+        containerSelector: '[data-pdf-content]',
+        pixelRatio: 3,
+        isDark: document.documentElement.classList.contains('dark'),
+        backgroundColor:
+          document.documentElement.classList.contains('dark') ? '#12123F' : '#F1F1F1',
+        filename: 'vendedores-ecommer.pdf',
       })
-
-      const imgData = canvas.toDataURL('image/png')
-
-      const pdf = new jsPDF({
-        orientation: 'p',
-        unit: 'mm',
-        format: [210, (canvas.height * 210) / canvas.width],
-      })
-
-      pdf.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width)
-      pdf.save('vendedores-ecommer.pdf')
+      await capture.toPdf()
     } catch (error) {
       console.error('Error al generar PDF:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [loading])
 
   return (
     <button
@@ -45,9 +35,10 @@ export function PdfDownloadButton() {
       disabled={loading}
       className="fixed bottom-6 right-30 z-50 flex items-center gap-2 text-white px-5 py-3 rounded-full shadow-2xl hover:opacity-90 transition-all font-semibold text-sm disabled:opacity-60"
       style={{
-        background: resolvedTheme === 'light'
-          ? 'linear-gradient(135deg, #6BB8FF, #9969F8)'
-          : 'linear-gradient(135deg, #9969F8, #6BB8FF)',
+        background:
+          resolvedTheme === 'light'
+            ? 'linear-gradient(135deg, #6BB8FF, #9969F8)'
+            : 'linear-gradient(135deg, #9969F8, #6BB8FF)',
       }}
     >
       {loading ? (

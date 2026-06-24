@@ -1,15 +1,19 @@
 'use client';
 
+import { useCallback } from 'react';
 import { Megaphone } from 'lucide-react';
 import { UseVendedoresText } from './UseVendedoresText';
 import { TypewriterTitle } from './TypewriterTitle';
 import { FloatingChips } from './FloatingChips';
 import { AgendarDemoButton } from './AgendarDemoButton';
+import { getAdminUrl } from '@/lib/sellers-landing-url';
 import Image from 'next/image';
 
-const ADMIN_URL = process.env.NEXT_PUBLIC_VENDEDORES_ADMIN_URL || '#';
-
 export function HeroSection() {
+  const handleRedirect = useCallback(() => {
+    window.open(getAdminUrl(), '_blank');
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(153,105,248,0.08)_0%,_transparent_70%)]" />
@@ -29,14 +33,12 @@ export function HeroSection() {
               <UseVendedoresText path={['hero', 'description']} />
             </p>
             <div className="flex flex-wrap gap-4">
-              <a
-                href={ADMIN_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleRedirect}
                 className="inline-flex items-center gap-2 bg-[#6BB8FF] dark:bg-[#9969F8] text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-all"
               >
                 <UseVendedoresText path={['hero', 'demoButton']} />
-              </a>
+              </button>
               <AgendarDemoButton />
             </div>
           </div>

@@ -733,6 +733,7 @@
       }
     },
     "tienda": {
+      "badge": "Simplicity",
       "title": "Your store ready in minutes",
       "subtitle": "We have simplified the technical complexity so you can focus on what you do best: creating amazing products. Our intuitive interface allows you to manage everything from your mobile device.",
       "checklist": {
@@ -850,22 +851,39 @@
     },
     "faq": {
       "title": "Frequently Asked Questions",
+      "subtitle": "We resolve your operational doubts so you can scale with confidence.",
       "questions": {
+        "gratis": {
+          "question": "Is the platform really free to use?",
+          "answer": "Yes. The only cost is the payment gateway fees (Wompi): 7.9% per transaction, covering credit cards, PSE, and bank correspondents. If you need additional features, you can check our plans."
+        },
         "tecnicos": {
-          "question": "Do I need technical knowledge?",
-          "answer": "No. Ecommer is designed so that any entrepreneur can set up their store in minutes, without needing to know how to program. Our support team accompanies you at every step of the process."
+          "question": "Do I need technical knowledge to use the platform?",
+          "answer": "Not at all. If you know how to use WhatsApp or Instagram, you know how to use Ecommer. Uploading a product is as easy as posting a photo on social media."
+        },
+        "cobro": {
+          "question": "How and when do I receive the money from my sales?",
+          "answer": "You receive the money every 15 days. If you use Nequi, Bancolombia, or a bank with a registered BRE-B key, there are no additional costs. If you choose another bank without a key, the transaction costs are assumed by the store."
         },
         "envios": {
-          "question": "How do shipments work with Servientrega?",
-          "answer": "Your store is directly integrated with Servientrega. When a customer places an order, the system automatically generates the shipping guide and you can track the status in real-time from your administration panel."
+          "question": "How do shipments work in Popayán?",
+          "answer": "We have an alliance with MESSENGER. When you receive an order, the system automatically notifies them to pick up the package at your location and deliver it to the customer. The shipping cost is assumed by the buyer and is calculated based on distance."
         },
-        "comisiones": {
-          "question": "What commissions do you charge per sale?",
-          "answer": "Ecommer charges a competitive commission only when you sell — you don't pay anything if there are no sales. Schedule a demo and we'll explain the details of the pricing model adapted to your business volume."
+        "facturacion": {
+          "question": "Is electronic invoicing mandatory?",
+          "answer": "Not to start. If you are a natural person in a non-IVA responsible regime, you can sell without electronic invoicing. Legal entities are required by law. For them, we offer the electronic invoicing service with DIAN Digital Certificate from $199,900/year."
         },
-        "movil": {
-          "question": "Can I manage my store from my cellphone?",
-          "answer": "Yes. The administration panel is optimized for mobile. You can manage products, view orders, respond to customers, and review sales metrics from anywhere."
+        "contabilidad": {
+          "question": "Does Ecommer help me with accounting?",
+          "answer": "Yes. The platform records all your sales and generates ready-to-download reports, so your accountant doesn't have to do extra work. We meet the standards to keep you up to date with DIAN effortlessly."
+        },
+        "proteccion": {
+          "question": "How do they protect my money against claims or chargebacks?",
+          "answer": "Wompi monitors payments 24/7 and money can only be withdrawn with a second key. In case of claims for physical product sales, they notify you and you have 7 days to prove delivery. We recommend keeping all sales documentation for at least one year."
+        },
+        "atencion": {
+          "question": "Is there a customer service number?",
+          "answer": "Yes, we have a customer service number. You can contact us at 314 851 8961, where we will gladly assist you. Initially, the support connects you with an AI Bot which redirects you to a real assistant if necessary."
         }
       }
     },

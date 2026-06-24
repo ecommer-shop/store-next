@@ -92,7 +92,12 @@ export function FloatingChips() {
           key={i}
           ref={(el) => { chipRefs.current[i] = el; }}
           className={`absolute ${config.positionClass}`}
-          style={{ transform: `rotate(${config.rotation}deg) translate(0px, 0px)` }}
+          data-pdf-chip
+          data-pdf-rotation={config.rotation}
+          style={{
+            transform: `rotate(${config.rotation}deg) translate(0px, 0px)`,
+            '--pdf-rot': `${config.rotation}`,
+          } as React.CSSProperties}
         >
           <div className="flex items-center gap-3 backdrop-blur-xl bg-white/80 dark:bg-[#12123F]/60 border border-black/[0.08] dark:border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-full px-5 py-3">
             <div className="w-6 h-6 rounded-full  flex items-center justify-center">

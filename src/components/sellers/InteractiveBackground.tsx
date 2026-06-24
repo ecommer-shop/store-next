@@ -26,7 +26,7 @@ const GRID_SPACING = 42;
 const DASH_LENGTH = 4;
 const DASH_WIDTH = 1.0;
 
-const INFLUENCE_RADIUS = 130;
+const INFLUENCE_RADIUS = 110;
 const MOUSE_ACCEL = 0.35;
 const DAMPING_FACTOR = 0.94;
 const SPRING_STIFFNESS = 0.006;
@@ -122,7 +122,7 @@ export function InteractiveBackground() {
           p.vx += (-dyMouse / distMouse) * force * SWIRL_FACTOR;
           p.vy += (dxMouse / distMouse) * force * SWIRL_FACTOR;
 
-          currentOpacity += proximity * (currentTheme === 'light' ? 1.5 : 0.58);
+          currentOpacity += proximity * (currentTheme === 'light' ? 100 : 80);
         }
 
         const dxHome = p.originX - p.x;
@@ -138,7 +138,7 @@ export function InteractiveBackground() {
         const angleToCursor = Math.atan2(mouse.smoothY - p.y, mouse.smoothX - p.x);
         p.angle = angleToCursor + Math.PI / 2;
 
-        const finalOpacity = Math.min(currentOpacity, 0.85);
+        const finalOpacity = Math.min(currentOpacity, 8);
 
         ctx.save();
         ctx.translate(p.x, p.y);
@@ -178,6 +178,7 @@ export function InteractiveBackground() {
 
   return (
     <canvas
+      id="pdf-canvas-bg"
       ref={canvasRef}
       className="fixed inset-0 -z-20 bg-[#F1F1F1] dark:bg-[#121414] transition-colors duration-500"
       aria-hidden="true"

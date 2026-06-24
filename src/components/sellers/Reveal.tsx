@@ -29,6 +29,7 @@ export function Reveal({
 }: RevealProps) {
   return (
     <motion.div
+      data-pdf-reveal
       initial={{
         opacity: 0,
         ...offset[direction],

@@ -1,13 +1,17 @@
 'use client';
 
+import { useCallback } from 'react';
 import { Check } from 'lucide-react';
 import { UseVendedoresText } from './UseVendedoresText';
 import { Reveal } from './Reveal';
 import { LoginCardPreview } from './LoginCardPreview';
-
-const ADMIN_URL = process.env.NEXT_PUBLIC_VENDEDORES_ADMIN_URL || '#';
+import { getAdminUrl } from '@/lib/sellers-landing-url';
 
 export function TiendaListaSection() {
+  const handleRedirect = useCallback(() => {
+    window.open(getAdminUrl(), '_blank');
+  }, []);
+
   return (
     <section className="py-24">
       <div className="container mx-auto px-4">
@@ -15,7 +19,7 @@ export function TiendaListaSection() {
           <Reveal direction="left">
             <div>
               <span className="text-sm font-semibold uppercase tracking-wider text-[#9969F8]">
-                Simplicidad
+                <UseVendedoresText path={['tienda', 'badge']} />
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-[#12123F] dark:text-[#F1F1F1] mt-2 mb-6">
                 <UseVendedoresText path={['tienda', 'title']} />
@@ -49,14 +53,12 @@ export function TiendaListaSection() {
                   </span>
                 </li>
               </ul>
-              <a
-                href={ADMIN_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleRedirect}
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-[#6BB8FF] to-[#9969F8] dark:from-[#9969F8] dark:to-[#6BB8FF] text-[#12123F] dark:text-[#F1F1F1] px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition-all"
               >
                 <UseVendedoresText path={['tienda', 'buttonText']} />
-              </a>
+              </button>
             </div>
           </Reveal>
           <Reveal direction="right">
