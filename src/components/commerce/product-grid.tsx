@@ -1,6 +1,6 @@
 'use client'
-import { use, useEffect, useState } from 'react';
-import { trackSearchResults } from '@/lib/analytics/events';
+import { use, useEffect, useState, useRef } from 'react';
+import { trackSearchResults, trackViewItemList } from '@/lib/analytics/events';
 import { useSearchParams } from 'next/navigation';
 import { ProductCard } from './product-card';
 import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
@@ -55,10 +55,26 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
 
     const allItems = data?.pages.flatMap(p => p.items) ?? [];
     const totalItems = data?.pages[0]?.totalItems ?? 0;
+    const hasTrackedListRef = useRef(false);
+
+    useEffect(() => {
+        if (hasTrackedListRef.current) return;
+        if (!allItems.length) return;
+        hasTrackedListRef.current = true;
+        const listName = trackAsSearch ? 'search' : (collectionSlug ? 'collection' : 'product_grid');
+        trackViewItemList({
+            list_name: listName,
+            items: allItems.slice(0, 12).map((p: any) => ({
+                item_id: p.productId,
+                item_name: p.productName ?? p.name,
+                price: p.priceWithTax?.__typename === 'SinglePrice' ? p.priceWithTax.value : p.priceWithTax?.min ?? 0,
+            })),
+        });
+    }, [allItems, trackAsSearch, collectionSlug]);
 
     useEffect(() => {
         if (!trackAsSearch) return;
-        const term = (clientSearchParams.get('q') ?? '').trim();
+        const term = (clientSearchParams.get("q") ?? "").trim();
         if (!term) return;
         trackSearchResults({ search_term: term, results_count: totalItems });
     }, [trackAsSearch, clientSearchParams, totalItems]);
