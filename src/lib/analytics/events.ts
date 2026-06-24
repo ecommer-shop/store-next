@@ -67,3 +67,27 @@ export function trackLogin(params: { method: 'Google' | 'email' | string }) {
 export function trackSignup(params: { method: 'Google' | 'email' | string }) {
   pushEvent('signup', params);
 }
+
+export function trackViewItemList(params: { items: GtagItem[]; list_name: string }) {
+  pushEcommerceEvent('view_item_list', { item_list_name: params.list_name, items: params.items });
+}
+
+export function trackSelectItem(item: GtagItem & { list_name?: string }) {
+  pushEcommerceEvent('select_item', { items: [item] });
+}
+
+export function trackBeginCheckout(params: { items: GtagItem[]; value: number; currency?: string }) {
+  pushEcommerceEvent('begin_checkout', {
+    currency: params.currency ?? 'COP',
+    value: params.value,
+    items: params.items,
+  });
+}
+
+export function trackAddShippingInfo(params: { shipping_tier: string }) {
+  pushEvent('add_shipping_info', params);
+}
+
+export function trackAddPaymentInfo(params: { payment_type: string }) {
+  pushEvent('add_payment_info', params);
+}
