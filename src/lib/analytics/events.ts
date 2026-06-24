@@ -5,6 +5,7 @@ type GtagItem = {
   item_name: string;
   price: number;
   quantity?: number;
+  seller_name?: string;
 };
 
 function pushEcommerceEvent(eventName: string, ecommerce: Record<string, unknown>) {
