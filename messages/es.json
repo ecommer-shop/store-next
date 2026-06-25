@@ -581,6 +581,11 @@
         "title": "Pagos Seguros Wompi",
         "description": "Múltiples métodos de pago 100% confiables"
       }
+    },
+    "sellersCta": {
+      "title": "¿Quieres vender con nosotros?",
+      "description": "Conoce la vista de vendedores y descubre cómo crear tu tienda, gestionar productos y escalar tus ventas en minutos.",
+      "button": "Ir a Vendedores"
     }
   },
   "About": {

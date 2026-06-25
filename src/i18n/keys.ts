@@ -584,6 +584,11 @@ export const I18N = {
         title: 'features.wompi.title',
         description: 'features.wompi.description'
       }
+    },
+    sellersCta: {
+      title: 'sellersCta.title',
+      description: 'sellersCta.description',
+      button: 'sellersCta.button'
     }
   },
 

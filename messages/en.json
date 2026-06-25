@@ -587,6 +587,11 @@
         "title": "Wompi Secure Payments",
         "description": "Multiple 100% reliable payment methods"
       }
+    },
+    "sellersCta": {
+      "title": "Want to sell with us?",
+      "description": "Visit the sellers view and discover how to create your store, manage products, and scale your sales in minutes.",
+      "button": "Go to Sellers"
     }
   },
   "About": {
