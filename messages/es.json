@@ -705,6 +705,31 @@
       "floatingCard": "Nueva Venta $30,650 • 2 Productos • 1 Cliente",
       "storeButton": "Crear mi Tienda Gratis"
     },
+    "schedule": {
+      "openButton": "Agendar una Demo",
+      "selectDateTitle": "Selecciona una fecha",
+      "weekdaysOnly": "Solo disponible de lunes a viernes",
+      "selectTimeTitle": "Selecciona una hora",
+      "prevMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "back": "Volver",
+      "confirm": "Confirmar por WhatsApp",
+      "whatsappMessage": "Hola, quiero agendar una demo de Ecommer para el {date} a las {time}."
+    },
+    "loginPreview": {
+      "businessNameLabel": "Nombre del negocio",
+      "businessNameValue": "Tienda Don Julio",
+      "emailLabel": "Email",
+      "emailValue": "donjulio@tutienda.com",
+      "category": "Categoría: Alimentos",
+      "city": "Ciudad: Popayán, Cauca",
+      "activeStore": "✦ Tienda activa",
+      "logoAlt": "Ecommer Vendedores"
+    },
+    "pdf": {
+      "loading": "Generando...",
+      "ariaLabel": "Descargar vista en PDF"
+    },
     "beneficios": {
       "title": "Excelencia Operativa",
       "subtitle": "Todo lo que necesitas para operar sin fricciones.",
@@ -742,7 +767,7 @@
       "title": "Nuestros aliados estratégicos",
       "dian": "DIAN",
       "wompi": "wompi",
-      "servientrega": "SERVIENTREGA"
+      "servientrega": "MESSENGER"
     },
     "valorOperativo": {
       "title": "Valor Operativo Real",

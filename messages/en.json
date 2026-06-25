@@ -11,7 +11,9 @@
     "themeSwitcher": {
       "tittle": "Appearance",
       "subtittle": "Change theme",
-      "light": "Light"
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
     },
     "langSwitcher": {
       "tittle": "Language"
@@ -206,22 +208,21 @@
         "CANCELLED": "Cancelled"
       }
     },
-      "content": {
-        "title": "Your profile",
-        "description": "Manage your account information."
-      },
-      "deleteAccount": {
-        "title": "Delete account",
-        "description": "Delete your Ecommer account, this cannot be undone.",
-        "warningTitle": "This action is permanent",
-        "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
-        "action": "Delete my account",
-        "confirm": "Yes, delete account",
-        "cancel": "Cancel",
-        "deleting": "Deleting...",
-        "successTitle": "Account deleted",
-        "errorTitle": "Could not delete account"
-      }
+    "content": {
+      "title": "Your profile",
+      "description": "Manage your account information."
+    },
+    "deleteAccount": {
+      "title": "Delete account",
+      "description": "Delete your Ecommer account, this cannot be undone.",
+      "warningTitle": "This action is permanent",
+      "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
+      "action": "Delete my account",
+      "confirm": "Yes, delete account",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "successTitle": "Account deleted",
+      "errorTitle": "Could not delete account"
     }
   },
   "Cart": {
@@ -696,7 +697,6 @@
     "cancel": "Cancel",
     "perMonth": "/month"
   },
-
   "Vendedores": {
     "hero": {
       "badge": "REMEMBER: Take Colombian talent to every corner of the planet. Your factory, connected to the global market. Technology that scales the pride of our heritage.",
@@ -709,6 +709,31 @@
       "secondaryButton": "Watch Demo",
       "floatingCard": "International Sales $1,240 USD",
       "storeButton": "Create My Store Free"
+    },
+    "schedule": {
+      "openButton": "Schedule a Demo",
+      "selectDateTitle": "Select a date",
+      "weekdaysOnly": "Available Monday through Friday only",
+      "selectTimeTitle": "Select a time",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "back": "Back",
+      "confirm": "Confirm via WhatsApp",
+      "whatsappMessage": "Hi, I'd like to schedule an Ecommer demo for {date} at {time}."
+    },
+    "loginPreview": {
+      "businessNameLabel": "Business name",
+      "businessNameValue": "Don Julio Store",
+      "emailLabel": "Email",
+      "emailValue": "donjulio@tutienda.com",
+      "category": "Category: Food",
+      "city": "City: Popayán, Cauca",
+      "activeStore": "✦ Active store",
+      "logoAlt": "Ecommer sellers"
+    },
+    "pdf": {
+      "loading": "Generating...",
+      "ariaLabel": "Download PDF view"
     },
     "beneficios": {
       "title": "Operational Excellence",
@@ -747,7 +772,7 @@
       "title": "Our Strategic Partners",
       "dian": "DIAN",
       "wompi": "wompi",
-      "servientrega": "SERVIENTREGA"
+      "servientrega": "MESSENGER"
     },
     "valorOperativo": {
       "title": "Real Operational Value",

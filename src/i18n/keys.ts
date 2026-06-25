@@ -711,6 +711,31 @@ export const I18N = {
       floatingCard: 'hero.floatingCard',
       storeButton: 'hero.storeButton'
     },
+    schedule: {
+      openButton: 'schedule.openButton',
+      selectDateTitle: 'schedule.selectDateTitle',
+      weekdaysOnly: 'schedule.weekdaysOnly',
+      selectTimeTitle: 'schedule.selectTimeTitle',
+      prevMonth: 'schedule.prevMonth',
+      nextMonth: 'schedule.nextMonth',
+      back: 'schedule.back',
+      confirm: 'schedule.confirm',
+      whatsappMessage: 'schedule.whatsappMessage'
+    },
+    loginPreview: {
+      businessNameLabel: 'loginPreview.businessNameLabel',
+      businessNameValue: 'loginPreview.businessNameValue',
+      emailLabel: 'loginPreview.emailLabel',
+      emailValue: 'loginPreview.emailValue',
+      category: 'loginPreview.category',
+      city: 'loginPreview.city',
+      activeStore: 'loginPreview.activeStore',
+      logoAlt: 'loginPreview.logoAlt'
+    },
+    pdf: {
+      loading: 'pdf.loading',
+      ariaLabel: 'pdf.ariaLabel'
+    },
     beneficios: {
       title: 'beneficios.title',
       subtitle: 'beneficios.subtitle',
@@ -852,21 +877,37 @@ export const I18N = {
     faq: {
       title: 'faq.title',
       questions: {
+        gratis: {
+          question: 'faq.questions.gratis.question',
+          answer: 'faq.questions.gratis.answer'
+        },
         tecnicos: {
-          question: '¿Necesito conocimientos técnicos?',
-          answer: 'No. Ecommer está diseñada para que cualquier emprendedor pueda configurar su tienda en minutos, sin necesidad de saber programar. Nuestro equipo de soporte te acompaña en cada paso del proceso.'
+          question: 'faq.questions.tecnicos.question',
+          answer: 'faq.questions.tecnicos.answer'
+        },
+        cobro: {
+          question: 'faq.questions.cobro.question',
+          answer: 'faq.questions.cobro.answer'
         },
         envios: {
-          question: '¿Cómo funcionan los envíos con Servientrega?',
-          answer: 'Tu tienda está integrada directamente con Servientrega. Cuando un cliente hace un pedido, el sistema genera automáticamente la guía de envío y puedes rastrear el estado en tiempo real desde tu panel de administración.'
+          question: 'faq.questions.envios.question',
+          answer: 'faq.questions.envios.answer'
         },
-        comisiones: {
-          question: '¿Qué comisiones cobran por venta?',
-          answer: 'Ecommer cobra una comisión competitiva solo cuando vendes — no pagas nada si no hay ventas. Agenda una demo y te explicamos el detalle del modelo de precios adaptado a tu volumen de negocio.'
+        facturacion: {
+          question: 'faq.questions.facturacion.question',
+          answer: 'faq.questions.facturacion.answer'
         },
-        movil: {
-          question: '¿Puedo manejar mi tienda desde el celular?',
-          answer: 'Sí. El panel de administración está optimizado para móvil. Podés gestionar productos, ver pedidos, responder clientes y revisar métricas de ventas desde cualquier lugar.'
+        contabilidad: {
+          question: 'faq.questions.contabilidad.question',
+          answer: 'faq.questions.contabilidad.answer'
+        },
+        proteccion: {
+          question: 'faq.questions.proteccion.question',
+          answer: 'faq.questions.proteccion.answer'
+        },
+        atencion: {
+          question: 'faq.questions.atencion.question',
+          answer: 'faq.questions.atencion.answer'
         }
       }
     },

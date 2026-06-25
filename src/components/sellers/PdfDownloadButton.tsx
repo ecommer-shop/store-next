@@ -2,10 +2,12 @@
 
 import { useState, useCallback } from 'react'
 import { useTheme } from 'next-themes'
+import { useTranslations } from 'next-intl'
 import { PdfCapture } from '@/lib/pdf-capture'
 
 export function PdfDownloadButton() {
   const { resolvedTheme } = useTheme()
+  const t = useTranslations('Vendedores')
   const [loading, setLoading] = useState(false)
 
   const downloadPdf = useCallback(async () => {
@@ -33,6 +35,7 @@ export function PdfDownloadButton() {
     <button
       onClick={downloadPdf}
       disabled={loading}
+      aria-label={t('pdf.ariaLabel')}
       className="fixed bottom-6 right-30 z-50 flex items-center gap-2 text-white px-5 py-3 rounded-full shadow-2xl hover:opacity-90 transition-all font-semibold text-sm disabled:opacity-60"
       style={{
         background:
@@ -47,7 +50,7 @@ export function PdfDownloadButton() {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Generando...
+          {t('pdf.loading')}
         </>
       ) : (
         <>
@@ -58,7 +61,6 @@ export function PdfDownloadButton() {
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
           </svg>
-          Comparte la página!
         </>
       )}
     </button>

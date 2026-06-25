@@ -13,6 +13,7 @@ interface Particle {
   seed: number;
   color: string;
   baseAlpha: number;
+  opacity: number;
   angle: number;
   scale: number;
 }
@@ -81,6 +82,7 @@ export function InteractiveBackground() {
             seed: Math.random() * Math.PI * 2,
             color: activeColors[colorIndex],
             baseAlpha,
+            opacity: baseAlpha,
             angle: 0, scale: 1,
           });
         }
@@ -103,15 +105,18 @@ export function InteractiveBackground() {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         const breath = Math.sin(time + p.seed);
-        let currentOpacity = p.baseAlpha + 0.04 * breath;
+        const targetOpacityBase = p.baseAlpha + 0.02 * breath;
         p.scale = 0.9 + 0.1 * Math.abs(breath);
 
         const dxMouse = mouse.smoothX - p.x;
         const dyMouse = mouse.smoothY - p.y;
         const distMouse = Math.hypot(dxMouse, dyMouse);
 
+        let targetOpacity = targetOpacityBase;
+
         if (distMouse < INFLUENCE_RADIUS && distMouse > 0) {
           const proximity = 1 - distMouse / INFLUENCE_RADIUS;
+          const glow = proximity * proximity * (3 - 2 * proximity);
           const force = proximity * MOUSE_ACCEL;
 
           const dirX = dxMouse / distMouse;
@@ -122,8 +127,10 @@ export function InteractiveBackground() {
           p.vx += (-dyMouse / distMouse) * force * SWIRL_FACTOR;
           p.vy += (dxMouse / distMouse) * force * SWIRL_FACTOR;
 
-          currentOpacity += proximity * (currentTheme === 'light' ? 100 : 80);
+          targetOpacity += glow * (currentTheme === 'light' ? 0.9 : 0.82);
         }
+
+        p.opacity += (targetOpacity - p.opacity) * 0.08;
 
         const dxHome = p.originX - p.x;
         const dyHome = p.originY - p.y;
@@ -138,13 +145,11 @@ export function InteractiveBackground() {
         const angleToCursor = Math.atan2(mouse.smoothY - p.y, mouse.smoothX - p.x);
         p.angle = angleToCursor + Math.PI / 2;
 
-        const finalOpacity = Math.min(currentOpacity, 8);
-
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.angle);
         ctx.scale(p.scale, 1);
-        ctx.globalAlpha = finalOpacity;
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.opacity));
         ctx.strokeStyle = p.color;
         const dashLen = currentTheme === 'light' ? 5 : 4;
         ctx.lineWidth = DASH_WIDTH;

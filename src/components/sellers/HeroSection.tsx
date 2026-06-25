@@ -16,14 +16,14 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(153,105,248,0.08)_0%,_transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(153,105,248,0.08)_0%,transparent_70%)]" />
       <div className="absolute inset-0 -z-10 h-full w-full bg-transparent bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(153,105,248,0.22),rgba(255,255,255,0))]" />
       <div className="relative container mx-auto px-4 py-20 lg:py-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
           {/* LEFT COLUMN */}
           <div className="space-y-8">
-            <div className="inline-flex rounded-xl items-start gap-3 bg-white/90 dark:bg-[#12123F]/80 border border-[#9969F8]/30 rounded-full px-5 py-3">
-              <Megaphone className="w-5 h-5 text-[#9969F8] mt-0.5 flex-shrink-0" />
+            <div className="inline-flex rounded-xl items-start gap-3 bg-white/90 dark:bg-[#12123F]/80 border border-[#9969F8]/30 rounded-[9999px] px-5 py-3">
+              <Megaphone className="w-5 h-5 text-[#9969F8] mt-0.5 flex-none" />
               <span className="text-sm text-[#12123F]/80 dark:text-[#F1F1F1]/80 leading-relaxed">
                 <UseVendedoresText path={['hero', 'badge']} />
               </span>
