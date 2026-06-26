@@ -22,7 +22,9 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
 
   const selectedLinesSubtotal = displayedLines.reduce((sum: number, line: OrderLine) => sum + (line.linePriceWithTax ?? 0), 0);
   const discountTotal = order.discounts?.reduce((sum: number, d: { amountWithTax: number }) => sum + (d.amountWithTax ?? 0), 0) ?? 0;
-  const finalTotal = selectedLinesSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
+  
+  const finalTotal = discountTotal < 0 ? selectedLinesSubtotal + (order.shippingWithTax ?? 0) + discountTotal : selectedLinesSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
+  
   return (
     <Card className="sticky top-11
     rounded-md

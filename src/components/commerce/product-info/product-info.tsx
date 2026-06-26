@@ -170,7 +170,6 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
     const canAddToCart = selectedVariant && isInStock;
 
     const stockStatus = selectedVariant?.stockLevel as ProductInfoStockStatus;
-    console.log('Stock status for selected variant:', selectedVariant?.stockLevel);
     const statusColorClass = STOCK_STATUS_COLORS[stockStatus] || "text-muted-foreground";
     const handleShare = async () => {
         const shareData = {

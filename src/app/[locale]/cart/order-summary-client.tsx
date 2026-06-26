@@ -43,8 +43,9 @@ export function OrderSummaryClient({
     .reduce((sum, line) => sum + line.linePriceWithTax, 0);
 
   const discountTotal = discounts?.reduce((sum, d) => sum + d.amountWithTax, 0) ?? 0;
-  const finalTotal = selectedLinesTotal + shippingWithTax - discountTotal;
-
+  
+  const finalTotal = discountTotal < 0 ? selectedLinesTotal + shippingWithTax + discountTotal : selectedLinesTotal + shippingWithTax - discountTotal;
+  
   return (
     <>
       <div className="flex justify-between text-sm">
