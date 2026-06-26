@@ -27,8 +27,9 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
   );
   const discountTotal =
     order.discounts?.reduce((sum: number, d: { amountWithTax: number }) => sum + (d.amountWithTax ?? 0), 0) ?? 0;
-  const finalTotal = selectedSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
-
+  const finalTotal = discountTotal < 0
+    ? selectedSubtotal + (order.shippingWithTax ?? 0) + discountTotal
+    : selectedSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
   return (
     <div className="sticky top-11 rounded-2xl border border-border bg-card shadow-xl shadow-[#12123F]/10 dark:shadow-white/5 overflow-hidden">
 
