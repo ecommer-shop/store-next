@@ -11,7 +11,9 @@
     "themeSwitcher": {
       "tittle": "Appearance",
       "subtittle": "Change theme",
-      "light": "Light"
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
     },
     "langSwitcher": {
       "tittle": "Language"
@@ -206,22 +208,21 @@
         "CANCELLED": "Cancelled"
       }
     },
-      "content": {
-        "title": "Your profile",
-        "description": "Manage your account information."
-      },
-      "deleteAccount": {
-        "title": "Delete account",
-        "description": "Delete your Ecommer account, this cannot be undone.",
-        "warningTitle": "This action is permanent",
-        "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
-        "action": "Delete my account",
-        "confirm": "Yes, delete account",
-        "cancel": "Cancel",
-        "deleting": "Deleting...",
-        "successTitle": "Account deleted",
-        "errorTitle": "Could not delete account"
-      }
+    "content": {
+      "title": "Your profile",
+      "description": "Manage your account information."
+    },
+    "deleteAccount": {
+      "title": "Delete account",
+      "description": "Delete your Ecommer account, this cannot be undone.",
+      "warningTitle": "This action is permanent",
+      "warningDescription": "Your store data will be anonymized first, then your Ecommer account will be deleted. You will not be able to restore access.",
+      "action": "Delete my account",
+      "confirm": "Yes, delete account",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "successTitle": "Account deleted",
+      "errorTitle": "Could not delete account"
     }
   },
   "Cart": {
@@ -586,11 +587,72 @@
         "title": "Wompi Secure Payments",
         "description": "Multiple 100% reliable payment methods"
       }
+    },
+    "sellersCta": {
+      "title": "Want to sell with us?",
+      "description": "Visit the sellers view and discover how to create your store, manage products, and scale your sales in minutes.",
+      "button": "Go to Sellers"
     }
   },
   "About": {
     "title": "About Us",
-    "description": "Provider information in accordance with Law 1480 of 2011, ensuring a clear and transparent shopping experience.",
+    "description": "We connect entrepreneurs and merchants from the region with their customers. No complications. No technological barriers. With Cauca pride.",
+    "history": "Ecommer was born from a concrete observation: while large companies dominate digital commerce, most Colombian micro-entrepreneurs remain on the sidelines. Fragmented tools, high costs, technical barriers, and a market where 96% of businesses in Cauca are micro-enterprises, with over 56% operating informally. There was no solution built for them. We decided to build it.",
+    "mission": "To empower Colombian micro-entrepreneurs with accessible, integrated, and scalable e-commerce technology — so they can sell online with the same power as big brands.",
+    "vision": "To be the reference platform for digital commerce for MSMEs in LATAM — enabling thousands of local businesses to digitize their sales, scale their operations, and connect with customers on any channel. We start in Popayán. We scale by metrics, not by maps.",
+    "audience": {
+      "title": "Who we serve",
+      "description": "If you have a business in Popayán or any municipality in Cauca, Ecommer is your platform. Create your store in minutes, upload your products, and reach more customers without needing technical knowledge.",
+      "securePayments": "Secure payments processed by Wompi (Bancolombia)",
+      "localDelivery": "Local deliveries with MESSENGER",
+      "alwaysOpen": "Your store available 24/7",
+      "cta": "I want to sell on Ecommer"
+    },
+    "team": {
+      "title": "The team behind Ecommer",
+      "members": {
+        "ceo": "Ronnovic Rigel Toth — CEO",
+        "accountant": "Luz Carime Ruiz Gómez — Accountant",
+        "serverLead": "William Fernando Sevilla Palechor — Server Lead",
+        "eiaLead": "Juan Carlos Martínez Fernández — EIA Lead",
+        "lawyer": "Daniel Mateo Campo Nuñez — Lawyer"
+      }
+    },
+    "location": {
+      "title": "Where we are",
+      "text": "Ecommer operates from Popayán, Cauca, Colombia."
+    },
+    "differentiators": {
+      "title": "Why we are different",
+      "description": "Ecommer is not just another e-commerce tool. It is an integration and orchestration company: we combine the best market providers (Vendure, Wompi, Clerk, Azure, DIAN) into a unified experience, adapted to the Colombian context.",
+      "simetria": "SimetrIA — our own AI agent that sells from WhatsApp, Instagram, and Facebook, without taking the buyer out of the chat.",
+      "messenger": "Messenger as preferred partner — access to 15,000+ monthly deliveries in Popayán from day one.",
+      "compliance": "Native compliance — PCI DSS, DIAN (Resolution 0227/2025), Law 1581, Consumer Statute — built in by default, not as an add-on.",
+      "incentives": "Incentive-aligned model — the platform only earns when the seller sells."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "q": "Is it really free for 3 months?",
+        "a": "Yes. For the first 3 months you pay no monthly fee for using the platform. The only cost you assume are the transaction fees, which are charged directly by our payment gateway Wompi."
+      },
+      "q2": {
+        "q": "What do I need to register as a seller?",
+        "a": "You only need your email address. If you want to operate as a company, you can add your tax information later."
+      },
+      "q3": {
+        "q": "Is it safe? My customer is afraid to enter their card.",
+        "a": "Absolutely. Payments on Ecommer are processed through Wompi, a gateway certified with PCI-DSS, the most demanding international security standard. Your customers' information is encrypted and never exposed."
+      },
+      "q4": {
+        "q": "Do I need to know how to code to use Ecommer?",
+        "a": "Not at all. If you know how to use Facebook or WhatsApp, you know how to use Ecommer. Uploading a product is as easy as uploading a photo to Instagram."
+      },
+      "q5": {
+        "q": "What is the Digital Certificate and why does it cost $199,900 COP?",
+        "a": "It is your digital signature before DIAN — the legal mechanism that validates your electronic invoices in Colombia. Without it, your invoices have no tax validity. You can purchase it annually for $199,900 COP or in monthly installments with a commitment period."
+      }
+    },
     "legal": {
       "label": "Legal Information",
       "rs": "Legal Name:",
@@ -610,6 +672,11 @@
       "warranty": "Warranty",
       "withdrawal": "Withdrawal",
       "paymentReversal": "Payment Reversal"
+    },
+    "cta": {
+      "title": "Ready to be part of Cauca's digital commerce?",
+      "register": "Register your store and start selling",
+      "discover": "Discover products from your region"
     }
   },
   "Legal": {
@@ -635,14 +702,43 @@
     "cancel": "Cancel",
     "perMonth": "/month"
   },
-
   "Vendedores": {
     "hero": {
-      "badge": "The new era of B2B",
-      "title": "Evolve the way the world sees your business",
-      "subtitle": "The omnichannel platform designed for Colombian manufacturers and sellers looking to scale globally.",
-      "demoButton": "Schedule a Demo",
+      "badge": "REMEMBER: Take Colombian talent to every corner of the planet. Your factory, connected to the global market. Technology that scales the pride of our heritage.",
+      "title": {
+        "prefix": "Evolve the way the ",
+        "highlight": "world sees your business"
+      },
+      "description": "Comprehensive platform designed exclusively for Colombian manufacturers, artisans, and entrepreneurs. Scale your international sales with enterprise-level tools adapted to your reality.",
+      "demoButton": "Start Free Trial →",
+      "secondaryButton": "Watch Demo",
+      "floatingCard": "International Sales $1,240 USD",
       "storeButton": "Create My Store Free"
+    },
+    "schedule": {
+      "openButton": "Schedule a Demo",
+      "selectDateTitle": "Select a date",
+      "weekdaysOnly": "Available Monday through Friday only",
+      "selectTimeTitle": "Select a time",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "back": "Back",
+      "confirm": "Confirm via WhatsApp",
+      "whatsappMessage": "Hi, I'd like to schedule an Ecommer demo for {date} at {time}."
+    },
+    "loginPreview": {
+      "businessNameLabel": "Business name",
+      "businessNameValue": "Don Julio Store",
+      "emailLabel": "Email",
+      "emailValue": "donjulio@tutienda.com",
+      "category": "Category: Food",
+      "city": "City: Popayán, Cauca",
+      "activeStore": "✦ Active store",
+      "logoAlt": "Ecommer sellers"
+    },
+    "pdf": {
+      "loading": "Generating...",
+      "ariaLabel": "Download PDF view"
     },
     "beneficios": {
       "title": "Operational Excellence",
@@ -667,6 +763,7 @@
       }
     },
     "tienda": {
+      "badge": "Simplicity",
       "title": "Your store ready in minutes",
       "subtitle": "We have simplified the technical complexity so you can focus on what you do best: creating amazing products. Our intuitive interface allows you to manage everything from your mobile device.",
       "checklist": {
@@ -680,7 +777,29 @@
       "title": "Our Strategic Partners",
       "dian": "DIAN",
       "wompi": "wompi",
-      "servientrega": "SERVIENTREGA"
+      "servientrega": "MESSENGER"
+    },
+    "valorOperativo": {
+      "title": "Real Operational Value",
+      "subtitle": "Native local integrations to solve the true bottlenecks of Colombian commerce.",
+      "cards": {
+        "dian": {
+          "title": "DIAN Invoicing",
+          "description": "Automatic sales synchronization with electronic invoicing complying with DIAN regulations."
+        },
+        "wompi": {
+          "title": "Wompi Payments",
+          "description": "Native integration with Bancolombia gateway, high approval rate and robust fraud prevention."
+        },
+        "logistica": {
+          "title": "Connected Logistics",
+          "description": "Automated shipping labels and real-time tracking with Servientrega and major carriers."
+        },
+        "panel": {
+          "title": "Executive Dashboard",
+          "description": "Real-time analytics of inventory, omnichannel sales, and campaign performance."
+        }
+      }
     },
     "sectores": {
       "title": "The best of Colombia for the world",
@@ -698,24 +817,103 @@
         "description": "Cultural heritage transformed into contemporary luxury pieces."
       }
     },
+    "enfoqueSectorial": {
+      "title": "Regional Sector Focus",
+      "subtitle": "Specialized solutions for the sectors driving the Colombian economy.",
+      "buttonText": "Explore Success Stories",
+      "items": {
+        "cafe": {
+          "badge": "Coffee Axis",
+          "title": "Specialty Coffees",
+          "description": "Traceability from farm to cup, international subscriptions, and batch management with precise roasting dates."
+        },
+        "moda": {
+          "badge": "Medellín & Bucaramanga",
+          "title": "Fashion & Footwear",
+          "description": "Advanced management of sizes, colors, and multi-warehouse inventory."
+        },
+        "artesanias": {
+          "badge": "National Identity",
+          "title": "Luxury Handicrafts",
+          "description": "Digital certificates of origin, artisan narratives integrated into checkout, and secure shipping for unique irreplaceable pieces.",
+          "link": "Learn More →"
+        }
+      }
+    },
+    "planes": {
+      "title": "Plans Designed to Scale",
+      "subtitle": "No hidden fees. Grow at your own pace with world-class technology designed for sellers.",
+      "popular": "MOST POPULAR",
+      "cards": {
+        "free": {
+          "name": "Free",
+          "price": "FREE / forever",
+          "description": "Perfect to start your digital transformation",
+          "features": {
+            "products": "15 Products",
+            "variations": "250 Variations"
+          },
+          "buttonText": "Create Free Account"
+        },
+        "tienda": {
+          "name": "Store",
+          "price": "$29,900 COP / month",
+          "description": "For actively growing businesses",
+          "features": {
+            "products": "500 Products",
+            "variations": "5,000 Variants",
+            "simetria": "Full access to Simetría"
+          },
+          "buttonText": "Select Plan"
+        },
+        "omnichannel": {
+          "name": "Omnichannel",
+          "price": "$99,900 COP / month",
+          "description": "Complete multi-channel operation",
+          "features": {
+            "products": "1,500 Products",
+            "variations": "15,000 Variants",
+            "simetria": "Full access to Simetría"
+          },
+          "buttonText": "Contact Sales"
+        }
+      }
+    },
     "faq": {
       "title": "Frequently Asked Questions",
+      "subtitle": "We resolve your operational doubts so you can scale with confidence.",
       "questions": {
+        "gratis": {
+          "question": "Is the platform really free to use?",
+          "answer": "Yes. The only cost is the payment gateway fees (Wompi): 7.9% per transaction, covering credit cards, PSE, and bank correspondents. If you need additional features, you can check our plans."
+        },
         "tecnicos": {
-          "question": "Do I need technical knowledge?",
-          "answer": "No. Ecommer is designed so that any entrepreneur can set up their store in minutes, without needing to know how to program. Our support team accompanies you at every step of the process."
+          "question": "Do I need technical knowledge to use the platform?",
+          "answer": "Not at all. If you know how to use WhatsApp or Instagram, you know how to use Ecommer. Uploading a product is as easy as posting a photo on social media."
+        },
+        "cobro": {
+          "question": "How and when do I receive the money from my sales?",
+          "answer": "You receive the money every 15 days. If you use Nequi, Bancolombia, or a bank with a registered BRE-B key, there are no additional costs. If you choose another bank without a key, the transaction costs are assumed by the store."
         },
         "envios": {
-          "question": "How do shipments work with Servientrega?",
-          "answer": "Your store is directly integrated with Servientrega. When a customer places an order, the system automatically generates the shipping guide and you can track the status in real-time from your administration panel."
+          "question": "How do shipments work in Popayán?",
+          "answer": "We have an alliance with MESSENGER. When you receive an order, the system automatically notifies them to pick up the package at your location and deliver it to the customer. The shipping cost is assumed by the buyer and is calculated based on distance."
         },
-        "comisiones": {
-          "question": "What commissions do you charge per sale?",
-          "answer": "Ecommer charges a competitive commission only when you sell — you don't pay anything if there are no sales. Schedule a demo and we'll explain the details of the pricing model adapted to your business volume."
+        "facturacion": {
+          "question": "Is electronic invoicing mandatory?",
+          "answer": "Not to start. If you are a natural person in a non-IVA responsible regime, you can sell without electronic invoicing. Legal entities are required by law. For them, we offer the electronic invoicing service with DIAN Digital Certificate from $199,900/year."
         },
-        "movil": {
-          "question": "Can I manage my store from my cellphone?",
-          "answer": "Yes. The administration panel is optimized for mobile. You can manage products, view orders, respond to customers, and review sales metrics from anywhere."
+        "contabilidad": {
+          "question": "Does Ecommer help me with accounting?",
+          "answer": "Yes. The platform records all your sales and generates ready-to-download reports, so your accountant doesn't have to do extra work. We meet the standards to keep you up to date with DIAN effortlessly."
+        },
+        "proteccion": {
+          "question": "How do they protect my money against claims or chargebacks?",
+          "answer": "Wompi monitors payments 24/7 and money can only be withdrawn with a second key. In case of claims for physical product sales, they notify you and you have 7 days to prove delivery. We recommend keeping all sales documentation for at least one year."
+        },
+        "atencion": {
+          "question": "Is there a customer service number?",
+          "answer": "Yes, we have a customer service number. You can contact us at 314 851 8961, where we will gladly assist you. Initially, the support connects you with an AI Bot which redirects you to a real assistant if necessary."
         }
       }
     },

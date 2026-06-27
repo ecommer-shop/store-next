@@ -164,6 +164,7 @@ interface DeliveryContextOrder {
 
 interface DeliveryOriginGroup {
     key: string;
+    sellerChannelCode: string;
     sellerName: string;
     originLatLng: string;
     originNeighborhood: string;
@@ -329,6 +330,7 @@ function groupOrderLinesBySellerOrigin(order: DeliveryContextOrder): DeliveryOri
 
         groups.set(key, {
             key,
+            sellerChannelCode: sellerShop.channelCode,
             sellerName: sellerShop.sellerName,
             originLatLng: sellerShop.pickupLatLng,
             originNeighborhood: sellerShop.pickupNeighborhood || sellerShop.sellerName,
@@ -515,6 +517,10 @@ async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, 
             CreateDeliveryOrderMutation as any,
             {
                 input: {
+                    orderId: order.id,
+                    orderCode: order.code,
+                    sellerChannelCode: group.sellerChannelCode,
+                    sellerName: group.sellerName,
                     barrio_origen: group.originNeighborhood,
                     barrio_destino: customFields?.neighborhood || shippingAddress.city || 'Destino',
                     origen_lat_lng: group.originLatLng,
