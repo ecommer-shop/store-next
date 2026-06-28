@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata, Viewport } from "next";
 import { GoogleTagManager } from '@next/third-parties/google';
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
@@ -31,6 +32,23 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+
+const poppins = localFont({
+  src: [
+    { path: "../../../public/fonts/Poppins-Regular.ttf", weight: "400" },
+    { path: "../../../public/fonts/Poppins-SemiBold.ttf", weight: "600" },
+  ],
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const gilroy = localFont({
+  src: [
+    { path: "../../../public/fonts/Gilroy-Light.otf", weight: "300" },
+    { path: "../../../public/fonts/Gilroy-ExtraBold.otf", weight: "800" },
+  ],
+  variable: "--font-gilroy",
+  display: "swap",
 });
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -120,6 +138,8 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
               `}
           </Script>
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
+      <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
+        <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
           <Providers>
             <NextIntlClientProvider
                 locale={locale}

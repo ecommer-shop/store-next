@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export function HomeFeatures() {
     const t = useTranslations('Home');
@@ -32,6 +33,21 @@ export function HomeFeatures() {
                         <h3 className="text-xl font-semibold">{t(I18N.Home.features.wompi.title)}</h3>
                         <p className="text-muted-foreground text-sm">{t(I18N.Home.features.wompi.description)}</p>
                     </div>
+                </div>
+
+                <div className="mt-14 rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#12123F]/60 backdrop-blur-md p-6 md:p-8 text-center">
+                    <p className="text-xl md:text-2xl font-semibold text-[#12123F] dark:text-[#F1F1F1] mb-3">
+                        {t(I18N.Home.sellersCta.title)}
+                    </p>
+                    <p className="text-sm md:text-base text-[#12123F]/70 dark:text-[#F1F1F1]/70 max-w-2xl mx-auto mb-6">
+                        {t(I18N.Home.sellersCta.description)}
+                    </p>
+                    <Link
+                        href="/sellers"
+                        className="inline-flex items-center justify-center rounded-md px-6 py-3 font-semibold text-white bg-linear-to-r from-[#6BB8FF] to-[#9969F8] hover:opacity-90 transition-all"
+                    >
+                        {t(I18N.Home.sellersCta.button)}
+                    </Link>
                 </div>
             </div>
         </section>

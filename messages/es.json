@@ -581,6 +581,11 @@
         "title": "Pagos Seguros Wompi",
         "description": "Múltiples métodos de pago 100% confiables"
       }
+    },
+    "sellersCta": {
+      "title": "¿Quieres vender con nosotros?",
+      "description": "Conoce la vista de vendedores y descubre cómo crear tu tienda, gestionar productos y escalar tus ventas en minutos.",
+      "button": "Ir a Vendedores"
     }
   },
   "About": {
@@ -694,11 +699,41 @@
 
   "Vendedores": {
     "hero": {
-      "badge": "La nueva era del B2B",
-      "title": "Evoluciona la forma en que el mundo ve tu negocio",
-      "subtitle": "La plataforma omnicanal diseñada para fabricantes y vendedores colombianos que buscan escalar globalmente.",
-      "demoButton": "Agendar una Demo",
+      "badge": "RECUERDA: Lleva el talento colombiano a cada rincón del planeta. Tu fábrica, conectada con el mercado global. La tecnología que escala el orgullo de lo nuestro.",
+      "title": {
+        "prefix": "Evoluciona la forma en que el ",
+        "highlight": "mundo ve tu negocio"
+      },
+      "description": "Plataforma integral diseñada exclusivamente para fabricantes, artesanos y emprendedores colombianos. Escala tus ventas internacionales con herramientas de nivel corporativo adaptadas a tu realidad.",
+      "demoButton": "Comenzar Prueba Gratuita →",
+      "secondaryButton": "Ver Demo",
+      "floatingCard": "Nueva Venta $30,650 • 2 Productos • 1 Cliente",
       "storeButton": "Crear mi Tienda Gratis"
+    },
+    "schedule": {
+      "openButton": "Agendar una Demo",
+      "selectDateTitle": "Selecciona una fecha",
+      "weekdaysOnly": "Solo disponible de lunes a viernes",
+      "selectTimeTitle": "Selecciona una hora",
+      "prevMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "back": "Volver",
+      "confirm": "Confirmar por WhatsApp",
+      "whatsappMessage": "Hola, quiero agendar una demo de Ecommer para el {date} a las {time}."
+    },
+    "loginPreview": {
+      "businessNameLabel": "Nombre del negocio",
+      "businessNameValue": "Tienda Don Julio",
+      "emailLabel": "Email",
+      "emailValue": "donjulio@tutienda.com",
+      "category": "Categoría: Alimentos",
+      "city": "Ciudad: Popayán, Cauca",
+      "activeStore": "✦ Tienda activa",
+      "logoAlt": "Ecommer Vendedores"
+    },
+    "pdf": {
+      "loading": "Generando...",
+      "ariaLabel": "Descargar vista en PDF"
     },
     "beneficios": {
       "title": "Excelencia Operativa",
@@ -723,6 +758,7 @@
       }
     },
     "tienda": {
+      "badge": "Simplicidad",
       "title": "Tu tienda lista en minutos",
       "subtitle": "Hemos simplificado la complejidad técnica para que te enfoques en lo que mejor sabes hacer: crear productos increíbles. Nuestra interfaz intuitiva te permite gestionar todo desde tu dispositivo móvil.",
       "checklist": {
@@ -736,7 +772,29 @@
       "title": "Nuestros aliados estratégicos",
       "dian": "DIAN",
       "wompi": "wompi",
-      "servientrega": "SERVIENTREGA"
+      "servientrega": "MESSENGER"
+    },
+    "valorOperativo": {
+      "title": "Valor Operativo Real",
+      "subtitle": "Integraciones locales nativas para resolver los verdaderos cuellos de botella del comercio colombiano.",
+      "cards": {
+        "dian": {
+          "title": "Facturación DIAN",
+          "description": "Sincronización automática de ventas con facturación electrónica cumpliendo normativa DIAN."
+        },
+        "wompi": {
+          "title": "Pagos Wompi",
+          "description": "Integración nativa con pasarela de Bancolombia, alta tasa de aprobación y antifraude robusto."
+        },
+        "logistica": {
+          "title": "Logística Conectada",
+          "description": "Guías automatizadas y rastreo en tiempo real con MESSENGER y principales transportadoras."
+        },
+        "panel": {
+          "title": "Panel Ejecutivo",
+          "description": "Analíticas y métricas en tiempo real de inventario y ventas para que puedas observar tu rendimiento."
+        }
+      }
     },
     "sectores": {
       "title": "Lo mejor de Colombia para el mundo",
@@ -754,24 +812,103 @@
         "description": "Herencia cultural transformada en piezas de lujo contemporáneo."
       }
     },
+    "enfoqueSectorial": {
+      "title": "Enfoque Sectorial Regional",
+      "subtitle": "Soluciones especializadas para los sectores que impulsan la economía colombiana.",
+      "buttonText": "Explorar Casos de Éxito",
+      "items": {
+        "cafe": {
+          "badge": "Especialidad Colombiana",
+          "title": "Cafés Especiales",
+          "description": "Trazabilidad desde la finca hasta la taza"
+        },
+        "moda": {
+          "badge": "Diseño Colombiano",
+          "title": "Moda & Calzado",
+          "description": "Gestión avanzada de tallas, colores e inventarios multialmacén."
+        },
+        "artesanias": {
+          "badge": "Identidad Nacional",
+          "title": "Artesanías de Lujo",
+          "description": "Herencia cultural transformada en piezas de lujo contemporáneo y envíos seguros para piezas únicas irrepetibles.",
+          "link": "Conocer Módulo →"
+        }
+      }
+    },
+    "planes": {
+      "title": "Planes diseñados para escalar",
+      "subtitle": "Sin comisiones ocultas. Crece a tu propio ritmo con tecnología de clase mundial diseñada para vendedores.",
+      "popular": "MÁS POPULAR",
+      "cards": {
+        "free": {
+          "name": "Free",
+          "price": "GRATIS / para siempre",
+          "description": "Perfecto para empezar tu transformación digital",
+          "features": {
+            "products": "15 Productos",
+            "variations": "250 Variaciones"
+          },
+          "buttonText": "Crear Cuenta Gratis"
+        },
+        "tienda": {
+          "name": "Tienda",
+          "price": "$29.900 COP /mes",
+          "description": "Para negocios en crecimiento activo",
+          "features": {
+            "products": "500 Productos",
+            "variations": "5000 Variantes de Producto",
+            "simetria": "Acceso completo a Simetría"
+          },
+          "buttonText": "Seleccionar Plan"
+        },
+        "omnichannel": {
+          "name": "Omnichannel",
+          "price": "$99.900 COP /mes",
+          "description": "Operación completa multicanal",
+          "features": {
+            "products": "1500 Productos",
+            "variations": "15000 Variantes de Producto",
+            "simetria": "Acceso completo a Simetría"
+          },
+          "buttonText": "Crear Cuenta y Comprar"
+        }
+      }
+    },
     "faq": {
       "title": "Preguntas Frecuentes",
+      "subtitle": "Resolvemos tus dudas operativas para que escales con confianza.",
       "questions": {
+        "gratis": {
+          "question": "¿Realmente es gratis usar la plataforma?",
+          "answer": "Sí. El único costo son las comisiones de la pasarela de pagos (Wompi): 7.9% por transacción, que cubre tarjetas, PSE y corresponsales. Si deseas funcionalidades adicionales, puedes revisar nuestros paquetes."
+        },
         "tecnicos": {
-          "question": "¿Necesito conocimientos técnicos?",
-          "answer": "No. Ecommer está diseñada para que cualquier emprendedor pueda configurar su tienda en minutos, sin necesidad de saber programar. Nuestro equipo de soporte te acompaña en cada paso del proceso."
+          "question": "¿Necesito conocimientos técnicos para usar la plataforma?",
+          "answer": "Para nada. Si sabés usar WhatsApp o Instagram, sabés usar Ecommer. Subir un producto es tan fácil como publicar una foto en redes sociales."
+        },
+        "cobro": {
+          "question": "¿Cómo y cuándo recibo el dinero de mis ventas?",
+          "answer": "Recibes el dinero cada 15 días. Si usas Nequi, Bancolombia o un banco con llave BRE-B registrada, no hay costos adicionales. Si eliges otro banco sin llave, los costos de la transacción los asume la tienda."
         },
         "envios": {
-          "question": "¿Cómo funcionan los envíos con Servientrega?",
-          "answer": "Tu tienda está integrada directamente con Servientrega. Cuando un cliente hace un pedido, el sistema genera automáticamente la guía de envío y puedes rastrear el estado en tiempo real desde tu panel de administración."
+          "question": "¿Cómo funcionan los envíos en Popayán?",
+          "answer": "Tenemos alianza con MESSENGER. Cuando recibes un pedido, el sistema les notifica automáticamente para que recojan el paquete en tu local y lo entreguen al cliente. El costo del envío lo asume el comprador y se calcula según la distancia."
         },
-        "comisiones": {
-          "question": "¿Qué comisiones cobran por venta?",
-          "answer": "Ecommer cobra una comisión competitiva solo cuando vendes — no pagas nada si no hay ventas. Agenda una demo y te explicamos el detalle del modelo de precios adaptado a tu volumen de negocio."
+        "facturacion": {
+          "question": "¿Es obligatorio facturar electrónicamente?",
+          "answer": "No para comenzar. Si eres persona natural en régimen no responsable de IVA, puedes vender sin facturación electrónica. Las personas jurídicas sí están obligadas por ley. Para ellas, ofrecemos el servicio de facturación electrónica con Certificado Digital DIAN desde $199.900/año."
         },
-        "movil": {
-          "question": "¿Puedo manejar mi tienda desde el celular?",
-          "answer": "Sí. El panel de administración está optimizado para móvil. Podés gestionar productos, ver pedidos, responder clientes y revisar métricas de ventas desde cualquier lugar."
+        "contabilidad": {
+          "question": "¿Ecommer me ayuda con la contabilidad?",
+          "answer": "Sí. La plataforma registra todas tus ventas y genera reportes listos para descargar, para que tu contador no tenga que hacer trabajo extra. Cumplimos los estándares para que estés al día con la DIAN sin esfuerzo."
+        },
+        "proteccion": {
+          "question": "¿Cómo protegen mi dinero ante reclamos o contracargos?",
+          "answer": "Wompi monitorea los pagos 24/7 y el dinero solo se retira con una segunda clave. Ante reclamos en ventas de productos físicos, te notifican y tienes 7 días para demostrar la entrega. Se recomienda guardar toda la documentación de ventas por al menos un año."
+        },
+        "atencion": {
+          "question": "¿Existe un número de atención al cliente?",
+          "answer": "Sí, contamos con un número de atención al cliente. Puedes comunicarte al 314 851 8961, donde con gusto te brindaremos asistencia, inicialmente el soporte te conecta con un Bot de IA el cual te redirecciona a un asistente real si es necesario."
         }
       }
     },
