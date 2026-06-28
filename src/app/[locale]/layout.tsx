@@ -25,6 +25,7 @@ import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
 import Script from 'next/script';
 import { ConsentBanner } from '@/components/providers/consent-banner';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,6 +33,7 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
 
 const poppins = localFont({
   src: [
@@ -119,8 +121,8 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       signInFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
     >
-      <html lang={locale} suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
+      <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
+        <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
           <Script id="consent-default" strategy="beforeInteractive">
               {`
                   window.dataLayer = window.dataLayer || [];
@@ -138,8 +140,6 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
               `}
           </Script>
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
-      <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
-        <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
           <Providers>
             <NextIntlClientProvider
                 locale={locale}
