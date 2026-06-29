@@ -1,20 +1,12 @@
-'use client';
+"use client";
 
-import { Users } from 'lucide-react';
-import { UseAboutText } from './UseAboutText';
+import { Users } from "lucide-react";
+import { UseAboutText } from "./UseAboutText";
 
 const groups = [
   {
-    key: 'leadership',
-    members: ['ceo', 'accountant', 'serverLead', 'eiaLead', 'lawyer'],
-  },
-  {
-    key: 'server',
-    members: ['mary', 'brayan', 'juanFelipe', 'william', 'darwin'],
-  },
-  {
-    key: 'eia',
-    members: ['javier', 'kevin', 'ivan'],
+    key: "leadership",
+    members: ["ceo", "accountant", "serverLead", "eiaLead", "lawyer"],
   },
 ] as const;
 
@@ -25,22 +17,22 @@ export function TeamSection() {
         <div className="max-w-3xl mx-auto text-center mb-10">
           <Users className="size-10 mx-auto mb-4 text-primary" />
           <h2 className="text-3xl font-bold">
-            <UseAboutText path={['team', 'title']} />
+            <UseAboutText path={["team", "title"]} />
           </h2>
         </div>
 
         <div className="max-w-xl mx-auto space-y-8">
           {groups.map((group) => (
             <div key={group.key}>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                <UseAboutText path={['team', group.key, 'label']} />
-              </h3>
               <div className="divide-y border rounded-lg bg-background">
                 {group.members.map((member) => (
-                  <div key={member} className="flex items-center gap-4 px-6 py-4">
+                  <div
+                    key={member}
+                    className="flex items-center gap-4 px-6 py-4"
+                  >
                     <div className="size-2 rounded-full bg-primary shrink-0" />
                     <span className="font-medium">
-                      <UseAboutText path={['team', group.key, member]} />
+                      <UseAboutText path={["team", group.key, member]} />
                     </span>
                   </div>
                 ))}
