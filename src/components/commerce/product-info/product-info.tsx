@@ -62,6 +62,14 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
     const [isAdded, setIsAdded] = useState(false);
     const [showGoToCart, setShowGoToCart] = useState(false);
     const t = useTranslations('Commerce');
+    const [showBanner, setShowBanner] = useState(false);
+
+    useEffect(() => {
+        if (showBanner) {
+            const timer = setTimeout(() => setShowBanner(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showBanner]);
 
     useEffect(() => {
         checkProductInCart(product.id).then((isInCart) => {
@@ -182,6 +190,10 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
     const stockStatus = selectedVariant?.stockLevel as ProductInfoStockStatus;
     console.log('Stock status for selected variant:', selectedVariant?.stockLevel);
     const statusColorClass = STOCK_STATUS_COLORS[stockStatus] || "text-muted-foreground";
+    const isMobileDevice = () => {
+        if (typeof navigator === 'undefined') return false;
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    };
     const handleShare = async () => {
         const shareData = {
             title: product.name,
@@ -189,7 +201,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             url: window.location.href,
         };
 
-        if (navigator.share) {
+        if (isMobileDevice() && navigator.share) {
             try {
                 await navigator.share(shareData);
                 trackShareProduct({ item_id: product.id, share_method: 'WebShareAPI' });
@@ -199,6 +211,18 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     console.error('Error al compartir:', error);
                     toast.danger(t(I18N.Commerce.productInfo.toast.shareError));
                 }
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                trackShareProduct({ item_id: product.id, share_method: 'Clipboard' });
+                toast.success(t(I18N.Commerce.productInfo.toast.shareSuccess));
+                
+                setShowBanner(true); 
+
+            } catch (error) {
+                console.error('Error al copiar el link:', error);
+                toast.danger(t(I18N.Commerce.productInfo.toast.shareError));
             }
         }
     };
@@ -387,6 +411,12 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                             </NextLink>
                         </div>
                     )}
+                </div>
+            )}
+            {showBanner && (
+                <div className="fixed bottom-5 right-5 bg-zinc-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl z-50 flex items-center gap-2 border border-zinc-800 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <CheckCircle2 className="w-4 h-4 text-green-400" />
+                    <span>¡Enlace copiado al portapapeles!</span>
                 </div>
             )}
         </div>
