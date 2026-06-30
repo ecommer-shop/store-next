@@ -18,6 +18,7 @@ import { I18N } from '@/i18n/keys';
 import { CustomerAddress } from '../../account/addresses/addresses-client';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
 import clsx from 'clsx';
+import { trackAddShippingInfo } from '@/lib/analytics/events';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
@@ -94,6 +95,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
         customFields: selectedAddress.customFields || undefined,
       }, useSameForBilling);
 
+      trackAddShippingInfo({ shipping_tier: 'standard' });
       router.refresh();
       onComplete();
     } catch (error) {

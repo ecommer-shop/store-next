@@ -37,7 +37,7 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
                         <Spinner color="current" />
                     </div>
                 }>
-                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} searchParams={searchParamsResolved} />
+                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} searchParams={searchParamsResolved} trackAsSearch />
                 </Suspense>
             </div>
         </div>
