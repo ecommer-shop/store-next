@@ -478,7 +478,7 @@
         "alreadySubmitted": "Review Submitted",
         "title": "Write a Review"
       },
-      "mustPurchaseFirst": "You must purchase this product before writing a review.",
+      "mustPurchaseFirst": "Reviews are reserved for verified customers.",
       "aiSummary": {
         "badge": "AI • Smart Summary",
         "noReviewsTitle": "No analysis available yet 💬",

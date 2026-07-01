@@ -152,8 +152,9 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                                 product={{ ...product }}
                                 storeLink={storeLink}
                                 searchParams={searchParamsResolved}
-                                productImageUrl={product.assets?.[0]?.preview ?? null}
-                            />
+                                 productImageUrl={product.assets?.[0]?.preview ?? null}
+                                 primaryCollection={primaryCollection}
+                             />
                         </Suspense>
                     </div>
                 </div>
