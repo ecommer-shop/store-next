@@ -24,6 +24,7 @@ return {
             '/*/cart/',
             '/*/checkout/',
             '/*/order-confirmation/',
+            '/*/search',
             '/*/go',
         ],
 

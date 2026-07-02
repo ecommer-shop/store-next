@@ -610,12 +610,27 @@
     },
     "team": {
       "title": "The team behind Ecommer",
-      "members": {
+      "leadership": {
+        "label": "Leadership",
         "ceo": "Ronnovic Rigel Toth — CEO",
         "accountant": "Luz Carime Ruiz Gómez — Accountant",
         "serverLead": "William Fernando Sevilla Palechor — Server Lead",
         "eiaLead": "Juan Carlos Martínez Fernández — EIA Lead",
         "lawyer": "Daniel Mateo Campo Nuñez — Lawyer"
+      },
+      "server": {
+        "label": "Server",
+        "mary": "Mary Luz Montenegro Cotacio — Server",
+        "brayan": "Brayan Alexander Moreno Trullo — Server",
+        "juanFelipe": "Juan Felipe Peña Acosta — Server",
+        "william": "William Alberto Jiménez Muñoz — Server",
+        "darwin": "Darwin Steven Gómez Camayo — Server"
+      },
+      "eia": {
+        "label": "EIA",
+        "javier": "Javier Felipe Ruiz Ramos — EIA",
+        "kevin": "Kevin Esteban Potosi Hoyos — EIA",
+        "ivan": "Ivan Dario Mipaz Chamorro — EIA"
       }
     },
     "location": {
