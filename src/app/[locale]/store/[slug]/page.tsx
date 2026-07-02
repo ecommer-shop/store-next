@@ -138,18 +138,18 @@ export default async function StorePage({ params }: Props) {
 
             <div className="container mx-auto px-4 space-y-10">
                 <section className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    {storeBannerDisplayable && storeBannerUrl ? (
-                        <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden ring-2 ring-border shadow-md flex-shrink-0">
-                            <Image
-                                src={storeBannerUrl}
-                                alt={storeName}
-                                fill
-                                className="object-cover"
-                                sizes="80px"
-                                unoptimized
-                            />
-                        </div>
-                    ) : null}
+                {storeBannerDisplayable && storeBannerUrl ? (
+                    <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-2xl overflow-hidden ring-2 ring-[#6BB8FF]/40 shadow-md flex-shrink-0">
+                        <Image
+                            src={storeBannerUrl}
+                            alt={storeName}
+                            fill
+                            className="object-cover"
+                            sizes="112px"
+                            unoptimized
+                        />
+                    </div>
+                ) : null}
                     <div className="space-y-2">
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
                             {storeName}
