@@ -113,7 +113,11 @@ async function fetchStoreCatalogProducts(
 }
 
 /** Catálogo del canal; el índice `search` suele devolver 0 en tiendas de vendedor. */
-export async function getStoreProducts(slug: string, locale: string): Promise<StoreProductCard[]> {
+export async function getStoreProducts(
+    slug: string,
+    locale: string,
+    searchParams: { [key: string]: string | string[] | undefined } = {},
+): Promise<StoreProductCard[]> {
     const opts = sellerStoreRequestOptions(slug, locale);
 
     try {
@@ -121,7 +125,7 @@ export async function getStoreProducts(slug: string, locale: string): Promise<St
             SearchProductsQuery,
             {
                 input: {
-                    ...buildSearchInput({ searchParams: {} }),
+                    ...buildSearchInput({ searchParams }),
                     take: 100,
                     skip: 0,
                 },

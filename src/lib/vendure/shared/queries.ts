@@ -63,6 +63,11 @@ export const GetProductsFallbackQuery = graphql(`
                     sellerName
                     channelCode
                 }
+                collections {
+                    id
+                    name
+                    slug
+                }
             }
         }
     }
