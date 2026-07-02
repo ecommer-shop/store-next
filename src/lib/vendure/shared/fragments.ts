@@ -20,11 +20,6 @@ export const ProductCardFragment = graphql(`
             }
         }
         currencyCode
-        collections {
-            id
-            name
-            slug
-        }
     }
 `);
 
