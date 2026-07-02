@@ -11,6 +11,7 @@ import {Avatar, Button, Card, CloseButton, Link as HLink} from "@heroui/react";
 
 
 import { useRouter } from "next/navigation";
+import { trackSelectItem } from '@/lib/analytics/events';
 
 
 interface ProductCardProps { product: FragmentOf<typeof ProductCardFragment>; }
@@ -20,6 +21,14 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
   const product = readFragment(ProductCardFragment, productProp);
   const previewSrc = normalizeVendureAssetUrl(product.productAsset?.preview) ?? '';
 
+  const handleSelectItem = () => {
+    trackSelectItem({
+      item_id: product.productId,
+      item_name: product.productName,
+      price: product.priceWithTax.__typename === 'SinglePrice' ? product.priceWithTax.value : product.priceWithTax.min,
+    });
+  };
+
   return (
     <div className="relative group">
       
@@ -28,48 +37,50 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
         href={`/product/${product.slug}`}
         className="absolute inset-0 z-10"
         aria-label={`Ver ${product.productName}`}
+        onClick={handleSelectItem}
       />
 
-      <Card
-        className="
-          p-0 relative w-full rounded-sm
-          h-[150px]
-          min-[400px]:h-[170px]
-          sm:h-[300px]
-          md:h-[240px]
-          lg:h-[280px]
-          xl:h-[320px]
-        "
-      >
-        {previewSrc ? (
-          <Image
-            alt={product.productName}
-            className="absolute inset-0 h-full w-full object-cover"
-            src={previewSrc}
-            width={500}
-            height={500}
-            unoptimized
-          />
-        ) : (
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-muted px-3 text-center text-xs text-muted-foreground"
-            aria-hidden
-          >
-            Sin imagen
-          </div>
-        )}
-
-        <Card.Footer
+        <Card
           className="
-            mt-auto relative z-20
-            flex items-end justify-between p-3 sm:p-4
-            bg-gradient-to-t from-black/70 via-black/50 to-transparent
+            p-0 relative w-full rounded-sm
+            h-[150px]
+            min-[400px]:h-[170px]
+            sm:h-[300px]
+            md:h-[240px]
+            lg:h-[280px]
+            xl:h-[320px]
           "
         >
-          <Link
-        href={`/product/${product.slug}`}
-        className="absolute inset-0 z-10"
-        aria-label={`Ver ${product.productName}`}
+          {previewSrc ? (
+            <Image
+              alt={product.productName}
+              className="absolute inset-0 h-full w-full object-cover"
+              src={previewSrc}
+              width={500}
+              height={500}
+              unoptimized
+            />
+          ) : (
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-muted px-3 text-center text-xs text-muted-foreground"
+              aria-hidden
+            >
+              Sin imagen
+            </div>
+          )}
+
+          <Card.Footer
+            className="
+              mt-auto relative z-20
+              flex items-end justify-between p-3 sm:p-4
+              bg-gradient-to-t from-black/70 via-black/50 to-transparent
+            "
+          >
+            <Link
+          href={`/product/${product.slug}`}
+          className="absolute inset-0 z-10"
+          aria-label={`Ver ${product.productName}`}
+          onClick={handleSelectItem}
       />
 
           <div>
@@ -89,16 +100,16 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
           </div>
 
           {/* Botón SOLO desktop */}
-          <Button
-            onClick={() => router.push(`/product/${product.slug}`)}
-            className="
-              hidden lg:flex
-              relative z-30
-              mb-2 bg-white/95 text-black shadow-lg
-              min-w-[90px] h-10
-            "
-          >
-          Comprar
+            <Button
+              onClick={() => { handleSelectItem(); router.push(`/product/${product.slug}`); }}
+              className="
+                hidden lg:flex
+                relative z-30
+                mb-2 bg-white/95 text-black shadow-lg
+                min-w-[90px] h-10
+              "
+            >
+            Comprar
           </Button>
 
         </Card.Footer>

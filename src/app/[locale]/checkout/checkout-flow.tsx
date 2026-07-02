@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Accordion, Surface } from '@heroui/react';
+import { trackBeginCheckout } from '@/lib/analytics/events';
 import ShippingAddressStep from './steps/shipping-address-step';
 import DeliveryStep from './steps/delivery-step';
 import PaymentStep from './steps/payment-step';
@@ -34,6 +35,19 @@ export default function CheckoutFlow({ onSetShippingMethod, pb, uri }: CheckoutF
 
   const t = useTranslations('Checkout')
   const { order } = useCheckout();
+
+  useEffect(() => {
+    trackBeginCheckout({
+      value: order.lines.reduce((sum: number, line: any) => sum + line.linePriceWithTax, 0),
+      items: order.lines.map((line: any) => ({
+        item_id: line.productVariant?.id ?? line.id,
+        item_name: line.productVariant?.name ?? '',
+        price: line.linePriceWithTax / (line.quantity || 1),
+        quantity: line.quantity,
+      })),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Determine initial step and completed steps based on order state
   const getInitialState = () => {
