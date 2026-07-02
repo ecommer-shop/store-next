@@ -143,6 +143,21 @@ export async function getStoreProducts(
     return fetchStoreCatalogProducts(slug, locale);
 }
 
+export async function getStoreCollections(slug: string, locale: string): Promise<Array<{ id: string; name: string; slug: string }>> {
+    try {
+        const { data } = await query(
+            GetProductsFallbackQuery,
+            { options: { take: 100, skip: 0, filter: { enabled: { eq: true } } } },
+            sellerStoreRequestOptions(slug, locale),
+        );
+        const allCollections = (data.products.items ?? []).flatMap(p => p.collections ?? []);
+        return Array.from(new Map(allCollections.map(c => [c.id, c])).values());
+    } catch (e) {
+        console.warn('[store] getStoreCollections falló:', vendureMessage(e).slice(0, 200));
+        return [];
+    }
+}
+
 /** Destacados por IDs del plugin store-page (no depende del índice de búsqueda). */
 export async function getStoreFeaturedProducts(slug: string, locale: string): Promise<StoreProductCard[]> {
     const ids = (await getStoreFeaturedProductIds(slug, locale)).slice(0, 3);
