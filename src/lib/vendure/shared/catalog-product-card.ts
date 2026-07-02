@@ -8,6 +8,7 @@ type CatalogProduct = {
     slug: string;
     featuredAsset?: { id: string; preview: string } | null;
     variants?: Array<{ priceWithTax: number; currencyCode: string }>;
+    collections?: Array<{ id: string; name: string; slug: string }>;
 };
 
 /** Convierte `products` del Shop API al shape de {@link ProductCardFragment} (SearchResult). */
@@ -28,5 +29,6 @@ export function mapCatalogProductToProductCard(product: CatalogProduct): Fragmen
             value: firstVariant?.priceWithTax ?? 0,
         },
         currencyCode: (firstVariant?.currencyCode ?? CurrencyCode.Cop) as CurrencyCode,
+        collections: product.collections ?? [],
     } as unknown as FragmentOf<typeof ProductCardFragment>;
 }

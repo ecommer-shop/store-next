@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/commerce/product-card';
+import { FeaturedProductsCarousel } from '@/components/commerce/featured-products-carousel';
 import { readFragment } from '@/graphql';
 import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 import {
@@ -155,24 +156,18 @@ export default async function StorePage({ params }: Props) {
                             {storeName}
                         </h1>
                         <div
-                            className="text-muted-foreground prose prose-sm max-w-2xl"
+                            className="text-muted-foreground prose prose-base sm:prose-lg max-w-2xl leading-relaxed"
                             dangerouslySetInnerHTML={{ __html: storeDescription }}
                         />
                     </div>
                 </section>
 
-                <section>
-                    <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
-                    {featuredProducts.length ? (
-                        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                            {featuredProducts.map((product, index) => (
-                                <ProductCard key={`featured-product-${index}`} product={product} />
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-muted-foreground">Esta tienda no tiene productos destacados por ahora.</p>
-                    )}
-                </section>
+                {featuredProducts.length > 0 && (
+                    <section>
+                        <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
+                        <FeaturedProductsCarousel products={featuredProducts} />
+                    </section>
+                )}
 
                 <section>
                     <div className="flex items-center justify-between mb-4">

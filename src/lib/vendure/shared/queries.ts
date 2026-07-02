@@ -59,6 +59,11 @@ export const GetProductsFallbackQuery = graphql(`
                     priceWithTax
                     currencyCode
                 }
+                collections {
+                    id
+                    name
+                    slug
+                }
             }
         }
     }
