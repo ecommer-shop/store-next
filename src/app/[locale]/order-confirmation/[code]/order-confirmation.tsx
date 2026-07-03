@@ -29,6 +29,9 @@ const GetOrderByCodeQuery = graphql(`
                         id
                         name
                         slug
+                        sellerShop {
+                            sellerName
+                        }
                         featuredAsset {
                             id
                             preview
@@ -87,6 +90,7 @@ export async function OrderConfirmation({ params, t }: OrderConfirmationProps) {
                     item_name: line.productVariant.product.name,
                     price: line.linePriceWithTax / line.quantity,
                     quantity: line.quantity,
+                    seller_name: (line.productVariant.product as any).sellerShop?.sellerName,
                 }))}
             />
             <div className="max-w-3xl mx-auto">
