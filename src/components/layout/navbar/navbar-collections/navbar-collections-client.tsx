@@ -9,6 +9,7 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { trackClickCategory } from '@/lib/analytics/events';
 
 interface Collection {
   id: string;
@@ -33,7 +34,11 @@ export function NavbarCollectionsClient({ collections }: NavbarCollectionsClient
             {rest.map((collection) => (
               <li key={collection.slug}>
                 <NavigationMenuLink asChild className="block rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <Link href={`/collection/${collection.slug}`}>
+                  {/* Primer Link: Categorías del menú desplegable */}
+                  <Link 
+                    href={`/collection/${collection.slug}`}
+                    onClick={() => trackClickCategory({ category_name: collection.name })}
+                  >
                     {collection.name}
                   </Link>
                 </NavigationMenuLink>
@@ -46,7 +51,11 @@ export function NavbarCollectionsClient({ collections }: NavbarCollectionsClient
       {featured.map((collection) => (
         <NavigationMenuItem key={collection.slug}>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href={`/collection/${collection.slug}`}>
+            {/* Segundo Link: Categorías destacadas principales */}
+            <Link 
+              href={`/collection/${collection.slug}`}
+              onClick={() => trackClickCategory({ category_name: collection.name })}
+            >
               {collection.name}
             </Link>
           </NavigationMenuLink>

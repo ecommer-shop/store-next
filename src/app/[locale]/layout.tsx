@@ -1,7 +1,8 @@
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
 import type { Metadata, Viewport } from "next";
+import { GoogleTagManager } from '@next/third-parties/google';
+import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -16,13 +17,23 @@ import {
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-
 const clerkStorefrontFallbackUrl = buildCanonicalUrl(`/${routing.defaultLocale}`);
 import { ReactNode } from "react";
 import { enUS, esMX } from '@clerk/localizations'
 import { getMessages } from "next-intl/server";
 import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
+import Script from 'next/script';
+import { ConsentBanner } from '@/components/providers/consent-banner';
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 const poppins = localFont({
   src: [
@@ -41,7 +52,6 @@ const gilroy = localFont({
   variable: "--font-gilroy",
   display: "swap",
 });
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -82,7 +92,6 @@ export const metadata: Metadata = {
     ],
   }
 };
-
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -92,12 +101,10 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "#12123F" },
   ],
 };
-
 type Props<T> = {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 };
-
 export default async function LocaleLayout({ children, params }: Props<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
@@ -105,6 +112,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
   }
   const localClerk = locale === 'es' ? esMX : enUS;
   const messages = await getMessages();
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
   return (
     <ClerkProvider
       dynamic
@@ -115,6 +123,23 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
         <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
+          <Script id="consent-default" strategy="beforeInteractive">
+              {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  
+                  const isLocalhost = typeof window !== \'undefined\' && (window.location.hostname === \'localhost\' || window.location.hostname === \'127.0.0.1\');
+                  
+                  gtag(\'consent\', \'default\', {
+                      ad_storage: isLocalhost ? \'granted\' : \'denied\',
+                      ad_user_data: isLocalhost ? \'granted\' : \'denied\',
+                      ad_personalization: isLocalhost ? \'granted\' : \'denied\',
+                      analytics_storage: isLocalhost ? \'granted\' : \'denied\',
+                      wait_for_update: 500
+                  });
+              `}
+          </Script>
+          {gtmId && <GoogleTagManager gtmId={gtmId} />}
           <Providers>
             <NextIntlClientProvider
                 locale={locale}
@@ -130,7 +155,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                   <Footer />
                   <ChatWidget />
                 </div>
-                
+                <ConsentBanner />
               </NextIntlClientProvider>
               <Toaster />
           </Providers>

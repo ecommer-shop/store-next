@@ -27,6 +27,7 @@ import {
   DrawerBody,
   DrawerFooter
 } from "@heroui/drawer";
+import { trackLogin, trackSignup } from "@/lib/analytics/events";
 
 export function NavbarUser() {
   const { resolvedTheme } = useTheme();
@@ -41,8 +42,10 @@ export function NavbarUser() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSignINButton = () => {
-    return(
-      <SignInButton mode="redirect">{t(I18N.UserBar.login)}</SignInButton>
+    return (
+      <span onClick={() => trackLogin({ method: 'Clerk/Redirect' })}>
+        <SignInButton mode="redirect">{t(I18N.UserBar.login)}</SignInButton>
+      </span>
     )
   }
   useEffect(() => {
@@ -150,6 +153,7 @@ export function NavbarUser() {
                   <Button
                     variant="ghost"
                     onPress={() => {
+                      trackLogin({ method: 'Clerk/Modal' });
                       onClose();
                       openSignIn();
                     }}
@@ -164,9 +168,10 @@ export function NavbarUser() {
                   <Button
                     variant="primary"
                     onPress={() => {
+                      trackSignup({ method: 'Clerk/Modal' }); 
                       onClose();
                       openSignUp({
-                        
+
                       });
                     }}
                     className="bg-[#6BB8FF]/60 hover:bg-[#6BB8FF] dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"

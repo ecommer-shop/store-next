@@ -1,5 +1,6 @@
 'use client';
 import {useState, useMemo, useEffect} from 'react';
+import { trackViewItem, trackAddToCart } from '@/lib/analytics/events';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import NextLink from 'next/link';
 import {RadioGroup, Label, Button, Radio, toast} from '@heroui/react';
@@ -12,6 +13,7 @@ import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { GetProductVariantStock } from './actions';
 import { ProductInfoStockStatus, STOCK_STATUS_COLORS } from './constants';
+import { trackClickSellerProfile, trackShareProduct } from '@/lib/analytics/events';
 
 interface ProductInfoProps {
     product: {
@@ -67,6 +69,13 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 setShowGoToCart(true);
             }
         });
+    }, [product.id]);
+
+    useEffect(() => {
+        const variant = selectedVariant ?? product.variants[0];
+        if (variant) {
+            trackViewItem({ item_id: variant.id, item_name: product.name, price: variant.priceWithTax, seller_name: storeLink?.name });
+        }
     }, [product.id]);
 
     // Initialize selected options from URL
@@ -136,6 +145,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             const result = await addToCart(selectedVariant.id, 1);
 
             if (result.success) {
+                trackAddToCart({ item_id: selectedVariant.id, item_name: product.name, price: selectedVariant.priceWithTax, seller_name: storeLink?.name });
                 setIsAdded(true);
                 setShowGoToCart(true);
                 toast.success(t(I18N.Commerce.productInfo.toast.addedTitle), {
@@ -182,6 +192,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
+                trackShareProduct({ item_id: product.id, share_method: 'WebShareAPI' });
                 toast.success(t(I18N.Commerce.productInfo.toast.shareSuccess));
             } catch (error) {
                 if (error instanceof Error && error.name !== 'AbortError') {
@@ -369,6 +380,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                             {t(I18N.Commerce.productInfo.storeLabel)}:{` `}
                             <NextLink
                                 href={storeLink.href}
+                                onClick={() => trackClickSellerProfile({ seller_name: storeLink.name })}
                                 className="font-semibold underline underline-offset-2"
                             >
                                 {storeLink.name}
