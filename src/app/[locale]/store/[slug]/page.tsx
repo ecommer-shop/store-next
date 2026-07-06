@@ -166,7 +166,7 @@ export default async function StorePage({ params }: Props) {
                     {featuredProducts.length ? (
                         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
                             {featuredProducts.map((product, index) => (
-                                <ProductCard key={`featured-product-${index}`} product={product} />
+                                <ProductCard key={`featured-product-${index}`} product={product} storeName={storeName} />
                             ))}
                         </div>
                     ) : (
@@ -182,7 +182,7 @@ export default async function StorePage({ params }: Props) {
                     {remainingProducts.length ? (
                         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
                             {remainingProducts.map((product, index) => (
-                                <ProductCard key={`store-product-${index}`} product={product} />
+                                <ProductCard key={`store-product-${index}`} product={product} storeName={storeName} />
                             ))}
                         </div>
                     ) : featuredProducts.length === 0 ? (

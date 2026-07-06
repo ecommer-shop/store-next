@@ -1,8 +1,9 @@
 'use server';
-import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
+import { GetProductsSellerNamesQuery, SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { query } from '@/lib/vendure/server/api';
-import { ResultOf } from '@/graphql';
+import { ResultOf, readFragment } from '@/graphql';
 import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
+import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 
 interface FetchNextPageArgs {
   page: number;
@@ -16,6 +17,7 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
   items: ResultOf<typeof SearchProductsQuery>["search"]["items"];
   totalItems: number;
   token?: string;
+  storeNames?: Record<string, string>;
 }> {
   // Limit token usage for security
   if (token && token.length > 128) throw new Error('Token too long');
@@ -37,9 +39,31 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
   );
 
   const search = result.data.search;
+  const items = search.items;
+
+  // Fetch seller names for this page's products
+  let storeNames: Record<string, string> = {};
+  try {
+    const productIds = items.map((item) => readFragment(ProductCardFragment, item).productId);
+    if (productIds.length > 0) {
+      const sellerResult = await query(GetProductsSellerNamesQuery, {
+        options: { filter: { id: { in: productIds } }, take: productIds.length },
+      });
+      for (const p of sellerResult.data.products.items ?? []) {
+        const shop = (p as any).sellerShop as { sellerName?: string } | null | undefined;
+        if (shop?.sellerName) {
+          storeNames[p.id] = shop.sellerName;
+        }
+      }
+    }
+  } catch {
+    // sellerShop not available on older backends — degrade gracefully
+  }
+
   return {
-    items: search.items,
+    items,
     totalItems: search.totalItems,
     token: result.token,
+    storeNames,
   };
 }
