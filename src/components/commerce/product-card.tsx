@@ -98,8 +98,10 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer' }: Pro
             handleSelectItem();
             router.push(`/product/${product.slug}`);
           }}
-          className="hidden lg:flex mt-2 w-full items-center justify-center rounded-lg py-2 text-xs font-bold text-white transition-all duration-200 hover:opacity-90 active:scale-95"
-          style={{ background: "linear-gradient(90deg, #6BB8FF, #9969F8)" }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#22c55e')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#6BB8FF')}
+          className="hidden lg:flex mt-2 w-full items-center justify-center rounded-lg py-2 text-xs font-bold text-white transition-colors duration-200 active:scale-95"
+          style={{ backgroundColor: '#6BB8FF' }}
         >
           Comprar
         </button>
