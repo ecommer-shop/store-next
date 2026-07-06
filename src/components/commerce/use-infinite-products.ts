@@ -25,6 +25,7 @@ interface PageData {
   totalItems: number;
   token?: string;
   page: number;
+  storeNames?: Record<string, string>;
 }
 export function useInfiniteProducts({ take, initialData, searchParams = {}, collectionSlug }: UseInfiniteProductsOptions) {
   // Create a search params key for the query cache

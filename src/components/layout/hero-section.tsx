@@ -1,87 +1,70 @@
 'use client';
 
-import { I18N } from "@/i18n/keys";
-import {Button} from "@heroui/react";
 import { useTranslations } from "next-intl";
+import { I18N } from "@/i18n/keys";
 import Image from "next/image";
 import Link from "next/link";
 import { trackClickExplore } from "@/lib/analytics/events";
+
 export function HeroSection() {
     const t = useTranslations("HeroSection");
+
     return (
-        <section className="relative bg-muted overflow-hidden mt-4 ">
-            {/* Fondo LIGHT */}
-            <Image
-                src="/bg-light.webp"
-                className="absolute inset-0 w-full h-full object-cover block dark:hidden"
-                alt=""
-                aria-hidden
-                width={500}
-                height={500}
-            />
+        <section
+            className="relative overflow-hidden mt-[64px]"
+            style={{
+                background: "linear-gradient(135deg, #12123F 0%, #1e1b6e 40%, #4c1d95 75%, #6d28d9 100%)",
+                minHeight: "260px",
+            }}
+        >
+            {/* Background image — visible on all screen sizes */}
+            <div className="absolute inset-0">
+                <Image
+                    src="/Publicidad_Ecom.png"
+                    alt="Publicidad Ecommer"
+                    fill
+                    className="object-cover object-center opacity-90"
+                    priority
+                    sizes="100vw"
+                />
+                {/* Gradient: on mobile covers only ~40% left, on desktop ~50% */}
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        background: "linear-gradient(90deg, #12123F 0%, #12123F 30%, rgba(18,18,63,0.75) 45%, rgba(18,18,63,0.2) 65%, transparent 100%)",
+                    }}
+                />
+            </div>
 
-            {/* Fondo DARK */}
-            <Image
-                src="/bg-dark.webp"
-                className="absolute inset-0 w-full h-full object-cover hidden dark:block"
-                alt=""
-                aria-hidden
-                width={500}
-                height={500}
-            />
-
-            {/* Capa liquid blur */}
-            <div
-                className="
-                absolute inset-0
-                backdrop-blur-2xl
-                bg-[#f1f1f1]/40
-                dark:bg-[#12123f]/40
-                pointer-events-none
-                "
-            />
-
-            {/* Contenido */}
-            <div className="relative z-10 container mx-auto px-4 py-6 md:py-10">
-                <div className="max-w-4xl mx-auto text-center space-y-4">
-                <h1 className="flex justify-center" translate="no">
-                    {/* Logo para modo claro (imagen oscura) */}
-                    <Image
-                        src="/logo-vendedores-dark.png"
-                        alt="Ecommer!"
-                        width={600}
-                        height={150}
-                        className="w-[600px] max-w-full h-[150px] object-contain block dark:hidden scale-[1.5]"
-                        priority
-                    />
-                    {/* Logo para modo oscuro (imagen clara) */}
-                    <Image
-                        src="/logo-vendedores-light.png"
-                        alt="Ecommer!"
-                        width={600}
-                        height={150}
-                        className="w-[600px] max-w-full h-[150px] object-contain hidden dark:block"
-                        priority
-                    />
-                </h1>
-
-                <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-                    {t(I18N.HeroSection.title)}
-                    <br />
-                    {t(I18N.HeroSection.description)}
-                </p>
-
-                <div className="flex justify-center">
-                    <Link className="rounded-md" href="/search">
-                        <Button
-                            size="lg"
-                            className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8] rounded-md"
-                            onPress={() => trackClickExplore()}
+            {/* Text content */}
+            <div className="relative z-10 container mx-auto px-6 py-10 md:py-16 flex items-center min-h-[260px]">
+                <div className="max-w-xs sm:max-w-sm md:max-w-xl">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300 mb-3">
+                        Ecommer · Marketplace Colombia
+                    </p>
+                    <h1
+                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5"
+                        style={{ fontFamily: "var(--font-gilroy, system-ui)" }}
+                    >
+                        Lleva tu<br />
+                        negocio al<br />
+                        <span
+                            className="text-transparent bg-clip-text"
+                            style={{ backgroundImage: "linear-gradient(90deg, #6BB8FF, #a78bfa)" }}
+                        >
+                            mundo digital.
+                        </span>
+                    </h1>
+                    <Link href="/search" onClick={() => trackClickExplore()}>
+                        <button
+                            className="inline-flex items-center gap-2 px-7 py-3 rounded-md font-bold text-base text-white transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+                            style={{
+                                background: "linear-gradient(90deg, #6BB8FF, #9969F8)",
+                            }}
                         >
                             {t(I18N.HeroSection.shopButton)}
-                        </Button>
+                        </button>
                     </Link>
-                </div>
                 </div>
             </div>
         </section>

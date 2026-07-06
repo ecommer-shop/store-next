@@ -8,20 +8,23 @@ export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // ✅ Esperar hidratación completa del cliente antes de evaluar entorno
-  // Esto soluciona el bug del parpadeo y desaparición
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Solo evaluar la condición DESPUES de estar hidratado en el cliente
+  // Escuchar el evento global para abrir el chat desde cualquier parte (ej: navbar)
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener('open-simetria-chat', handler);
+    return () => window.removeEventListener('open-simetria-chat', handler);
+  }, []);
+
   if (!isHydrated) {
     return null;
   }
 
   const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV;
   
-  // Mostrar chat en dev y stage, ocultar solo en producción
   if (APP_ENV === 'prod') {
     return null;
   }
