@@ -3,6 +3,12 @@ import Link from "next/link";
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
+import {NavbarLink} from '@/components/layout/navbar/navbar-link';
+import {
+    NavigationMenu,
+    NavigationMenuList,
+    NavigationMenuItem,
+} from '@/components/ui/navigation-menu';
 import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
@@ -11,7 +17,6 @@ import {SearchInputSkeleton} from '@/components/shared/skeletons/search-input-sk
 
 export function Navbar() {
     return (
-        //<header className="fixed top-0 left-0 right-0 z-50 border-b bg-background">
         <header className="
             fixed top-0 left-0 right-0 z-50
             border-b
@@ -27,7 +32,6 @@ export function Navbar() {
                 {/* IZQUIERDA */}
                 <div className="flex items-center gap-2 sm:gap-6 flex-shrink-0">
                     <Link href="/" className="relative flex items-center w-[50px] sm:w-[60px] h-6 flex-shrink-0">
-                        {/* Light */}
                         <Image
                             src="/logo-dark.webp"
                             alt="Ecommer"
@@ -37,7 +41,6 @@ export function Navbar() {
                             priority
                         />
 
-                        {/* Dark */}
                         <Image
                             src="/logo-light.webp"
                             alt="Ecommer"
@@ -49,11 +52,16 @@ export function Navbar() {
                     </Link>
 
                     {/* Collections solo desktop */}
-                    <nav className="hidden md:flex md:items-center md:gap-6">
+                    <NavigationMenu className="hidden md:flex">
+                    <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavbarLink href="/blog">Blog</NavbarLink>
+                    </NavigationMenuItem>
                     <Suspense>
                         <NavbarCollections />
                     </Suspense>
-                    </nav>
+                    </NavigationMenuList>
+                    </NavigationMenu>
                 </div>
 
                 {/* DERECHA */}

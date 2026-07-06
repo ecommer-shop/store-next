@@ -933,5 +933,19 @@
       "demoButton": "Agendar Demo",
       "storeButton": "Crear mi Tienda"
     }
+  },
+  "Blog": {
+    "title": "Blog",
+    "description": "Lee nuestros últimos artículos y novedades.",
+    "readMore": "Leer más",
+    "publishedOn": "Publicado el {date}",
+    "categories": "Categorías",
+    "tags": "Etiquetas",
+    "noArticles": "No hay artículos aún",
+    "backToBlog": "Volver al blog",
+    "relatedPosts": "Artículos relacionados",
+    "relatedProducts": "Productos relacionados",
+    "minRead": "{minutes} min de lectura",
+    "by": "Por"
   }
 }

@@ -936,7 +936,23 @@
       "title": "Ready to take your business to the next level?",
       "subtitle": "Join hundreds of Colombian manufacturers who are already exporting and selling more with Ecommer.",
       "demoButton": "Schedule Demo",
-      "storeButton": "Create My Store"
+      "storeButton": "Create my Store"
     }
+  },
+  "Blog": {
+    "title": "Blog",
+    "description": "Read our latest articles and updates.",
+    "readMore": "Read more",
+    "publishedOn": "Published on {date}",
+    "categories": "Categories",
+    "tags": "Tags",
+    "noArticles": "No articles yet",
+    "backToBlog": "Back to blog",
+    "relatedPosts": "Related Posts",
+    "relatedProducts": "Related Products",
+    "minRead": "{minutes} min read",
+    "by": "By"
+  }
+}
   }
 }
