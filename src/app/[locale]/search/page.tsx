@@ -33,7 +33,7 @@ interface PageProps<T> {
 
 export default async function SearchPage({searchParams}: PageProps<'/search'>) {
     return (
-        <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="container mx-auto px-4 pt-3 pb-6 mt-14">
             <Suspense fallback={<SearchTermSkeleton/>}>
                 <SearchTerm searchParams={searchParams}/>
             </Suspense>

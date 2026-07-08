@@ -9,7 +9,7 @@ import {Suspense} from "react";
 import Link from "next/link"; 
 import { useRouter } from "next/navigation";
 import { trackSelectItem } from '@/lib/analytics/events';
-import { Truck, Store } from 'lucide-react';
+import { Store } from 'lucide-react';
 
 interface ProductCardProps {
   product: FragmentOf<typeof ProductCardFragment>;
@@ -80,14 +80,6 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer' }: Pro
           <Store size={11} className="text-purple-400 flex-shrink-0" />
           <span className="text-[10px] font-semibold text-purple-500 dark:text-purple-400 truncate">
             {storeName}
-          </span>
-        </div>
-
-        {/* Etiqueta envío */}
-        <div className="flex items-center gap-1">
-          <Truck size={11} className="text-green-500 flex-shrink-0" />
-          <span className="text-[10px] font-semibold text-green-600 dark:text-green-400">
-            Envío gratis
           </span>
         </div>
 

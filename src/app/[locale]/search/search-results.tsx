@@ -46,7 +46,7 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 lg:gap-8">
             {/* Filters Sidebar */}
             <aside className="lg:col-span-1">
                 <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>

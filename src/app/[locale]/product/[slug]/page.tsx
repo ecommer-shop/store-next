@@ -15,8 +15,7 @@ import {
     Tabs
 } from '@heroui/react';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import {
+import Image from 'next/image';import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
@@ -118,33 +117,27 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     const variantId = product.variants[0]?.id;
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
     const t = await getTranslations('Product');
-    const tHome = await getTranslations('Home');
 
     return (
-        <Suspense fallback={
-            <p>{I18N.Account.common.loading}</p>
-        }>
-            <div className="container mx-auto px-4 py-8 mt-16">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                    {/* Left Column: Image Carousel */}
-                    <div className="lg:sticky lg:top-20 lg:self-start">
+        <Suspense fallback={<p>{I18N.Account.common.loading}</p>}>
+
+            {/* ── Hero: imagen + info + reseñas inline ── */}
+            <div className="container mx-auto px-4 py-8 mt-16 max-w-6xl">
+                <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 lg:gap-12 items-start">
+
+                    {/* Columna izquierda: imagen */}
+                    <div className="lg:sticky lg:top-24 lg:self-start">
                         <ProductImageCarousel images={product.assets} />
                     </div>
 
-                    {/* Right Column: Product Info */}
-                    <div>
+                    {/* Columna derecha: info + reseñas */}
+                    <div className="flex flex-col gap-8">
                         <Suspense fallback={
                             <div className="h-40 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <circle cx="18" cy="12" r="0" fill="#12123f">
-                                        <animate attributeName="r" begin=".67" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
-                                    </circle>
-                                    <circle cx="12" cy="12" r="0" fill="#12123f">
-                                        <animate attributeName="r" begin=".33" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
-                                    </circle>
-                                    <circle cx="6" cy="12" r="0" fill="#12123f">
-                                        <animate attributeName="r" begin="0" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" />
-                                    </circle>
+                                    <circle cx="18" cy="12" r="0" fill="#12123f"><animate attributeName="r" begin=".67" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" /></circle>
+                                    <circle cx="12" cy="12" r="0" fill="#12123f"><animate attributeName="r" begin=".33" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" /></circle>
+                                    <circle cx="6" cy="12" r="0" fill="#12123f"><animate attributeName="r" begin="0" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0" /></circle>
                                 </svg>
                             </div>
                         }>
@@ -155,188 +148,98 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                                 productImageUrl={product.assets?.[0]?.preview ?? null}
                             />
                         </Suspense>
+
+                        {/* Reseñas: justo debajo del nombre de la tienda */}
+                        <ReviewsSection productId={productId} variantId={variantId} />
                     </div>
                 </div>
             </div>
 
-            <div className="mt-16 container mx-auto px-4">
-                <ReviewsSection
-                    productId={productId}
-                    variantId={variantId}
-                />
-            </div>
+            {/* ── CTA Vendedores (reemplaza "Por qué elegirnos") ── */}
+            <section
+                className="py-16 mt-10 relative overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #12123F 0%, #1e1b6e 50%, #2d1a7e 100%)' }}
+            >
+                {/* blobs decorativos */}
+                <div className="absolute top-0 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
+                    style={{ background: '#9969F8', transform: 'translate(-40%, -40%)' }} />
+                <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
+                    style={{ background: '#6BB8FF', transform: 'translate(40%, 40%)' }} />
 
-            {/* Product Benefits Section */}
-            <section className="py-16 bg-muted/30 mt-12">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-2xl font-bold text-center mb-8">{t(I18N.Product.whyChooseUs)}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                        <div className="space-y-3">
-                            <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center overflow-hidden">
-                                <Image src="/Icono-CyC.png" width={80} height={80} alt="Cámara de Comercio" className="object-contain" />
-                            </div>
-                            <h3 className="text-xl font-semibold">{tHome(I18N.Home.features.cyc.title)}</h3>
-                            <p className="text-muted-foreground text-sm">{tHome(I18N.Home.features.cyc.description)}</p>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center overflow-hidden">
-                                <Image src="/Icono-Dian.png" width={80} height={80} alt="DIAN" className="object-contain" />
-                            </div>
-                            <h3 className="text-xl font-semibold">{tHome(I18N.Home.features.dian.title)}</h3>
-                            <p className="text-muted-foreground text-sm">{tHome(I18N.Home.features.dian.description)}</p>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center">
-                                <Image src="/Icono-Wompi.png" width={80} height={80} alt="Wompi" className="object-contain scale-125" />
-                            </div>
-                            <h3 className="text-xl font-semibold">{tHome(I18N.Home.features.wompi.title)}</h3>
-                            <p className="text-muted-foreground text-sm">{tHome(I18N.Home.features.wompi.description)}</p>
-                        </div>
-                    </div>
+                <div className="relative container mx-auto px-4 max-w-3xl text-center">
+                    <p className="text-xs font-bold tracking-[0.25em] uppercase mb-3" style={{ color: '#6BB8FF' }}>
+                        PARA VENDEDORES
+                    </p>
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+                        ¿Quieres vender con nosotros?
+                    </h2>
+                    <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.72)' }}>
+                        Conoce la vista de vendedores y descubre cómo crear tu tienda, gestionar productos y escalar tus ventas en minutos.
+                    </p>
+                    <a
+                        href="/vendedores"
+                        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold text-white transition-all hover:scale-105 hover:shadow-xl"
+                        style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
+                    >
+                        Ir a Vendedores
+                    </a>
                 </div>
             </section>
 
-            {/* Store FAQ Section */}
-            <section className="py-16 bg-muted/30">
-                <div className="container mx-auto px-4 max-w-3xl">
-                    <h2 className="text-2xl font-bold text-center mb-8">{t(I18N.Product.faq)}</h2>
+            {/* ── Productos relacionados ── */}
+            <div className="py-10 container mx-auto px-4 max-w-6xl">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <aside className="lg:col-span-1">
+                        <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                            <FacetFilters productDataPromise={productDataPromise} />
+                        </Suspense>
+                    </aside>
+                    <div className="lg:col-span-3">
+                        <Suspense fallback={<div className="flex flex-col mt-17 items-center gap-2"><Spinner color="current" /></div>}>
+                            <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
+                        </Suspense>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── FAQ: al final de la página ── */}
+            <section className="py-16" style={{ background: '#F1F1F1' }}>
+                <div className="container mx-auto px-4 max-w-3xl dark:bg-transparent">
+                    <p className="text-xs font-bold tracking-[0.25em] uppercase text-center mb-2" style={{ color: '#9969F8' }}>
+                        SOPORTE
+                    </p>
+                    <h2 className="text-2xl font-extrabold text-center mb-8" style={{ color: '#12123F' }}>
+                        {t(I18N.Product.faq)}
+                    </h2>
                     <Accordion lang="single" className="w-full">
-
-                        <Accordion.Item key="returns" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.returnPolicy)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.returnDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="tracking" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.trackOrder)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.trackDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="shippingCost" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.shippingCost)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.shippingCostDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="deliveryTime" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.deliveryTime)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.deliveryDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="paymentMethods" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.paymentMethods)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.paymentDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="paymentSecurity" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.paymentSecurity)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.paymentSecurityDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="invoice" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.invoice)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.invoiceDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
-                        <Accordion.Item key="support" className="border-b border-[#12123F] dark:border-[#F1F1F1] py-2">
-                            <Accordion.Heading>
-                                <Accordion.Trigger>
-                                    {t(I18N.Product.support)}
-                                    <Accordion.Indicator className='text-foreground' fill='currentColor' />
-                                </Accordion.Trigger>
-                            </Accordion.Heading>
-                            <Accordion.Panel>
-                                <Accordion.Body className='text-foreground'>
-                                    {t(I18N.Product.supportDescription)}
-                                </Accordion.Body>
-                            </Accordion.Panel>
-                        </Accordion.Item>
-
+                        {[
+                            { key: 'returns',       q: I18N.Product.returnPolicy,    a: I18N.Product.returnDescription },
+                            { key: 'tracking',      q: I18N.Product.trackOrder,      a: I18N.Product.trackDescription },
+                            { key: 'shippingCost',  q: I18N.Product.shippingCost,    a: I18N.Product.shippingCostDescription },
+                            { key: 'deliveryTime',  q: I18N.Product.deliveryTime,    a: I18N.Product.deliveryDescription },
+                            { key: 'paymentMethods',q: I18N.Product.paymentMethods,  a: I18N.Product.paymentDescription },
+                            { key: 'paymentSecurity',q:I18N.Product.paymentSecurity, a: I18N.Product.paymentSecurityDescription },
+                            { key: 'invoice',       q: I18N.Product.invoice,         a: I18N.Product.invoiceDescription },
+                            { key: 'support',       q: I18N.Product.support,         a: I18N.Product.supportDescription },
+                        ].map(({ key, q, a }) => (
+                            <Accordion.Item key={key} className="border-b border-[#9969F8]/20 py-2">
+                                <Accordion.Heading>
+                                    <Accordion.Trigger className="font-semibold text-[#12123F] dark:text-foreground">
+                                        {t(q)}
+                                        <Accordion.Indicator className="text-[#9969F8]" fill="currentColor" />
+                                    </Accordion.Trigger>
+                                </Accordion.Heading>
+                                <Accordion.Panel>
+                                    <Accordion.Body className="text-muted-foreground text-sm leading-relaxed">
+                                        {t(a)}
+                                    </Accordion.Body>
+                                </Accordion.Panel>
+                            </Accordion.Item>
+                        ))}
                     </Accordion>
                 </div>
             </section>
 
-            <div className="p-20 grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Filters Sidebar */}
-                <aside className="lg:col-span-1">
-                    <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-                        <FacetFilters productDataPromise={productDataPromise} />
-                    </Suspense>
-                </aside>
-
-                {/* Product Grid */}
-                <div className="lg:col-span-3">
-                    <Suspense fallback={
-                        <div className="flex flex-col mt-17 items-center gap-2">
-                            <Spinner color="current" />
-                        </div>
-                    }>
-                        <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12} />
-                    </Suspense>
-                </div>
-            </div>
         </Suspense>
     );
 }
