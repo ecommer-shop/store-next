@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Checkbox } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2, MapPin, Plus, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -185,33 +185,30 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       )}
 
       {/* Same billing checkbox */}
-      <div className="flex items-center gap-3 py-1">
-        <Checkbox
-          id="same-billing"
-          isSelected={useSameForBilling}
-          onChange={(checked) => setUseSameForBilling(checked === true)}
-          classNames={{
-            wrapper: 'rounded-md',
-            icon: 'text-white',
-            base: clsx(
-              'inline-flex items-center gap-2 cursor-pointer',
-              useSameForBilling ? 'text-[#9969F8]' : 'text-muted-foreground',
-            ),
-          }}
-        >
-          <Checkbox.Control className={clsx(
-            'w-5 h-5 rounded-md border-2 transition-colors',
+      <label className="flex items-center gap-3 py-1 cursor-pointer select-none">
+        <div
+          className={clsx(
+            'w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0',
             useSameForBilling ? 'bg-[#9969F8] border-[#9969F8]' : 'bg-background border-border',
-          )}>
-            <Checkbox.Indicator />
-          </Checkbox.Control>
-          <Checkbox.Content>
-            <span className="text-sm font-medium text-foreground">
-              {t(I18N.Checkout.shippingAddress.sameBilling)}
-            </span>
-          </Checkbox.Content>
-        </Checkbox>
-      </div>
+          )}
+        >
+          {useSameForBilling && (
+            <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+        <input
+          id="same-billing"
+          type="checkbox"
+          className="sr-only"
+          checked={useSameForBilling}
+          onChange={(e) => setUseSameForBilling(e.target.checked)}
+        />
+        <span className={clsx('text-sm font-medium', useSameForBilling ? 'text-[#9969F8]' : 'text-foreground')}>
+          {t(I18N.Checkout.shippingAddress.sameBilling)}
+        </span>
+      </label>
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -228,7 +225,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
           <DialogTrigger asChild>
             <Button
               type="button"
-              variant="bordered"
+              variant="outline"
               className="rounded-xl border-2 border-[#9969F8]/40 text-[#9969F8] hover:bg-[#9969F8]/10 transition font-medium h-11 gap-2"
             >
               <Plus className="w-4 h-4" />
