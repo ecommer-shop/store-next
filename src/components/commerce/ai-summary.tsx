@@ -5,12 +5,11 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { StarRating } from '@/components/ui/star-rating';
-import { Card, Button, Chip } from "@heroui/react";
+import { Card, Button } from "@heroui/react";
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { GetProductReviewsQuery } from '@/lib/vendure/shared/reviews';
 import { query } from '@/lib/vendure/client/api';
-import { Sparkles } from 'lucide-react';
 
 interface AISummaryProps {
   productId: string;
@@ -92,78 +91,42 @@ export function AISummary({ productId, onToggleReviews, showReviews }: AISummary
   }
 
   return (
-    <div className="relative">
-      {/* Efecto de brillo de fondo */}
-      <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-secondary to-primary opacity-20 blur-lg" />
-      
-      <Card className="relative border border-primary/50 bg-content1/95 backdrop-blur-md p-4 md:p-5">
-        {/* Badge superior */}
-        <div className="flex w-full items-center justify-between mb-3">
-          <Chip 
-            color="success" 
-            variant="soft" 
-            size="sm"
-            className="border-success/50 bg-success/20"
-          >
-            <Sparkles className="h-3 w-3 animate-pulse" />
-            {t(I18N.Commerce.ReviewsSection.aiSummary.badge)}
-          </Chip>
-        </div>
-
-        {/* Estrellas arriba del título */}
-        <div className="flex items-center gap-2 mb-2">
-          <StarRating value={averageRating} interactive={false} size="md" />
-          <span className="text-xl md:text-2xl font-bold">
-            {averageRating}
-          </span>
-          <span className="text-sm text-muted-foreground">/ 5</span>
-        </div>
-
-        {/* Título con gradiente */}
-        <h3 className="w-full text-left text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-3">
-          {aiSummary ? aiSummary.title : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsTitle)}
-        </h3>
-
-        <p className="text-sm leading-relaxed text-default-600 mb-4">
-          {aiSummary 
-            ? aiSummary.summary 
-            : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsDescription)
-          }
-        </p>
-
-        {/* Indicador de confianza - SOLO SI HAY RESUMEN DE IA */}
-        {aiSummary ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 rounded-lg bg-success/10 px-3 py-2">
-              <div className="flex h-2 w-2 animate-pulse rounded-full bg-success" />
-              <span className="text-xs text-success-600 dark:text-success-400">
-                {t(I18N.Commerce.ReviewsSection.aiSummary.basedOn, { count: aiSummary.basedOnReviewsCount })}
-              </span>
-            </div>
-            
-            {/* Botón pequeño en esquina inferior derecha */}
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-primary"
-              onPress={onToggleReviews}
-            >
-              {showReviews ? t(I18N.Commerce.ReviewsSection.aiSummary.hide) : t(I18N.Commerce.ReviewsSection.aiSummary.showMore)}
-            </Button>
+    <Card className="border border-border bg-content1/95 p-3">
+      {/* Header compacto con estrellas en línea */}
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <StarRating value={averageRating} interactive={false} size="sm" />
+            <span className="text-sm font-bold">{averageRating}</span>
+            <span className="text-xs text-muted-foreground">/ 5</span>
           </div>
-        ) : (
-          <div className="flex justify-end">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-primary"
-              onPress={onToggleReviews}
-            >
-              {showReviews ? t(I18N.Commerce.ReviewsSection.aiSummary.hide) : t(I18N.Commerce.ReviewsSection.aiSummary.showMore)}
-            </Button>
-          </div>
-        )}
-      </Card>
-    </div>
+          <h3 className="text-sm font-semibold text-foreground line-clamp-1">
+            {aiSummary ? aiSummary.title : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsTitle)}
+          </h3>
+        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="text-primary text-xs shrink-0"
+          onPress={onToggleReviews}
+        >
+          {showReviews ? 'Ocultar' : 'Ver más'}
+        </Button>
+      </div>
+
+      {/* Summary compacto */}
+      <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2">
+        {aiSummary
+          ? aiSummary.summary
+          : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsDescription)}
+      </p>
+
+      {/* Footer mini */}
+      {aiSummary && totalReviews > 0 && (
+        <div className="text-xs text-muted-foreground mt-2">
+          Basado en {totalReviews} {totalReviews === 1 ? 'reseña' : 'reseñas'}
+        </div>
+      )}
+    </Card>
   );
 }

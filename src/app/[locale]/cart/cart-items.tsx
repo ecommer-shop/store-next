@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {Minus, Plus, X} from 'lucide-react';
-import {Price} from '@/components/commerce/price';
-import {removeFromCart, adjustQuantity} from './actions';
+import { Trash2, ShoppingCart } from 'lucide-react';
+import { Price } from '@/components/commerce/price';
+import { removeFromCart } from './actions';
 import { Button } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import SelectLineCheckbox from './select-line-checkbox';
+import { QuantityStepper } from './quantity-stepper';
 
 type ActiveOrder = {
     id: string;
@@ -32,107 +32,98 @@ type ActiveOrder = {
     }>;
 };
 
-export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
+export async function CartItems({ activeOrder }: { activeOrder: ActiveOrder | null }) {
     const t = await getTranslations('Cart');
-    
+
     if (!activeOrder || activeOrder.lines.length === 0) {
         return (
-            <div className="container mx-auto px-4 py-16">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold mb-4">{t(I18N.Cart.empty.title)}</h1>
-                    <p className="text-muted-foreground mb-8">
-                        {t(I18N.Cart.empty.description)}
-                    </p>
-                    <Button>
-                        <Link href="/">{t(I18N.Cart.empty.continueShopping)}</Link>
-                    </Button>
+            <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+                <div className="flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-5">
+                    <ShoppingCart className="w-9 h-9 text-muted-foreground" />
                 </div>
+                <h2 className="text-2xl font-bold mb-2">{t(I18N.Cart.empty.title)}</h2>
+                <p className="text-muted-foreground mb-6 max-w-xs">
+                    {t(I18N.Cart.empty.description)}
+                </p>
+                <Link
+                    href="/search"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#9969F8] text-white font-semibold px-6 py-3 hover:opacity-90 transition"
+                >
+                    {t(I18N.Cart.empty.continueShopping)}
+                </Link>
             </div>
         );
     }
 
     return (
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-3">
             {activeOrder.lines.map((line) => (
                 <div
                     key={line.id}
-                    className="relative flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-card"
+                    className="relative flex gap-3 p-3 sm:p-4 border border-border rounded-2xl bg-card shadow-sm"
                 >
-                    <div className="absolute top-3 left-3 p-2 sm:static sm:p-0">
+                    {/* Checkbox — top-left, overlapping image */}
+                    <div className="absolute top-3 left-3 z-10">
                         <SelectLineCheckbox lineId={line.id} />
                     </div>
 
-                    {line.productVariant.product.featuredAsset && (
-                        <Link
-                            href={`/product/${line.productVariant.product.slug}`}
-                            className="flex-shrink-0"
-                        >
-                            <Image
-                                src={line.productVariant.product.featuredAsset.preview}
-                                alt={line.productVariant.name}
-                                width={120}
-                                height={120}
-                                className="rounded-md object-cover w-full sm:w-[120px] h-[120px]"
-                            />
-                        </Link>
-                    )}
+                    {/* Product image */}
+                    <Link
+                        href={`/product/${line.productVariant.product.slug}`}
+                        className="flex-shrink-0 mt-1"
+                    >
+                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-muted border border-border">
+                            {line.productVariant.product.featuredAsset ? (
+                                <Image
+                                    src={line.productVariant.product.featuredAsset.preview}
+                                    alt={line.productVariant.name}
+                                    fill
+                                    className="object-cover"
+                                    sizes="96px"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <ShoppingCart className="w-6 h-6 text-muted-foreground" />
+                                </div>
+                            )}
+                        </div>
+                    </Link>
 
-                    <div className="flex-grow min-w-0">
-                        <Link
-                            href={`/product/${line.productVariant.product.slug}`}
-                            className="font-semibold hover:underline block"
-                        >
-                            {line.productVariant.product.name}
-                        </Link>
-                        {line.productVariant.name !== line.productVariant.product.name && (
-                            <p className="text-sm text-muted-foreground mt-1">
-                                {line.productVariant.name}
-                            </p>
-                        )}
-                        <p className="text-sm text-muted-foreground mt-1">
-                            SKU: {line.productVariant.sku}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-2 sm:hidden">
-                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> {t(I18N.Cart.items.each)}
-                        </p>
-
-                        <div className="flex items-center gap-3 mt-4">
-                            <div className="flex items-center gap-2 border rounded-md">
-                                <form
-                                    action={async () => {
-                                        'use server';
-                                        await adjustQuantity(line.id, Math.max(1, line.quantity - 1));
-                                    }}
+                    {/* Content */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between gap-2">
+                        {/* Top row: name + line price */}
+                        <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1 pl-5 sm:pl-0">
+                                <Link
+                                    href={`/product/${line.productVariant.product.slug}`}
+                                    className="font-semibold text-sm leading-tight hover:underline line-clamp-2 text-foreground"
                                 >
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size='sm'
-                                        className="h-9 w-9 rounded-none"
-                                        isDisabled={line.quantity <= 1}
-                                    >
-                                        <Minus className="h-4 w-4"/>
-                                    </Button>
-                                </form>
-
-                                <span className="w-12 text-center font-medium">{line.quantity}</span>
-
-                                <form
-                                    action={async () => {
-                                        'use server';
-                                        await adjustQuantity(line.id, line.quantity + 1);
-                                    }}
-                                >
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-9 w-9 rounded-none"
-                                    >
-                                        <Plus className="h-4 w-4"/>
-                                    </Button>
-                                </form>
+                                    {line.productVariant.product.name}
+                                </Link>
+                                {line.productVariant.name !== line.productVariant.product.name && (
+                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                                        {line.productVariant.name}
+                                    </p>
+                                )}
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                    SKU: {line.productVariant.sku}
+                                </p>
                             </div>
+
+                            {/* Line total — always visible */}
+                            <div className="flex-shrink-0 text-right">
+                                <p className="font-bold text-base text-foreground">
+                                    <Price value={line.linePriceWithTax} currencyCode={activeOrder.currencyCode} />
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode} /> {t(I18N.Cart.items.each)}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Bottom row: stepper + delete */}
+                        <div className="flex items-center justify-between gap-2">
+                            <QuantityStepper lineId={line.id} quantity={line.quantity} />
 
                             <form
                                 action={async () => {
@@ -144,29 +135,13 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                                     type="submit"
                                     variant="ghost"
                                     size="sm"
-                                    className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    className="h-8 w-8 rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 border border-border hover:border-red-500/30 transition-all p-0"
                                     aria-label={t(I18N.Cart.items.remove)}
                                 >
-                                    <X className="h-5 w-5"/>
+                                    <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
                             </form>
-
-                            <div className="sm:hidden ml-auto">
-                                <p className="font-semibold text-lg">
-                                    <Price value={line.linePriceWithTax}
-                                           currencyCode={activeOrder.currencyCode}/>
-                                </p>
-                            </div>
                         </div>
-                    </div>
-
-                    <div className="hidden sm:block text-right flex-shrink-0">
-                        <p className="font-semibold text-lg">
-                            <Price value={line.linePriceWithTax} currencyCode={activeOrder.currencyCode}/>
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> {t(I18N.Cart.items.each)}
-                        </p>
                     </div>
                 </div>
             ))}

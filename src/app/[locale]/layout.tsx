@@ -120,6 +120,86 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       localization={localClerk}
       signInFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
+      appearance={{
+        layout: {
+          logoImageUrl: `${SITE_URL}/logo-vendedores-dark.png`,
+          logoLinkUrl: SITE_URL,
+        },
+        variables: {
+          colorPrimary: '#9969F8',
+          colorText: '#12123F',
+          colorTextSecondary: '#6b7280',
+          colorBackground: '#ffffff',
+          colorInputBackground: '#f9f8ff',
+          colorInputText: '#12123F',
+          borderRadius: '0.75rem',
+          fontFamily: 'var(--font-poppins, system-ui)',
+        },
+        elements: {
+          card: {
+            boxShadow: '0 8px 40px rgba(153,105,248,0.18)',
+            border: '1px solid rgba(153,105,248,0.25)',
+            borderRadius: '1.25rem',
+          },
+          headerTitle: {
+            color: '#12123F',
+            fontSize: '1.35rem',
+            fontWeight: '800',
+          },
+          headerSubtitle: {
+            color: '#6b7280',
+          },
+          socialButtonsBlockButton: {
+            border: '1.5px solid rgba(153,105,248,0.3)',
+            borderRadius: '0.75rem',
+            color: '#12123F',
+            '&:hover': {
+              borderColor: '#9969F8',
+              background: 'rgba(153,105,248,0.06)',
+            },
+          },
+          dividerLine: { background: 'rgba(153,105,248,0.2)' },
+          dividerText: { color: '#9ca3af' },
+          formFieldLabel: {
+            color: '#12123F',
+            fontWeight: '600',
+            fontSize: '0.8rem',
+          },
+          formFieldInput: {
+            borderRadius: '0.625rem',
+            border: '1.5px solid rgba(153,105,248,0.25)',
+            background: '#f9f8ff',
+            color: '#12123F',
+            '&:focus': { borderColor: '#9969F8', boxShadow: '0 0 0 2px rgba(153,105,248,0.15)' },
+          },
+          formButtonPrimary: {
+            background: 'linear-gradient(90deg, #6BB8FF 0%, #9969F8 100%)',
+            borderRadius: '0.75rem',
+            fontWeight: '700',
+            fontSize: '0.95rem',
+            boxShadow: '0 2px 12px rgba(153,105,248,0.3)',
+            '&:hover': { opacity: '0.92', boxShadow: '0 4px 16px rgba(153,105,248,0.4)' },
+          },
+          footerActionLink: {
+            color: '#9969F8',
+            fontWeight: '600',
+            '&:hover': { color: '#6BB8FF' },
+          },
+          identityPreviewText: { color: '#12123F' },
+          identityPreviewEditButton: { color: '#9969F8' },
+          logoBox: {
+            justifyContent: 'center',
+            height: '64px',
+            marginBottom: '4px',
+          },
+          logoImage: {
+            height: '64px',
+            width: 'auto',
+            maxWidth: '200px',
+            objectFit: 'contain',
+          },
+        },
+      }}
     >
       <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
         <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>

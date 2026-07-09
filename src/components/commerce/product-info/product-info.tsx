@@ -215,19 +215,19 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
     };
 
     return (
-        <div className="space-y-6">
-            {/* Product Title */}
-            <div>
-                <h1 className="text-3xl font-bold">{product.name}</h1>
+        <div className="space-y-5">
+            {/* ── Nombre + precio ── */}
+            <div className="pb-4" style={{ borderBottom: '1px solid rgba(107,184,255,0.2)' }}>
+                <h1 className="text-2xl font-extrabold text-foreground leading-snug">{product.name}</h1>
                 {selectedVariant && (
-                    <p className="text-2xl font-bold mt-2">
-                        <Price value={selectedVariant.priceWithTax} />
+                    <p className="text-3xl font-black mt-2" style={{ color: '#12123F' }}>
+                        <span className="dark:text-white"><Price value={selectedVariant.priceWithTax} /></span>
                     </p>
                 )}
             </div>
 
-            {/* Product Description */}
-            <div className="prose prose-sm max-w-none">
+            {/* ── Descripción ── */}
+            <div className="prose prose-sm max-w-none text-muted-foreground">
                 <div dangerouslySetInnerHTML={{ __html: product.description }} />
             </div>
 
@@ -286,7 +286,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 </div>
             )}
 
-            {/* Stock Status */}
+            {/* ── Stock Status ── */}
             {selectedVariant && stockStatus && (
                 <div className="text-sm">
                     <span className={`${statusColorClass} font-semibold`}>
@@ -295,11 +295,13 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 </div>
             )}
 
-            <div className="pt-4 flex flex-col items-center gap-3">
+            <div className="pt-2 flex flex-col gap-3">
+                {/* Botón principal */}
                 <Button
                     size="lg"
                     variant='primary'
-                    className="w-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                    className="w-full font-bold rounded-xl text-white"
+                    style={canAddToCart ? { background: 'linear-gradient(90deg, #12123F, #1a1a5e)' } : {}}
                     isDisabled={!canAddToCart || isAdding}
                     onPress={handleAddToCart}
                 >
@@ -329,16 +331,16 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                             {t(I18N.Commerce.productInfo.addToCart)}
                         </>
                     )}
-
                 </Button>
 
                 {showGoToCart && (
-                    <div className="flex flex-row gap-2 w-full text-foreground">
+                    <div className="flex flex-row gap-2 w-full">
                         <ContinueShoppingButton size="lg" className="flex-1 min-w-0" />
                         <Button
                             size="lg"
                             variant="primary"
-                            className="flex-1 min-w-0 rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                            className="flex-1 min-w-0 rounded-xl font-bold text-white"
+                            style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
                             onPress={() => router.push('/cart')}
                         >
                             Ir al carrito
@@ -346,33 +348,39 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     </div>
                 )}
 
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full text-foreground"
-                    onPress={handleShare}
-                >
-                    <Share2 className="mr-2 h-5 w-5" />
-                    {t(I18N.Commerce.productInfo.shareProduct)}
-                </Button>
+                {/* Botones secundarios */}
+                <div className="flex gap-2">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-muted-foreground rounded-xl"
+                        onPress={handleShare}
+                    >
+                        <Share2 className="mr-2 h-4 w-4" />
+                        {t(I18N.Commerce.productInfo.shareProduct)}
+                    </Button>
 
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full text-foreground"
-                    onPress={handleDownloadQR}
-                >
-                    <Download className="mr-2 h-5 w-5" />
-                    Descargar imagen con QR
-                </Button>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-muted-foreground rounded-xl"
+                        onPress={handleDownloadQR}
+                    >
+                        <Download className="mr-2 h-4 w-4" />
+                        Descargar QR
+                    </Button>
+                </div>
             </div>
 
-            {/* SKU */}
+            {/* ── ID/REFERENCIA + Tienda ── */}
             {(selectedVariant || storeLink) && (
-                <div className="space-y-1 text-xs text-foreground">
+                <div
+                    className="space-y-1 text-xs text-muted-foreground pt-3"
+                    style={{ borderTop: '1px solid rgba(107,184,255,0.2)' }}
+                >
                     {selectedVariant && (
                         <div>
-                            {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
+                            ID/REFERENCIA: <span className="font-medium">{selectedVariant.sku}</span>
                         </div>
                     )}
                     {storeLink && (
@@ -382,6 +390,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                                 href={storeLink.href}
                                 onClick={() => trackClickSellerProfile({ seller_name: storeLink.name })}
                                 className="font-semibold underline underline-offset-2"
+                                style={{ color: '#6BB8FF' }}
                             >
                                 {storeLink.name}
                             </NextLink>
@@ -389,6 +398,25 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     )}
                 </div>
             )}
+
+            {/* ── Invitación a calificar ── */}
+            <div
+                className="flex items-start gap-3 p-4 rounded-2xl mt-2"
+                style={{
+                    background: 'linear-gradient(135deg, rgba(107,184,255,0.08) 0%, rgba(153,105,248,0.08) 100%)',
+                    border: '1px solid rgba(153,105,248,0.25)',
+                }}
+            >
+                <span className="text-2xl select-none">⭐</span>
+                <div>
+                    <p className="text-sm font-semibold text-foreground leading-snug">
+                        ¿Ya tienes este producto?
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                        Tu opinión importa. Comparte tu experiencia y ayuda a otros compradores a elegir con confianza.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }

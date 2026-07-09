@@ -7,7 +7,7 @@ import {
     GetEligiblePaymentMethodsQuery,
     GetEligibleShippingMethodsQuery,
 } from '@/lib/vendure/shared/queries';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/navigation';
 import CheckoutFlow from './checkout-flow';
 import { CheckoutProvider } from './checkout-provider';
 import { noIndexRobots } from '@/lib/vendure/shared/metadata';

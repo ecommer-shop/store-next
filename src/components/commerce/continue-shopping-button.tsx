@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
@@ -13,7 +13,7 @@ interface Props {
 export function ContinueShoppingButton({ className, size }: Props) {
     const t = useTranslations('Cart');
     return (
-        <Link className={className || 'w-full'} href="/">
+        <Link className={className || 'w-full'} href="/search">
             <Button size={size} className="w-full rounded-md bg-[var(--accent-hover)] text-[var(--accent-foreground)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] transition-colors font-medium">
                 {t(I18N.Cart.summary.continueShopping)}
             </Button>

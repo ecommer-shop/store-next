@@ -435,7 +435,12 @@
         },
         "error": {
           "title": "Error al votar",
+          "description": "No se pudo registrar tu voto. Por favor intenta de nuevo.",
           "networkError": "No se pudo registrar tu voto. Por favor intenta de nuevo."
+        },
+        "removed": {
+          "title": "Voto eliminado",
+          "description": "Tu voto ha sido eliminado correctamente."
         }
       },
       "pagination": {
@@ -466,7 +471,7 @@
       "aiSummary": {
         "badge": "IA • Resumen Inteligente",
         "noReviewsTitle": "Todavía no hay un análisis disponible 💬",
-        "noReviewsDescription": "Sé parte de las primeras opiniones que permitirán generar un resumen inteligente.",
+        "noReviewsDescription": "Sé parte de las primeras opiniones.",
         "basedOn": "Basado en {count} opiniones verificadas",
         "showMore": "Ver más",
         "hide": "Ocultar"
@@ -712,6 +717,185 @@
     "perMonth": "/mes"
   },
 
+  "Users": {
+    "hero": {
+      "badge": "PARA COMPRADORES",
+      "title": "Tu experiencia de compra,",
+      "highlight": "simple y segura",
+      "description": "Encuentra productos de emprendedores colombianos, realiza pagos seguros y recibe tu pedido directamente en tu puerta. Todo en un solo lugar."
+    },
+    "welcome": {
+      "title": "Bienvenido a Ecommer",
+      "description": "Ecommer es un marketplace diseñado para conectar a compradores con miles de productos ofrecidos por diferentes empresas, emprendimientos y vendedores en un solo lugar. Nuestra plataforma permite descubrir, comparar y comprar productos de forma fácil, rápida y segura, brindando una experiencia de compra moderna respaldada por tecnología, inteligencia artificial y procesos automatizados.",
+      "free": "Comprar en Ecommer es completamente gratuito. No existen costos por registrarse, navegar por la plataforma o realizar una compra. El único valor adicional que puede aplicarse corresponde al costo del envío, el cual depende de la ubicación del comprador, el vendedor y las tarifas establecidas por nuestros operadores logísticos."
+    },
+    "payments": {
+      "title": "Pagos seguros",
+      "description": "En Ecommer trabajamos con Wompi, una de las principales plataformas de procesamiento de pagos en Colombia, desarrollada por Bancolombia, que cumple con altos estándares de seguridad para proteger la información financiera de nuestros usuarios.",
+      "intro": "Gracias a esta integración podrás realizar tus compras utilizando diferentes métodos de pago, entre ellos:",
+      "methods": {
+        "cards": "Tarjetas de crédito Visa, Mastercard y American Express",
+        "debit": "Tarjetas débito mediante PSE",
+        "nequi": "Nequi",
+        "bancolombia": "Bancolombia",
+        "button": "Botón Bancolombia",
+        "pse": "Pagos desde cuentas bancarias mediante PSE",
+        "others": "Otros métodos de pago habilitados por Wompi según disponibilidad"
+      },
+      "security": "Toda la información de pago es procesada directamente por Wompi mediante conexiones seguras y cifradas, por lo que Ecommer nunca almacena los datos completos de tus tarjetas o cuentas bancarias."
+    },
+    "shipping": {
+      "title": "Envíos",
+      "local": {
+        "title": "Envíos locales",
+        "description": "Para las entregas dentro de Popayán, Ecommer trabaja junto a Messenger, una de las empresas de domicilios líderes de la ciudad, reconocida por su rapidez, cobertura y eficiencia en la entrega de productos.",
+        "benefit": "Gracias a esta alianza, los pedidos locales pueden ser gestionados de manera ágil, permitiendo reducir los tiempos de entrega y ofrecer un mejor seguimiento durante todo el proceso."
+      },
+      "national": {
+        "title": "Envíos nacionales",
+        "description": "Para los envíos al resto del país, Ecommer está integrado con Envia.com, una plataforma tecnológica especializada en logística que conecta múltiples empresas transportadoras nacionales e internacionales desde una sola integración.",
+        "benefit": "Esta tecnología permite calcular automáticamente tarifas de envío, generar guías, realizar seguimiento de los paquetes y seleccionar la transportadora más conveniente según el destino y las condiciones del pedido, brindando una experiencia logística más eficiente y transparente."
+      },
+      "factors": {
+        "title": "El costo del envío dependerá de factores como:",
+        "origin": "Ciudad de origen",
+        "destination": "Ciudad de destino",
+        "weight": "Peso y dimensiones del paquete",
+        "carrier": "Transportadora seleccionada",
+        "rates": "Tarifas vigentes de nuestros operadores logísticos"
+      }
+    },
+    "tracking": {
+      "title": "Seguimiento de pedidos",
+      "description": "Una vez tu compra sea confirmada podrás conocer el estado de tu pedido desde la plataforma.",
+      "intro": "Durante el proceso podrás consultar información como:",
+      "statuses": {
+        "received": "Pedido recibido",
+        "confirmed": "Pago confirmado",
+        "preparing": "Pedido en preparación",
+        "dispatched": "Pedido despachado",
+        "transit": "En camino",
+        "delivered": "Entregado"
+      },
+      "national": "En los envíos nacionales también podrás realizar el seguimiento utilizando la información suministrada por la empresa transportadora."
+    },
+    "support": {
+      "title": "Atención inteligente 24/7",
+      "description": "En Ecommer contamos con SimetrIA, nuestro agente de inteligencia artificial disponible las 24 horas del día, los 7 días de la semana.",
+      "intro": "SimetrIA está diseñado para ayudarte de forma inmediata con consultas relacionadas con:",
+      "topics": {
+        "orders": "Estado de pedidos",
+        "products": "Información de productos",
+        "payments": "Métodos de pago",
+        "shipping": "Envíos",
+        "purchases": "Compras",
+        "platform": "Funcionamiento de la plataforma",
+        "faq": "Preguntas frecuentes",
+        "support": "Soporte general"
+      },
+      "human": "Si durante la conversación SimetrIA identifica que tu solicitud requiere atención personalizada, realizará la conexión con uno de los asesores del equipo de Ecommer para que puedas recibir asistencia humana de forma oportuna.",
+      "combination": "De esta manera combinamos la rapidez de la inteligencia artificial con el acompañamiento de nuestro equipo cuando sea necesario."
+    },
+    "security": {
+      "title": "Seguridad en tus compras",
+      "description": "La seguridad de nuestros usuarios es una prioridad.",
+      "intro": "Por ello Ecommer incorpora diferentes tecnologías para proteger cada compra realizada en la plataforma, incluyendo:",
+      "features": {
+        "https": "Conexiones seguras mediante HTTPS",
+        "wompi": "Procesamiento seguro de pagos con Wompi",
+        "privacy": "Protección de la información personal",
+        "tracking": "Seguimiento de pedidos",
+        "confirmation": "Confirmación de pagos antes del despacho",
+        "processes": "Procesos tecnológicos que buscan garantizar una experiencia de compra confiable"
+      }
+    },
+    "howToBuy": {
+      "title": "¿Cómo comprar?",
+      "description": "Comprar en Ecommer es muy sencillo:",
+      "steps": {
+        "step1": "Busca el producto que deseas",
+        "step2": "Revisa la información, disponibilidad y precio",
+        "step3": "Agrégalo al carrito de compras",
+        "step4": "Ingresa la dirección de entrega",
+        "step5": "Selecciona el método de pago disponible",
+        "step6": "Confirma tu pedido",
+        "step7": "Recibe la confirmación de la compra",
+        "step8": "Haz seguimiento al estado de tu pedido hasta la entrega"
+      }
+    },
+    "commitment": {
+      "title": "Nuestro compromiso",
+      "description": "En Ecommer trabajamos para ofrecer una experiencia de compra moderna, segura y respaldada por tecnología. Integramos pagos electrónicos confiables, soluciones logísticas para entregas locales y nacionales, inteligencia artificial para brindar soporte permanente y una plataforma que facilita encontrar productos de diferentes vendedores en un solo lugar.",
+      "goal": "Nuestro objetivo es que cada compra sea un proceso simple, transparente y confiable, permitiéndote comprar con tranquilidad mientras nosotros nos encargamos de la tecnología que hace posible toda la experiencia."
+    },
+    "benefits": {
+      "title": "¿Por qué comprar en Ecommer?",
+      "subtitle": "Compramos lo nuestro. Apoyamos lo local.",
+      "items": {
+        "payments": {
+          "title": "Pagos 100% seguros",
+          "description": "Procesados por Wompi (Bancolombia), con certificación PCI-DSS. Tu información nunca queda expuesta."
+        },
+        "delivery": {
+          "title": "Entrega a domicilio",
+          "description": "MESSENGER recoge en la tienda del vendedor y te lo lleva a tu puerta. Seguimiento en tiempo real."
+        },
+        "invoice": {
+          "title": "Factura electrónica",
+          "description": "Los vendedores emiten facturas válidas ante la DIAN. Recibes un comprobante legal de tu compra."
+        },
+        "support": {
+          "title": "Atención al cliente",
+          "description": "Soporte disponible al 314 851 8961. Un asistente real está a un paso si lo necesitas."
+        }
+      }
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "subtitle": "Todo lo que necesitas saber antes de comprar.",
+      "q1": {
+        "q": "¿Cómo funciona una devolución?",
+        "a": "Las solicitudes de devolución deben presentarse a través del correo legal@ecommer.shop. Una vez recibida, Ecommer analiza el caso conforme a la normativa aplicable y, si procede, lo remite al vendedor para que gestione la devolución correspondiente."
+      },
+      "q2": {
+        "q": "¿Puedo rastrear mi pedido?",
+        "a": "Sí. Una vez que tu pedido es despachado, recibirás una notificación. También puedes consultar el estado de tu compra en cualquier momento desde tu cuenta en la plataforma."
+      },
+      "q3": {
+        "q": "¿Cuánto cuesta el envío?",
+        "a": "El costo del envío se calcula automáticamente según la distancia entre la tienda del vendedor y tu dirección de entrega. Podrás ver el valor exacto antes de confirmar tu compra."
+      },
+      "q4": {
+        "q": "¿Quién entrega mi pedido?",
+        "a": "Los pedidos en Popayán son entregados por MESSENGER. Una vez que completas tu compra, el sistema avisa automáticamente al mensajero para que recoja el paquete en la tienda del vendedor y lo lleve directamente a tu puerta."
+      },
+      "q5": {
+        "q": "¿Qué métodos de pago puedo usar?",
+        "a": "Aceptamos todos los medios de pago: tarjetas de crédito y débito (Visa, Mastercard, Amex), PSE (cualquier banco), Nequi, Daviplata y corresponsales bancarios. Elige el que más te convenga al momento de pagar."
+      },
+      "q6": {
+        "q": "¿Es seguro pagar en la plataforma?",
+        "a": "Totalmente seguro. Procesamos todos los pagos a través de Wompi, certificada con PCI-DSS — el estándar internacional más exigente para datos bancarios, el mismo que usan los sistemas bancarios tradicionales. Tu información viaja encriptada y nunca queda expuesta."
+      },
+      "q7": {
+        "q": "¿Recibiré una factura por mi compra?",
+        "a": "Sí. Los vendedores habilitados en la plataforma emiten facturas electrónicas válidas ante la DIAN, por lo que recibirás un comprobante legal de tu compra directamente."
+      },
+      "q8": {
+        "q": "¿Cómo me comunico si tengo un problema?",
+        "a": "Contamos con atención al cliente al número 314 851 8961. Inicialmente te atenderá un Bot de IA que te redireccionará a un asesor real si es necesario. También puedes escribirnos por correo a legal@ecommer.shop para temas relacionados con devoluciones."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para descubrir productos de tu región?",
+      "subtitle": "Apoya el comercio local de Popayán y el Cauca.",
+      "shopButton": "Explorar productos",
+      "sellButton": "Quiero vender"
+    },
+    "footer": {
+      "link": "Usuarios"
+    }
+  },
   "Vendedores": {
     "hero": {
       "badge": "RECUERDA: Lleva el talento colombiano a cada rincón del planeta. Tu fábrica, conectada con el mercado global. La tecnología que escala el orgullo de lo nuestro.",
