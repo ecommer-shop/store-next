@@ -102,7 +102,7 @@
           "editAddress": "Edit address",
           "addNewAddress": "Add new address",
           "updateDetails": "Update your address details",
-          "fillForm": "Complete the form below to add a new address",
+          "fillForm": "Complete the form below to add a new address. This information is required to ensure your order arrives safely and on time.",
           "areYouSure": "Are you sure?",
           "deleteWarning": "This action cannot be undone. This will permanently delete this address."
         }

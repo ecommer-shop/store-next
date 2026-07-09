@@ -89,6 +89,10 @@ export const AdjustCartItemMutation = graphql(`
                 id
                 code
                 totalQuantity
+                lines {
+                    id
+                    quantity
+                }
             }
             ... on ErrorResult {
                 errorCode

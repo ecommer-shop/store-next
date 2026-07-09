@@ -53,11 +53,11 @@ export default clerkMiddleware(async (auth, req) => {
     const { userId } = await auth();
 
     if (!userId) {
+      const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
       const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
-      const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
 
-      const signInUrl = new URL(`/${locale}/sign-in`, domain);
-      signInUrl.searchParams.set('redirect_url', returnTo);
+      const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+      signInUrl.searchParams.set("redirect_url", returnTo);
       return NextResponse.redirect(signInUrl);
     }
   }
