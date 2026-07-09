@@ -372,7 +372,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 </div>
             </div>
 
-            {/* ── Id del producto + Tienda ── */}
+            {/* ── ID/REFERENCIA + Tienda ── */}
             {(selectedVariant || storeLink) && (
                 <div
                     className="space-y-1 text-xs text-muted-foreground pt-3"
@@ -380,7 +380,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                 >
                     {selectedVariant && (
                         <div>
-                            Id del producto: <span className="font-medium">{selectedVariant.sku}</span>
+                            ID/REFERENCIA: <span className="font-medium">{selectedVariant.sku}</span>
                         </div>
                     )}
                     {storeLink && (
