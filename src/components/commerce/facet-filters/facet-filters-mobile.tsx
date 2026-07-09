@@ -107,7 +107,7 @@ export function FacetFiltersMobile({
                                 current.forEach(id => { if (!newKeys.has(id)) toggleFacet(id); });
                                 newKeys.forEach(id => { if (!current.includes(id)) toggleFacet(id); });
                             }}
-                            variant="outline"
+                            variant="surface"
                         >
                             <TagGroup.List
                                 items={activeGroup.values}
