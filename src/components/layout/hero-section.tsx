@@ -11,12 +11,12 @@ import { trackClickExplore } from '@/lib/analytics/events';
 
 const SLIDES = [
   {
-    src: '/Ima_Hero/CarruselB.png',
-    alt: 'Ecommer — Slide B',
+    src: '/hero-images/carousel-slide-1.jpg',
+    alt: 'Ecommer — Slide 1',
   },
   {
-    src: '/Ima_Hero/CarrucelC.png',
-    alt: 'Ecommer — Slide C',
+    src: '/hero-images/carousel-slide-2.png',
+    alt: 'Ecommer — Slide 2',
   },
 ];
 
