@@ -10,6 +10,10 @@ export const AuthenticateWithClerk = graphql(`
                 id
                 identifier
             }
+            ... on ErrorResult {
+                errorCode
+                message
+            }
         }
     }
 `);

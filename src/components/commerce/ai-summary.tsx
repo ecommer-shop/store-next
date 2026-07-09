@@ -91,43 +91,42 @@ export function AISummary({ productId, onToggleReviews, showReviews }: AISummary
   }
 
   return (
-    <div className="relative">
-      <Card className="relative border border-border bg-content1/95 p-3 md:p-4">
-        {/* Estrellas + rating en una línea compacta */}
-        <div className="flex items-center gap-2 mb-2">
-          <StarRating value={averageRating} interactive={false} size="sm" />
-          <span className="text-base font-bold">{averageRating}</span>
-          <span className="text-xs text-muted-foreground">/ 5</span>
+    <Card className="border border-border bg-content1/95 p-3">
+      {/* Header compacto con estrellas en línea */}
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <StarRating value={averageRating} interactive={false} size="sm" />
+            <span className="text-sm font-bold">{averageRating}</span>
+            <span className="text-xs text-muted-foreground">/ 5</span>
+          </div>
+          <h3 className="text-sm font-semibold text-foreground line-clamp-1">
+            {aiSummary ? aiSummary.title : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsTitle)}
+          </h3>
         </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="text-primary text-xs shrink-0"
+          onPress={onToggleReviews}
+        >
+          {showReviews ? 'Ocultar' : 'Ver más'}
+        </Button>
+      </div>
 
-        {/* Título */}
-        <h3 className="text-sm font-semibold text-foreground mb-1.5">
-          {aiSummary ? aiSummary.title : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsTitle)}
-        </h3>
+      {/* Summary compacto */}
+      <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2">
+        {aiSummary
+          ? aiSummary.summary
+          : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsDescription)}
+      </p>
 
-        <p className="text-xs leading-relaxed text-muted-foreground mb-3">
-          {aiSummary
-            ? aiSummary.summary
-            : t(I18N.Commerce.ReviewsSection.aiSummary.noReviewsDescription)}
-        </p>
-
-        {/* Footer compacto */}
-        <div className="flex items-center justify-between">
-          {aiSummary && (
-            <span className="text-xs text-muted-foreground">
-              {t(I18N.Commerce.ReviewsSection.aiSummary.basedOn, { count: aiSummary.basedOnReviewsCount })}
-            </span>
-          )}
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-primary ml-auto"
-            onPress={onToggleReviews}
-          >
-            {showReviews ? t(I18N.Commerce.ReviewsSection.aiSummary.hide) : t(I18N.Commerce.ReviewsSection.aiSummary.showMore)}
-          </Button>
+      {/* Footer mini */}
+      {aiSummary && totalReviews > 0 && (
+        <div className="text-xs text-muted-foreground mt-2">
+          Basado en {totalReviews} {totalReviews === 1 ? 'reseña' : 'reseñas'}
         </div>
-      </Card>
-    </div>
+      )}
+    </Card>
   );
 }
