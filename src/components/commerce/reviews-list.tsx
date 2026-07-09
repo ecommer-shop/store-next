@@ -13,6 +13,8 @@ import { I18N } from '@/i18n/keys';
 import { GetProductReviewsQuery, VoteOnReviewMutation } from '@/lib/vendure/shared/reviews';
 import { query } from '@/lib/vendure/client/api';
 import { getToken } from './getToken';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { cn } from '@/lib/vendure/shared/utils';
 
 interface ReviewsListProps {
   productId: string;
@@ -35,6 +37,10 @@ interface Review {
   createdAt: string;
 }
 
+interface UserVotes {
+  [reviewId: string]: 'up' | 'down';
+}
+
 export function ReviewsList({ 
   productId, 
   limit = 5, 
@@ -45,7 +51,26 @@ export function ReviewsList({
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [userVotes, setUserVotes] = useState<UserVotes>({});
   const t = useTranslations();
+
+  // Load user votes from localStorage
+  useEffect(() => {
+    const storedVotes = localStorage.getItem(`review-votes-${productId}`);
+    if (storedVotes) {
+      try {
+        setUserVotes(JSON.parse(storedVotes));
+      } catch (e) {
+        console.error('Error loading votes', e);
+      }
+    }
+  }, [productId]);
+
+  // Save votes to localStorage
+  const saveVotes = (votes: UserVotes) => {
+    localStorage.setItem(`review-votes-${productId}`, JSON.stringify(votes));
+    setUserVotes(votes);
+  };
 
   const fetchReviews = async () => {
     setLoading(true);
