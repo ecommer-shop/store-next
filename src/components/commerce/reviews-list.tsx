@@ -153,14 +153,14 @@ export function ReviewsList({
 
   if (reviews.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-muted-foreground mb-4">
-          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
+      <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/20 w-fit">
+        <svg className="w-4 h-4 shrink-0 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <div className="min-w-0">
+          <span className="text-sm font-medium text-foreground">{t(I18N.Commerce.ReviewsList.empty.title)}</span>
+          <span className="text-xs text-muted-foreground ml-2 hidden sm:inline">{t(I18N.Commerce.ReviewsList.empty.description)}</span>
         </div>
-        <h3 className="text-lg font-medium text-foreground mb-2">{t(I18N.Commerce.ReviewsList.empty.title)}</h3>
-        <p className="text-muted-foreground">{t(I18N.Commerce.ReviewsList.empty.description)}</p>
       </div>
     );
   }

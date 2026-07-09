@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {Minus, Plus, X} from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import {Price} from '@/components/commerce/price';
-import {removeFromCart, adjustQuantity} from './actions';
+import {removeFromCart} from './actions';
 import { Button } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import SelectLineCheckbox from './select-line-checkbox';
+import { QuantityStepper } from './quantity-stepper';
 
 type ActiveOrder = {
     id: string;
@@ -96,44 +96,11 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                             <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> {t(I18N.Cart.items.each)}
                         </p>
 
-                        <div className="flex items-center gap-3 mt-4">
-                            <div className="flex items-center gap-2 border rounded-md">
-                                <form
-                                    action={async () => {
-                                        'use server';
-                                        await adjustQuantity(line.id, Math.max(1, line.quantity - 1));
-                                    }}
-                                >
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size='sm'
-                                        className="h-9 w-9 rounded-none"
-                                        isDisabled={line.quantity <= 1}
-                                    >
-                                        <Minus className="h-4 w-4"/>
-                                    </Button>
-                                </form>
+                        <div className="flex items-center gap-4 mt-4">
+                            {/* Quantity stepper with stock feedback */}
+                            <QuantityStepper lineId={line.id} quantity={line.quantity} />
 
-                                <span className="w-12 text-center font-medium">{line.quantity}</span>
-
-                                <form
-                                    action={async () => {
-                                        'use server';
-                                        await adjustQuantity(line.id, line.quantity + 1);
-                                    }}
-                                >
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-9 w-9 rounded-none"
-                                    >
-                                        <Plus className="h-4 w-4"/>
-                                    </Button>
-                                </form>
-                            </div>
-
+                            {/* Remove button */}
                             <form
                                 action={async () => {
                                     'use server';
@@ -144,10 +111,11 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                                     type="submit"
                                     variant="ghost"
                                     size="sm"
-                                    className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    className="h-8 gap-1.5 px-3 rounded-full text-xs font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 border border-border hover:border-red-500/30 transition-all"
                                     aria-label={t(I18N.Cart.items.remove)}
                                 >
-                                    <X className="h-5 w-5"/>
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">{t(I18N.Cart.items.remove)}</span>
                                 </Button>
                             </form>
 
