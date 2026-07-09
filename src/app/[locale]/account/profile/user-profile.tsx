@@ -1,6 +1,6 @@
 "use client"
 
-import { SignedIn, UserProfile, useSession, useUser } from "@clerk/nextjs"
+import { SignedIn, UserProfile, useSession } from "@clerk/nextjs"
 import { Button, AlertDialog } from "@heroui/react"
 import { useTheme } from "next-themes"
 import { dark } from "@clerk/themes"
@@ -8,7 +8,6 @@ import { useLocale, useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { toast } from "sonner"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { deleteAccountAction } from "./actions"
 import { I18N } from "@/i18n/keys"
 
@@ -58,80 +57,221 @@ export default function UserProfileClient() {
 
   return (
     <SignedIn>
-      <div className="space-y-6">
-        <UserProfile
-          routing="path"
-          path={`/${locale}/account/profile`}
-          appearance={{
-            baseTheme: resolvedTheme === "dark" ? dark : undefined,
-            variables: {
-                borderRadius: "2px",
-                colorBackground: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
-                colorShadow: resolvedTheme === "dark" ? "#F1F1F1" : "#12123f",
-            },
-            elements: {
-              modalContent: {
-                background: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
-                borderRadius: "2px",
+      <div className="space-y-6 p-6">
+        {/* Clerk UserProfile Component */}
+        <div className="rounded-xl overflow-hidden">
+          <UserProfile
+            routing="path"
+            path={`/${locale}/account/profile`}
+            appearance={{
+              baseTheme: resolvedTheme === "dark" ? dark : undefined,
+              variables: {
+                borderRadius: "12px",
+                colorBackground: resolvedTheme === "dark" ? "#0f0f2e" : "#ffffff",
+                colorText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+                colorTextSecondary: "#9969F8",
+                colorPrimary: "#9969F8",
+                colorNeutral: resolvedTheme === "dark" ? "#9969F8" : "#12123F",
+                colorInputBackground: resolvedTheme === "dark" ? "#1a1a45" : "#f5f3ff",
+                colorInputText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+                colorShadow: resolvedTheme === "dark"
+                  ? "0 8px 32px rgba(153,105,248,0.2), 0 2px 8px rgba(0,0,0,0.5)"
+                  : "0 8px 32px rgba(153,105,248,0.12), 0 2px 8px rgba(18,18,63,0.08)",
+                fontFamily: "inherit",
+                fontWeight: { normal: 400, medium: 500, bold: 700 },
+                fontSize: "14px",
               },
-              modalBackdrop: {
-                "&::backdrop": {
-                  height: "100%",
-                  width: "100%"
-                }
-              }
-            },
-          }}
-        />
+              elements: {
+                card: {
+                  background: "transparent",
+                  boxShadow: "none",
+                  border: "none",
+                  padding: 0,
+                },
+                rootBox: {
+                  width: "100%",
+                },
+                navbar: {
+                  background: resolvedTheme === "dark"
+                    ? "rgba(153,105,248,0.08)"
+                    : "rgba(153,105,248,0.06)",
+                  borderRight: "1px solid rgba(153,105,248,0.2)",
+                  borderRadius: "12px 0 0 12px",
+                  padding: "16px",
+                },
+                navbarButton: {
+                  borderRadius: "8px",
+                  padding: "10px 12px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  transition: "all 0.2s ease",
+                },
+                navbarButton__active: {
+                  background: "linear-gradient(90deg, #9969F8, #6BB8FF)",
+                  color: "#ffffff",
+                  fontWeight: "600",
+                },
+                pageScrollBox: {
+                  padding: "32px 24px",
+                  background: resolvedTheme === "dark" ? "transparent" : "#fafafa",
+                },
+                profileSection: {
+                  borderBottom: "1px solid rgba(153,105,248,0.15)",
+                  paddingBottom: "24px",
+                  marginBottom: "24px",
+                },
+                profileSectionTitle: {
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  color: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+                  marginBottom: "12px",
+                },
+                profileSectionPrimaryButton: {
+                  background: "linear-gradient(90deg, #9969F8, #6BB8FF)",
+                  color: "#ffffff",
+                  borderRadius: "8px",
+                  border: "none",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  transition: "all 0.2s ease",
+                },
+                badge: {
+                  background: "rgba(107,184,255,0.15)",
+                  color: "#6BB8FF",
+                  border: "1px solid rgba(107,184,255,0.3)",
+                  borderRadius: "6px",
+                  padding: "4px 8px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                },
+                formButtonPrimary: {
+                  background: "linear-gradient(90deg, #9969F8, #6BB8FF)",
+                  color: "#ffffff",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                },
+                formFieldInput: {
+                  background: resolvedTheme === "dark" ? "#1a1a45" : "#f5f3ff",
+                  border: "1px solid rgba(153,105,248,0.3)",
+                  color: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+                  borderRadius: "8px",
+                  padding: "10px 12px",
+                  fontSize: "14px",
+                },
+                formFieldLabel: {
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+                  marginBottom: "6px",
+                },
+                modalContent: {
+                  background: resolvedTheme === "dark" ? "#0f0f2e" : "#ffffff",
+                  borderRadius: "16px",
+                  border: "1px solid rgba(153,105,248,0.25)",
+                  padding: "24px",
+                },
+                modalBackdrop: {
+                  background: "rgba(0,0,0,0.5)",
+                  backdropFilter: "blur(8px)",
+                },
+                footer: {
+                  display: "none",
+                },
+              },
+            }}
+          />
+        </div>
 
-        <Card className="border-red-500/40 rounded-md">
-          <CardHeader className="flex flex-col gap-2">
-            <CardTitle>{t(I18N.Account.profile.deleteAccount.title)}</CardTitle>
-            <CardDescription>{t(I18N.Account.profile.deleteAccount.description)}</CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Delete Account Section */}
+        <div className="relative rounded-xl overflow-hidden border border-red-500/30 dark:border-red-500/40 bg-gradient-to-br from-red-50 via-red-50/50 to-red-100/30 dark:from-red-950/30 dark:via-red-950/20 dark:to-red-900/10 backdrop-blur-sm shadow-lg shadow-red-500/5">
+          {/* Decorative corner glow */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative p-6 space-y-4">
+            {/* Header */}
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                {t(I18N.Account.profile.deleteAccount.title)}
+              </h3>
+              <p className="text-sm text-red-700 dark:text-red-300/80 leading-relaxed">
+                {t(I18N.Account.profile.deleteAccount.description)}
+              </p>
+            </div>
+
+            {/* Action Button */}
             <Button
-              variant="danger-soft"
-              className="rounded-md"
+              variant="danger"
+              className="rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200"
               onPress={() => setDeleteDialogOpen(true)}
             >
               {t(I18N.Account.profile.deleteAccount.action)}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
+        {/* Delete Confirmation Dialog */}
         <AlertDialog isOpen={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialog.Backdrop variant="blur" style={{ height: "100%" }}>
             <AlertDialog.Container>
-              <AlertDialog.Dialog className="w-sm rounded-md">
+              <AlertDialog.Dialog className="w-sm rounded-xl shadow-2xl">
                 <AlertDialog.CloseTrigger />
-                <AlertDialog.Header>
-                  <AlertDialog.Heading>
-                    <AlertDialog.Icon status="danger" />
-                    {t(I18N.Account.profile.deleteAccount.warningTitle)}
+                <AlertDialog.Header className="pb-4">
+                  <AlertDialog.Heading className="flex items-start gap-3">
+                    <div className="shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/50 flex items-center justify-center">
+                      <AlertDialog.Icon status="danger" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-2">
+                        {t(I18N.Account.profile.deleteAccount.warningTitle)}
+                      </h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {t(I18N.Account.profile.deleteAccount.warningDescription)}
+                      </p>
+                    </div>
                   </AlertDialog.Heading>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {t(I18N.Account.profile.deleteAccount.warningDescription)}
-                  </p>
                 </AlertDialog.Header>
-                <AlertDialog.Footer>
+                <AlertDialog.Footer className="flex gap-3 pt-4">
                   <Button
-                    className="rounded-md"
+                    className="rounded-lg flex-1"
                     slot="close"
-                    variant="danger-soft"
+                    variant="primary"
                     isDisabled={isDeleting}
                   >
                     {t(I18N.Account.profile.deleteAccount.cancel)}
                   </Button>
                   <Button
-                    className="rounded-md"
+                    className="rounded-lg flex-1 font-semibold"
                     variant="danger"
                     onPress={handleDeleteAccount}
                     isDisabled={isDeleting}
                   >
-                    {isDeleting
-                      ? t(I18N.Account.profile.deleteAccount.deleting)
-                      : t(I18N.Account.profile.deleteAccount.confirm)}
+                    {isDeleting ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                        </svg>
+                        {t(I18N.Account.profile.deleteAccount.deleting)}
+                      </span>
+                    ) : (
+                      t(I18N.Account.profile.deleteAccount.confirm)
+                    )}
                   </Button>
                 </AlertDialog.Footer>
               </AlertDialog.Dialog>

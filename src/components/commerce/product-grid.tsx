@@ -101,9 +101,9 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
     ));
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-2 md:space-y-4">
             <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground md:text-sm">
                     <ProductCount count={totalItems} />
                 </p>
                 <SortDropdownEntry />

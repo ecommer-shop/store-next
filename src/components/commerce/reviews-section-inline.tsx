@@ -166,8 +166,8 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
   const hasReviews = stats && stats.totalReviews > 0;
 
   return (
-    <div className="space-y-6">
-      {/* Formulario - SOLO SI COMPRÓ - PRIMERO */}
+    <div className="space-y-4">
+      {/* Formulario - COMPACTO */}
       {hasPurchased ? (
         <ReviewFormInline
           productId={productId}
@@ -175,67 +175,56 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
           onSuccess={handleReviewSubmitted}
         />
       ) : (
-        <Alert className="border-muted">
-          <ShoppingBag className="h-4 w-4" />
-          <AlertDescription className="text-sm">
+        <Alert className="border-muted py-2 px-3">
+          <ShoppingBag className="h-3.5 w-3.5" />
+          <AlertDescription className="text-xs">
             {t(I18N.Commerce.ReviewsSection.mustPurchaseFirst) || 
              'Debes comprar este producto antes de dejar una reseña.'}
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Card de IA - SIEMPRE VISIBLE */}
+      {/* Card de IA - COMPACTO */}
       <AISummary 
         productId={productId} 
         showReviews={showReviews}
         onToggleReviews={() => setShowReviews(!showReviews)}
       />
 
-      <Separator className="my-4" />
+      {/* Card de estadísticas - COMPACTO - SOLO SI HAY REVIEWS */}
+      {hasReviews && !showReviews && (
+        <Card className="border border-primary/30 bg-content1/95 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground">
+              {stats?.totalReviews || 0} {stats?.totalReviews === 1 ? 'reseña' : 'reseñas'}
+            </span>
+          </div>
 
-      {/* Card de estadísticas - SOLO SI HAY REVIEWS */}
-      {hasReviews && (
-        <div className="relative">
-          {/* Efecto de brillo de fondo */}
-          <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-secondary to-primary opacity-20 blur-lg" />
-          
-          <Card className="relative border border-primary/50 bg-content1/95 backdrop-blur-md p-4 md:p-5">
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                <div className="text-xs md:text-sm text-muted-foreground">
-                  {t(I18N.Commerce.ReviewsSection.totalReviews, { 
-                    count: stats?.totalReviews || 0 
-                  })}
+          {/* Distribución de ratings - COMPACTO */}
+          <div className="space-y-1.5">
+            {Array.from({ length: 5 }, (_, i) => {
+              const rating = 5 - i;
+              const percentage = getRatingPercentage(rating);
+              return (
+                <div key={rating} className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 w-12">
+                    <span className="text-xs text-muted-foreground">{rating}</span>
+                    <StarRating value={1} interactive={false} size="sm" />
+                  </div>
+                  <div className="flex-1 bg-muted rounded-full h-1.5">
+                    <div
+                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${percentage}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground w-10 text-right">
+                    {percentage}%
+                  </div>
                 </div>
-              </div>
-
-              {/* Distribución de ratings */}
-              <div className="space-y-2">
-                {Array.from({ length: 5 }, (_, i) => {
-                  const rating = 5 - i;
-                  const percentage = getRatingPercentage(rating);
-                  return (
-                    <div key={rating} className="flex items-center gap-2 md:gap-3">
-                      <div className="flex items-center gap-1 md:gap-2 w-14 md:w-16">
-                        <span className="text-xs md:text-sm text-muted-foreground">{rating}</span>
-                        <StarRating value={1} interactive={false} size="sm" />
-                      </div>
-                      <div className="flex-1 bg-muted rounded-full h-1.5 md:h-2">
-                        <div
-                          className="bg-primary h-1.5 md:h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${percentage}%` }}
-                        ></div>
-                      </div>
-                      <div className="text-xs md:text-sm text-muted-foreground w-10 md:w-12 text-right">
-                        {percentage}%
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </Card>
-        </div>
+              );
+            })}
+          </div>
+        </Card>
       )}
 
       {/* Lista de reviews - OCULTA POR DEFECTO */}

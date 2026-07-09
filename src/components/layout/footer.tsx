@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from 'next-intl/server';
 import { I18N } from '@/i18n/keys';
+import { Users } from 'lucide-react';
 
 function FooterBrandName() {
     // Can hardcode or translate - for now keep as is since it's brand name
@@ -32,10 +33,11 @@ const getCachedTopCollections = async () => {
 export async function Footer() {
     /*'use cache'
     cacheLife('days');*/
-    const [collections, tLayout, tAbout] = await Promise.all([
+    const [collections, tLayout, tAbout, tUsers] = await Promise.all([
         getCachedTopCollections(),
         getTranslations('Layout'),
         getTranslations('About'),
+        getTranslations('Users'),
     ]);
 
     return (
@@ -73,6 +75,15 @@ export async function Footer() {
                                     className="hover:text-foreground transition-colors"
                                 >
                                     {tLayout(I18N.Layout.footer.sections.about.label)}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/users"
+                                    className="hover:text-foreground transition-colors inline-flex items-center gap-1.5"
+                                >
+                                    <Users className="size-3.5 opacity-70" />
+                                    {tUsers('footer.link')}
                                 </Link>
                             </li>
                             <li>
