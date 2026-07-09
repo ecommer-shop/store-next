@@ -435,7 +435,12 @@
         },
         "error": {
           "title": "Error al votar",
+          "description": "No se pudo registrar tu voto. Por favor intenta de nuevo.",
           "networkError": "No se pudo registrar tu voto. Por favor intenta de nuevo."
+        },
+        "removed": {
+          "title": "Voto eliminado",
+          "description": "Tu voto ha sido eliminado correctamente."
         }
       },
       "pagination": {
