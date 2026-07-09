@@ -179,30 +179,32 @@ export function AddressForm({
 
   return (
     <Form onSubmit={submitForm}>
-      <div className="grid grid-cols-2 gap-4">
-        <input type="hidden" {...register('customFields.latitude')} />
-        <input type="hidden" {...register('customFields.longitude')} />
-        <input type="hidden" {...register('customFields.neighborhood')} />
-        <input type="hidden" {...register('customFields.googlePlaceId')} />
-        {geoError && (
-          <div className="col-span-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {geoError}
-          </div>
-        )}
+      {/* Hidden geo fields */}
+      <input type="hidden" {...register('customFields.latitude')} />
+      <input type="hidden" {...register('customFields.longitude')} />
+      <input type="hidden" {...register('customFields.neighborhood')} />
+      <input type="hidden" {...register('customFields.googlePlaceId')} />
+      {/* company hidden — not needed for individual buyers */}
+      <input type="hidden" {...register('company')} />
 
-        <TextField className="col-span-2">
-          <Label>{labels.fullName} *</Label>
-          <Input {...register('fullName', { required: labels.fullName })} />
-          <FieldError>{errors.fullName?.message}</FieldError>
+      <div className="space-y-5">
+
+        {/* Nombre completo */}
+        <TextField>
+          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+            {labels.fullName} <span className="text-[#9969F8]">*</span>
+          </Label>
+          <Input
+            className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+            autoComplete="name"
+            {...register('fullName', { required: labels.fullName })}
+          />
+          <FieldError className="text-xs text-red-500 mt-1">{errors.fullName?.message}</FieldError>
         </TextField>
 
-        <TextField className="col-span-2">
-          <Label>{labels.company}</Label>
-          <Input {...register('company')} />
-        </TextField>
-
+        {/* Dirección principal */}
         {hasGoogleMapsApiKey ? (
-          <div className="col-span-2">
+          <div>
             <Controller
               name="streetLine1"
               control={control}
@@ -210,7 +212,7 @@ export function AddressForm({
               render={({ field }) => (
                 <GoogleAddressAutocomplete
                   label={`${labels.streetLine1} *`}
-                  placeholder="Escribe y selecciona una direccion de Google Maps"
+                  placeholder="Escribe y selecciona una dirección de Google Maps"
                   apiKey={googleMapsApiKey}
                   value={field.value ?? ''}
                   inputName={field.name}
@@ -220,36 +222,36 @@ export function AddressForm({
                 />
               )}
             />
-            <FieldError>{errors.streetLine1?.message}</FieldError>
+            <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
           </div>
         ) : (
           <>
-            {requireGoogleCoordinates && (
-              <div className="col-span-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                Configura NEXT_PUBLIC_GOOGLE_MAPS_API_KEY en el front para seleccionar direcciones con Google Maps y guardar coordenadas.
-              </div>
-            )}
-            <TextField className="col-span-2">
-              <Label>{labels.streetLine1} *</Label>
+            <TextField>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                {labels.streetLine1} <span className="text-[#9969F8]">*</span>
+              </Label>
               <Input
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
                 autoComplete="address-line1"
                 {...register('streetLine1', { required: labels.streetLine1 })}
               />
-              <FieldError>{errors.streetLine1?.message}</FieldError>
+              <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
             </TextField>
           </>
         )}
 
+        {/* Coordenadas confirmadas */}
         {hasValidCoordinates && latitude !== null && longitude !== null && (
-          <div className="col-span-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-900">
-            <p className="font-medium">Direccion seleccionada desde Google Maps</p>
-            {selectedStreetLine && (
-              <p className="mt-1 text-muted-foreground">{selectedStreetLine}</p>
-            )}
-            <p className="mt-1 text-xs text-emerald-700">
-              {geoFields?.neighborhood && <span>Barrio: {geoFields.neighborhood}. </span>}
-              Coordenadas guardadas: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300">
+            <p className="font-semibold flex items-center gap-1.5">
+              <span>✅</span> Dirección verificada con Google Maps
             </p>
+            {selectedStreetLine && (
+              <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400">{selectedStreetLine}</p>
+            )}
+            {geoFields?.neighborhood && (
+              <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-500">Barrio: {geoFields.neighborhood}</p>
+            )}
             <GoogleLocationMapPreview
               apiKey={googleMapsApiKey}
               latitude={latitude}
@@ -259,56 +261,115 @@ export function AddressForm({
           </div>
         )}
 
-        <TextField className="col-span-2">
-          <Label>{labels.streetLine2}</Label>
-          <Input {...register('streetLine2')} />
-        </TextField>
+        {/* Geo error */}
+        {geoError && (
+          <div className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/30 dark:border-red-800 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+            {geoError}
+          </div>
+        )}
 
+        {/* Apartamento / Suite */}
         <TextField>
-          <Label>{labels.city} *</Label>
-          <Input {...register('city', { required: labels.city })} />
-        </TextField>
-
-        <TextField>
-          <Label>{labels.province} *</Label>
-          <Input {...register('province', { required: labels.province })} />
-        </TextField>
-
-        <TextField>
-          <Label>{labels.postalCode} *</Label>
-          <Input {...register('postalCode', { required: labels.postalCode })} />
-        </TextField>
-
-        <TextField>
-          <Label>{labels.country} *</Label>
-          <Controller
-            name="countryCode"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <CountrySelect
-                countries={countries}
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
+          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+            {labels.streetLine2}
+          </Label>
+          <Input
+            className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+            placeholder="Apto, piso, oficina…"
+            {...register('streetLine2')}
           />
-          <FieldError>{errors.countryCode?.message}</FieldError>
         </TextField>
 
-        <TextField className="col-span-2">
-          <Label>{labels.phoneNumber} *</Label>
-          <Input {...register('phoneNumber', { required: labels.phoneNumber })} />
+        {/* Ciudad + Departamento */}
+        <div className="grid grid-cols-2 gap-4">
+          <TextField>
+            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+              {labels.city} <span className="text-[#9969F8]">*</span>
+            </Label>
+            <Input
+              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+              {...register('city', { required: labels.city })}
+            />
+            <FieldError className="text-xs text-red-500 mt-1">{errors.city?.message}</FieldError>
+          </TextField>
+
+          <TextField>
+            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+              {labels.province} <span className="text-[#9969F8]">*</span>
+            </Label>
+            <Input
+              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+              {...register('province', { required: labels.province })}
+            />
+            <FieldError className="text-xs text-red-500 mt-1">{errors.province?.message}</FieldError>
+          </TextField>
+        </div>
+
+        {/* Código postal + País */}
+        <div className="grid grid-cols-2 gap-4">
+          <TextField>
+            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+              {labels.postalCode} <span className="text-[#9969F8]">*</span>
+            </Label>
+            <Input
+              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+              {...register('postalCode', { required: labels.postalCode })}
+            />
+            <FieldError className="text-xs text-red-500 mt-1">{errors.postalCode?.message}</FieldError>
+          </TextField>
+
+          <TextField>
+            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+              {labels.country} <span className="text-[#9969F8]">*</span>
+            </Label>
+            <Controller
+              name="countryCode"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <CountrySelect
+                  countries={countries}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+            <FieldError className="text-xs text-red-500 mt-1">{errors.countryCode?.message}</FieldError>
+          </TextField>
+        </div>
+
+        {/* Teléfono */}
+        <TextField>
+          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+            {labels.phoneNumber} <span className="text-[#9969F8]">*</span>
+          </Label>
+          <Input
+            className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+            type="tel"
+            autoComplete="tel"
+            {...register('phoneNumber', { required: labels.phoneNumber })}
+          />
+          <FieldError className="text-xs text-red-500 mt-1">{errors.phoneNumber?.message}</FieldError>
         </TextField>
+
       </div>
 
-      <div className="flex justify-end gap-3 mt-6">
+      <div className="flex justify-end gap-3 mt-7">
         {onCancel && (
-          <Button type="button" variant="danger-soft" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="danger-soft"
+            className="rounded-xl px-5"
+            onClick={onCancel}
+          >
             {labels.cancel}
           </Button>
         )}
-        <Button type="submit" isDisabled={isSubmitting}>
+        <Button
+          type="submit"
+          isDisabled={isSubmitting}
+          className="rounded-xl px-6 bg-[#9969F8] text-white hover:opacity-90 transition"
+        >
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {labels.submit}
         </Button>

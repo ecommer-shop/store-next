@@ -47,7 +47,7 @@ export async function OrderSummary({ activeOrder }: { activeOrder: ActiveOrder }
                 <CheckoutButtonClient label={t(I18N.Cart.summary.checkout)} lines={activeOrder.lines} />
             
             <div className="mt-2 w-full text-foreground">
-                <ThemeButton variant="accent" href="/" className="w-full rounded-md">
+                <ThemeButton variant="accent" href="/search" className="w-full rounded-md">
                     {t(I18N.Cart.summary.continueShopping)}
                 </ThemeButton>
             </div>

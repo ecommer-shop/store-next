@@ -44,7 +44,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                         {t(I18N.Cart.empty.description)}
                     </p>
                     <Button>
-                        <Link href="/">{t(I18N.Cart.empty.continueShopping)}</Link>
+                        <Link href="/search">{t(I18N.Cart.empty.continueShopping)}</Link>
                     </Button>
                 </div>
             </div>
