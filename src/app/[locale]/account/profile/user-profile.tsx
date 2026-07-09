@@ -65,34 +65,92 @@ export default function UserProfileClient() {
           appearance={{
             baseTheme: resolvedTheme === "dark" ? dark : undefined,
             variables: {
-                borderRadius: "2px",
-                colorBackground: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
-                colorShadow: resolvedTheme === "dark" ? "#F1F1F1" : "#12123f",
+              borderRadius: "8px",
+              colorBackground: resolvedTheme === "dark" ? "#0f0f2e" : "#ffffff",
+              colorText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+              colorTextSecondary: "#9969F8",
+              colorPrimary: "#9969F8",
+              colorNeutral: resolvedTheme === "dark" ? "#9969F8" : "#12123F",
+              colorInputBackground: resolvedTheme === "dark" ? "#1a1a45" : "#f5f3ff",
+              colorInputText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+              colorShadow: resolvedTheme === "dark"
+                ? "0 8px 32px rgba(153,105,248,0.2), 0 2px 8px rgba(0,0,0,0.5)"
+                : "0 8px 32px rgba(153,105,248,0.12), 0 2px 8px rgba(18,18,63,0.08)",
+              fontFamily: "inherit",
+              fontWeight: { normal: 400, medium: 500, bold: 700 },
             },
             elements: {
+              card: {
+                background: "transparent",
+                boxShadow: "none",
+                border: "none",
+              },
+              navbar: {
+                background: resolvedTheme === "dark"
+                  ? "rgba(153,105,248,0.08)"
+                  : "rgba(153,105,248,0.06)",
+                borderRight: "1px solid rgba(153,105,248,0.2)",
+              },
+              navbarButton: {
+                borderRadius: "6px",
+              },
+              navbarButton__active: {
+                background: "linear-gradient(90deg, #9969F8, #6BB8FF)",
+                color: "#ffffff",
+              },
+              pageScrollBox: {
+                padding: "24px",
+              },
+              profileSection: {
+                borderBottom: "1px solid rgba(153,105,248,0.15)",
+              },
+              profileSectionPrimaryButton: {
+                background: "linear-gradient(90deg, #9969F8, #6BB8FF)",
+                color: "#ffffff",
+                borderRadius: "6px",
+                border: "none",
+              },
+              badge: {
+                background: "rgba(107,184,255,0.15)",
+                color: "#6BB8FF",
+                border: "1px solid rgba(107,184,255,0.3)",
+              },
+              formButtonPrimary: {
+                background: "linear-gradient(90deg, #9969F8, #6BB8FF)",
+                color: "#ffffff",
+                borderRadius: "6px",
+              },
+              formFieldInput: {
+                background: resolvedTheme === "dark" ? "#1a1a45" : "#f5f3ff",
+                border: "1px solid rgba(153,105,248,0.3)",
+                color: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+                borderRadius: "6px",
+              },
               modalContent: {
-                background: resolvedTheme === "dark" ? "#12123F" : "#F1F1F1",
-                borderRadius: "2px",
+                background: resolvedTheme === "dark" ? "#0f0f2e" : "#ffffff",
+                borderRadius: "12px",
+                border: "1px solid rgba(153,105,248,0.25)",
               },
               modalBackdrop: {
-                "&::backdrop": {
-                  height: "100%",
-                  width: "100%"
-                }
-              }
+                background: "rgba(0,0,0,0.5)",
+                backdropFilter: "blur(8px)",
+              },
+              footer: {
+                display: "none",
+              },
             },
           }}
         />
 
-        <Card className="border-red-500/40 rounded-md">
+        <Card className="border border-red-500/30 bg-red-950/20 backdrop-blur-sm rounded-xl">
           <CardHeader className="flex flex-col gap-2">
-            <CardTitle>{t(I18N.Account.profile.deleteAccount.title)}</CardTitle>
-            <CardDescription>{t(I18N.Account.profile.deleteAccount.description)}</CardDescription>
+            <CardTitle className="text-red-400">{t(I18N.Account.profile.deleteAccount.title)}</CardTitle>
+            <CardDescription className="text-red-300/70">{t(I18N.Account.profile.deleteAccount.description)}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
               variant="danger-soft"
-              className="rounded-md"
+              className="rounded-lg border border-red-500/40 hover:bg-red-600/20"
               onPress={() => setDeleteDialogOpen(true)}
             >
               {t(I18N.Account.profile.deleteAccount.action)}

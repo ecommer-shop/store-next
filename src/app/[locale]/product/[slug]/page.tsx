@@ -1,32 +1,27 @@
 import type { Metadata } from 'next';
 import { isLegacyProductDetailWithoutSellerShopError } from '@/lib/vendure/graphql-validation-fallback';
 import { query } from '@/lib/vendure/server/api';
-import { GetProductDetailLegacyQuery, GetProductDetailQuery } from '@/lib/vendure/shared/queries';
+import { GetProductDetailLegacyQuery, GetProductDetailQuery, SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
-// import { RelatedProducts } from '@/components/commerce/related-products';
-import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
+import { RelatedProducts } from '@/components/commerce/related-products';
 import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
 import { FacetFilters } from '@/components/commerce/facet-filters/facet-filters';
-import { RelatedProductsGrid } from '@/components/commerce/related-products-grid';
-import {
-    Accordion,
-    Separator,
-    Spinner,
-    Tabs
-} from '@heroui/react';
+import { Accordion, Spinner } from '@heroui/react';
+import { ChevronDownIcon } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';import {
+import Image from 'next/image';
+import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
 import { ProductInfo } from '@/components/commerce/product-info/product-info';
+import { ProductGrid } from '@/components/commerce/product-grid';
 import { Suspense } from 'react';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import { ReviewsSection } from '@/components/commerce/reviews-section-inline';
-import { ProductGrid } from '@/components/commerce/product-grid';
 
 interface PageProps<T = any> {
     params: Promise<T>;
@@ -155,12 +150,44 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                 </div>
             </div>
 
-            {/* ── CTA Vendedores (reemplaza "Por qué elegirnos") ── */}
+            {/* ── Productos relacionados por categoría ── */}
+            {primaryCollection?.slug && (
+                <div className="container mx-auto px-4 pb-10 max-w-6xl">
+                    <div className="mb-6">
+                        <p className="text-xs font-bold tracking-[0.25em] uppercase mb-1" style={{ color: '#9969F8' }}>
+                            DE LA MISMA CATEGORÍA
+                        </p>
+                        <h2 className="text-2xl font-extrabold text-foreground">
+                            Productos relacionados
+                        </h2>
+                    </div>
+                    <Suspense fallback={
+                        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div key={i} className="bg-card rounded-xl overflow-hidden border border-border animate-pulse">
+                                    <div className="aspect-square bg-muted" />
+                                    <div className="p-3 space-y-2">
+                                        <div className="h-4 bg-muted rounded w-3/4" />
+                                        <div className="h-5 bg-muted rounded w-1/2" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    }>
+                        <RelatedProducts
+                            collectionSlug={primaryCollection.slug}
+                            currentProductId={productId}
+                            locale={locale}
+                        />
+                    </Suspense>
+                </div>
+            )}
+
+            {/* ── CTA Vendedores ── */}
             <section
                 className="py-16 mt-10 relative overflow-hidden"
                 style={{ background: 'linear-gradient(135deg, #12123F 0%, #1e1b6e 50%, #2d1a7e 100%)' }}
             >
-                {/* blobs decorativos */}
                 <div className="absolute top-0 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
                     style={{ background: '#9969F8', transform: 'translate(-40%, -40%)' }} />
                 <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
@@ -186,7 +213,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
                 </div>
             </section>
 
-            {/* ── Productos relacionados ── */}
+            {/* ── Más productos ── */}
             <div className="py-10 container mx-auto px-4 max-w-6xl">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     <aside className="lg:col-span-1">
@@ -203,35 +230,37 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             </div>
 
             {/* ── FAQ: al final de la página ── */}
-            <section className="py-16" style={{ background: '#F1F1F1' }}>
-                <div className="container mx-auto px-4 max-w-3xl dark:bg-transparent">
+            <section className="py-16 bg-muted/30 dark:bg-muted/10">
+                <div className="container mx-auto px-4 max-w-3xl">
                     <p className="text-xs font-bold tracking-[0.25em] uppercase text-center mb-2" style={{ color: '#9969F8' }}>
                         SOPORTE
                     </p>
-                    <h2 className="text-2xl font-extrabold text-center mb-8" style={{ color: '#12123F' }}>
+                    <h2 className="text-2xl font-extrabold text-center mb-8 text-foreground">
                         {t(I18N.Product.faq)}
                     </h2>
-                    <Accordion lang="single" className="w-full">
+                    <Accordion className="w-full">
                         {[
-                            { key: 'returns',       q: I18N.Product.returnPolicy,    a: I18N.Product.returnDescription },
-                            { key: 'tracking',      q: I18N.Product.trackOrder,      a: I18N.Product.trackDescription },
-                            { key: 'shippingCost',  q: I18N.Product.shippingCost,    a: I18N.Product.shippingCostDescription },
-                            { key: 'deliveryTime',  q: I18N.Product.deliveryTime,    a: I18N.Product.deliveryDescription },
-                            { key: 'paymentMethods',q: I18N.Product.paymentMethods,  a: I18N.Product.paymentDescription },
-                            { key: 'paymentSecurity',q:I18N.Product.paymentSecurity, a: I18N.Product.paymentSecurityDescription },
-                            { key: 'invoice',       q: I18N.Product.invoice,         a: I18N.Product.invoiceDescription },
-                            { key: 'support',       q: I18N.Product.support,         a: I18N.Product.supportDescription },
+                            { key: 'returns',        q: I18N.Product.returnPolicy,        a: I18N.Product.returnDescription },
+                            { key: 'tracking',       q: I18N.Product.trackOrder,          a: I18N.Product.trackDescription },
+                            { key: 'shippingCost',   q: I18N.Product.shippingCost,        a: I18N.Product.shippingCostDescription },
+                            { key: 'deliveryTime',   q: I18N.Product.deliveryTime,        a: I18N.Product.deliveryDescription },
+                            { key: 'paymentMethods', q: I18N.Product.paymentMethods,      a: I18N.Product.paymentDescription },
+                            { key: 'paymentSecurity',q: I18N.Product.paymentSecurity,     a: I18N.Product.paymentSecurityDescription },
+                            { key: 'invoice',        q: I18N.Product.invoice,             a: I18N.Product.invoiceDescription },
+                            { key: 'support',        q: I18N.Product.support,             a: I18N.Product.supportDescription },
                         ].map(({ key, q, a }) => (
-                            <Accordion.Item key={key} className="border-b border-[#9969F8]/20 py-2">
+                            <Accordion.Item key={key} className="border-b border-border last:border-b-0">
                                 <Accordion.Heading>
-                                    <Accordion.Trigger className="font-semibold text-[#12123F] dark:text-foreground">
-                                        {t(q)}
-                                        <Accordion.Indicator className="text-[#9969F8]" fill="currentColor" />
+                                    <Accordion.Trigger className="flex flex-1 items-center justify-between gap-4 py-4 text-left text-sm font-medium hover:underline">
+                                        <span className="text-foreground">{t(q)}</span>
+                                        <ChevronDownIcon className="text-[#9969F8] size-4 shrink-0 transition-transform duration-200" />
                                     </Accordion.Trigger>
                                 </Accordion.Heading>
                                 <Accordion.Panel>
-                                    <Accordion.Body className="text-muted-foreground text-sm leading-relaxed">
-                                        {t(a)}
+                                    <Accordion.Body>
+                                        <div className="pb-4 text-sm text-muted-foreground leading-relaxed">
+                                            {t(a)}
+                                        </div>
                                     </Accordion.Body>
                                 </Accordion.Panel>
                             </Accordion.Item>
