@@ -189,7 +189,7 @@ export default async function StorePage({ params }: Props) {
                 </section>
 
                 {profile?.socialLinks?.length ? (
-                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <section className="flex flex-wrap items-center gap-x-4 gap-y-3">
                         {profile.socialLinks.map(link => {
                             const isWhatsApp = link.platform === 'whatsapp';
                             const platformStyle = isWhatsApp
@@ -199,38 +199,33 @@ export default async function StorePage({ params }: Props) {
                                   : { bg: '#E4405F', hover: '#c13584', icon: InstagramIcon };
                             const Icon = platformStyle.icon;
                             return (
-                                <div
-                                    key={link.platform}
-                                    className="rounded-xl border border-border/50 bg-card p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all"
-                                >
+                                <div key={link.platform} className="flex items-center gap-2">
                                     <div
                                         style={{ background: platformStyle.bg }}
-                                        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
                                     >
                                         <Icon />
                                     </div>
-                                    <div className="flex items-center gap-2 flex-wrap min-w-0">
-                                        {!isWhatsApp && (
-                                            <a
-                                                href={link.profileUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{ background: platformStyle.bg }}
-                                                className="px-3 py-1.5 rounded-full text-white text-xs font-medium hover:opacity-90 transition-opacity shrink-0"
-                                            >
-                                                Seguir
-                                            </a>
-                                        )}
+                                    {!isWhatsApp && (
                                         <a
-                                            href={link.dmLink}
+                                            href={link.profileUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ background: platformStyle.bg }}
-                                            className="px-3 py-1.5 rounded-full text-white text-xs font-medium hover:opacity-90 transition-opacity shrink-0"
+                                            style={{ borderColor: platformStyle.bg, color: platformStyle.bg }}
+                                            className="border rounded-full px-3 py-1 text-xs font-medium hover:bg-opacity-10 transition-all shrink-0"
                                         >
-                                            {isWhatsApp ? 'Chatear' : 'Mensaje'}
+                                            Seguir
                                         </a>
-                                    </div>
+                                    )}
+                                    <a
+                                        href={link.dmLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ background: platformStyle.bg }}
+                                        className="px-3 py-1 rounded-full text-white text-xs font-medium hover:opacity-90 transition-opacity shrink-0"
+                                    >
+                                        {isWhatsApp ? 'Chatear' : 'Mensaje'}
+                                    </a>
                                 </div>
                             );
                         })}
