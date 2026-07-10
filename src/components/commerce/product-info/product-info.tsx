@@ -278,51 +278,21 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
     };
 
     return (
-            <div className="space-y-6">
-            {/* Breadcrumb */}
-            {primaryCollection && (
-                <nav aria-label="Breadcrumb">
-                    <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <li>
-                            <NextLink href="/" className="hover:text-foreground">
-                                Inicio
-                            </NextLink>
-                        </li>
-                        {primaryCollection.parent && (
-                            <li className="flex items-center">
-                                <span className="mx-2">/</span>
-                                <NextLink href={`/collection/${primaryCollection.parent.slug}`} className="hover:text-foreground">
-                                    {primaryCollection.parent.name}
-                                </NextLink>
-                            </li>
-                        )}
-                        <li className="flex items-center">
-                            <span className="mx-2">/</span>
-                            <NextLink href={`/collection/${primaryCollection.slug}`} className="hover:text-foreground">
-                                {primaryCollection.name}
-                            </NextLink>
-                        </li>
-                        <li className="flex items-center text-foreground font-semibold">
-                            <span className="mx-2">/</span>
-                            <span>{product.name}</span>
-                        </li>
-                    </ol>
-                </nav>
-            )}
-            {/* Product Title */}
-            <div>
-                <h1 className="text-3xl font-bold">{product.name}</h1>
+        <div className="space-y-5">
+            {/* ── Nombre + precio ── */}
+            <div className="pb-4" style={{ borderBottom: '1px solid rgba(107,184,255,0.2)' }}>
+                <h1 className="text-2xl font-extrabold text-foreground leading-snug">{product.name}</h1>
                 {selectedVariant && (
-                    <p className="text-2xl font-bold mt-2">
-                        <Price value={selectedVariant.priceWithTax} />
+                    <p className="text-3xl font-black mt-2" style={{ color: '#12123F' }}>
+                        <span className="dark:text-white"><Price value={selectedVariant.priceWithTax} /></span>
                     </p>
                 )}
             </div>
 
-            {/* Product Description */}
-            <div className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: product.description }}
-            />
+            {/* ── Descripción ── */}
+            <div className="prose prose-sm max-w-none text-muted-foreground">
+                <div dangerouslySetInnerHTML={{ __html: product.description }} />
+            </div>
 
             {/* Option Groups */}
             {product.optionGroups.length > 0 && (
@@ -379,7 +349,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                 </div>
             )}
 
-            {/* Stock Status */}
+            {/* ── Stock Status ── */}
             {selectedVariant && stockStatus && (
                 <div className="text-sm">
                     <span className={`${statusColorClass} font-semibold`}>
@@ -387,7 +357,6 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                     </span>
                 </div>
             )}
-
             {/* Seller Info */}
             {storeLink && (
                 <div className="text-sm">
@@ -466,7 +435,8 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                     <Button
                         size="lg"
                         variant='primary'
-                        className="flex-1 min-w-0 text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                        className="flex-1 min-w-0 font-bold rounded-xl text-white"
+                        style={canAddToCart ? { background: 'linear-gradient(90deg, #12123F, #1a1a5e)' } : {}}
                         isDisabled={!canAddToCart || isAdding}
                         onPress={handleAddToCart}
                     >
@@ -517,12 +487,13 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                 </Button>
 
                 {showGoToCart && (
-                    <div className="flex flex-row gap-2 w-full text-foreground">
+                    <div className="flex flex-row gap-2 w-full">
                         <ContinueShoppingButton size="lg" className="flex-1 min-w-0" />
                         <Button
                             size="lg"
                             variant="primary"
-                            className="flex-1 min-w-0 rounded-full text-accent-foreground hover:bg-[#6BB8FF] dark:hover:bg-[#9969F8]"
+                            className="flex-1 min-w-0 rounded-xl font-bold text-white"
+                            style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
                             onPress={() => router.push('/cart')}
                         >
                             Ir al carrito
@@ -531,12 +502,12 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                 )}
 
                 <Button
-                    size="lg"
+                    size="sm"
                     variant="outline"
-                    className="w-full text-[#12123F] dark:text-[#F1F1F1] border-2 border-[#6BB8FF] hover:bg-[#6BB8FF]/10 dark:hover:bg-[#9969F8]/10 font-semibold"
+                    className="flex-1 text-muted-foreground rounded-xl"
                     onPress={handleShare}
                 >
-                    <Share2 className="mr-2 h-5 w-5 text-[#6BB8FF]" />
+                    <Share2 className="mr-2 h-4 w-4" />
                     {t(I18N.Commerce.productInfo.shareProduct)}
                 </Button>
             </div>
@@ -560,7 +531,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
             {/* SKU */}
             {selectedVariant && (
                 <div className="text-xs text-foreground">
-                    {t(I18N.Commerce.productInfo.sku)}: {selectedVariant.sku}
+                    ID/REFERENCIA: <span className="font-medium">{selectedVariant.sku}</span>
                 </div>
             )}
             {showBanner && (
@@ -569,6 +540,25 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                     <span>¡Enlace copiado al portapapeles!</span>
                 </div>
             )}
+
+            {/* ── Invitación a calificar ── */}
+            <div
+                className="flex items-start gap-3 p-4 rounded-2xl mt-2"
+                style={{
+                    background: 'linear-gradient(135deg, rgba(107,184,255,0.08) 0%, rgba(153,105,248,0.08) 100%)',
+                    border: '1px solid rgba(153,105,248,0.25)',
+                }}
+            >
+                <span className="text-2xl select-none">⭐</span>
+                <div>
+                    <p className="text-sm font-semibold text-foreground leading-snug">
+                        ¿Ya tienes este producto?
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                        Tu opinión importa. Comparte tu experiencia y ayuda a otros compradores a elegir con confianza.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }

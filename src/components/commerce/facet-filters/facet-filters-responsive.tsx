@@ -1,4 +1,6 @@
-import { Accordion, Checkbox, Label } from "@heroui/react";
+import { Accordion } from "@heroui/react";
+import { Check } from "lucide-react";
+import { getFacetStyle } from './facet-config';
 
 export function FacetsAccordionContent({
   facetGroups,
@@ -11,58 +13,81 @@ export function FacetsAccordionContent({
 }) {
   return (
     <Accordion allowsMultipleExpanded className="space-y-3">
-      {Object.entries(facetGroups).map(([_, facet]) => (
-        <Accordion.Item key={facet.id} className="rounded-lg border border-border bg-background px-3 py-2">
-          <Accordion.Heading>
-            <Accordion.Trigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-foreground">
-              {facet.name}
-              <Accordion.Indicator className="text-foreground" fill="currentColor">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                  <path
-                    className="text-foreground"
-                    fill="currentColor"
-                    fillRule="evenodd"
-                    d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Accordion.Indicator>
-            </Accordion.Trigger>
-          </Accordion.Heading>
+      {Object.entries(facetGroups).map(([_, facet]) => {
+        const style = getFacetStyle(facet.name);
+        const Icon = style.icon;
 
-          <Accordion.Panel className="space-y-3 pt-2">
+        return (
+          <Accordion.Item
+            key={facet.id}
+            className="rounded-lg border border-border bg-background overflow-hidden"
+          >
+            {/* Header del grupo */}
+            <Accordion.Heading>
+              <Accordion.Trigger className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-bold text-foreground">
+                <span className="flex items-center gap-2">
+                  <Icon size={16} style={{ color: style.color }} />
+                  {facet.name}
+                </span>
+                <Accordion.Indicator className="text-foreground/50" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16">
+                    <path
+                      fill="currentColor"
+                      fillRule="evenodd"
+                      d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </Accordion.Indicator>
+              </Accordion.Trigger>
+            </Accordion.Heading>
 
-            {facet.values.map((value: any) => {
-              const isChecked = selectedFacets.includes(value.id);
+            {/* Opciones */}
+            <Accordion.Panel className="pb-1">
+              {facet.values.map((value: any, idx: number) => {
+                const isSelected = selectedFacets.includes(value.id);
 
-              return (
-                <Accordion.Body key={value.id} className="flex items-center justify-between rounded-md px-2 py-2 hover:bg-muted/50 transition-colors">
-                  <Checkbox
-                    id={value.id}
-                    isSelected={isChecked}
-                    onChange={() => toggleFacet(value.id)}
-                  >
-                    <Checkbox.Control>
-                      <Checkbox.Indicator />
-                    </Checkbox.Control>
-                    <Checkbox.Content>
-                      <Label
-                        htmlFor={value.id}
-                        className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                      >
+                return (
+                  <Accordion.Body key={value.id}>
+                    <button
+                      onClick={() => toggleFacet(value.id)}
+                      className={`
+                        w-full flex items-center justify-between
+                        px-3 py-0.5 text-sm transition-all duration-150
+                        ${idx !== 0 ? 'border-t border-border/30' : ''}
+                        ${isSelected
+                          ? 'bg-foreground text-background'
+                          : 'text-foreground hover:bg-muted/60'
+                        }
+                      `}
+                    >
+                      {/* Nombre + count */}
+                      <span className="flex items-center gap-2 font-medium">
+                        {/* Barra de color a la izquierda solo cuando está seleccionado */}
+                        {isSelected && (
+                          <span
+                            className="w-1 h-4 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: style.color }}
+                          />
+                        )}
                         {value.name}
-                        <span className="text-xs text-muted-foreground">
+                        <span className={`text-xs ${isSelected ? 'opacity-60' : 'text-muted-foreground'}`}>
                           ({value.count})
                         </span>
-                      </Label>
-                    </Checkbox.Content>
-                  </Checkbox>
-                </Accordion.Body>
-              );
-            })}
-          </Accordion.Panel>
-        </Accordion.Item>
-      ))}
+                      </span>
+
+                      {/* Check cuando está seleccionado */}
+                      {isSelected && (
+                        <Check size={14} style={{ color: style.color }} strokeWidth={2.5} />
+                      )}
+                    </button>
+                  </Accordion.Body>
+                );
+              })}
+            </Accordion.Panel>
+          </Accordion.Item>
+        );
+      })}
     </Accordion>
   );
 }

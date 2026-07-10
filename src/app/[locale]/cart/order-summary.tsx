@@ -1,11 +1,9 @@
-import Link from 'next/link';
-import { Button } from '@heroui/react';
 import CheckoutButtonClient from './checkout-button-client';
-import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
 import { getTranslations } from 'next-intl/server';
 import { OrderSummaryClient } from './order-summary-client';
 import { ThemeButton } from '@/components/commerce/theme-button';
+import { ShoppingBag } from 'lucide-react';
 
 type ActiveOrder = {
     id: string;
@@ -25,12 +23,16 @@ type ActiveOrder = {
 
 export async function OrderSummary({ activeOrder }: { activeOrder: ActiveOrder }) {
     const t = await getTranslations('Cart');
-    const totalLines = activeOrder.lines.length;
-    return (
-        <div className="border rounded-lg p-6 bg-card sticky top-10 z-9">
-            <h2 className="text-xl font-bold mb-4">{t(I18N.Cart.summary.title)}</h2>
 
-            <div className="space-y-2 mb-4">
+    return (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm lg:sticky lg:top-10">
+            {/* Header */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
+                <ShoppingBag className="w-4 h-4 text-[#9969F8]" />
+                <h2 className="font-semibold text-sm text-foreground">{t(I18N.Cart.summary.title)}</h2>
+            </div>
+
+            <div className="px-4 py-4 space-y-3">
                 <OrderSummaryClient
                     lines={activeOrder.lines}
                     subTotalWithTax={activeOrder.subTotalWithTax}
@@ -40,14 +42,13 @@ export async function OrderSummary({ activeOrder }: { activeOrder: ActiveOrder }
                 />
             </div>
 
-            <div className="border-t pt-4 mb-6">
-                {/* This div is now handled by OrderSummaryClient - removing the duplicate total */}
-            </div>
-            
-                <CheckoutButtonClient label={t(I18N.Cart.summary.checkout)} lines={activeOrder.lines} />
-            
-            <div className="mt-2 w-full text-foreground">
-                <ThemeButton variant="accent" href="/" className="w-full rounded-md">
+            {/* CTA buttons */}
+            <div className="px-4 pb-4 space-y-2">
+                <CheckoutButtonClient
+                    label={t(I18N.Cart.summary.checkout)}
+                    lines={activeOrder.lines}
+                />
+                <ThemeButton variant="accent" href="/search" className="w-full rounded-xl">
                     {t(I18N.Cart.summary.continueShopping)}
                 </ThemeButton>
             </div>

@@ -18,9 +18,13 @@ export async function removeFromCart(lineId: string) {
     updateTag('cart');
 }
 
-export async function adjustQuantity(lineId: string, quantity: number) {
-    await mutate(AdjustCartItemMutation, {lineId, quantity}, {token: (await token()), useAuthToken: true});
+export async function adjustQuantity(lineId: string, quantity: number): Promise<{ actualQuantity: number }> {
+    const result = await mutate(AdjustCartItemMutation, {lineId, quantity}, {token: (await token()), useAuthToken: true});
     updateTag('cart');
+    // Return the actual quantity Vendure set (may be capped by stock)
+    const lines: any[] = (result?.data as any)?.adjustOrderLine?.lines ?? [];
+    const line = lines.find((l: any) => l.id === lineId);
+    return { actualQuantity: line?.quantity ?? quantity };
 }
 
 export async function applyPromotionCode(formData: FormData) {

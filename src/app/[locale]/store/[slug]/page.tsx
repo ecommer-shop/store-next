@@ -172,12 +172,14 @@ export default async function StorePage({ params, searchParams }: Props) {
                     </div>
                 </section>
 
-                {featuredProducts.length > 0 && (
-                    <section>
-                        <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
+                <section>
+                    <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
+                    {featuredProducts.length > 0 ? (
                         <FeaturedProductsCarousel products={featuredProducts} />
-                    </section>
-                )}
+                    ) : (
+                        <p className="text-muted-foreground">Esta tienda no tiene productos destacados por ahora.</p>
+                    )}
+                </section>
 
                 <section>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
@@ -229,7 +231,7 @@ export default async function StorePage({ params, searchParams }: Props) {
                     {remainingProducts.length ? (
                         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
                             {remainingProducts.map((product, index) => (
-                                <ProductCard key={`store-product-${index}`} product={product} />
+                                <ProductCard key={`store-product-${index}`} product={product} storeName={storeName} />
                             ))}
                         </div>
                     ) : featuredProducts.length === 0 ? (

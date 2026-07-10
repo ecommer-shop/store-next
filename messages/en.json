@@ -102,7 +102,7 @@
           "editAddress": "Edit address",
           "addNewAddress": "Add new address",
           "updateDetails": "Update your address details",
-          "fillForm": "Complete the form below to add a new address",
+          "fillForm": "Complete the form below to add a new address. This information is required to ensure your order arrives safely and on time.",
           "areYouSure": "Are you sure?",
           "deleteWarning": "This action cannot be undone. This will permanently delete this address."
         }
@@ -716,6 +716,185 @@
     "subscribe": "Subscribe",
     "cancel": "Cancel",
     "perMonth": "/month"
+  },
+  "Users": {
+    "hero": {
+      "badge": "FOR BUYERS",
+      "title": "Your shopping experience,",
+      "highlight": "simple and secure",
+      "description": "Find products from Colombian entrepreneurs, make secure payments and receive your order right at your door. All in one place."
+    },
+    "welcome": {
+      "title": "Welcome to Ecommer",
+      "description": "Ecommer is a marketplace designed to connect buyers with thousands of products offered by different companies, businesses and vendors in one place. Our platform allows you to discover, compare and buy products easily, quickly and securely, providing a modern shopping experience backed by technology, artificial intelligence and automated processes.",
+      "free": "Shopping at Ecommer is completely free. There are no costs to register, browse the platform or make a purchase. The only additional cost that may apply is the shipping cost, which depends on the buyer's location, the seller and the rates set by our logistics operators."
+    },
+    "payments": {
+      "title": "Secure payments",
+      "description": "At Ecommer we work with Wompi, one of the main payment processing platforms in Colombia, developed by Bancolombia, which complies with high security standards to protect our users' financial information.",
+      "intro": "Thanks to this integration you can make your purchases using different payment methods, including:",
+      "methods": {
+        "cards": "Visa, Mastercard and American Express credit cards",
+        "debit": "Debit cards through PSE",
+        "nequi": "Nequi",
+        "bancolombia": "Bancolombia",
+        "button": "Bancolombia Button",
+        "pse": "Payments from bank accounts through PSE",
+        "others": "Other payment methods enabled by Wompi depending on availability"
+      },
+      "security": "All payment information is processed directly by Wompi through secure and encrypted connections, so Ecommer never stores complete data of your cards or bank accounts."
+    },
+    "shipping": {
+      "title": "Shipping",
+      "local": {
+        "title": "Local shipping",
+        "description": "For deliveries within Popayán, Ecommer works with Messenger, one of the leading delivery companies in the city, recognized for its speed, coverage and efficiency in product delivery.",
+        "benefit": "Thanks to this alliance, local orders can be managed agilely, allowing us to reduce delivery times and offer better tracking throughout the entire process."
+      },
+      "national": {
+        "title": "National shipping",
+        "description": "For shipments to the rest of the country, Ecommer is integrated with Envia.com, a technological platform specialized in logistics that connects multiple national and international carrier companies from a single integration.",
+        "benefit": "This technology allows to automatically calculate shipping rates, generate guides, track packages and select the most convenient carrier according to the destination and order conditions, providing a more efficient and transparent logistics experience."
+      },
+      "factors": {
+        "title": "The shipping cost will depend on factors such as:",
+        "origin": "City of origin",
+        "destination": "Destination city",
+        "weight": "Weight and dimensions of the package",
+        "carrier": "Selected carrier",
+        "rates": "Current rates from our logistics operators"
+      }
+    },
+    "tracking": {
+      "title": "Order tracking",
+      "description": "Once your purchase is confirmed you will be able to know the status of your order from the platform.",
+      "intro": "During the process you can check information such as:",
+      "statuses": {
+        "received": "Order received",
+        "confirmed": "Payment confirmed",
+        "preparing": "Order in preparation",
+        "dispatched": "Order dispatched",
+        "transit": "In transit",
+        "delivered": "Delivered"
+      },
+      "national": "For national shipments you can also track using the information provided by the carrier company."
+    },
+    "support": {
+      "title": "Intelligent support 24/7",
+      "description": "At Ecommer we have SimetrIA, our artificial intelligence agent available 24 hours a day, 7 days a week.",
+      "intro": "SimetrIA is designed to help you immediately with queries related to:",
+      "topics": {
+        "orders": "Order status",
+        "products": "Product information",
+        "payments": "Payment methods",
+        "shipping": "Shipping",
+        "purchases": "Purchases",
+        "platform": "Platform operation",
+        "faq": "Frequently asked questions",
+        "support": "General support"
+      },
+      "human": "If during the conversation SimetrIA identifies that your request requires personalized attention, it will connect you with one of the advisors from the Ecommer team so you can receive human assistance in a timely manner.",
+      "combination": "This way we combine the speed of artificial intelligence with the support of our team when necessary."
+    },
+    "security": {
+      "title": "Security in your purchases",
+      "description": "The security of our users is a priority.",
+      "intro": "That's why Ecommer incorporates different technologies to protect every purchase made on the platform, including:",
+      "features": {
+        "https": "Secure connections through HTTPS",
+        "wompi": "Secure payment processing with Wompi",
+        "privacy": "Protection of personal information",
+        "tracking": "Order tracking",
+        "confirmation": "Payment confirmation before dispatch",
+        "processes": "Technological processes that seek to guarantee a reliable shopping experience"
+      }
+    },
+    "howToBuy": {
+      "title": "How to buy?",
+      "description": "Buying at Ecommer is very simple:",
+      "steps": {
+        "step1": "Search for the product you want",
+        "step2": "Review the information, availability and price",
+        "step3": "Add it to the shopping cart",
+        "step4": "Enter the delivery address",
+        "step5": "Select the available payment method",
+        "step6": "Confirm your order",
+        "step7": "Receive the purchase confirmation",
+        "step8": "Track the status of your order until delivery"
+      }
+    },
+    "commitment": {
+      "title": "Our commitment",
+      "description": "At Ecommer we work to offer a modern, secure shopping experience backed by technology. We integrate reliable electronic payments, logistics solutions for local and national deliveries, artificial intelligence to provide permanent support and a platform that makes it easy to find products from different sellers in one place.",
+      "goal": "Our goal is for every purchase to be a simple, transparent and reliable process, allowing you to shop with peace of mind while we take care of the technology that makes the whole experience possible."
+    },
+    "benefits": {
+      "title": "Why shop at Ecommer?",
+      "subtitle": "We buy local. We support local.",
+      "items": {
+        "payments": {
+          "title": "100% secure payments",
+          "description": "Processed by Wompi (Bancolombia), PCI-DSS certified. Your information is never exposed."
+        },
+        "delivery": {
+          "title": "Home delivery",
+          "description": "MESSENGER picks up from the seller's store and brings it to your door. Real-time tracking."
+        },
+        "invoice": {
+          "title": "Electronic invoice",
+          "description": "Sellers issue invoices validated by the DIAN. You receive legal proof of your purchase."
+        },
+        "support": {
+          "title": "Customer support",
+          "description": "Support available at 314 851 8961. A real agent is one step away if you need them."
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Everything you need to know before buying.",
+      "q1": {
+        "q": "How does a return work?",
+        "a": "Return requests must be submitted by email to legal@ecommer.shop. Once received, Ecommer reviews the case according to applicable regulations and, if approved, forwards it to the seller to process the corresponding refund."
+      },
+      "q2": {
+        "q": "Can I track my order?",
+        "a": "Yes. Once your order is dispatched, you will receive a notification. You can also check the status of your purchase at any time from your account on the platform."
+      },
+      "q3": {
+        "q": "How much does shipping cost?",
+        "a": "Shipping costs are calculated automatically based on the distance between the seller's store and your delivery address. You will see the exact amount before confirming your purchase."
+      },
+      "q4": {
+        "q": "Who delivers my order?",
+        "a": "Orders in Popayán are delivered by MESSENGER. Once you complete your purchase, the system automatically notifies the courier to pick up the package from the seller's store and bring it straight to your door."
+      },
+      "q5": {
+        "q": "What payment methods can I use?",
+        "a": "We accept all payment methods: credit and debit cards (Visa, Mastercard, Amex), PSE (any bank), Nequi, Daviplata, and banking correspondents. Choose the one that works best for you at checkout."
+      },
+      "q6": {
+        "q": "Is it safe to pay on the platform?",
+        "a": "Completely safe. All payments are processed through Wompi, certified with PCI-DSS — the most rigorous international security standard for banking data, the same level used by traditional banking systems. Your information is encrypted and never exposed."
+      },
+      "q7": {
+        "q": "Will I receive an invoice for my purchase?",
+        "a": "Yes. Sellers enabled on the platform issue electronic invoices validated by the DIAN (Colombian Tax Authority), so you will receive a legal proof of purchase directly."
+      },
+      "q8": {
+        "q": "How do I get help if I have a problem?",
+        "a": "You can reach our customer support team at 314 851 8961. An AI Bot will initially assist you and redirect you to a real advisor if needed. You can also email us at legal@ecommer.shop for return-related inquiries."
+      }
+    },
+    "cta": {
+      "title": "Ready to discover products from your region?",
+      "subtitle": "Support local commerce from Popayán and Cauca.",
+      "shopButton": "Explore products",
+      "sellButton": "I want to sell"
+    },
+    "footer": {
+      "link": "Users"
+    }
   },
   "Vendedores": {
     "hero": {
