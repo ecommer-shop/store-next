@@ -161,6 +161,37 @@ export default async function StorePage({ params }: Props) {
                     </div>
                 </section>
 
+                {profile?.socialLinks?.length ? (
+                    <section className="flex flex-wrap gap-3">
+                        {profile.socialLinks.map(link => {
+                            const label = link.platform === 'whatsapp' ? 'Chatear' : 'Mensaje';
+                            const followLabel = link.platform === 'whatsapp' ? null : 'Seguir';
+                            return (
+                                <div key={link.platform} className="flex gap-2">
+                                    {followLabel && (
+                                        <a
+                                            href={link.profileUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background hover:bg-accent transition-colors text-sm font-medium text-foreground"
+                                        >
+                                            {followLabel}
+                                        </a>
+                                    )}
+                                    <a
+                                        href={link.dmLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background hover:bg-accent transition-colors text-sm font-medium text-foreground"
+                                    >
+                                        {label}
+                                    </a>
+                                </div>
+                            );
+                        })}
+                    </section>
+                ) : null}
+
                 <section>
                     <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
                     {featuredProducts.length ? (
