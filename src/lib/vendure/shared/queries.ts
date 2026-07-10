@@ -556,6 +556,14 @@ export const GetSellerStoreProfileQuery = graphql(`
             storeName
             storeDescription
             storeBannerUrl
+            socialLinks {
+                platform
+                username
+                dmLink
+                profileUrl
+                displayName
+                inPipeline
+            }
         }
     }
 `);
