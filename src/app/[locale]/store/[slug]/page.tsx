@@ -189,7 +189,7 @@ export default async function StorePage({ params }: Props) {
                 </section>
 
                 {profile?.socialLinks?.length ? (
-                    <section className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                    <section className="flex flex-col sm:flex-row gap-2">
                         {profile.socialLinks.map(link => {
                             const isWhatsApp = link.platform === 'whatsapp';
                             const platformColor = isWhatsApp
@@ -206,28 +206,25 @@ export default async function StorePage({ params }: Props) {
                             return (
                                 <div
                                     key={link.platform}
-                                    className="rounded-xl border border-border/50 bg-card p-4 flex flex-col gap-3 shadow-sm min-w-[160px] flex-1"
-                                    style={{ '--platform': platformColor } as React.CSSProperties}
+                                    className="rounded-xl p-3 flex flex-col gap-2 shadow-sm flex-1 w-fit"
+                                    style={{ background: platformColor }}
                                 >
-                                    <div className="flex items-center gap-2.5">
-                                        <div
-                                            style={{ background: platformColor }}
-                                            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-                                        >
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-7 h-7 flex items-center justify-center [&>svg]:fill-white shrink-0">
                                             <Icon />
-                                        </div>
-                                        <span className="text-sm font-semibold text-foreground">
+                                        </span>
+                                        <span className="text-xs font-medium text-white/80 truncate">
                                             {label}
                                         </span>
                                     </div>
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-wrap gap-1.5">
                                         {!isWhatsApp && (
                                             <a
                                                 href={link.profileUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{ borderColor: platformColor, color: platformColor }}
-                                                className="border rounded-full px-3.5 py-1.5 text-xs font-medium hover:bg-[var(--platform)] hover:text-white transition-all duration-200 shrink-0"
+                                                className="rounded-full px-2.5 py-1 text-xs font-medium bg-white hover:bg-white/80 transition-all duration-200 shrink-0"
+                                                style={{ color: platformColor }}
                                             >
                                                 Seguir
                                             </a>
@@ -236,8 +233,8 @@ export default async function StorePage({ params }: Props) {
                                             href={link.dmLink}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ background: 'white', color: platformColor }}
-                                            className="rounded-full px-3.5 py-1.5 text-xs font-medium hover:bg-[var(--platform)] hover:text-white transition-all duration-200 shadow-sm shrink-0"
+                                            className="rounded-full px-2.5 py-1 text-xs font-medium bg-white hover:bg-white/80 transition-all duration-200 shrink-0"
+                                            style={{ color: platformColor }}
                                         >
                                             {isWhatsApp ? 'Chatear' : 'Mensaje'}
                                         </a>
