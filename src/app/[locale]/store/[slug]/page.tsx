@@ -189,43 +189,59 @@ export default async function StorePage({ params }: Props) {
                 </section>
 
                 {profile?.socialLinks?.length ? (
-                    <section className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-4 gap-y-3">
+                    <section className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
                         {profile.socialLinks.map(link => {
                             const isWhatsApp = link.platform === 'whatsapp';
-                            const platformStyle = isWhatsApp
-                                ? { bg: '#25D366', hover: '#1da851', icon: WhatsAppIcon }
+                            const platformColor = isWhatsApp
+                                ? '#25D366'
                                 : link.platform === 'facebook'
-                                  ? { bg: '#1877F2', hover: '#166fe5', icon: FacebookIcon }
-                                  : { bg: '#E4405F', hover: '#c13584', icon: InstagramIcon };
-                            const Icon = platformStyle.icon;
+                                  ? '#1877F2'
+                                  : '#E4405F';
+                            const Icon = isWhatsApp
+                                ? WhatsAppIcon
+                                : link.platform === 'facebook'
+                                  ? FacebookIcon
+                                  : InstagramIcon;
+                            const label = link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
                             return (
-                                <div key={link.platform} className="flex items-center gap-2">
-                                    <div
-                                        style={{ background: platformStyle.bg }}
-                                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                                    >
-                                        <Icon />
+                                <div
+                                    key={link.platform}
+                                    className="rounded-xl border border-border/50 bg-card p-4 flex flex-col gap-3 shadow-sm min-w-[160px] flex-1"
+                                    style={{ '--platform': platformColor } as React.CSSProperties}
+                                >
+                                    <div className="flex items-center gap-2.5">
+                                        <div
+                                            style={{ background: platformColor }}
+                                            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                                        >
+                                            <Icon />
+                                        </div>
+                                        <span className="text-sm font-semibold text-foreground">
+                                            {label}
+                                        </span>
                                     </div>
-                                    {!isWhatsApp && (
+                                    <div className="flex flex-wrap gap-2">
+                                        {!isWhatsApp && (
+                                            <a
+                                                href={link.profileUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{ borderColor: platformColor, color: platformColor }}
+                                                className="border rounded-full px-3.5 py-1.5 text-xs font-medium hover:bg-[var(--platform)] hover:text-white transition-all duration-200 shrink-0"
+                                            >
+                                                Seguir
+                                            </a>
+                                        )}
                                         <a
-                                            href={link.profileUrl}
+                                            href={link.dmLink}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ borderColor: platformStyle.bg, color: platformStyle.bg }}
-                                            className="border rounded-full px-3 py-1.5 sm:py-1 text-xs font-medium hover:bg-current/5 transition-all shrink-0"
+                                            style={{ background: 'white', color: platformColor }}
+                                            className="rounded-full px-3.5 py-1.5 text-xs font-medium hover:bg-[var(--platform)] hover:text-white transition-all duration-200 shadow-sm shrink-0"
                                         >
-                                            Seguir
+                                            {isWhatsApp ? 'Chatear' : 'Mensaje'}
                                         </a>
-                                    )}
-                                    <a
-                                        href={link.dmLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ background: platformStyle.bg }}
-                                        className="px-3 py-1.5 sm:py-1 rounded-full text-white text-xs font-medium hover:opacity-90 transition-opacity shrink-0"
-                                    >
-                                        {isWhatsApp ? 'Chatear' : 'Mensaje'}
-                                    </a>
+                                    </div>
                                 </div>
                             );
                         })}
