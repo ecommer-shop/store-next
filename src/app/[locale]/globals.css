@@ -369,3 +369,27 @@ body.wompi-open .checkout-container {
     @apply bg-accent text-accent-foreground rounded-md
   }
 }
+
+/* Scrollbar personalizado para carruseles de filtros */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #6BB8FF, #9969F8);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #5aa8ef, #8858e7);
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #6BB8FF transparent;
+}

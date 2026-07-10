@@ -6,7 +6,7 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
-
+import { trackSearch } from '@/lib/analytics/events';
 export function SearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,6 +21,7 @@ export function SearchInput() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchValue.trim()) return;
+    trackSearch({ search_term: searchValue.trim() });
     router.push(`/search?q=${encodeURIComponent(searchValue.trim())}`);
   };
 

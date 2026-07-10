@@ -27,6 +27,7 @@ import {
   DrawerBody,
   DrawerFooter
 } from "@heroui/drawer";
+import { trackLogin, trackSignup } from "@/lib/analytics/events";
 
 export function NavbarUser() {
   const { resolvedTheme } = useTheme();
@@ -41,8 +42,10 @@ export function NavbarUser() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSignINButton = () => {
-    return(
-      <SignInButton mode="redirect">{t(I18N.UserBar.login)}</SignInButton>
+    return (
+      <span onClick={() => trackLogin({ method: 'Clerk/Redirect' })}>
+        <SignInButton mode="redirect">{t(I18N.UserBar.login)}</SignInButton>
+      </span>
     )
   }
   useEffect(() => {
@@ -150,6 +153,7 @@ export function NavbarUser() {
                   <Button
                     variant="ghost"
                     onPress={() => {
+                      trackLogin({ method: 'Clerk/Modal' });
                       onClose();
                       openSignIn();
                     }}
@@ -164,9 +168,10 @@ export function NavbarUser() {
                   <Button
                     variant="primary"
                     onPress={() => {
+                      trackSignup({ method: 'Clerk/Modal' }); 
                       onClose();
                       openSignUp({
-                        
+
                       });
                     }}
                     className="bg-[#6BB8FF]/60 hover:bg-[#6BB8FF] dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
@@ -205,12 +210,25 @@ export function NavbarUser() {
               userButtonPopoverActionButton__manageAccount: "hidden!",
               userButtonPopoverActionButton__signOut: "hidden!",
               userButtonOuterIdentifier: "max-md:hidden",
+              userButtonPopoverFooter: "hidden",
             },
             variables: {
-              borderRadius: "2px",
+              borderRadius: "4px",
               colorText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
-              colorBackground: resolvedTheme === "dark" ? "oklch(21.638% 0.08352 276.853 / .99);" : "oklch(95.815% 0.00011 271.152 / 0.97);",
-              colorShadow: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F"
+              colorTextSecondary: resolvedTheme === "dark" ? "#9969F8" : "#9969F8",
+              colorBackground: resolvedTheme === "dark"
+                ? "#0f0f2e"
+                : "#ffffff",
+              colorPrimary: "#9969F8",
+              colorShimmer: resolvedTheme === "dark" ? "#9969F8" : "#6BB8FF",
+              colorShadow: resolvedTheme === "dark"
+                ? "0 8px 32px rgba(153,105,248,0.25), 0 2px 8px rgba(0,0,0,0.6)"
+                : "0 8px 32px rgba(18,18,63,0.15), 0 2px 8px rgba(0,0,0,0.08)",
+              colorNeutral: resolvedTheme === "dark" ? "#9969F8" : "#12123F",
+              colorInputBackground: resolvedTheme === "dark" ? "#1a1a40" : "#f5f5ff",
+              colorInputText: resolvedTheme === "dark" ? "#F1F1F1" : "#12123F",
+              fontFamily: "inherit",
+              fontWeight: { normal: 400, medium: 500, bold: 700 },
             },
             layout: {
               animations: true,

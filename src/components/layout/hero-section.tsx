@@ -1,87 +1,159 @@
 'use client';
 
-import { I18N } from "@/i18n/keys";
-import {Button} from "@heroui/react";
-import { useTranslations } from "next-intl";
-import Image from "next/image";
-import Link from "next/link";
+import { useCallback, useEffect, useState } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { trackClickExplore } from '@/lib/analytics/events';
+
+const SLIDES = [
+  {
+    src: '/hero-images/carousel-slide-1.jpg',
+    alt: 'Ecommer — Slide 1',
+  },
+  {
+    src: '/hero-images/carousel-slide-2.png',
+    alt: 'Ecommer — Slide 2',
+  },
+];
+
 export function HeroSection() {
-    const t = useTranslations("HeroSection");
-    return (
-        <section className="relative bg-muted overflow-hidden mt-4 ">
-            {/* Fondo LIGHT */}
-            <Image
-                src="/bg-light.webp"
-                className="absolute inset-0 w-full h-full object-cover block dark:hidden"
-                alt=""
-                aria-hidden
-                width={500}
-                height={500}
-            />
+  const t = useTranslations('HeroSection');
 
-            {/* Fondo DARK */}
-            <Image
-                src="/bg-dark.webp"
-                className="absolute inset-0 w-full h-full object-cover hidden dark:block"
-                alt=""
-                aria-hidden
-                width={500}
-                height={500}
-            />
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-            {/* Capa liquid blur */}
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const scrollTo   = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on('select', onSelect);
+    onSelect();
+    return () => { emblaApi.off('select', onSelect); };
+  }, [emblaApi]);
+
+  // Autoplay manual — 4.5 s, pausa al arrastrar
+  useEffect(() => {
+    if (!emblaApi) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const play = () => { timer = setTimeout(() => { emblaApi.scrollNext(); play(); }, 4500); };
+    const stop = () => clearTimeout(timer);
+    emblaApi.on('pointerDown', stop);
+    play();
+    return () => { stop(); emblaApi.off('pointerDown', stop); };
+  }, [emblaApi]);
+
+  return (
+    /*
+     * El wrapper tiene overflow-visible para que las flechas puedan
+     * salir a los lados (igual que MercadoLibre).
+     * mt-[64px] compensa el navbar fijo.
+     */
+    <section className="relative mt-[64px] w-full">
+
+      {/* ── Flechas fuera del carrusel, centradas verticalmente ── */}
+      <button
+        onClick={scrollPrev}
+        aria-label="Imagen anterior"
+        className="hidden md:flex absolute -left-0 top-1/2 -translate-y-1/2 z-30
+                   w-10 h-10 items-center justify-center rounded-full
+                   bg-white/90 dark:bg-[#1a1a3e]/90 shadow-md
+                   border border-gray-200 dark:border-white/10
+                   hover:bg-white dark:hover:bg-[#1a1a3e]
+                   transition-all hover:scale-105"
+        style={{ left: '4px' }}
+      >
+        <ChevronLeft className="size-5 text-gray-700 dark:text-white" />
+      </button>
+
+      <button
+        onClick={scrollNext}
+        aria-label="Siguiente imagen"
+        className="hidden md:flex absolute top-1/2 -translate-y-1/2 z-30
+                   w-10 h-10 items-center justify-center rounded-full
+                   bg-white/90 dark:bg-[#1a1a3e]/90 shadow-md
+                   border border-gray-200 dark:border-white/10
+                   hover:bg-white dark:hover:bg-[#1a1a3e]
+                   transition-all hover:scale-105"
+        style={{ right: '4px' }}
+      >
+        <ChevronRight className="size-5 text-gray-700 dark:text-white" />
+      </button>
+
+      {/* ── Carrusel: imagen a pantalla completa sin padding ── */}
+      <div ref={emblaRef} className="overflow-hidden w-full">
+        <div className="flex">
+          {SLIDES.map((slide) => (
             <div
-                className="
-                absolute inset-0
-                backdrop-blur-2xl
-                bg-[#f1f1f1]/40
-                dark:bg-[#12123f]/40
-                pointer-events-none
-                "
-            />
-
-            {/* Contenido */}
-            <div className="relative z-10 container mx-auto px-4 py-6 md:py-10">
-                <div className="max-w-4xl mx-auto text-center space-y-4">
-                <h1 className="flex justify-center" translate="no">
-                    {/* Logo para modo claro (imagen oscura) */}
-                    <Image
-                        src="/logo-vendedores-dark.png"
-                        alt="Ecommer!"
-                        width={600}
-                        height={150}
-                        className="w-[600px] max-w-full h-[150px] object-contain block dark:hidden scale-[1.5]"
-                        priority
-                    />
-                    {/* Logo para modo oscuro (imagen clara) */}
-                    <Image
-                        src="/logo-vendedores-light.png"
-                        alt="Ecommer!"
-                        width={600}
-                        height={150}
-                        className="w-[600px] max-w-full h-[150px] object-contain hidden dark:block"
-                        priority
-                    />
-                </h1>
-
-                <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-                    {t(I18N.HeroSection.title)}
-                    <br />
-                    {t(I18N.HeroSection.description)}
-                </p>
-
-                <div className="flex justify-center">
-                    <Link className="rounded-md" href="/search">
-                        <Button
-                            size="lg"
-                            className="min-w-[200px] bg-[#6BB8FF] dark:bg-[#9969F8] rounded-md"
-                        >
-                            {t(I18N.HeroSection.shopButton)}
-                        </Button>
-                    </Link>
-                </div>
-                </div>
+              key={slide.src}
+              className="flex-none w-full"
+              /*
+               * 33/10 ≈ 20% menos alto que 21/8, todo el contenido sigue visible.
+               */
+              style={{ aspectRatio: '33/10' }}
+            >
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                width={1920}
+                height={731}
+                className="w-full h-full object-cover object-center"
+                priority
+                sizes="100vw"
+              />
             </div>
-        </section>
-    );
+          ))}
+        </div>
+      </div>
+
+      {/* ── Dots centrados + botón Explorar a la derecha ── */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-20
+                   flex items-center justify-between px-4 py-2"
+        style={{ background: 'linear-gradient(to top, rgba(18,18,63,0.55) 0%, transparent 100%)' }}
+      >
+        {/* spacer izquierdo para centrar los dots */}
+        <div className="w-24" />
+
+        {/* Dots */}
+        <div className="flex items-center gap-1.5">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              aria-label={`Ir a imagen ${i + 1}`}
+              className="rounded-full transition-all duration-300"
+              style={{
+                width:  selectedIndex === i ? '20px' : '7px',
+                height: '7px',
+                background: selectedIndex === i
+                  ? 'linear-gradient(90deg, #6BB8FF, #9969F8)'
+                  : 'rgba(255,255,255,0.55)',
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Botón Explorar */}
+        <div className="w-24 flex justify-end">
+          <Link href="/search" onClick={() => trackClickExplore()}>
+            <button
+              className="inline-flex items-center px-5 py-2 rounded-md
+                         font-bold text-sm text-white shadow-lg
+                         transition-all hover:scale-105 active:scale-95"
+              style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
+            >
+              {t(I18N.HeroSection.shopButton)}
+            </button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
 }

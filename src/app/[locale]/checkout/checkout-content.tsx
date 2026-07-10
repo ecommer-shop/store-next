@@ -7,7 +7,7 @@ import {
     GetEligiblePaymentMethodsQuery,
     GetEligibleShippingMethodsQuery,
 } from '@/lib/vendure/shared/queries';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/navigation';
 import CheckoutFlow from './checkout-flow';
 import { CheckoutProvider } from './checkout-provider';
 import { noIndexRobots } from '@/lib/vendure/shared/metadata';
@@ -36,7 +36,8 @@ interface CheckoutContentProps {
     uri: string;
 }
 
-export default async function CheckoutContent({ pb, uri }: CheckoutContentProps) {
+export default async function CheckoutContent({ pb, uri, params }: CheckoutContentProps) {
+    const { locale } = params;
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
     const token = await getAuthToken();
@@ -56,13 +57,13 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
     const activeOrder = orderRes.data.activeOrder;
 
     if (!activeOrder || activeOrder.lines.length === 0) {
-        return redirect('/cart');
+        return redirect({ href: '/cart', locale });
     }
 
     // If the order is no longer in AddingItems state, it's been completed
     // Redirect to the order confirmation page
     if (activeOrder.state !== 'AddingItems' && activeOrder.state !== 'ArrangingPayment') {
-        return redirect(`/order-confirmation/${activeOrder.code}`);
+        return redirect({ href: `/order-confirmation/${activeOrder.code}`, locale });
     }
 
     const addresses = addressesRes.data.activeCustomer?.addresses || [];

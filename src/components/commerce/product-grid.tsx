@@ -1,5 +1,6 @@
 'use client'
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useState, useRef } from 'react';
+import { trackSearchResults, trackViewItemList } from '@/lib/analytics/events';
 import { useSearchParams } from 'next/navigation';
 import { ProductCard } from './product-card';
 import { SortDropdownEntry } from './sort-dropdown/sort-dropdown-entry';
@@ -7,8 +8,8 @@ import { ProductGridNoProducts, ProductCount } from './product-grid-content';
 import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { useInfiniteProducts } from './use-infinite-products';
 import InfiniteScroll from 'react-infinite-scroller';
-import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
-import { ResultOf } from '@/graphql';
+import { ResultOf, readFragment } from '@/graphql';
+import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 
 interface ProductGridProps {
     productDataPromise: Promise<{
@@ -19,20 +20,19 @@ interface ProductGridProps {
     take: number;
     searchParams?: { [key: string]: string | string[] | undefined };
     collectionSlug?: string;
+    trackAsSearch?: boolean;
+    /** Server-side resolved map of productId → store name for page 1 */
+    initialStoreNames?: Record<string, string>;
 }
 
-// C: Vendure I: Infinite scroll with useInfiniteQuery + react-infinite-scroller
-export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams, collectionSlug }: ProductGridProps) {
-    // Unwrap server data (initial page from SSR)
+export function ProductGrid({ productDataPromise, currentPage, take, searchParams: serverSearchParams, collectionSlug, trackAsSearch, initialStoreNames = {} }: ProductGridProps) {
     const initialResult = use(productDataPromise);
     const initialSearch = initialResult.data.search;
     const clientSearchParams = useSearchParams();
-    
-    // Convert client search params to object for comparison
+
     const currentSearchParamsObj = Object.fromEntries(clientSearchParams);
     const [prevSearchParamsObj, setPrevSearchParamsObj] = useState(serverSearchParams || currentSearchParamsObj);
 
-    // Detect when search params change (filters, sort, etc.)
     useEffect(() => {
         const paramsChanged = JSON.stringify(prevSearchParamsObj) !== JSON.stringify(currentSearchParamsObj);
         if (paramsChanged) {
@@ -40,7 +40,7 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
         }
     }, [clientSearchParams, prevSearchParamsObj, currentSearchParamsObj]);
 
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isRefetching } = useInfiniteProducts({
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts({
         take,
         initialData: {
             items: initialSearch.items,
@@ -53,6 +53,38 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
 
     const allItems = data?.pages.flatMap(p => p.items) ?? [];
     const totalItems = data?.pages[0]?.totalItems ?? 0;
+    const hasTrackedListRef = useRef(false);
+
+    // Merge store names: server-resolved page-1 names + lazy-loaded page names
+    const allStoreNames: Record<string, string> = {
+        ...initialStoreNames,
+        ...(data?.pages ?? []).reduce<Record<string, string>>(
+            (acc, page) => ({ ...acc, ...(page.storeNames ?? {}) }),
+            {}
+        ),
+    };
+
+    useEffect(() => {
+        if (hasTrackedListRef.current) return;
+        if (!allItems.length) return;
+        hasTrackedListRef.current = true;
+        const listName = trackAsSearch ? 'search' : (collectionSlug ? 'collection' : 'product_grid');
+        trackViewItemList({
+            list_name: listName,
+            items: allItems.slice(0, 12).map((p: any) => ({
+                item_id: p.productId,
+                item_name: p.productName ?? p.name,
+                price: p.priceWithTax?.__typename === 'SinglePrice' ? p.priceWithTax.value : p.priceWithTax?.min ?? 0,
+            })),
+        });
+    }, [allItems, trackAsSearch, collectionSlug]);
+
+    useEffect(() => {
+        if (!trackAsSearch) return;
+        const term = (clientSearchParams.get("q") ?? "").trim();
+        if (!term) return;
+        trackSearchResults({ search_term: term, results_count: totalItems });
+    }, [trackAsSearch, clientSearchParams, totalItems]);
 
     if (!allItems.length) {
         return <ProductGridNoProducts />;
@@ -69,9 +101,9 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
     ));
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-2 md:space-y-4">
             <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground md:text-sm">
                     <ProductCount count={totalItems} />
                 </p>
                 <SortDropdownEntry />
@@ -90,9 +122,17 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
                 }
             >
                 <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                    {allItems.map((product, i) => (
-                        <ProductCard key={'product-grid-item-' + i} product={product} />
-                    ))}
+                    {allItems.map((product, i) => {
+                        const p = readFragment(ProductCardFragment, product);
+                        const storeName = allStoreNames[p.productId];
+                        return (
+                            <ProductCard
+                                key={'product-grid-item-' + i}
+                                product={product}
+                                storeName={storeName}
+                            />
+                        );
+                    })}
                 </div>
             </InfiniteScroll>
         </div>

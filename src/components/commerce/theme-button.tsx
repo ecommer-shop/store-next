@@ -1,7 +1,7 @@
 'use client';
 
 import { Button as HeroButton, ButtonProps as HeroButtonProps } from '@heroui/react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export type ThemeButtonVariant = 'primary' | 'secondary' | 'accent' | 'outline';
 
@@ -37,9 +37,11 @@ export function ThemeButton({ variant = 'primary', href, className = '', childre
 
   if (href) {
     return (
-      <HeroButton as={Link} href={href} className={combinedClasses} {...props as any}>
-        {children}
-      </HeroButton>
+      <Link href={href} className="w-full">
+        <HeroButton className={combinedClasses} {...props as any}>
+          {children}
+        </HeroButton>
+      </Link>
     );
   }
 

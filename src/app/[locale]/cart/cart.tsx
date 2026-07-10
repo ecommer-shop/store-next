@@ -58,10 +58,18 @@ export async function Cart() {
 
     return (
         <SelectedItemsProvider orderId={activeOrder.id} initialSelectedIds={initialSelectedIds} allLineIds={activeOrder.lines.map(l => l.id)}>
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6">
+              {/* On mobile: summary + promo first, items below */}
+              <div className="lg:hidden space-y-4">
+                  <OrderSummary activeOrder={activeOrder} />
+                  <PromotionCode activeOrder={activeOrder} />
+              </div>
+
+              {/* Items — full width on mobile, 2/3 on desktop */}
               <CartItems activeOrder={activeOrder} />
 
-              <div className="lg:col-span-1">
+              {/* Sidebar: only visible on desktop */}
+              <div className="hidden lg:block lg:col-span-1 space-y-4">
                   <OrderSummary activeOrder={activeOrder} />
                   <PromotionCode activeOrder={activeOrder} />
               </div>
