@@ -189,7 +189,7 @@ export default async function StorePage({ params }: Props) {
                 </section>
 
                 {profile?.socialLinks?.length ? (
-                    <section className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                    <section className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-4 gap-y-3">
                         {profile.socialLinks.map(link => {
                             const isWhatsApp = link.platform === 'whatsapp';
                             const platformStyle = isWhatsApp
@@ -212,7 +212,7 @@ export default async function StorePage({ params }: Props) {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             style={{ borderColor: platformStyle.bg, color: platformStyle.bg }}
-                                            className="border rounded-full px-3 py-1 text-xs font-medium hover:bg-opacity-10 transition-all shrink-0"
+                                            className="border rounded-full px-3 py-1.5 sm:py-1 text-xs font-medium hover:bg-current/5 transition-all shrink-0"
                                         >
                                             Seguir
                                         </a>
@@ -222,7 +222,7 @@ export default async function StorePage({ params }: Props) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{ background: platformStyle.bg }}
-                                        className="px-3 py-1 rounded-full text-white text-xs font-medium hover:opacity-90 transition-opacity shrink-0"
+                                        className="px-3 py-1.5 sm:py-1 rounded-full text-white text-xs font-medium hover:opacity-90 transition-opacity shrink-0"
                                     >
                                         {isWhatsApp ? 'Chatear' : 'Mensaje'}
                                     </a>
