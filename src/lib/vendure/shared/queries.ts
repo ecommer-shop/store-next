@@ -59,6 +59,11 @@ export const GetProductsFallbackQuery = graphql(`
                     priceWithTax
                     currencyCode
                 }
+                collections {
+                    id
+                    name
+                    slug
+                }
                 sellerShop {
                     sellerName
                 }
@@ -117,6 +122,8 @@ export const GetProductDetailQuery = graphql(`
                 slug
                 parent {
                     id
+                    name
+                    slug
                 }
             }
         }
@@ -170,6 +177,8 @@ export const GetProductDetailLegacyQuery = graphql(`
                 slug
                 parent {
                     id
+                    name
+                    slug
                 }
             }
         }
