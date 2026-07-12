@@ -47,7 +47,6 @@ export default function CheckoutButtonClient({
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            console.log('[Cart] Vendure authentication successful, cart merged');
             // Recargar la página para mostrar el carrito fusionado
             router.refresh();
           } else {
