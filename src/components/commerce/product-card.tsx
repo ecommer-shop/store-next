@@ -24,16 +24,6 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer', store
   const product = readFragment(ProductCardFragment, productProp);
   const previewSrc = normalizeVendureAssetUrl(product.productAsset?.preview) ?? '';
 
-  // DEBUG: Verificar qué productos tienen channelCode
-  if (storeName && storeName !== 'Ecommer') {
-    console.log('ProductCard Debug:', {
-      productName: product.productName,
-      storeName,
-      storeChannelCode,
-      hasChannelCode: !!storeChannelCode
-    });
-  }
-
   const rawPrice =
     product.priceWithTax.__typename === 'SinglePrice'
       ? product.priceWithTax.value

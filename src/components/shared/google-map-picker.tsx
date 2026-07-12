@@ -236,8 +236,6 @@ export function GoogleMapPicker({
           const place = results[0];
           const components = place.address_components;
 
-          console.log('🔍 Todos los componentes de Google Maps:', components);
-
           const route = getAddressComponent(components, 'route');
           const streetNumber = getAddressComponent(components, 'street_number');
           const formattedAddress = place.formatted_address || '';
@@ -258,15 +256,6 @@ export function GoogleMapPicker({
             getAddressComponent(components, 'sublocality') ||
             '';
 
-          console.log('📍 Información extraída del mapa:', {
-            formattedAddress,
-            city: `"${city}" (locality: "${locality}", adminLevel2: "${adminLevel2}")`,
-            province: `"${province}"`,
-            postalCode: `"${postalCode}"`,
-            countryCode: `"${countryCode}"`,
-            neighborhood: `"${neighborhood}"`,
-          });
-
           onLocationSelect({
             latitude: selectedLocation.lat,
             longitude: selectedLocation.lng,
@@ -279,8 +268,7 @@ export function GoogleMapPicker({
             neighborhood,
           });
         } else {
-          // Si falla el geocoding, enviar al menos las coordenadas
-          console.warn('⚠️ Geocoding falló, enviando solo coordenadas');
+          // Si falla el geocoding, enviar solo las coordenadas
           onLocationSelect({
             latitude: selectedLocation.lat,
             longitude: selectedLocation.lng,

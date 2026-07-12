@@ -158,50 +158,27 @@ export function AddressForm({
   }, [getValues, setValue]);
 
   const handleMapPickerSelect = useCallback((selection: MapPickerSelection) => {
-    console.log('🗺️ Datos recibidos del mapa en el formulario:', selection);
-    
     const selectedAddress = selection.formattedAddress || selection.streetLine1;
 
     if (selectedAddress) {
-      console.log('📝 Llenando dirección:', selectedAddress);
       setValue('streetLine1', selectedAddress, { shouldDirty: true, shouldValidate: true });
-    } else {
-      console.warn('⚠️ No hay dirección para llenar');
     }
-    
     if (selection.city) {
-      console.log('🏙️ Llenando ciudad:', selection.city);
       setValue('city', selection.city, { shouldDirty: true, shouldValidate: true });
-    } else {
-      console.warn('⚠️ No hay ciudad en la selección');
     }
-    
     if (selection.province) {
-      console.log('🏛️ Llenando departamento/estado:', selection.province);
       setValue('province', selection.province, { shouldDirty: true, shouldValidate: true });
-    } else {
-      console.warn('⚠️ No hay provincia/departamento en la selección');
     }
-    
     if (selection.postalCode) {
-      console.log('📮 Llenando código postal:', selection.postalCode);
       setValue('postalCode', selection.postalCode, { shouldDirty: true, shouldValidate: true });
-    } else {
-      console.warn('⚠️ No hay código postal en la selección');
     }
-    
     if (selection.countryCode) {
       const country = countries.find(
         item => item.code.toLowerCase() === selection.countryCode?.toLowerCase(),
       );
       if (country) {
-        console.log('🌍 Llenando país:', country.name, '(', country.code, ')');
         setValue('countryCode', country.id, { shouldDirty: true, shouldValidate: true });
-      } else {
-        console.warn('⚠️ No se encontró el país con código:', selection.countryCode);
       }
-    } else {
-      console.warn('⚠️ No hay código de país en la selección');
     }
 
     setValue(
@@ -215,8 +192,7 @@ export function AddressForm({
       },
       { shouldDirty: true, shouldValidate: true },
     );
-    
-    console.log('✅ Cerrando modal del mapa');
+
     setGeoError(null);
     setIsMapPickerOpen(false);
   }, [countries, getValues, setValue]);
