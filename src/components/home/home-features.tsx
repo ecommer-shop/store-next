@@ -66,21 +66,21 @@ export function HomeFeatures() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-12">
                     <div className="space-y-3">
                         <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
-                            <Image src="/Icono-CyC.png" width={80} height={80} alt="Cámara de Comercio" className="object-contain" />
+                            <Image src="/icon-cyc.png" width={80} height={80} alt="Cámara de Comercio" className="object-contain" />
                         </div>
                         <h3 className="text-base font-bold text-gray-900 dark:text-white">{t(I18N.Home.features.cyc.title)}</h3>
                         <p className="text-muted-foreground text-xs">{t(I18N.Home.features.cyc.description)}</p>
                     </div>
                     <div className="space-y-3">
                         <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
-                            <Image src="/Icono-Dian.png" width={80} height={80} alt="DIAN" className="object-contain" />
+                            <Image src="/icon-dian.jpg" width={80} height={80} alt="DIAN" className="object-contain" />
                         </div>
                         <h3 className="text-base font-bold text-gray-900 dark:text-white">{t(I18N.Home.features.dian.title)}</h3>
                         <p className="text-muted-foreground text-xs">{t(I18N.Home.features.dian.description)}</p>
                     </div>
                     <div className="space-y-3">
                         <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
-                            <Image src="/Icono-Wompi.png" width={80} height={80} alt="Wompi" className="object-contain scale-125" />
+                            <Image src="/icon-wompi.png" width={80} height={80} alt="Wompi" className="object-contain scale-125" />
                         </div>
                         <h3 className="text-base font-bold text-gray-900 dark:text-white">{t(I18N.Home.features.wompi.title)}</h3>
                         <p className="text-muted-foreground text-xs">{t(I18N.Home.features.wompi.description)}</p>

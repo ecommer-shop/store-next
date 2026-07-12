@@ -18,6 +18,7 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
   totalItems: number;
   token?: string;
   storeNames?: Record<string, string>;
+  storeChannelCodes?: Record<string, string>;
 }> {
   // Limit token usage for security
   if (token && token.length > 128) throw new Error('Token too long');
@@ -41,8 +42,9 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
   const search = result.data.search;
   const items = search.items;
 
-  // Fetch seller names for this page's products
+  // Fetch seller names and channel codes for this page's products
   let storeNames: Record<string, string> = {};
+  let storeChannelCodes: Record<string, string> = {};
   try {
     const productIds = items.map((item) => readFragment(ProductCardFragment, item).productId);
     if (productIds.length > 0) {
@@ -50,9 +52,12 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
         options: { filter: { id: { in: productIds } }, take: productIds.length },
       });
       for (const p of sellerResult.data.products.items ?? []) {
-        const shop = (p as any).sellerShop as { sellerName?: string } | null | undefined;
+        const shop = (p as any).sellerShop as { sellerName?: string; channelCode?: string } | null | undefined;
         if (shop?.sellerName) {
           storeNames[p.id] = shop.sellerName;
+        }
+        if (shop?.channelCode) {
+          storeChannelCodes[p.id] = shop.channelCode;
         }
       }
     }
@@ -65,5 +70,6 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
     totalItems: search.totalItems,
     token: result.token,
     storeNames,
+    storeChannelCodes,
   };
 }

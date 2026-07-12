@@ -66,7 +66,7 @@ export function HeroSection() {
                    bg-white/90 dark:bg-[#1a1a3e]/90 shadow-md
                    border border-gray-200 dark:border-white/10
                    hover:bg-white dark:hover:bg-[#1a1a3e]
-                   transition-all hover:scale-105"
+                   transition-all hover:scale-105 cursor-pointer"
         style={{ left: '4px' }}
       >
         <ChevronLeft className="size-5 text-gray-700 dark:text-white" />
@@ -80,7 +80,7 @@ export function HeroSection() {
                    bg-white/90 dark:bg-[#1a1a3e]/90 shadow-md
                    border border-gray-200 dark:border-white/10
                    hover:bg-white dark:hover:bg-[#1a1a3e]
-                   transition-all hover:scale-105"
+                   transition-all hover:scale-105 cursor-pointer"
         style={{ right: '4px' }}
       >
         <ChevronRight className="size-5 text-gray-700 dark:text-white" />
@@ -112,14 +112,23 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* ── Dots centrados + botón Explorar a la derecha ── */}
+      {/* ── Overlay inferior: botón Explorar centrado + dots ── */}
       <div
         className="absolute bottom-0 left-0 right-0 z-20
-                   flex items-center justify-between px-4 py-2"
-        style={{ background: 'linear-gradient(to top, rgba(18,18,63,0.55) 0%, transparent 100%)' }}
+                   flex flex-col items-center gap-2 pb-4 pt-8"
+        style={{ background: 'linear-gradient(to top, rgba(18,18,63,0.65) 0%, transparent 100%)' }}
       >
-        {/* spacer izquierdo para centrar los dots */}
-        <div className="w-24" />
+        {/* Botón Explorar — centrado y prominente */}
+        <Link href="/search" onClick={() => trackClickExplore()}>
+          <button
+            className="inline-flex items-center px-7 py-2.5 rounded-full
+                       font-bold text-sm text-white shadow-lg
+                       transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
+          >
+            {t(I18N.HeroSection.shopButton)}
+          </button>
+        </Link>
 
         {/* Dots */}
         <div className="flex items-center gap-1.5">
@@ -128,7 +137,7 @@ export function HeroSection() {
               key={i}
               onClick={() => scrollTo(i)}
               aria-label={`Ir a imagen ${i + 1}`}
-              className="rounded-full transition-all duration-300"
+              className="rounded-full transition-all duration-300 cursor-pointer"
               style={{
                 width:  selectedIndex === i ? '20px' : '7px',
                 height: '7px',
@@ -138,20 +147,6 @@ export function HeroSection() {
               }}
             />
           ))}
-        </div>
-
-        {/* Botón Explorar */}
-        <div className="w-24 flex justify-end">
-          <Link href="/search" onClick={() => trackClickExplore()}>
-            <button
-              className="inline-flex items-center px-5 py-2 rounded-md
-                         font-bold text-sm text-white shadow-lg
-                         transition-all hover:scale-105 active:scale-95"
-              style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
-            >
-              {t(I18N.HeroSection.shopButton)}
-            </button>
-          </Link>
         </div>
       </div>
     </section>

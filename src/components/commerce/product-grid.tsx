@@ -64,6 +64,13 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
         ),
     };
 
+    const allStoreChannelCodes: Record<string, string> = {
+        ...(data?.pages ?? []).reduce<Record<string, string>>(
+            (acc, page) => ({ ...acc, ...(page.storeChannelCodes ?? {}) }),
+            {}
+        ),
+    };
+
     useEffect(() => {
         if (hasTrackedListRef.current) return;
         if (!allItems.length) return;
@@ -125,11 +132,13 @@ export function ProductGrid({ productDataPromise, currentPage, take, searchParam
                     {allItems.map((product, i) => {
                         const p = readFragment(ProductCardFragment, product);
                         const storeName = allStoreNames[p.productId];
+                        const storeChannelCode = allStoreChannelCodes[p.productId];
                         return (
                             <ProductCard
                                 key={'product-grid-item-' + i}
                                 product={product}
                                 storeName={storeName}
+                                storeChannelCode={storeChannelCode}
                             />
                         );
                     })}

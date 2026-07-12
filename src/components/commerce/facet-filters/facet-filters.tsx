@@ -181,7 +181,7 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
                                border border-red-300 dark:border-red-500/40
                                text-red-500 dark:text-red-400
                                hover:bg-red-50 dark:hover:bg-red-500/10
-                               transition-colors duration-200"
+                               transition-colors duration-200 cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>

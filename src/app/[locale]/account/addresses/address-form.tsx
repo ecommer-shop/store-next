@@ -3,13 +3,14 @@
 import { Button, FieldError, Form, Label, TextField } from '@heroui/react';
 import { Input } from '@heroui/react';
 import { Controller, useForm } from 'react-hook-form';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
 import { CountrySelect } from '@/components/shared/country-select';
 import {
   GoogleAddressAutocomplete,
   GoogleAddressSelection,
   GoogleLocationMapPreview,
 } from '@/components/shared/google-address-autocomplete';
+import { GoogleMapPicker, MapPickerSelection } from '@/components/shared/google-map-picker';
 import { useCallback, useState } from 'react';
 
 export interface Country {
@@ -85,8 +86,9 @@ export function AddressForm({
   requireGoogleCoordinates = false,
   labels,
 }: AddressFormProps) {
-  const { register, handleSubmit, control, formState: { errors }, setValue, getValues, watch } =
+  const { register, handleSubmit, control, formState: { errors }, setValue, getValues, watch, trigger } =
     useForm<AddressFormData>({
+      mode: 'onBlur',
       defaultValues: {
         countryCode: countries[0]?.id ?? 'CO',
         ...defaultValues,
@@ -95,6 +97,7 @@ export function AddressForm({
   const geoFields = watch('customFields');
   const selectedStreetLine = watch('streetLine1');
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const hasGoogleMapsApiKey = Boolean(googleMapsApiKey || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
   const handleGoogleAddressSelect = useCallback((selection: GoogleAddressSelection) => {
@@ -150,6 +153,45 @@ export function AddressForm({
     );
     setGeoError(null);
   }, [getValues, setValue]);
+
+  const handleMapPickerSelect = useCallback((selection: MapPickerSelection) => {
+    const selectedAddress = selection.formattedAddress || selection.streetLine1;
+
+    if (selectedAddress) {
+      setValue('streetLine1', selectedAddress, { shouldDirty: true, shouldValidate: true });
+    }
+    if (selection.city) {
+      setValue('city', selection.city, { shouldDirty: true, shouldValidate: true });
+    }
+    if (selection.province) {
+      setValue('province', selection.province, { shouldDirty: true, shouldValidate: true });
+    }
+    if (selection.postalCode) {
+      setValue('postalCode', selection.postalCode, { shouldDirty: true, shouldValidate: true });
+    }
+    if (selection.countryCode) {
+      const country = countries.find(
+        item => item.code.toLowerCase() === selection.countryCode?.toLowerCase(),
+      );
+      if (country) {
+        setValue('countryCode', country.id, { shouldDirty: true, shouldValidate: true });
+      }
+    }
+
+    setValue(
+      'customFields',
+      {
+        ...getValues('customFields'),
+        latitude: selection.latitude,
+        longitude: selection.longitude,
+        neighborhood: selection.neighborhood || null,
+        googlePlaceId: null,
+      },
+      { shouldDirty: true, shouldValidate: true },
+    );
+    setGeoError(null);
+    setIsMapPickerOpen(false);
+  }, [countries, getValues, setValue]);
 
   const latitude = normalizeCoordinate(geoFields?.latitude);
   const longitude = normalizeCoordinate(geoFields?.longitude);
@@ -223,6 +265,17 @@ export function AddressForm({
               )}
             />
             <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
+            
+            {/* Botón para abrir selector de mapa */}
+            <Button
+              type="button"
+              variant="light"
+              className="mt-2 text-[#9969F8] hover:bg-[#9969F8]/10 rounded-lg"
+              onPress={() => setIsMapPickerOpen(true)}
+            >
+              <MapPin className="h-4 w-4 mr-2" />
+              Seleccionar ubicación en el mapa
+            </Button>
           </div>
         ) : (
           <>
@@ -343,11 +396,43 @@ export function AddressForm({
           <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
             {labels.phoneNumber} <span className="text-[#9969F8]">*</span>
           </Label>
-          <Input
-            className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-            type="tel"
-            autoComplete="tel"
-            {...register('phoneNumber', { required: labels.phoneNumber })}
+          <Controller
+            name="phoneNumber"
+            control={control}
+            rules={{
+              required: 'El número de teléfono es requerido',
+              validate: (value) => {
+                if (!value || value.length === 0) {
+                  return 'El número de teléfono es requerido';
+                }
+                if (!/^\d+$/.test(value)) {
+                  return 'El número de teléfono solo puede contener números';
+                }
+                if (value.length !== 10) {
+                  return 'Por favor diligenciar 10 cifras';
+                }
+                return true;
+              }
+            }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                type="tel"
+                autoComplete="tel"
+                maxLength={10}
+                placeholder="3001234567"
+                value={field.value || ''}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  field.onChange(value);
+                }}
+                onBlur={() => {
+                  field.onBlur();
+                  trigger('phoneNumber');
+                }}
+              />
+            )}
           />
           <FieldError className="text-xs text-red-500 mt-1">{errors.phoneNumber?.message}</FieldError>
         </TextField>
@@ -374,6 +459,17 @@ export function AddressForm({
           {labels.submit}
         </Button>
       </div>
+
+      {/* Map Picker Modal */}
+      {isMapPickerOpen && (
+        <GoogleMapPicker
+          apiKey={googleMapsApiKey}
+          initialLatitude={normalizeCoordinate(geoFields?.latitude) ?? undefined}
+          initialLongitude={normalizeCoordinate(geoFields?.longitude) ?? undefined}
+          onLocationSelect={handleMapPickerSelect}
+          onClose={() => setIsMapPickerOpen(false)}
+        />
+      )}
     </Form>
   );
 }

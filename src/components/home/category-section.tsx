@@ -37,23 +37,25 @@ async function getCategoryProducts(
 
         const productIds = items.map((item) => readFragment(ProductCardFragment, item).productId);
         let storeNames: Record<string, string> = {};
+        let storeChannelCodes: Record<string, string> = {};
         if (productIds.length > 0) {
             try {
                 const sellerResult = await query(GetProductsSellerNamesQuery, {
                     options: { filter: { id: { in: productIds } }, take: productIds.length },
                 });
                 for (const p of sellerResult.data.products.items ?? []) {
-                    const shop = (p as any).sellerShop as { sellerName?: string } | null | undefined;
+                    const shop = (p as any).sellerShop as { sellerName?: string; channelCode?: string } | null | undefined;
                     if (shop?.sellerName) storeNames[p.id] = shop.sellerName;
+                    if (shop?.channelCode) storeChannelCodes[p.id] = shop.channelCode;
                 }
             } catch {
                 // degrade gracefully
             }
         }
 
-        return { items, storeNames };
+        return { items, storeNames, storeChannelCodes };
     } catch {
-        return { items: [], storeNames: {} };
+        return { items: [], storeNames: {}, storeChannelCodes: {} };
     }
 }
 
@@ -63,7 +65,7 @@ export async function CategorySection({
     excludeIds = [],
     take = 6,
 }: CategorySectionProps) {
-    const { items, storeNames } = await getCategoryProducts(collectionSlug, excludeIds, take);
+    const { items, storeNames, storeChannelCodes } = await getCategoryProducts(collectionSlug, excludeIds, take);
 
     if (items.length === 0) return null;
 
@@ -91,7 +93,11 @@ export async function CategorySection({
                         const p = readFragment(ProductCardFragment, product);
                         return (
                             <div key={i} className="flex-none w-[160px] sm:w-auto">
-                                <ProductCard product={product} storeName={storeNames[p.productId]} />
+                                <ProductCard
+                                    product={product}
+                                    storeName={storeNames[p.productId]}
+                                    storeChannelCode={storeChannelCodes[p.productId]}
+                                />
                             </div>
                         );
                     })}

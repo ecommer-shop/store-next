@@ -58,9 +58,9 @@ export async function Cart() {
 
     return (
         <SelectedItemsProvider orderId={activeOrder.id} initialSelectedIds={initialSelectedIds} allLineIds={activeOrder.lines.map(l => l.id)}>
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
               {/* On mobile: summary + promo first, items below */}
-              <div className="lg:hidden space-y-4">
+              <div className="lg:hidden space-y-3">
                   <OrderSummary activeOrder={activeOrder} />
                   <PromotionCode activeOrder={activeOrder} />
               </div>

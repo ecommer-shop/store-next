@@ -32,14 +32,28 @@ export function HeroSection() {
             <p className="text-lg text-[#12123F]/70 dark:text-[#F1F1F1]/70 max-w-xl leading-relaxed">
               <UseVendedoresText path={['hero', 'description']} />
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={handleRedirect}
-                className="inline-flex items-center gap-2 bg-[#6BB8FF] dark:bg-[#9969F8] text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-all"
-              >
-                <UseVendedoresText path={['hero', 'demoButton']} />
-              </button>
-              <AgendarDemoButton />
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={handleRedirect}
+                  className="inline-flex items-center gap-2 bg-[#6BB8FF] dark:bg-[#9969F8] text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-all"
+                >
+                  <UseVendedoresText path={['hero', 'demoButton']} />
+                </button>
+                <AgendarDemoButton />
+              </div>
+              
+              <div className="flex flex-col gap-3">
+                <p className="text-sm text-[#12123F]/60 dark:text-[#F1F1F1]/60 font-medium">
+                  <UseVendedoresText path={['hero', 'existingStoreText']} />
+                </p>
+                <button
+                  onClick={handleRedirect}
+                  className="inline-flex items-center gap-2 w-fit border-2 border-[#6BB8FF] dark:border-[#9969F8] text-[#6BB8FF] dark:text-[#9969F8] bg-white/70 dark:bg-transparent font-semibold px-6 py-3 rounded-xl hover:bg-[#6BB8FF]/10 dark:hover:bg-[#9969F8]/10 shadow-sm transition-all cursor-pointer"
+                >
+                  <UseVendedoresText path={['hero', 'goToStoreButton']} />
+                </button>
+              </div>
             </div>
           </div>
           {/* RIGHT COLUMN */}
