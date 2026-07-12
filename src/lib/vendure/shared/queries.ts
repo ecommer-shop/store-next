@@ -61,6 +61,7 @@ export const GetProductsFallbackQuery = graphql(`
                 }
                 sellerShop {
                     sellerName
+                    channelCode
                 }
             }
         }
@@ -520,6 +521,7 @@ export const GetProductsSellerNamesQuery = graphql(`
                 id
                 sellerShop {
                     sellerName
+                    channelCode
                 }
             }
         }

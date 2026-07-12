@@ -14,9 +14,16 @@ export function ChatWidget() {
 
   // Escuchar el evento global para abrir el chat desde cualquier parte (ej: navbar)
   useEffect(() => {
-    const handler = () => setIsOpen(true);
-    window.addEventListener('open-simetria-chat', handler);
-    return () => window.removeEventListener('open-simetria-chat', handler);
+    const openHandler = () => setIsOpen(true);
+    const toggleHandler = () => setIsOpen((prev) => !prev);
+    
+    window.addEventListener('open-simetria-chat', openHandler);
+    window.addEventListener('toggle-simetria-chat', toggleHandler);
+    
+    return () => {
+      window.removeEventListener('open-simetria-chat', openHandler);
+      window.removeEventListener('toggle-simetria-chat', toggleHandler);
+    };
   }, []);
 
   if (!isHydrated) {

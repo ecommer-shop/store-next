@@ -295,7 +295,7 @@ function TrackingSection() {
       style={{ background: '#F1F1F1', opacity: isVisible ? 1 : 0 }}
     >
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Package className="size-8" style={{ color: '#9969F8' }} />
             <h2 className="text-3xl md:text-4xl font-extrabold dark:text-white" style={{ color: '#12123F' }}>
@@ -303,7 +303,7 @@ function TrackingSection() {
             </h2>
           </div>
 
-          <p className="text-center text-muted-foreground mb-6">
+          <p className="text-center text-muted-foreground mb-6 max-w-3xl mx-auto">
             {t('tracking.description')}
           </p>
 
@@ -311,7 +311,7 @@ function TrackingSection() {
             {t('tracking.intro')}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
             {statuses.map((status, i) => (
               <div
                 key={status}
@@ -329,10 +329,53 @@ function TrackingSection() {
             ))}
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-background shadow-sm">
-            <p className="text-sm text-muted-foreground leading-relaxed text-center">
-              {t('tracking.national')}
-            </p>
+          {/* Envia.com tracking info */}
+          <div 
+            className="p-8 rounded-2xl bg-white dark:bg-background shadow-md"
+            style={{ border: '2px solid rgba(153,105,248,0.2)' }}
+          >
+            <div className="flex items-start gap-4 mb-4">
+              <div 
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(153,105,248,0.15)' }}
+              >
+                <Truck className="size-6" style={{ color: '#9969F8' }} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-2 dark:text-white" style={{ color: '#12123F' }}>
+                  Seguimiento con Número de Guía (Envíos Nacionales)
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t('tracking.national')}
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 mt-0.5 shrink-0" style={{ color: '#6BB8FF' }} />
+                  <div>
+                    <p className="text-xs font-semibold mb-1 text-foreground">Rastreo en tiempo real</p>
+                    <p className="text-xs text-muted-foreground">Conoce la ubicación exacta de tu paquete</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 mt-0.5 shrink-0" style={{ color: '#9969F8' }} />
+                  <div>
+                    <p className="text-xs font-semibold mb-1 text-foreground">Múltiples transportadoras</p>
+                    <p className="text-xs text-muted-foreground">Integración con principales operadores logísticos</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 mt-0.5 shrink-0" style={{ color: '#6BB8FF' }} />
+                  <div>
+                    <p className="text-xs font-semibold mb-1 text-foreground">Historial completo</p>
+                    <p className="text-xs text-muted-foreground">Visualiza todos los eventos de tu envío</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

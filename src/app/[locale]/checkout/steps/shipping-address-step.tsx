@@ -126,7 +126,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                   type="button"
                   onClick={() => setSelectedAddressId(address.id)}
                   className={clsx(
-                    'w-full text-left rounded-xl border-2 p-4 transition-all duration-150',
+                    'w-full text-left rounded-xl border-2 p-4 transition-all duration-150 cursor-pointer',
                     isSelected
                       ? 'border-[#9969F8] bg-[#9969F8]/5 shadow-sm'
                       : 'border-border bg-card hover:border-[#9969F8]/40 hover:bg-muted/30',

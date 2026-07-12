@@ -53,7 +53,7 @@ export function FacetsAccordionContent({
                       onClick={() => toggleFacet(value.id)}
                       className={`
                         w-full flex items-center justify-between
-                        px-3 py-0.5 text-sm transition-all duration-150
+                        px-3 py-0.5 text-sm transition-all duration-150 cursor-pointer
                         ${idx !== 0 ? 'border-t border-border/30' : ''}
                         ${isSelected
                           ? 'bg-foreground text-background'

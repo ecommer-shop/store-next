@@ -17,7 +17,7 @@ import { SyncCustomer } from "@/lib/vendure/client/sync-customer";
 import { useTranslations } from "next-intl";
 import { I18N } from "@/i18n/keys";
 import { Check, Globe, LogIn, Menu, Moon, Power, Store, Sun, UserPlus } from "lucide-react";
-import { getSellersLandingUrl } from "@/lib/sellers-landing-url";
+import { getSellersLandingUrl, getAdminUrl } from "@/lib/sellers-landing-url";
 import { ThemeModal } from "./theme-switcher/theme-switcher";
 import { LocaleModal } from "../locale-modal";
 import {
@@ -203,6 +203,7 @@ export function NavbarUser() {
       {/* Autenticado */}
       <SignedIn>
         <SyncCustomer/>
+        
         <UserButton
           appearance={{
             baseTheme: resolvedTheme === "dark" ? dark : undefined,

@@ -51,7 +51,7 @@ export const BenefitItem = memo(function BenefitItem({ benefit, variant }: Benef
                 aria-label={`${benefit.title}: ${benefit.subtitle}`}
                 className={cn(
                     cardVariantClasses[variant],
-                    'group cursor-default outline-none transition-all duration-300',
+                    'group cursor-pointer outline-none transition-all duration-300',
                     'hover:bg-default-100 dark:hover:bg-white/5 hover:shadow-md hover:scale-[1.02]',
                 )}
             >
