@@ -236,19 +236,36 @@ export function GoogleMapPicker({
           const place = results[0];
           const components = place.address_components;
 
+          console.log('🔍 Todos los componentes de Google Maps:', components);
+
           const route = getAddressComponent(components, 'route');
           const streetNumber = getAddressComponent(components, 'street_number');
           const formattedAddress = place.formatted_address || '';
+          
+          // Extraer ciudad - priorizar locality, luego administrative_area_level_2
           const locality = getAddressComponent(components, 'locality');
-          const city = locality || getAddressComponent(components, 'administrative_area_level_2');
-          const province = getAddressComponent(components, 'administrative_area_level_1');
+          const adminLevel2 = getAddressComponent(components, 'administrative_area_level_2');
+          const city = locality || adminLevel2 || '';
+          
+          // Extraer provincia/departamento/estado
+          const province = getAddressComponent(components, 'administrative_area_level_1') || '';
+          
           const postalCode = getAddressComponent(components, 'postal_code');
           const countryCode = getAddressComponent(components, 'country', 'short');
           const neighborhood =
             getAddressComponent(components, 'neighborhood') ||
             getAddressComponent(components, 'sublocality_level_1') ||
             getAddressComponent(components, 'sublocality') ||
-            city;
+            '';
+
+          console.log('📍 Información extraída del mapa:', {
+            formattedAddress,
+            city: `"${city}" (locality: "${locality}", adminLevel2: "${adminLevel2}")`,
+            province: `"${province}"`,
+            postalCode: `"${postalCode}"`,
+            countryCode: `"${countryCode}"`,
+            neighborhood: `"${neighborhood}"`,
+          });
 
           onLocationSelect({
             latitude: selectedLocation.lat,
@@ -263,6 +280,7 @@ export function GoogleMapPicker({
           });
         } else {
           // Si falla el geocoding, enviar al menos las coordenadas
+          console.warn('⚠️ Geocoding falló, enviando solo coordenadas');
           onLocationSelect({
             latitude: selectedLocation.lat,
             longitude: selectedLocation.lng,

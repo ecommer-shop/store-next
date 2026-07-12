@@ -96,6 +96,9 @@ export function AddressForm({
     });
   const geoFields = watch('customFields');
   const selectedStreetLine = watch('streetLine1');
+  const selectedCity = watch('city');
+  const selectedProvince = watch('province');
+  const selectedPostalCode = watch('postalCode');
   const [geoError, setGeoError] = useState<string | null>(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const hasGoogleMapsApiKey = Boolean(googleMapsApiKey || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
@@ -155,27 +158,50 @@ export function AddressForm({
   }, [getValues, setValue]);
 
   const handleMapPickerSelect = useCallback((selection: MapPickerSelection) => {
+    console.log('🗺️ Datos recibidos del mapa en el formulario:', selection);
+    
     const selectedAddress = selection.formattedAddress || selection.streetLine1;
 
     if (selectedAddress) {
+      console.log('📝 Llenando dirección:', selectedAddress);
       setValue('streetLine1', selectedAddress, { shouldDirty: true, shouldValidate: true });
+    } else {
+      console.warn('⚠️ No hay dirección para llenar');
     }
+    
     if (selection.city) {
+      console.log('🏙️ Llenando ciudad:', selection.city);
       setValue('city', selection.city, { shouldDirty: true, shouldValidate: true });
+    } else {
+      console.warn('⚠️ No hay ciudad en la selección');
     }
+    
     if (selection.province) {
+      console.log('🏛️ Llenando departamento/estado:', selection.province);
       setValue('province', selection.province, { shouldDirty: true, shouldValidate: true });
+    } else {
+      console.warn('⚠️ No hay provincia/departamento en la selección');
     }
+    
     if (selection.postalCode) {
+      console.log('📮 Llenando código postal:', selection.postalCode);
       setValue('postalCode', selection.postalCode, { shouldDirty: true, shouldValidate: true });
+    } else {
+      console.warn('⚠️ No hay código postal en la selección');
     }
+    
     if (selection.countryCode) {
       const country = countries.find(
         item => item.code.toLowerCase() === selection.countryCode?.toLowerCase(),
       );
       if (country) {
+        console.log('🌍 Llenando país:', country.name, '(', country.code, ')');
         setValue('countryCode', country.id, { shouldDirty: true, shouldValidate: true });
+      } else {
+        console.warn('⚠️ No se encontró el país con código:', selection.countryCode);
       }
+    } else {
+      console.warn('⚠️ No hay código de país en la selección');
     }
 
     setValue(
@@ -189,6 +215,8 @@ export function AddressForm({
       },
       { shouldDirty: true, shouldValidate: true },
     );
+    
+    console.log('✅ Cerrando modal del mapa');
     setGeoError(null);
     setIsMapPickerOpen(false);
   }, [countries, getValues, setValue]);
@@ -247,35 +275,68 @@ export function AddressForm({
         {/* Dirección principal */}
         {hasGoogleMapsApiKey ? (
           <div>
-            <Controller
-              name="streetLine1"
-              control={control}
-              rules={{ required: labels.streetLine1 }}
-              render={({ field }) => (
-                <GoogleAddressAutocomplete
-                  label={`${labels.streetLine1} *`}
-                  placeholder="Escribe y selecciona una dirección de Google Maps"
-                  apiKey={googleMapsApiKey}
-                  value={field.value ?? ''}
-                  inputName={field.name}
-                  className=""
-                  onValueChange={handleStreetLineManualChange}
-                  onSelect={handleGoogleAddressSelect}
-                />
-              )}
-            />
-            <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {labels.streetLine1} <span className="text-[#9969F8]">*</span>
+              </Label>
+              
+              {/* Botón para abrir selector de mapa */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-[#9969F8] hover:bg-[#9969F8]/10 rounded-lg text-xs h-auto py-1 cursor-pointer"
+                onPress={() => setIsMapPickerOpen(true)}
+              >
+                <MapPin className="h-3 w-3 mr-1" />
+                Seleccionar ubicación en el mapa
+              </Button>
+            </div>
             
-            {/* Botón para abrir selector de mapa */}
-            <Button
-              type="button"
-              variant="light"
-              className="mt-2 text-[#9969F8] hover:bg-[#9969F8]/10 rounded-lg"
-              onPress={() => setIsMapPickerOpen(true)}
-            >
-              <MapPin className="h-4 w-4 mr-2" />
-              Seleccionar ubicación en el mapa
-            </Button>
+            {/* Si ya tiene coordenadas válidas del mapa, mostrar input simple sin autocompletado */}
+            {hasValidCoordinates ? (
+              <TextField>
+                <Input
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                  autoComplete="address-line1"
+                  value={selectedStreetLine || ''}
+                  onChange={(e) => {
+                    // Si edita manualmente, limpiar las coordenadas
+                    const newValue = e.target.value;
+                    setValue('streetLine1', newValue, { shouldDirty: true, shouldValidate: true });
+                    setValue('customFields', {
+                      ...getValues('customFields'),
+                      latitude: null,
+                      longitude: null,
+                      neighborhood: null,
+                      googlePlaceId: null,
+                    }, { shouldDirty: true });
+                  }}
+                />
+                <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
+              </TextField>
+            ) : (
+              <Controller
+                name="streetLine1"
+                control={control}
+                rules={{ required: labels.streetLine1 }}
+                render={({ field }) => (
+                  <GoogleAddressAutocomplete
+                    label=""
+                    placeholder="Escribe y selecciona una dirección de Google Maps"
+                    apiKey={googleMapsApiKey}
+                    value={field.value ?? ''}
+                    inputName={field.name}
+                    className=""
+                    onValueChange={handleStreetLineManualChange}
+                    onSelect={handleGoogleAddressSelect}
+                  />
+                )}
+              />
+            )}
+            {!hasValidCoordinates && (
+              <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
+            )}
           </div>
         ) : (
           <>
@@ -335,41 +396,65 @@ export function AddressForm({
 
         {/* Ciudad + Departamento */}
         <div className="grid grid-cols-2 gap-4">
-          <TextField>
-            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-              {labels.city} <span className="text-[#9969F8]">*</span>
-            </Label>
-            <Input
-              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-              {...register('city', { required: labels.city })}
-            />
-            <FieldError className="text-xs text-red-500 mt-1">{errors.city?.message}</FieldError>
-          </TextField>
+          <Controller
+            name="city"
+            control={control}
+            rules={{ required: labels.city }}
+            render={({ field }) => (
+              <TextField>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                  {labels.city} <span className="text-[#9969F8]">*</span>
+                </Label>
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                />
+                <FieldError className="text-xs text-red-500 mt-1">{errors.city?.message}</FieldError>
+              </TextField>
+            )}
+          />
 
-          <TextField>
-            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-              {labels.province} <span className="text-[#9969F8]">*</span>
-            </Label>
-            <Input
-              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-              {...register('province', { required: labels.province })}
-            />
-            <FieldError className="text-xs text-red-500 mt-1">{errors.province?.message}</FieldError>
-          </TextField>
+          <Controller
+            name="province"
+            control={control}
+            rules={{ required: labels.province }}
+            render={({ field }) => (
+              <TextField>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                  {labels.province} <span className="text-[#9969F8]">*</span>
+                </Label>
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                />
+                <FieldError className="text-xs text-red-500 mt-1">{errors.province?.message}</FieldError>
+              </TextField>
+            )}
+          />
         </div>
 
         {/* Código postal + País */}
         <div className="grid grid-cols-2 gap-4">
-          <TextField>
-            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-              {labels.postalCode} <span className="text-[#9969F8]">*</span>
-            </Label>
-            <Input
-              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-              {...register('postalCode', { required: labels.postalCode })}
-            />
-            <FieldError className="text-xs text-red-500 mt-1">{errors.postalCode?.message}</FieldError>
-          </TextField>
+          <Controller
+            name="postalCode"
+            control={control}
+            rules={{ required: labels.postalCode }}
+            render={({ field }) => (
+              <TextField>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                  {labels.postalCode} <span className="text-[#9969F8]">*</span>
+                </Label>
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                />
+                <FieldError className="text-xs text-red-500 mt-1">{errors.postalCode?.message}</FieldError>
+              </TextField>
+            )}
+          />
 
           <TextField>
             <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
@@ -392,7 +477,7 @@ export function AddressForm({
         </div>
 
         {/* Teléfono */}
-        <TextField>
+        <div>
           <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
             {labels.phoneNumber} <span className="text-[#9969F8]">*</span>
           </Label>
@@ -409,17 +494,18 @@ export function AddressForm({
                   return 'El número de teléfono solo puede contener números';
                 }
                 if (value.length !== 10) {
-                  return 'Por favor diligenciar 10 cifras';
+                  return 'Por favor diligenciar 10 digitos';
                 }
                 return true;
               }
             }}
             render={({ field }) => (
-              <Input
+              <input
                 {...field}
                 className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-                type="tel"
-                autoComplete="tel"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
                 maxLength={10}
                 placeholder="3001234567"
                 value={field.value || ''}
@@ -434,8 +520,10 @@ export function AddressForm({
               />
             )}
           />
-          <FieldError className="text-xs text-red-500 mt-1">{errors.phoneNumber?.message}</FieldError>
-        </TextField>
+          {errors.phoneNumber && (
+            <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>
+          )}
+        </div>
 
       </div>
 
