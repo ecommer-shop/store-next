@@ -306,7 +306,7 @@ export function GoogleMapPicker({
           </div>
           <Button
             isIconOnly
-            variant="light"
+            variant="ghost"
             onPress={onClose}
             className="text-muted-foreground hover:text-foreground"
             aria-label="Cerrar"
