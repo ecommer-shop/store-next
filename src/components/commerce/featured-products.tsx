@@ -13,6 +13,7 @@ const getFeaturedCollectionProducts = async (): Promise<{
   items: any[];
   totalItems: number;
   storeNames: Record<string, string>;
+  storeChannelCodes: Record<string, string>;
 }> => {
   const result = await query(SearchProductsQuery, {
     input: {
@@ -33,6 +34,7 @@ const getFeaturedCollectionProducts = async (): Promise<{
     });
 
     let storeNames: Record<string, string> = {};
+    let storeChannelCodes: Record<string, string> = {};
     try {
       const sellerResult = await query(GetProductsSellerNamesQuery, {
         options: {
@@ -41,16 +43,19 @@ const getFeaturedCollectionProducts = async (): Promise<{
         },
       });
       for (const p of sellerResult.data.products.items ?? []) {
-        const shop = (p as any).sellerShop as { sellerName?: string } | null | undefined;
+        const shop = (p as any).sellerShop as { sellerName?: string; channelCode?: string } | null | undefined;
         if (shop?.sellerName) {
           storeNames[p.id] = shop.sellerName;
+        }
+        if (shop?.channelCode) {
+          storeChannelCodes[p.id] = shop.channelCode;
         }
       }
     } catch {
       // sellerShop may not be available on older backends — degrade gracefully
     }
 
-    return { items: searchItems, totalItems, storeNames };
+    return { items: searchItems, totalItems, storeNames, storeChannelCodes };
   }
 
   // Fallback: use products query (already has sellerShop)
@@ -68,11 +73,15 @@ const getFeaturedCollectionProducts = async (): Promise<{
   );
 
   const storeNames: Record<string, string> = {};
+  const storeChannelCodes: Record<string, string> = {};
   const mapped = filteredProducts.map((product) => {
     const firstVariant = product.variants?.[0];
-    const shop = (product as any).sellerShop as { sellerName?: string } | null | undefined;
+    const shop = (product as any).sellerShop as { sellerName?: string; channelCode?: string } | null | undefined;
     if (shop?.sellerName) {
       storeNames[product.id] = shop.sellerName;
+    }
+    if (shop?.channelCode) {
+      storeChannelCodes[product.id] = shop.channelCode;
     }
     return {
       productId: product.id,
@@ -92,11 +101,11 @@ const getFeaturedCollectionProducts = async (): Promise<{
     };
   }) as any[];
 
-  return { items: mapped, totalItems: mapped.length, storeNames };
+  return { items: mapped, totalItems: mapped.length, storeNames, storeChannelCodes };
 };
 
 export async function FeaturedProducts() {
-  const { items, totalItems, storeNames } = await getFeaturedCollectionProducts();
+  const { items, totalItems, storeNames, storeChannelCodes } = await getFeaturedCollectionProducts();
   const t = await getTranslations("HeroSection");
 
   return (
@@ -106,6 +115,7 @@ export async function FeaturedProducts() {
         initialItems={items}
         initialTotalItems={totalItems}
         storeNames={storeNames}
+        storeChannelCodes={storeChannelCodes}
         take={12}
       />
     </Suspense>

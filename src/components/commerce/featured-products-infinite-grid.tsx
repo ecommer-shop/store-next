@@ -14,6 +14,8 @@ interface FeaturedProductsInfiniteGridProps {
   take: number;
   /** Map of productId → store name, resolved server-side */
   storeNames?: Record<string, string>;
+  /** Map of productId → channel code, resolved server-side */
+  storeChannelCodes?: Record<string, string>;
 }
 
 export function FeaturedProductsInfiniteGrid({
@@ -22,6 +24,7 @@ export function FeaturedProductsInfiniteGrid({
   title,
   take,
   storeNames = {},
+  storeChannelCodes = {},
 }: FeaturedProductsInfiniteGridProps) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts({
     take,
@@ -36,6 +39,12 @@ export function FeaturedProductsInfiniteGrid({
   const allStoreNames: Record<string, string> = {
     ...storeNames,
     ...(data?.pages ?? []).reduce((acc, page) => ({ ...acc, ...(page.storeNames ?? {}) }), {}),
+  };
+
+  // Merge store channel codes from all fetched pages
+  const allStoreChannelCodes: Record<string, string> = {
+    ...storeChannelCodes,
+    ...(data?.pages ?? []).reduce((acc, page) => ({ ...acc, ...(page.storeChannelCodes ?? {}) }), {}),
   };
 
   const skeletons = Array.from({ length: take }).map((_, i) => (
@@ -87,11 +96,13 @@ export function FeaturedProductsInfiniteGrid({
             {displayedItems.map((product, i) => {
               const p = readFragment(ProductCardFragment, product);
               const storeName = allStoreNames[p.productId];
+              const storeChannelCode = storeChannelCodes[p.productId];
               return (
                 <ProductCard
                   key={'featured-product-' + i}
                   product={product}
                   storeName={storeName}
+                  storeChannelCode={storeChannelCode}
                 />
               );
             })}

@@ -767,8 +767,8 @@
     },
     "tracking": {
       "title": "Order tracking",
-      "description": "Once your purchase is confirmed you will be able to know the status of your order from the platform.",
-      "intro": "During the process you can check information such as:",
+      "description": "Once your purchase is confirmed, you will be able to fully track your order directly from your account on the platform.",
+      "intro": "During the process you can check statuses such as:",
       "statuses": {
         "received": "Order received",
         "confirmed": "Payment confirmed",
@@ -777,7 +777,7 @@
         "transit": "In transit",
         "delivered": "Delivered"
       },
-      "national": "For national shipments you can also track using the information provided by the carrier company."
+      "national": "For national shipments made with Envia.com, you will receive a tracking number that will allow you to track the status of your package in real time through the assigned carrier. You will be able to check detailed information such as current location, transit events, delivery attempts, and estimated arrival date. Envia's system integrates multiple national carriers, giving you full visibility from the moment the package leaves the warehouse until it arrives at your door."
     },
     "support": {
       "title": "Intelligent support 24/7",
@@ -906,6 +906,8 @@
       "description": "Comprehensive platform designed exclusively for Colombian manufacturers, artisans, and entrepreneurs. Scale your international sales with enterprise-level tools adapted to your reality.",
       "demoButton": "Start Free Trial →",
       "secondaryButton": "Watch Demo",
+      "existingStoreText": "Already have Your Store?",
+      "goToStoreButton": "Go to your store →",
       "floatingCard": "International Sales $1,240 USD",
       "storeButton": "Create My Store Free"
     },

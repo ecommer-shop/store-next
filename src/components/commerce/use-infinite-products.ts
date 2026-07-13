@@ -26,6 +26,7 @@ interface PageData {
   token?: string;
   page: number;
   storeNames?: Record<string, string>;
+  storeChannelCodes?: Record<string, string>;
 }
 export function useInfiniteProducts({ take, initialData, searchParams = {}, collectionSlug }: UseInfiniteProductsOptions) {
   // Create a search params key for the query cache
