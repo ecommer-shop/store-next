@@ -50,7 +50,7 @@ export function PlanesSection() {
               </ul>
               <button
                 onClick={handleRedirect}
-                className="w-full text-center border border-black/12 dark:border-[#F1F1F1]/20 text-[#12123F] dark:text-[#F1F1F1] px-6 py-3 rounded-xl font-semibold hover:bg-black/5 dark:hover:bg-[#F1F1F1]/10 transition-all"
+                className="w-full text-center border border-black/12 dark:border-[#F1F1F1]/20 text-[#12123F] dark:text-[#F1F1F1] px-6 py-3 rounded-xl font-semibold hover:bg-black/5 dark:hover:bg-[#F1F1F1]/10 transition-all cursor-pointer"
               >
                 <UseVendedoresText path={['planes', 'cards', 'free', 'buttonText']} />
               </button>
@@ -85,7 +85,7 @@ export function PlanesSection() {
               </ul>
               <button
                 onClick={handleRedirect}
-                className="w-full text-center bg-linear-to-r from-[#6BB8FF] to-[#9969F8] dark:from-[#9969F8] dark:to-[#7E42E5] text-white dark:text-[#F1F1F1] px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-[0_0_20px_rgba(107,184,255,0.3)] dark:shadow-[0_0_20px_rgba(153,105,248,0.4)]"
+                className="w-full text-center bg-linear-to-r from-[#6BB8FF] to-[#9969F8] dark:from-[#9969F8] dark:to-[#7E42E5] text-white dark:text-[#F1F1F1] px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-[0_0_20px_rgba(107,184,255,0.3)] dark:shadow-[0_0_20px_rgba(153,105,248,0.4)] cursor-pointer"
               >
                 <UseVendedoresText path={['planes', 'cards', 'tienda', 'buttonText']} />
               </button>
@@ -117,7 +117,7 @@ export function PlanesSection() {
               </ul>
               <button
                 onClick={handleRedirect}
-                className="w-full text-center border border-black/12 dark:border-[#F1F1F1]/20 text-[#12123F] dark:text-[#F1F1F1] px-6 py-3 rounded-xl font-semibold hover:bg-black/5 dark:hover:bg-[#F1F1F1]/10 transition-all"
+                className="w-full text-center border border-black/12 dark:border-[#F1F1F1]/20 text-[#12123F] dark:text-[#F1F1F1] px-6 py-3 rounded-xl font-semibold hover:bg-black/5 dark:hover:bg-[#F1F1F1]/10 transition-all cursor-pointer"
               >
                 <UseVendedoresText path={['planes', 'cards', 'omnichannel', 'buttonText']} />
               </button>

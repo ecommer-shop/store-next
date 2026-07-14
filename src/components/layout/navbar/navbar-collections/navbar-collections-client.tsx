@@ -29,7 +29,7 @@ export function NavbarCollectionsClient({ collections }: NavbarCollectionsClient
   const rest = collections.slice(3);
 
   const openSimetriaChat = () => {
-    window.dispatchEvent(new Event('open-simetria-chat'));
+    window.dispatchEvent(new Event('toggle-simetria-chat'));
   };
 
   return (

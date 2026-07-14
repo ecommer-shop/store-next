@@ -47,7 +47,6 @@ export default function CheckoutButtonClient({
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            console.log('[Cart] Vendure authentication successful, cart merged');
             // Recargar la página para mostrar el carrito fusionado
             router.refresh();
           } else {
@@ -68,9 +67,9 @@ export default function CheckoutButtonClient({
   };
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-1.5 lg:gap-2 w-full">
       {isDisabled ? (
-        <Button className="w-full" size="lg" isDisabled>
+        <Button className="w-full h-10 lg:h-11 text-sm lg:text-base" size="lg" isDisabled>
           {label}
         </Button>
       ) : (
@@ -79,13 +78,13 @@ export default function CheckoutButtonClient({
           className="w-full"
           onClick={handleCheckout}
         >
-          <Button className="w-full" size="lg">
+          <Button className="w-full h-10 lg:h-11 text-sm lg:text-base" size="lg">
             {label}
           </Button>
         </Link>
       )}
       {isBelowMinimum && (
-        <span className="text-xs text-[color:var(--warning-text)] text-center font-medium">
+        <span className="text-[10px] lg:text-xs text-[color:var(--warning-text)] text-center font-medium leading-tight">
           Haz tu pedido desde $30.000 COP y disfruta de nuestro servicio.
         </span>
       )}

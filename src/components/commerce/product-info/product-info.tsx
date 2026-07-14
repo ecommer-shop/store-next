@@ -4,7 +4,7 @@ import { trackViewItem, trackAddToCart } from '@/lib/analytics/events';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import NextLink from 'next/link';
 import {RadioGroup, Label, Button, Radio, toast} from '@heroui/react';
-import {ShoppingCart, CheckCircle2, Share2, Download} from 'lucide-react';
+import {ShoppingCart, CheckCircle2, Share2, Download, Star, BadgeCheck, Truck, ShieldCheck, RotateCcw} from 'lucide-react';
 import {addToCart, checkProductInCart} from '@/app/[locale]/product/[slug]/actions';
 import {Price} from '@/components/commerce/price';
 import {ContinueShoppingButton} from '@/components/commerce/continue-shopping-button';
@@ -52,16 +52,32 @@ interface ProductInfoProps {
     searchParams: { [key: string]: string | string[] | undefined };
     storeLink?: { name: string; href: string };
     productImageUrl?: string | null;
+    primaryCollection?: {
+        id: string;
+        name: string;
+        slug: string;
+        parent?: { id: string; name: string; slug: string } | null;
+    } | null;
 }
 
-export function ProductInfo({ product, searchParams, storeLink, productImageUrl }: ProductInfoProps) {
+export function ProductInfo({ product, searchParams, storeLink, productImageUrl, primaryCollection }: ProductInfoProps) {
     const pathname = usePathname();
     const router = useRouter();
     const currentSearchParams = useSearchParams();
     const [isAdding, setIsAdding] = useState(false);
+    const [isBuyingNow, setIsBuyingNow] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
     const [showGoToCart, setShowGoToCart] = useState(false);
     const t = useTranslations('Commerce');
+    const [showBanner, setShowBanner] = useState(false);
+    const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        if (showBanner) {
+            const timer = setTimeout(() => setShowBanner(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showBanner]);
 
     useEffect(() => {
         checkProductInCart(product.id).then((isInCart) => {
@@ -116,6 +132,10 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
         });
     }, [selectedOptions, product.variants, product.optionGroups]);
 
+    useEffect(() => {
+        setQuantity(1);
+    }, [selectedVariant?.id]);
+
     const handleOptionChange = (groupId: string, optionId: string) => {
         setSelectedOptions((prev) => ({
             ...prev,
@@ -142,7 +162,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
 
         setIsAdding(true);
         try {
-            const result = await addToCart(selectedVariant.id, 1);
+            const result = await addToCart(selectedVariant.id, quantity);
 
             if (result.success) {
                 trackAddToCart({ item_id: selectedVariant.id, item_name: product.name, price: selectedVariant.priceWithTax, seller_name: storeLink?.name });
@@ -176,12 +196,42 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             setIsAdding(false);
         }
     };
+    const handleBuyNow = async () => {
+        if (!selectedVariant) {
+            setIsAdded(true);
+            return;
+        }
+
+        setIsBuyingNow(true);
+        try {
+            const result = await addToCart(selectedVariant.id, quantity);
+
+            if (result.success) {
+                trackAddToCart({ item_id: selectedVariant.id, item_name: product.name, price: selectedVariant.priceWithTax, seller_name: storeLink?.name });
+                router.push('/checkout');
+            } else {
+                toast.danger(t(I18N.Commerce.productInfo.toast.errorTitle), {
+                    description: result.error || t(I18N.Commerce.productInfo.toast.errorDescription),
+                });
+            }
+        } catch {
+            toast.danger(t(I18N.Commerce.productInfo.toast.errorTitle), {
+                description: t(I18N.Commerce.productInfo.toast.errorDescription),
+            });
+        } finally {
+            setIsBuyingNow(false);
+        }
+    };
     const isInStock = selectedVariant && selectedVariant.stockLevel !== 'OUT_OF_STOCK';
     const canAddToCart = selectedVariant && isInStock;
 
     const stockStatus = selectedVariant?.stockLevel as ProductInfoStockStatus;
-    console.log('Stock status for selected variant:', selectedVariant?.stockLevel);
     const statusColorClass = STOCK_STATUS_COLORS[stockStatus] || "text-muted-foreground";
+    const maxQuantity = stockStatus === 'LOW_STOCK' ? 3 : 10;
+    const isMobileDevice = () => {
+        if (typeof navigator === 'undefined') return false;
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    };
     const handleShare = async () => {
         const shareData = {
             title: product.name,
@@ -189,7 +239,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
             url: window.location.href,
         };
 
-        if (navigator.share) {
+        if (isMobileDevice() && navigator.share) {
             try {
                 await navigator.share(shareData);
                 trackShareProduct({ item_id: product.id, share_method: 'WebShareAPI' });
@@ -199,6 +249,18 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     console.error('Error al compartir:', error);
                     toast.danger(t(I18N.Commerce.productInfo.toast.shareError));
                 }
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                trackShareProduct({ item_id: product.id, share_method: 'Clipboard' });
+                toast.success(t(I18N.Commerce.productInfo.toast.shareSuccess));
+                
+                setShowBanner(true); 
+
+            } catch (error) {
+                console.error('Error al copiar el link:', error);
+                toast.danger(t(I18N.Commerce.productInfo.toast.shareError));
             }
         }
     };
@@ -294,42 +356,132 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     </span>
                 </div>
             )}
+            {/* Seller Info */}
+            {storeLink && (
+                <div className="text-sm">
+                    {t(I18N.Commerce.productInfo.storeLabel)}:{` `}
+                    <span className="relative inline-block group/seller">
+                        <NextLink
+                            href={storeLink.href}
+                            onClick={() => trackClickSellerProfile({ seller_name: storeLink.name })}
+                            className="text-lg font-bold underline underline-offset-2 text-foreground"
+                        >
+                            {storeLink.name}
+                        </NextLink>
 
-            <div className="pt-2 flex flex-col gap-3">
-                {/* Botón principal */}
+                        {/* TODO: rating, verified y ventas son placeholder hardcodeado.
+                            Conectar con backend cuando exista Seller rating/verified en shop. */}
+                        <div className="invisible opacity-0 group-hover/seller:visible group-hover/seller:opacity-100 transition-opacity duration-150 absolute left-0 top-full mt-2 z-50 w-64 rounded-xl border border-[#12123F]/15 dark:border-[#F1F1F1]/20 bg-background p-4 shadow-xl">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#6BB8FF]/15 text-[#6BB8FF]">
+                                    <BadgeCheck className="w-5 h-5" />
+                                </span>
+                                <div>
+                                    <p className="text-sm font-bold text-foreground leading-tight">{storeLink.name}</p>
+                                    <p className="text-xs text-[#6BB8FF] font-medium">Vendedor Verificado</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-1 mb-1">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <Star
+                                        key={i}
+                                        className={i <= 4 ? "w-4 h-4 fill-[#9969F8] text-[#9969F8]" : "w-4 h-4 text-muted-foreground"}
+                                    />
+                                ))}
+                                <span className="text-xs text-muted-foreground ml-1">4.8/5</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mb-3">+150 ventas</p>
+
+                            <NextLink
+                                href={storeLink.href}
+                                className="block w-full text-center text-xs font-semibold rounded-lg py-2 bg-[#12123F] text-white dark:bg-[#F1F1F1] dark:text-[#12123F] hover:opacity-90 transition-opacity"
+                            >
+                                Ver tienda completa y más productos
+                            </NextLink>
+                        </div>
+                    </span>
+                </div>
+            )}
+
+            <div className="pt-4 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                    {selectedVariant && isInStock && (
+                        <div className="flex items-center gap-2 shrink-0">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-foreground w-9 h-9 min-w-0"
+                                isDisabled={quantity <= 1}
+                                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                            >
+                                -
+                            </Button>
+                            <span className="text-base font-semibold w-6 text-center text-foreground">
+                                {quantity}
+                            </span>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-foreground w-9 h-9 min-w-0"
+                                isDisabled={quantity >= maxQuantity}
+                                onPress={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+                            >
+                                +
+                            </Button>
+                        </div>
+                    )}
+                    <Button
+                        size="lg"
+                        variant='primary'
+                        className="flex-1 min-w-0 font-bold rounded-xl text-white"
+                        style={canAddToCart ? { background: 'linear-gradient(90deg, #12123F, #1a1a5e)' } : {}}
+                        isDisabled={!canAddToCart || isAdding}
+                        onPress={handleAddToCart}
+                    >
+                        {isAdding ? (
+                            <>
+                                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                {t(I18N.Commerce.productInfo.adding)}
+                            </>
+                        ) : isAdded ? (
+                            <>
+                                <CheckCircle2 className="mr-2 h-5 w-5" />
+                                {t(I18N.Commerce.productInfo.addedToCart)}
+                            </>
+                        ) : !selectedVariant && product.optionGroups.length > 0 ? (
+                            <>
+                                <ShoppingCart className="mr-2 h-5 w-5" />
+                                {t(I18N.Commerce.productInfo.selectOptions)}
+                            </>
+                        ) : !isInStock ? (
+                            <>
+                                <ShoppingCart className="mr-2 h-5 w-5" />
+                                {t(I18N.Commerce.productInfo.OUT_OF_STOCK)}
+                            </>
+                        ) : (
+                            <>
+                                <ShoppingCart className="mr-2 h-5 w-5" />
+                                {t(I18N.Commerce.productInfo.addToCart)}
+                            </>
+                        )}
+                    </Button>
+                </div>
+
                 <Button
                     size="lg"
-                    variant='primary'
-                    className="w-full font-bold rounded-xl text-white"
-                    style={canAddToCart ? { background: 'linear-gradient(90deg, #12123F, #1a1a5e)' } : {}}
-                    isDisabled={!canAddToCart || isAdding}
-                    onPress={handleAddToCart}
+                    variant="outline"
+                    className="w-full text-[#9969F8] dark:text-[#9969F8] border-2 border-[#9969F8] hover:bg-[#9969F8]/10"
+                    isDisabled={!canAddToCart || isBuyingNow || isAdding}
+                    onPress={handleBuyNow}
                 >
-                    {isAdding ? (
+                    {isBuyingNow ? (
                         <>
                             <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                             {t(I18N.Commerce.productInfo.adding)}
                         </>
-                    ) : isAdded ? (
-                        <>
-                            <CheckCircle2 className="mr-2 h-5 w-5" />
-                            {t(I18N.Commerce.productInfo.addedToCart)}
-                        </>
-                    ) : !selectedVariant && product.optionGroups.length > 0 ? (
-                        <>
-                            <ShoppingCart className="mr-2 h-5 w-5" />
-                            {t(I18N.Commerce.productInfo.selectOptions)}
-                        </>
-                    ) : !isInStock ? (
-                        <>
-                            <ShoppingCart className="mr-2 h-5 w-5" />
-                            {t(I18N.Commerce.productInfo.OUT_OF_STOCK)}
-                        </>
                     ) : (
-                        <>
-                            <ShoppingCart className="mr-2 h-5 w-5" />
-                            {t(I18N.Commerce.productInfo.addToCart)}
-                        </>
+                        'Comprar ahora'
                     )}
                 </Button>
 
@@ -348,54 +500,43 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl 
                     </div>
                 )}
 
-                {/* Botones secundarios */}
-                <div className="flex gap-2">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 text-muted-foreground rounded-xl"
-                        onPress={handleShare}
-                    >
-                        <Share2 className="mr-2 h-4 w-4" />
-                        {t(I18N.Commerce.productInfo.shareProduct)}
-                    </Button>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 text-muted-foreground rounded-xl"
+                    onPress={handleShare}
+                >
+                    <Share2 className="mr-2 h-4 w-4" />
+                    {t(I18N.Commerce.productInfo.shareProduct)}
+                </Button>
+            </div>
 
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 text-muted-foreground rounded-xl"
-                        onPress={handleDownloadQR}
-                    >
-                        <Download className="mr-2 h-4 w-4" />
-                        Descargar QR
-                    </Button>
+            {/* Shipping/Payment/Warranty Info */}
+            <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#12123F]/10 dark:border-[#F1F1F1]/15 p-4">
+                <div className="flex items-center gap-3">
+                    <Truck className="w-5 h-5 text-[#6BB8FF] shrink-0" />
+                    <span className="text-sm text-foreground">Envío rápido a todo el país</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-5 h-5 text-[#6BB8FF] shrink-0" />
+                    <span className="text-sm text-foreground">Pagos seguros y protegidos</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <RotateCcw className="w-5 h-5 text-[#6BB8FF] shrink-0" />
+                    <span className="text-sm text-foreground">Garantía de devolución</span>
                 </div>
             </div>
 
-            {/* ── ID/REFERENCIA + Tienda ── */}
-            {(selectedVariant || storeLink) && (
-                <div
-                    className="space-y-1 text-xs text-muted-foreground pt-3"
-                    style={{ borderTop: '1px solid rgba(107,184,255,0.2)' }}
-                >
-                    {selectedVariant && (
-                        <div>
-                            ID/REFERENCIA: <span className="font-medium">{selectedVariant.sku}</span>
-                        </div>
-                    )}
-                    {storeLink && (
-                        <div>
-                            {t(I18N.Commerce.productInfo.storeLabel)}:{` `}
-                            <NextLink
-                                href={storeLink.href}
-                                onClick={() => trackClickSellerProfile({ seller_name: storeLink.name })}
-                                className="font-semibold underline underline-offset-2"
-                                style={{ color: '#6BB8FF' }}
-                            >
-                                {storeLink.name}
-                            </NextLink>
-                        </div>
-                    )}
+            {/* SKU */}
+            {selectedVariant && (
+                <div className="text-xs text-foreground">
+                    ID/REFERENCIA: <span className="font-medium">{selectedVariant.sku}</span>
+                </div>
+            )}
+            {showBanner && (
+                <div className="fixed bottom-5 right-5 bg-zinc-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl z-50 flex items-center gap-2 border border-zinc-800 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <CheckCircle2 className="w-4 h-4 text-green-400" />
+                    <span>¡Enlace copiado al portapapeles!</span>
                 </div>
             )}
 
