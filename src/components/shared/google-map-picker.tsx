@@ -292,9 +292,9 @@ export function GoogleMapPicker({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-4xl bg-background rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-4xl max-h-[90vh] bg-background rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-[#9969F8]/5 to-[#6BB8FF]/5">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-[#9969F8]/5 to-[#6BB8FF]/5 flex-shrink-0">
           <div>
             <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
               <MapPin className="h-5 w-5 text-[#9969F8]" />
@@ -316,13 +316,13 @@ export function GoogleMapPicker({
         </div>
 
         {/* Map Container */}
-        <div className="relative">
+        <div className="relative flex-1 min-h-[240px]">
           <div
             ref={mapContainerRef}
-            className="w-full h-[500px] bg-muted"
+            className="w-full h-full min-h-[240px] bg-muted"
             aria-label="Mapa para seleccionar ubicación"
           />
-          
+
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/80">
               <div className="text-center">
@@ -342,7 +342,7 @@ export function GoogleMapPicker({
         </div>
 
         {/* Address Display & Actions */}
-        <div className="px-6 py-4 border-t border-border bg-muted/30">
+        <div className="px-6 py-4 border-t border-border bg-muted/30 flex-shrink-0 overflow-y-auto">
           {selectedLocation && address && (
             <div className="mb-4 p-3 rounded-lg bg-background border border-border">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
