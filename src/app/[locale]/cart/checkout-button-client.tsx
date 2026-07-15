@@ -18,17 +18,17 @@ export default function CheckoutButtonClient({
 
   let isBelowMinimum = false;
 
-  if (!isDisabled && lines) {
-    const selectedLinesTotal = lines
-      .filter((line) => selectedLineIds.includes(line.id))
-      .reduce((sum, line) => sum + line.linePriceWithTax, 0);
-
-    // Requiere un mínimo de $30000 COP (valor en centavos)
-    if (selectedLinesTotal <= 2999999) {
-      isDisabled = true;
-      isBelowMinimum = true;
-    }
-  }
+  // if (!isDisabled && lines) {
+  //   const selectedLinesTotal = lines
+  //     .filter((line) => selectedLineIds.includes(line.id))
+  //     .reduce((sum, line) => sum + line.linePriceWithTax, 0);
+  //
+  //   // Requiere un mínimo de $30000 COP (valor en centavos)
+  //   if (selectedLinesTotal <= 2999999) {
+  //     isDisabled = true;
+  //     isBelowMinimum = true;
+  //   }
+  // }
 
   return (
     <div className="flex flex-col gap-2 w-full">

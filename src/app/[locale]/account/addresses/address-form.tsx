@@ -5,25 +5,13 @@ import { Input } from '@heroui/react';
 import { Controller, useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { CountrySelect } from '@/components/shared/country-select';
-import {
-  GoogleAddressAutocomplete,
-  GoogleAddressSelection,
-  GoogleLocationMapPreview,
-} from '@/components/shared/google-address-autocomplete';
-import { useCallback, useState } from 'react';
+import { getMatiasCity, MATIAS_COLOMBIA_CITIES } from '@/lib/matias-cities';
+import { MATIAS_IDENTITY_DOCUMENT_TYPES } from '@/lib/matias-document-types';
 
 export interface Country {
   id: string;
   code: string;
   name: string;
-}
-
-export interface AddressGeoCustomFields {
-  [key: string]: unknown;
-  latitude?: number | null;
-  longitude?: number | null;
-  neighborhood?: string | null;
-  googlePlaceId?: string | null;
 }
 
 export interface AddressFormData {
@@ -36,17 +24,17 @@ export interface AddressFormData {
   countryCode: string;
   phoneNumber: string;
   company?: string;
-  customFields?: AddressGeoCustomFields;
+  matiasCityId?: string;
+  dni?: string;
+  identityDocumentId?: string;
 }
 
 interface AddressFormProps {
   countries: Country[];
   defaultValues?: Partial<AddressFormData>;
-  googleMapsApiKey?: string;
   onSubmit: (data: AddressFormData) => Promise<void>;
   onCancel?: () => void;
   isSubmitting?: boolean;
-  requireGoogleCoordinates?: boolean;
   labels: {
     fullName: string;
     company: string;
@@ -62,134 +50,35 @@ interface AddressFormProps {
   };
 }
 
-function normalizeCoordinate(value: unknown) {
-  if (value === null || value === undefined || value === '') {
-    return null;
-  }
-
-  const coordinate = Number(value);
-  return Number.isFinite(coordinate) ? coordinate : null;
-}
-
-function hasUsableCoordinates(latitude: number | null, longitude: number | null) {
-  return latitude !== null && longitude !== null && !(latitude === 0 && longitude === 0);
-}
-
 export function AddressForm({
   countries,
   defaultValues,
-  googleMapsApiKey,
   onSubmit,
   onCancel,
   isSubmitting = false,
-  requireGoogleCoordinates = false,
   labels,
 }: AddressFormProps) {
-  const { register, handleSubmit, control, formState: { errors }, setValue, getValues, watch } =
+  const { register, handleSubmit, control, setValue, watch, formState: { errors } } =
     useForm<AddressFormData>({
       defaultValues: {
-        countryCode: countries[0]?.id ?? 'CO',
+        countryCode: countries[0]?.code ?? 'CO',
+        identityDocumentId: '1',
         ...defaultValues,
       },
     });
-  const geoFields = watch('customFields');
-  const selectedStreetLine = watch('streetLine1');
-  const [geoError, setGeoError] = useState<string | null>(null);
-  const hasGoogleMapsApiKey = Boolean(googleMapsApiKey || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
-
-  const handleGoogleAddressSelect = useCallback((selection: GoogleAddressSelection) => {
-    const selectedAddress = selection.formattedAddress || selection.streetLine1;
-
-    if (selectedAddress) {
-      setValue('streetLine1', selectedAddress, { shouldDirty: true, shouldValidate: true });
-    }
-    if (selection.city) {
-      setValue('city', selection.city, { shouldDirty: true, shouldValidate: true });
-    }
-    if (selection.province) {
-      setValue('province', selection.province, { shouldDirty: true, shouldValidate: true });
-    }
-    if (selection.postalCode) {
-      setValue('postalCode', selection.postalCode, { shouldDirty: true, shouldValidate: true });
-    }
-    if (selection.countryCode) {
-      const country = countries.find(
-        item => item.code.toLowerCase() === selection.countryCode?.toLowerCase(),
-      );
-      if (country) {
-        setValue('countryCode', country.id, { shouldDirty: true, shouldValidate: true });
-      }
-    }
-
-    setValue(
-      'customFields',
-      {
-        ...getValues('customFields'),
-        latitude: selection.latitude,
-        longitude: selection.longitude,
-        neighborhood: selection.neighborhood || null,
-        googlePlaceId: selection.googlePlaceId || null,
-      },
-      { shouldDirty: true, shouldValidate: true },
-    );
-    setGeoError(null);
-  }, [countries, getValues, setValue]);
-
-  const handleStreetLineManualChange = useCallback((value: string) => {
-    setValue('streetLine1', value, { shouldDirty: true, shouldValidate: true });
-    setValue(
-      'customFields',
-      {
-        ...getValues('customFields'),
-        latitude: null,
-        longitude: null,
-        neighborhood: null,
-        googlePlaceId: null,
-      },
-      { shouldDirty: true, shouldValidate: true },
-    );
-    setGeoError(null);
-  }, [getValues, setValue]);
-
-  const latitude = normalizeCoordinate(geoFields?.latitude);
-  const longitude = normalizeCoordinate(geoFields?.longitude);
-  const hasValidCoordinates = hasUsableCoordinates(latitude, longitude);
-
-  const submitForm = handleSubmit(async (data) => {
-    const latitude = normalizeCoordinate(data.customFields?.latitude);
-    const longitude = normalizeCoordinate(data.customFields?.longitude);
-    const hasCoordinates = hasUsableCoordinates(latitude, longitude);
-
-    if (requireGoogleCoordinates && !hasCoordinates) {
-      setGeoError('Selecciona una direccion desde Google Maps para guardar sus coordenadas.');
-      return;
-    }
-
-    await onSubmit({
-      ...data,
-      customFields: hasCoordinates
-        ? {
-            ...data.customFields,
-            latitude,
-            longitude,
-          }
-        : undefined,
-    });
-  });
+  const selectedDepartment = watch('province');
+  const selectedMatiasCity = getMatiasCity(watch('matiasCityId'));
+  const matiasDepartments = Array.from(
+    new Set(MATIAS_COLOMBIA_CITIES.map((city) => city.department)),
+  ).sort((a, b) => a.localeCompare(b, 'es'));
+  const matiasCitiesForDepartment = selectedDepartment
+    ? MATIAS_COLOMBIA_CITIES.filter((city) => city.department === selectedDepartment)
+    : MATIAS_COLOMBIA_CITIES;
 
   return (
-    <Form onSubmit={submitForm}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-2 gap-4">
-        <input type="hidden" {...register('customFields.latitude')} />
-        <input type="hidden" {...register('customFields.longitude')} />
-        <input type="hidden" {...register('customFields.neighborhood')} />
-        <input type="hidden" {...register('customFields.googlePlaceId')} />
-        {geoError && (
-          <div className="col-span-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {geoError}
-          </div>
-        )}
-
+        <input type="hidden" {...register('city', { required: labels.city })} />
         <TextField className="col-span-2">
           <Label>{labels.fullName} *</Label>
           <Input {...register('fullName', { required: labels.fullName })} />
@@ -201,63 +90,11 @@ export function AddressForm({
           <Input {...register('company')} />
         </TextField>
 
-        {hasGoogleMapsApiKey ? (
-          <div className="col-span-2">
-            <Controller
-              name="streetLine1"
-              control={control}
-              rules={{ required: labels.streetLine1 }}
-              render={({ field }) => (
-                <GoogleAddressAutocomplete
-                  label={`${labels.streetLine1} *`}
-                  placeholder="Escribe y selecciona una direccion de Google Maps"
-                  apiKey={googleMapsApiKey}
-                  value={field.value ?? ''}
-                  inputName={field.name}
-                  className=""
-                  onValueChange={handleStreetLineManualChange}
-                  onSelect={handleGoogleAddressSelect}
-                />
-              )}
-            />
-            <FieldError>{errors.streetLine1?.message}</FieldError>
-          </div>
-        ) : (
-          <>
-            {requireGoogleCoordinates && (
-              <div className="col-span-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                Configura NEXT_PUBLIC_GOOGLE_MAPS_API_KEY en el front para seleccionar direcciones con Google Maps y guardar coordenadas.
-              </div>
-            )}
-            <TextField className="col-span-2">
-              <Label>{labels.streetLine1} *</Label>
-              <Input
-                autoComplete="address-line1"
-                {...register('streetLine1', { required: labels.streetLine1 })}
-              />
-              <FieldError>{errors.streetLine1?.message}</FieldError>
-            </TextField>
-          </>
-        )}
-
-        {hasValidCoordinates && latitude !== null && longitude !== null && (
-          <div className="col-span-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-900">
-            <p className="font-medium">Direccion seleccionada desde Google Maps</p>
-            {selectedStreetLine && (
-              <p className="mt-1 text-muted-foreground">{selectedStreetLine}</p>
-            )}
-            <p className="mt-1 text-xs text-emerald-700">
-              {geoFields?.neighborhood && <span>Barrio: {geoFields.neighborhood}. </span>}
-              Coordenadas guardadas: {latitude.toFixed(6)}, {longitude.toFixed(6)}
-            </p>
-            <GoogleLocationMapPreview
-              apiKey={googleMapsApiKey}
-              latitude={latitude}
-              longitude={longitude}
-              address={selectedStreetLine}
-            />
-          </div>
-        )}
+        <TextField className="col-span-2">
+          <Label>{labels.streetLine1} *</Label>
+          <Input {...register('streetLine1', { required: labels.streetLine1 })} />
+          <FieldError>{errors.streetLine1?.message}</FieldError>
+        </TextField>
 
         <TextField className="col-span-2">
           <Label>{labels.streetLine2}</Label>
@@ -265,14 +102,103 @@ export function AddressForm({
         </TextField>
 
         <TextField>
-          <Label>{labels.city} *</Label>
-          <Input {...register('city', { required: labels.city })} />
+          <Label>{labels.province} *</Label>
+          <Controller
+            name="province"
+            control={control}
+            rules={{ required: labels.province }}
+            render={({ field }) => (
+              <select
+                className="w-full rounded-xl border border-border bg-primary-foreground px-3 py-3 text-sm text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
+                value={field.value ?? ''}
+                onChange={(event) => {
+                  const department = event.target.value;
+                  field.onChange(department);
+                  if (selectedMatiasCity && selectedMatiasCity.department !== department) {
+                    setValue('matiasCityId', '', { shouldValidate: true });
+                    setValue('city', '', { shouldValidate: true });
+                  }
+                }}
+              >
+                <option value="">Selecciona departamento</option>
+                {matiasDepartments.map((department) => (
+                  <option key={department} value={department}>
+                    {department}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+          <FieldError>{errors.province?.message}</FieldError>
         </TextField>
 
         <TextField>
-          <Label>{labels.province} *</Label>
-          <Input {...register('province', { required: labels.province })} />
+          <Label>{labels.city} *</Label>
+          <Controller
+            name="matiasCityId"
+            control={control}
+            rules={{ required: labels.city }}
+            render={({ field }) => (
+              <select
+                className="w-full rounded-xl border border-border bg-primary-foreground px-3 py-3 text-sm text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
+                value={field.value ?? ''}
+                onChange={(event) => {
+                  const city = getMatiasCity(event.target.value);
+                  field.onChange(event.target.value);
+                  if (city) {
+                    setValue('city', city.city, { shouldValidate: true });
+                    setValue('province', city.department, { shouldValidate: true });
+                    if (city.postalCode) {
+                      setValue('postalCode', city.postalCode, { shouldValidate: true });
+                    }
+                  }
+                }}
+              >
+                <option value="">Selecciona ciudad</option>
+                {matiasCitiesForDepartment.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.city}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+          <FieldError>{errors.matiasCityId?.message}</FieldError>
         </TextField>
+
+        <div className="col-span-2 grid gap-4 rounded-xl border border-border p-4">
+          <p className="text-sm font-semibold text-foreground">Datos para facturación electrónica</p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <TextField>
+              <Label>Tipo de documento *</Label>
+              <Controller
+                name="identityDocumentId"
+                control={control}
+                rules={{ required: 'Tipo de documento' }}
+                render={({ field }) => (
+                  <select
+                    className="w-full rounded-xl border border-border bg-primary-foreground px-3 py-3 text-sm text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
+                    value={field.value ?? '1'}
+                    onChange={field.onChange}
+                  >
+                    {MATIAS_IDENTITY_DOCUMENT_TYPES.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.label} ({type.code})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+              <FieldError>{errors.identityDocumentId?.message}</FieldError>
+            </TextField>
+
+            <TextField>
+              <Label>Documento / NIT *</Label>
+              <Input {...register('dni', { required: 'Documento / NIT' })} />
+              <FieldError>{errors.dni?.message}</FieldError>
+            </TextField>
+          </div>
+        </div>
 
         <TextField>
           <Label>{labels.postalCode} *</Label>

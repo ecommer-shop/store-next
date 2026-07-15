@@ -2,38 +2,33 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button, Checkbox, Form, Radio, RadioGroup, TextField } from '@heroui/react';
+import { Button, Checkbox, Radio, RadioGroup } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@heroui/react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field';
-import { useForm, Controller } from 'react-hook-form';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAuth, useClerk } from '@clerk/nextjs';
 import { useCheckout } from '../checkout-provider';
 import { setShippingAddress, createCustomerAddress } from '../actions';
-import { CountrySelect } from '@/components/shared/country-select';
 import { I18N } from '@/i18n/keys';
-import { CustomerAddress } from '../../account/addresses/addresses-client';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
 import clsx from 'clsx';
+import { getMatiasCity, MATIAS_COLOMBIA_CITIES } from '@/lib/matias-cities';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
   t: (key: string) => string;
 }
 
-function hasGoogleCoordinates(address?: CustomerAddress | null) {
-  const latitude = Number(address?.customFields?.latitude);
-  const longitude = Number(address?.customFields?.longitude);
-  return Number.isFinite(latitude) && Number.isFinite(longitude);
-}
 
 export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
   const td = useTranslations('Account.addresses');
   const router = useRouter();
-  const { addresses, countries, order, googleMapsApiKey } = useCheckout();
+  const { isLoaded, isSignedIn } = useAuth();
+  const { redirectToSignIn } = useClerk();
+  const { addresses, countries, order } = useCheckout();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
     // If order already has a shipping address, try to match it with saved addresses
     if (order.shippingAddress) {
@@ -53,57 +48,81 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [useSameForBilling, setUseSameForBilling] = useState(true);
-  const [address, seetAddress] = useState<CustomerAddress | null>(null);
-  const selectedAddress = addresses.find(a => a.id === selectedAddressId);
-  const selectedAddressHasCoordinates = hasGoogleCoordinates(selectedAddress);
-  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<AddressFormData>({
-    defaultValues: address ? {
-      fullName: address.fullName || '',
-      company: address.company || '',
-      streetLine1: address.streetLine1,
-      streetLine2: address.streetLine2 || '',
-      city: address.city || '',
-      province: address.province || '',
-      postalCode: address.postalCode || '',
-      countryCode: address.country.id,
-      phoneNumber: address.phoneNumber || '',
-      customFields: address.customFields || undefined,
-    } : {
-      countryCode: countries[0]?.id || 'CO',
+  const resolveMatiasCityForAddress = (address: (typeof addresses)[number]) => {
+    const savedCity = getMatiasCity(address.customFields?.matiasCityId);
+    if (savedCity) return savedCity;
+    const addressCity = address.city?.trim().toLocaleLowerCase('es') ?? '';
+    const addressDepartment = address.province?.trim().toLocaleLowerCase('es') ?? '';
+    return MATIAS_COLOMBIA_CITIES.find(
+      (city) =>
+        city.city.toLocaleLowerCase('es') === addressCity &&
+        city.department.toLocaleLowerCase('es') === addressDepartment,
+    );
+  };
+
+  const redirectToClerkSignIn = () => {
+    void redirectToSignIn({
+      redirectUrl: window.location.href,
+    });
+  };
+
+  const ensureSignedIn = () => {
+    if (!isLoaded) return false;
+    if (!isSignedIn) {
+      redirectToClerkSignIn();
+      return false;
     }
-  });
+    return true;
+  };
 
   const handleSelectExistingAddress = async () => {
+    if (!ensureSignedIn()) return;
     if (!selectedAddressId) return;
+    const selectedAddress = addresses.find(a => a.id === selectedAddressId);
+    if (!selectedAddress) return;
+    const fiscalDni = selectedAddress.customFields?.dni?.trim();
+    const identityDocumentId = selectedAddress.customFields?.identityDocumentId || '1';
+    if (!fiscalDni) {
+      alert('Esta dirección no tiene documento/NIT para facturación. Edita la dirección y agrega los datos fiscales.');
+      return;
+    }
+    const matiasCity = resolveMatiasCityForAddress(selectedAddress);
+    if (!matiasCity) {
+      alert('No se pudo asociar la ciudad/departamento de esta dirección con el catálogo de Matias. Edita la dirección y selecciona la ciudad.');
+      return;
+    }
 
     setLoading(true);
     try {
-      const selectedAddress = addresses.find(a => a.id === selectedAddressId);
-      if (!selectedAddress) return;
-
       await setShippingAddress({
         fullName: selectedAddress.fullName || '',
         company: selectedAddress.company || '',
         streetLine1: selectedAddress.streetLine1,
         streetLine2: selectedAddress.streetLine2 || '',
-        city: selectedAddress.city || '',
-        province: selectedAddress.province || '',
+        city: matiasCity.city,
+        province: matiasCity.department,
         postalCode: selectedAddress.postalCode || '',
         countryCode: selectedAddress.country.code,
         phoneNumber: selectedAddress.phoneNumber || '',
-        customFields: selectedAddress.customFields || undefined,
-      }, useSameForBilling);
+        matiasCityId: matiasCity.id,
+        dni: fiscalDni,
+        identityDocumentId,
+      }, useSameForBilling, fiscalDni, identityDocumentId);
 
       router.refresh();
       onComplete();
     } catch (error) {
       console.error('Error setting address:', error);
+      if (error instanceof Error && error.message.includes('AUTH_REQUIRED')) {
+        redirectToClerkSignIn();
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const onSaveNewAddress = async (data: AddressFormData) => {
+    if (!ensureSignedIn()) return;
     setSaving(true);
     try {
       const country = countries.find(c => c.id === data.countryCode || c.code === data.countryCode);
@@ -116,8 +135,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
 
       // Close dialog and reset form
       setDialogOpen(false);
-      reset();
-
       // Refresh to get updated addresses list
       router.refresh();
 
@@ -125,6 +142,10 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       setSelectedAddressId(newAddress.id);
     } catch (error) {
       console.error('Error creating address:', error);
+      if (error instanceof Error && error.message.includes('AUTH_REQUIRED')) {
+        redirectToClerkSignIn();
+        return;
+      }
       alert(`Error creating address: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
@@ -138,7 +159,14 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       {addresses.length >= 0 && (
         <div className="space-y-4">
           <h3 className="font-semibold text-foreground">{t(I18N.Checkout.shippingAddress.selectSaved)}</h3>
-          <RadioGroup defaultValue={selectedAddressId || ''} onChange={setSelectedAddressId} value={selectedAddressId || ''}>
+          <RadioGroup
+            defaultValue={selectedAddressId || ''}
+            onChange={(value: any) => {
+              const nextId = typeof value === 'string' ? value : value?.target?.value;
+              setSelectedAddressId(nextId);
+            }}
+            value={selectedAddressId || ''}
+          >
             {addresses.map((address) => (
 
               <Radio key={address.id} value={address.id} id={address.id} className={clsx(
@@ -163,14 +191,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                         </p>
                         <p className="text-sm text-muted-foreground">{address.country.name}</p>
                         <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
-                        <p className={clsx(
-                          'text-xs font-medium',
-                          hasGoogleCoordinates(address) ? 'text-emerald-600' : 'text-destructive',
-                        )}>
-                          {hasGoogleCoordinates(address)
-                            ? 'Coordenadas de Google Maps guardadas'
-                            : 'Sin coordenadas de Google Maps'}
-                        </p>
                       </div>
                     </Card>
                   </Radio.Content>
@@ -196,16 +216,11 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
               </label>
             </Checkbox.Content>
           </Checkbox>
-          {selectedAddressId && !selectedAddressHasCoordinates && (
-            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              Esta direccion no tiene coordenadas. Agrega una nueva direccion seleccionandola desde Google Maps.
-            </div>
-          )}
 
           <div className="grid lg:grid-cols-3 gap-3 max-w-full">
             <Button
               onClick={handleSelectExistingAddress}
-              isDisabled={!selectedAddressId || loading || !selectedAddressHasCoordinates}
+              isDisabled={!selectedAddressId || loading}
               className="flex-1 rounded-md"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -227,9 +242,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                 </DialogHeader>
                 <AddressForm
                   countries={countries}
-                  googleMapsApiKey={googleMapsApiKey}
                   isSubmitting={saving}
-                  requireGoogleCoordinates
                   onSubmit={onSaveNewAddress}
                   onCancel={() => setDialogOpen(false)}
                   labels={{

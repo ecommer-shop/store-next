@@ -14,7 +14,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, MoreVertical, Home, CreditCard, Edit2, Trash2 } from 'lucide-react';
-import { AddressForm, AddressFormData, AddressGeoCustomFields } from './address-form';
+import { AddressForm, AddressFormData } from './address-form';
 import { createAddress, updateAddress, deleteAddress, setDefaultShippingAddress, setDefaultBillingAddress } from './actions';
 import { useRouter } from 'next/navigation';
 import { I18N } from '@/i18n/keys';
@@ -36,7 +36,11 @@ export interface CustomerAddress {
     postalCode?: string | null;
     country: { id: string; code: string; name: string };
     phoneNumber?: string | null;
-    customFields?: AddressGeoCustomFields | null;
+    customFields?: {
+        matiasCityId?: string | null;
+        dni?: string | null;
+        identityDocumentId?: string | null;
+    } | null;
     defaultShippingAddress?: boolean | null;
     defaultBillingAddress?: boolean | null;
 }
@@ -44,7 +48,6 @@ export interface CustomerAddress {
 interface AddressesClientProps {
     addresses: CustomerAddress[];
     countries: Country[];
-    googleMapsApiKey?: string;
 }
 
 export type CreateAddressPayload = {
@@ -57,7 +60,14 @@ export type CreateAddressPayload = {
     postalCode?: string;
     phoneNumber?: string;
     countryCode: string;
-    customFields?: AddressGeoCustomFields;
+    matiasCityId?: string;
+    dni?: string;
+    identityDocumentId?: string;
+    customFields?: {
+        matiasCityId?: string;
+        dni?: string;
+        identityDocumentId?: string;
+    };
 };
 
 export type UpdateAddressPayload = CreateAddressPayload & {
@@ -65,7 +75,7 @@ export type UpdateAddressPayload = CreateAddressPayload & {
 };
 
 
-export function AddressesClient({ addresses, countries, googleMapsApiKey }: AddressesClientProps) {
+export function AddressesClient({ addresses, countries }: AddressesClientProps) {
     const t = useTranslations('Account.addresses');
     const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -151,7 +161,9 @@ export function AddressesClient({ addresses, countries, googleMapsApiKey }: Addr
                 postalCode: data.postalCode,
                 phoneNumber: data.phoneNumber,
                 countryCode: country.code,
-                customFields: data.customFields,
+                matiasCityId: data.matiasCityId,
+                dni: data.dni,
+                identityDocumentId: data.identityDocumentId,
             };
 
             if (editingAddress) {
@@ -291,18 +303,19 @@ export function AddressesClient({ addresses, countries, googleMapsApiKey }: Addr
                     </DialogHeader>
                     <AddressForm
                         countries={countries}
-                        googleMapsApiKey={googleMapsApiKey}
                         defaultValues={editingAddress ? {
-                            fullName: editingAddress.fullName || '',
-                            company: editingAddress.company || '',
+                            fullName: editingAddress.fullName ?? '',
+                            company: editingAddress.company ?? '',
                             streetLine1: editingAddress.streetLine1,
-                            streetLine2: editingAddress.streetLine2 || '',
-                            city: editingAddress.city || '',
-                            province: editingAddress.province || '',
-                            postalCode: editingAddress.postalCode || '',
-                            phoneNumber: editingAddress.phoneNumber || '',
-                            countryCode: editingAddress.country.id,
-                            customFields: editingAddress.customFields || undefined,
+                            streetLine2: editingAddress.streetLine2 ?? '',
+                            city: editingAddress.city ?? '',
+                            province: editingAddress.province ?? '',
+                            postalCode: editingAddress.postalCode ?? '',
+                            countryCode: editingAddress.country.code,
+                            phoneNumber: editingAddress.phoneNumber ?? '',
+                            matiasCityId: editingAddress.customFields?.matiasCityId ?? undefined,
+                            dni: editingAddress.customFields?.dni ?? undefined,
+                            identityDocumentId: editingAddress.customFields?.identityDocumentId ?? '1',
                         } : undefined}
                         labels={{
                             fullName: t(I18N.Account.addresses.form.fields.fullName.label),

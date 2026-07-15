@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { Loader2, MapPin, Truck, CreditCard, Edit } from 'lucide-react';
+import { Loader2, MapPin, Truck, Edit } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
+import { placeOrder as placeOrderAction } from '../actions';
 
 interface ReviewStepProps {
   onComplete: () => void;
@@ -15,8 +16,10 @@ interface ReviewStepProps {
 }
 
 export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProps) {
-  const { order, paymentMethods, selectedPaymentMethodCode } = useCheckout();
+  const { order } = useCheckout();
   const [loading, setLoading] = useState(false);
+  const [testPaymentLoading, setTestPaymentLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { selectedLineIds } = useSelectedItems();
 
   const handlePlaceOrder = async () => {
@@ -25,6 +28,26 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
     setLoading(true);
     onComplete();
     setLoading(false);
+  };
+
+  const handleTestPayment = async () => {
+    if (!order.shippingAddress || !order.shippingLines?.length) return;
+    setTestPaymentLoading(true);
+    setErrorMessage(null);
+    try {
+      await placeOrderAction('wompi', selectedLineIds);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+        throw error;
+      }
+      console.error('Error finalizing test order:', error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'No se pudo finalizar el pedido de prueba.',
+      );
+      setTestPaymentLoading(false);
+    }
   };
 
   return (
@@ -99,6 +122,27 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
           )}
         </div>
       </div>
+
+      <div className="rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-950">
+        <p className="mb-3 text-sm font-medium">
+          Prueba temporal: finaliza el pedido sin abrir Wompi para validar si se emite la factura.
+        </p>
+        <Button
+          onClick={handleTestPayment}
+          isDisabled={testPaymentLoading || loading || !order.shippingAddress || !order.shippingLines?.length}
+          variant="bordered"
+          className="w-full border-amber-500 text-amber-950"
+        >
+          {testPaymentLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Prueba: finalizar sin Wompi y emitir factura
+        </Button>
+      </div>
+
+      {errorMessage && (
+        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {errorMessage}
+        </p>
+      )}
 
       <Button
         onClick={handlePlaceOrder}

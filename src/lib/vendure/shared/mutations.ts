@@ -153,10 +153,9 @@ export const CreateCustomerAddressMutation = graphql(`
             }
             phoneNumber
             customFields {
-                latitude
-                longitude
-                neighborhood
-                googlePlaceId
+                matiasCityId
+                dni
+                identityDocumentId
             }
             defaultShippingAddress
             defaultBillingAddress
@@ -182,10 +181,9 @@ export const UpdateCustomerAddressMutation = graphql(`
             }
             phoneNumber
             customFields {
-                latitude
-                longitude
-                neighborhood
-                googlePlaceId
+                matiasCityId
+                dni
+                identityDocumentId
             }
             defaultShippingAddress
             defaultBillingAddress
@@ -218,12 +216,6 @@ export const SetOrderShippingAddressMutation = graphql(`
                     postalCode
                     country
                     phoneNumber
-                    customFields {
-                        latitude
-                        longitude
-                        neighborhood
-                        googlePlaceId
-                    }
                 }
             }
             ... on ErrorResult {
@@ -251,12 +243,6 @@ export const SetOrderBillingAddressMutation = graphql(`
                     postalCode
                     country
                     phoneNumber
-                    customFields {
-                        latitude
-                        longitude
-                        neighborhood
-                        googlePlaceId
-                    }
                 }
             }
             ... on ErrorResult {
@@ -268,22 +254,8 @@ export const SetOrderBillingAddressMutation = graphql(`
 `);
 
 export const SetOrderDynamicShippingMethod = graphql(`
-    mutation SetDynamicShippingPrice($price: Int!) {
+    mutation SetOrderDynamicShippingPrice($price: Int!) {
         setDynamicShippingPrice(price: $price)
-    }
-`)
-
-export const CreateDeliveryOrderMutation = graphql(`
-    mutation CreateDeliveryOrder($input: CreateDeliveryOrderInput!) {
-        createDeliveryOrder(input: $input) {
-            success
-            message
-            id_documento
-            fecha_creacion
-            error
-            missing_fields
-            required_fields
-        }
     }
 `)
 
@@ -482,52 +454,6 @@ export const UpdateCustomerEmailAddressMutation = graphql(`
                 errorCode
                 message
             }
-        }
-    }
-`);
-
-export const CreateSubscriptionMutation = graphql(`
-    mutation CreateSubscription($token: String!, $planId: Int!, $paymentMethod: String!) {
-        createSubscriptionWithPayment(token: $token, planId: $planId, paymentMethod: $paymentMethod) {
-            id
-            status
-            plan { name }
-            productLimit
-            hasAIAccess
-            hasElectronicBilling
-        }
-    }
-`);
-
-export const CreatePendingSubscriptionMutation = graphql(`
-    mutation CreatePendingPayment($planId: Int!, $paymentMethod: String!) {
-        createPendingSubscription(planId: $planId, paymentMethod: $paymentMethod) {
-            id
-            status
-            asyncPaymentUrl
-            qrImage
-            transactionId
-            plan { name }
-        }
-    }
-`);
-
-export const StopAutoRenewMutation = graphql(`
-    mutation StopAutoRenew($subscriptionId: Int!) {
-        stopAutoRenew(subscriptionId: $subscriptionId) {
-            id
-            autoRenew
-            status
-        }
-    }
-`);
-
-export const CancelSubscriptionMutation = graphql(`
-    mutation CancelSubscriptionBack($subscriptionId: Int!) {
-        cancelSubscription(subscriptionId: $subscriptionId) {
-            id
-            status
-            plan { name }
         }
     }
 `);

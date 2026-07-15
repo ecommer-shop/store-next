@@ -11,6 +11,15 @@ const isProtectedRoute = createRouteMatcher([
   "/:locale/account/profile(.*)",
 ]);
 
+function isServerActionRequest(req: Request): boolean {
+  return (
+    req.method === 'POST' &&
+    (req.headers.has('next-action') ||
+      req.headers.get('accept')?.includes('text/x-component') ||
+      req.headers.has('rsc'))
+  );
+}
+
 export default clerkMiddleware(async (auth, req) => {
 
   const { pathname, search } = req.nextUrl;
@@ -53,6 +62,10 @@ export default clerkMiddleware(async (auth, req) => {
     const { userId } = await auth();
 
     if (!userId) {
+      if (isServerActionRequest(req)) {
+        return NextResponse.next();
+      }
+
       const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
       const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
 

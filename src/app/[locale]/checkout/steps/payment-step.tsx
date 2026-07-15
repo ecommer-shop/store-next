@@ -10,6 +10,8 @@ import { placeOrder as placeOrderAction } from '../actions';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { CurrencyCode, TransactionStatus } from '@/models/payment';
 
+const WOMPI_MIN_TEST_AMOUNT_IN_CENTS = 1500 * 100;
+
 interface PaymentStepProps {
   onComplete: () => void;
   pb: string;
@@ -88,7 +90,9 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     try {
       // Calculate the correct total based on selected items
       const correctTotal = getSelectedOrderTotal();
-      const amountInCents = Math.round(correctTotal);
+      // TEMPORAL PARA PRUEBAS: Wompi no permite transacciones menores a $1.500 COP.
+      // Quitar este Math.max cuando las pruebas usen productos con valor real suficiente.
+      const amountInCents = Math.max(Math.round(correctTotal), WOMPI_MIN_TEST_AMOUNT_IN_CENTS);
 
       // Generar una referencia única para cada intento de pago usando UUID
       const uniqueId = crypto.randomUUID().replace(/-/g, '');
@@ -146,6 +150,12 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     void openWompi();
   };
 
+  const handleTestPayment = () => {
+    setSelectedPaymentMethodCode('wompi');
+    setPaymentSuccess(true);
+    void finalizeOrder('wompi');
+  };
+
   return (
     <div className="space-y-6">
       <Card className={`p-6 flex items-center gap-4 ${paymentSuccess ? 'bg-green-50 border-green-200' : ''}`}>
@@ -172,6 +182,15 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         className="w-full sticky bottom-0"
       >
         {loading ? 'Cargando...' : paymentSuccess ? 'Finalizar pedido' : 'Pagar con Wompi'}
+      </Button>
+
+      <Button
+        onClick={handleTestPayment}
+        isDisabled={loading}
+        variant="bordered"
+        className="w-full"
+      >
+        Prueba: finalizar sin Wompi
       </Button>
 
       <Script
