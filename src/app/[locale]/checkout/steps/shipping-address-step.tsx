@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { Button } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, MapPin, Plus, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Loader2, MapPin, Plus, CheckCircle2, AlertCircle, Pencil } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
-import { setShippingAddress, createCustomerAddress } from '../actions';
+import { setShippingAddress, createCustomerAddress, updateCustomerAddress } from '../actions';
 import { I18N } from '@/i18n/keys';
 import { CustomerAddress } from '../../account/addresses/addresses-client';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
@@ -45,6 +45,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   });
 
   const [dialogOpen, setDialogOpen] = useState(addresses.length === 0);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [useSameForBilling, setUseSameForBilling] = useState(true);
@@ -107,6 +108,27 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
     }
   };
 
+  const onSaveEditedAddress = async (data: AddressFormData) => {
+    if (!editingAddressId) return;
+    setSaving(true);
+    try {
+      const country = countries.find(
+        (c) => c.id === data.countryCode || c.code === data.countryCode,
+      );
+      if (!country) throw new Error('Invalid country');
+      await updateCustomerAddress(editingAddressId, { ...data, countryCode: country.code });
+      setDialogOpen(false);
+      setEditingAddressId(null);
+      reset();
+      router.refresh();
+    } catch (error) {
+      console.error('Error updating address:', error);
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-5 pt-2">
 
@@ -121,10 +143,17 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
               const isSelected = selectedAddressId === address.id;
 
               return (
-                <button
+                <div
                   key={address.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedAddressId(address.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedAddressId(address.id);
+                    }
+                  }}
                   className={clsx(
                     'w-full text-left rounded-xl border-2 p-4 transition-all duration-150 cursor-pointer',
                     isSelected
@@ -154,22 +183,37 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                       </div>
                     </div>
 
-                    {/* Coords badge */}
-                    <div className="flex-shrink-0">
-                      {hasCoords ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
-                          <CheckCircle2 className="w-3 h-3" />
-                          Maps
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">
-                          <AlertCircle className="w-3 h-3" />
-                          Sin coords
-                        </span>
-                      )}
+                    <div className="flex-shrink-0 flex items-start gap-2">
+                      {/* Coords badge */}
+                      <div>
+                        {hasCoords ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Maps
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">
+                            <AlertCircle className="w-3 h-3" />
+                            Sin coords
+                          </span>
+                        )}
+                      </div>
+                      {/* Edit button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingAddressId(address.id);
+                          setDialogOpen(true);
+                        }}
+                        className="text-muted-foreground hover:text-[#9969F8] transition-colors"
+                        title="Edit address"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -221,7 +265,13 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
           {t(I18N.Checkout.shippingAddress.continueWithSelected)}
         </Button>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen} onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) {
+            setEditingAddressId(null);
+            reset();
+          }
+        }}>
           <DialogTrigger asChild>
             <Button
               type="button"
@@ -236,19 +286,42 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#9969F8]" />
-                {td(I18N.Account.addresses.form.actions.addNewAddress)}
+                {editingAddressId
+                  ? td(I18N.Account.addresses.form.actions.editAddress)
+                  : td(I18N.Account.addresses.form.actions.addNewAddress)}
               </DialogTitle>
               <DialogDescription>
-                {td(I18N.Account.addresses.form.actions.fillForm)}
+                {editingAddressId
+                  ? td(I18N.Account.addresses.form.actions.updateDetails)
+                  : td(I18N.Account.addresses.form.actions.fillForm)}
               </DialogDescription>
             </DialogHeader>
             <AddressForm
+              key={editingAddressId || 'create'}
               countries={countries}
+              defaultValues={editingAddressId ? (() => {
+                const addr = addresses.find(a => a.id === editingAddressId);
+                return addr ? {
+                  fullName: addr.fullName || '',
+                  company: addr.company || '',
+                  streetLine1: addr.streetLine1,
+                  streetLine2: addr.streetLine2 || '',
+                  city: addr.city || '',
+                  province: addr.province || '',
+                  postalCode: addr.postalCode || '',
+                  countryCode: addr.country.id,
+                  phoneNumber: addr.phoneNumber || '',
+                  customFields: addr.customFields || undefined,
+                } : undefined;
+              })() : undefined}
               googleMapsApiKey={googleMapsApiKey}
               isSubmitting={saving}
               requireGoogleCoordinates
-              onSubmit={onSaveNewAddress}
-              onCancel={() => setDialogOpen(false)}
+              onSubmit={editingAddressId ? onSaveEditedAddress : onSaveNewAddress}
+              onCancel={() => {
+                setDialogOpen(false);
+                setEditingAddressId(null);
+              }}
               labels={{
                 fullName: td(I18N.Account.addresses.form.fields.fullName.label),
                 company: td(I18N.Account.addresses.form.fields.company.label),

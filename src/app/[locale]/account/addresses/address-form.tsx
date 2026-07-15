@@ -236,17 +236,25 @@ export function AddressForm({
       <div className="space-y-5">
 
         {/* Nombre completo */}
-        <TextField>
-          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-            {labels.fullName} <span className="text-[#9969F8]">*</span>
-          </Label>
-          <Input
-            className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-            autoComplete="name"
-            {...register('fullName', { required: labels.fullName })}
-          />
-          <FieldError className="text-xs text-red-500 mt-1">{errors.fullName?.message}</FieldError>
-        </TextField>
+        <Controller
+          name="fullName"
+          control={control}
+          rules={{ required: labels.fullName }}
+          render={({ field }) => (
+            <TextField>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                {labels.fullName} <span className="text-[#9969F8]">*</span>
+              </Label>
+              <Input
+                {...field}
+                value={field.value || ''}
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                autoComplete="name"
+              />
+              <FieldError className="text-xs text-red-500 mt-1">{errors.fullName?.message}</FieldError>
+            </TextField>
+          )}
+        />
 
         {/* Dirección principal */}
         {hasGoogleMapsApiKey ? (
@@ -315,19 +323,25 @@ export function AddressForm({
             )}
           </div>
         ) : (
-          <>
-            <TextField>
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-                {labels.streetLine1} <span className="text-[#9969F8]">*</span>
-              </Label>
-              <Input
-                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-                autoComplete="address-line1"
-                {...register('streetLine1', { required: labels.streetLine1 })}
-              />
-              <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
-            </TextField>
-          </>
+          <Controller
+            name="streetLine1"
+            control={control}
+            rules={{ required: labels.streetLine1 }}
+            render={({ field }) => (
+              <TextField>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                  {labels.streetLine1} <span className="text-[#9969F8]">*</span>
+                </Label>
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                  autoComplete="address-line1"
+                />
+                <FieldError className="text-xs text-red-500 mt-1">{errors.streetLine1?.message}</FieldError>
+              </TextField>
+            )}
+          />
         )}
 
         {/* Coordenadas confirmadas */}
@@ -359,16 +373,23 @@ export function AddressForm({
         )}
 
         {/* Apartamento / Suite */}
-        <TextField>
-          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-            {labels.streetLine2}
-          </Label>
-          <Input
-            className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-            placeholder="Apto, piso, oficina…"
-            {...register('streetLine2')}
-          />
-        </TextField>
+        <Controller
+          name="streetLine2"
+          control={control}
+          render={({ field }) => (
+            <TextField>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                {labels.streetLine2}
+              </Label>
+              <Input
+                {...field}
+                value={field.value || ''}
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                placeholder="Apto, piso, oficina…"
+              />
+            </TextField>
+          )}
+        />
 
         {/* Ciudad + Departamento */}
         <div className="grid grid-cols-2 gap-4">
