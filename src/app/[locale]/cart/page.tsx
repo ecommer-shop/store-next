@@ -25,15 +25,14 @@ export default async function CartPage(_props: PageProps<'/cart'>) {
     
     return (
         <CartProviders>
-            <div className="container mx-auto px-4 py-20">
-                <h1 className="text-3xl font-bold mb-2">{t(I18N.Cart.title)}</h1>
-                <p className="text-muted-foreground mb-8">{t(I18N.Cart.subtitle)}</p>
-
+            <div className="container mx-auto px-4 py-6 sm:py-20">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-1">{t(I18N.Cart.title)}</h1>
+                <p className="text-sm text-muted-foreground mb-6">{t(I18N.Cart.subtitle)}</p>
 
                 <Suspense fallback={<CartSkeleton />}>
-                    <Cart/>
-            </Suspense>
-        </div>
+                    <Cart />
+                </Suspense>
+            </div>
         </CartProviders>
     );
 }

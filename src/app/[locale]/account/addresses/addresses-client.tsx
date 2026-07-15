@@ -14,7 +14,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, MoreVertical, Home, CreditCard, Edit2, Trash2 } from 'lucide-react';
-import { AddressForm, AddressFormData } from './address-form';
+import { AddressForm, AddressFormData, AddressGeoCustomFields } from './address-form';
 import { createAddress, updateAddress, deleteAddress, setDefaultShippingAddress, setDefaultBillingAddress } from './actions';
 import { useRouter } from 'next/navigation';
 import { I18N } from '@/i18n/keys';
@@ -36,6 +36,7 @@ export interface CustomerAddress {
     postalCode?: string | null;
     country: { id: string; code: string; name: string };
     phoneNumber?: string | null;
+    customFields?: AddressGeoCustomFields | null;
     defaultShippingAddress?: boolean | null;
     defaultBillingAddress?: boolean | null;
 }
@@ -43,6 +44,7 @@ export interface CustomerAddress {
 interface AddressesClientProps {
     addresses: CustomerAddress[];
     countries: Country[];
+    googleMapsApiKey?: string;
 }
 
 export type CreateAddressPayload = {
@@ -55,6 +57,7 @@ export type CreateAddressPayload = {
     postalCode?: string;
     phoneNumber?: string;
     countryCode: string;
+    customFields?: AddressGeoCustomFields;
 };
 
 export type UpdateAddressPayload = CreateAddressPayload & {
@@ -62,7 +65,7 @@ export type UpdateAddressPayload = CreateAddressPayload & {
 };
 
 
-export function AddressesClient({ addresses, countries }: AddressesClientProps) {
+export function AddressesClient({ addresses, countries, googleMapsApiKey }: AddressesClientProps) {
     const t = useTranslations('Account.addresses');
     const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -135,7 +138,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
         setIsSubmitting(true);
 
         try {
-            const country = countries.find(c => c.id === data.countryCode);
+            const country = countries.find(c => c.id === data.countryCode || c.code === data.countryCode);
             if (!country) throw new Error('Invalid country');
 
             const baseInput: CreateAddressPayload = {
@@ -148,6 +151,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                 postalCode: data.postalCode,
                 phoneNumber: data.phoneNumber,
                 countryCode: country.code,
+                customFields: data.customFields,
             };
 
             if (editingAddress) {
@@ -189,88 +193,129 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                 </Card>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {addresses.map((address) => (
-                        <Card key={address.id}>
-                            <CardHeader>
-                                <div className="flex items-start justify-between">
-                                    <div className="space-y-1 flex-1">
-                                        <CardTitle className="text-lg">{address.fullName}</CardTitle>
-                                        {(address.defaultShippingAddress || address.defaultBillingAddress) && (
-                                            <div className="flex gap-2">
-                                                {address.defaultShippingAddress && (
-                                                    <Badge variant="secondary">{t(I18N.Account.addresses.form.actions.defaultShipping)}</Badge>
-                                                )}
-                                                {address.defaultBillingAddress && (
-                                                    <Badge variant="secondary">{t(I18N.Account.addresses.form.actions.defaultBilling)}</Badge>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button
-                                                variant="ghost"
-                                                size="md"
-                                                aria-label="Address actions"
-                                            >
-                                                <MoreVertical className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem className='cursor-pointer' onClick={() => handleEdit(address)}>
-                                                <Edit2 className="mr-2 h-4 w-4" />
-                                                {t(I18N.Account.addresses.form.actions.edit)}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                className='cursor-pointer'
-                                                onClick={() => handleSetDefaultShipping(address.id)}
-                                                disabled={
-                                                    address.defaultShippingAddress ||
-                                                    (settingDefault?.id === address.id && settingDefault?.type === 'shipping')
-                                                }
-                                            >
-                                                <Home className="mr-2 h-4 w-4" />
-                                                {address.defaultShippingAddress ? t(I18N.Account.addresses.form.actions.defaultShipping) : t(I18N.Account.addresses.form.actions.setAsShipping)}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                className='cursor-pointer'
-                                                onClick={() => handleSetDefaultBilling(address.id)}
-                                                disabled={
-                                                    address.defaultBillingAddress ||
-                                                    (settingDefault?.id === address.id && settingDefault?.type === 'billing')
-                                                }
-                                            >
-                                                <CreditCard className="mr-2 h-4 w-4" />
-                                                {address.defaultBillingAddress ? t(I18N.Account.addresses.form.actions.defaultBilling) : t(I18N.Account.addresses.form.actions.setAsBilling)}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                onClick={() => handleDelete(address.id)}
-                                                className="cursor-pointer text-destructive focus:text-destructive"
-                                            >
-                                                <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                                                {t(I18N.Account.addresses.form.actions.delete)}
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-sm text-muted-foreground space-y-1">
-                                    {address.company && <p>{address.company}</p>}
-                                    <p>
-                                        {address.streetLine1}
-                                        {address.streetLine2 && `, ${address.streetLine2}`}
+                    {addresses.map((address, index) => (
+                        <div
+                            key={address.id}
+                            className={`relative group rounded-2xl border bg-background shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col gap-3
+                                ${address.defaultShippingAddress || address.defaultBillingAddress
+                                    ? 'border-[#9969F8]/40 ring-1 ring-[#9969F8]/20'
+                                    : 'border-border hover:border-[#9969F8]/30'
+                                }`}
+                        >
+                            {/* Label numerado */}
+                            <span className="absolute -top-2.5 left-4 text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#9969F8] text-white shadow-sm">
+                                Dirección {index + 1}
+                            </span>
+
+                            {/* Header: nombre + menú */}
+                            <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-foreground text-base truncate">
+                                        {address.fullName}
                                     </p>
-                                    <p>
-                                        {address.city}, {address.province} {address.postalCode}
-                                    </p>
-                                    <p>{address.country.name}</p>
-                                    <p>{address.phoneNumber}</p>
+                                    {/* Badges */}
+                                    {(address.defaultShippingAddress || address.defaultBillingAddress) && (
+                                        <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                            {address.defaultShippingAddress && (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#9969F8]/10 text-[#9969F8] border border-[#9969F8]/20">
+                                                    <Home className="h-2.5 w-2.5" />
+                                                    {t(I18N.Account.addresses.form.actions.defaultShipping)}
+                                                </span>
+                                            )}
+                                            {address.defaultBillingAddress && (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                                                    <CreditCard className="h-2.5 w-2.5" />
+                                                    {t(I18N.Account.addresses.form.actions.defaultBilling)}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                            </CardContent>
-                        </Card>
+
+                                {/* Menú de acciones */}
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button
+                                            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                                            aria-label="Address actions"
+                                        >
+                                            <MoreVertical className="h-4 w-4" />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem className="cursor-pointer" onClick={() => handleEdit(address)}>
+                                            <Edit2 className="mr-2 h-4 w-4" />
+                                            {t(I18N.Account.addresses.form.actions.edit)}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => handleSetDefaultShipping(address.id)}
+                                            disabled={
+                                                address.defaultShippingAddress ||
+                                                (settingDefault?.id === address.id && settingDefault?.type === 'shipping')
+                                            }
+                                        >
+                                            <Home className="mr-2 h-4 w-4" />
+                                            {address.defaultShippingAddress
+                                                ? t(I18N.Account.addresses.form.actions.defaultShipping)
+                                                : t(I18N.Account.addresses.form.actions.setAsShipping)}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => handleSetDefaultBilling(address.id)}
+                                            disabled={
+                                                address.defaultBillingAddress ||
+                                                (settingDefault?.id === address.id && settingDefault?.type === 'billing')
+                                            }
+                                        >
+                                            <CreditCard className="mr-2 h-4 w-4" />
+                                            {address.defaultBillingAddress
+                                                ? t(I18N.Account.addresses.form.actions.defaultBilling)
+                                                : t(I18N.Account.addresses.form.actions.setAsBilling)}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            onClick={() => handleDelete(address.id)}
+                                            className="cursor-pointer text-destructive focus:text-destructive"
+                                        >
+                                            <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+                                            {t(I18N.Account.addresses.form.actions.delete)}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+
+                            {/* Separador */}
+                            <div className="h-px bg-border" />
+
+                            {/* Contenido de la dirección */}
+                            <div className="space-y-1 text-sm text-muted-foreground">
+                                {address.company && (
+                                    <p className="font-medium text-foreground/80">{address.company}</p>
+                                )}
+                                <p className="leading-snug">
+                                    {address.streetLine1}
+                                    {address.streetLine2 && (
+                                        <span className="text-muted-foreground/70">, {address.streetLine2}</span>
+                                    )}
+                                </p>
+                                <p>
+                                    {address.city}{address.province && `, ${address.province}`}
+                                    {address.postalCode && (
+                                        <span className="ml-1 text-xs font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                                            {address.postalCode}
+                                        </span>
+                                    )}
+                                </p>
+                                <p className="text-muted-foreground/70">{address.country.name}</p>
+                                {address.phoneNumber && (
+                                    <p className="font-medium text-foreground/70 pt-0.5">
+                                        📞 {address.phoneNumber}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}
@@ -287,6 +332,19 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
                     </DialogHeader>
                     <AddressForm
                         countries={countries}
+                        googleMapsApiKey={googleMapsApiKey}
+                        defaultValues={editingAddress ? {
+                            fullName: editingAddress.fullName || '',
+                            company: editingAddress.company || '',
+                            streetLine1: editingAddress.streetLine1,
+                            streetLine2: editingAddress.streetLine2 || '',
+                            city: editingAddress.city || '',
+                            province: editingAddress.province || '',
+                            postalCode: editingAddress.postalCode || '',
+                            phoneNumber: editingAddress.phoneNumber || '',
+                            countryCode: editingAddress.country.id,
+                            customFields: editingAddress.customFields || undefined,
+                        } : undefined}
                         labels={{
                             fullName: t(I18N.Account.addresses.form.fields.fullName.label),
                             company: t(I18N.Account.addresses.form.fields.company.label),

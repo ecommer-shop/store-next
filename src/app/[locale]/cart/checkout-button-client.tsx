@@ -1,9 +1,11 @@
 "use client";
 
-import Link from 'next/link';
 import { Button } from '@heroui/react';
+import { Link } from '@/i18n/navigation';
 import { useSelectedItems } from './selected-items-context';
-import React from 'react';
+import { useUser, useClerk } from '@clerk/nextjs';
+import React, { useEffect, useRef } from 'react';
+import { useRouter } from '@/i18n/navigation';
 
 export default function CheckoutButtonClient({
   label,
@@ -13,9 +15,12 @@ export default function CheckoutButtonClient({
   lines?: Array<{ id: string; linePriceWithTax: number }>;
 }) {
   const { selectedLineIds } = useSelectedItems();
+  const { isSignedIn, isLoaded } = useUser();
+  const { openSignUp } = useClerk();
+  const router = useRouter();
+  const hasAuthenticatedRef = useRef(false);
 
   let isDisabled = selectedLineIds.length === 0;
-
   let isBelowMinimum = false;
 
   if (!isDisabled && lines) {
@@ -30,15 +35,56 @@ export default function CheckoutButtonClient({
     }
   }
 
+  // Detectar cuando el usuario se autentica y sincronizar con Vendure
+  useEffect(() => {
+    if (isLoaded && isSignedIn && !hasAuthenticatedRef.current) {
+      hasAuthenticatedRef.current = true;
+      
+      // Autenticar con Vendure para fusionar el carrito anónimo
+      fetch('/api/authenticate-vendure', {
+        method: 'POST',
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            // Recargar la página para mostrar el carrito fusionado
+            router.refresh();
+          } else {
+            console.error('[Cart] Vendure authentication failed:', data.error);
+          }
+        })
+        .catch((error) => {
+          console.error('[Cart] Error authenticating with Vendure:', error);
+        });
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  const handleCheckout = (e: React.MouseEvent) => {
+    if (!isSignedIn) {
+      e.preventDefault();
+      openSignUp();
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-2 w-full">
-      <Button className="w-full" size="lg" isDisabled={isDisabled}>
-        <Link className="w-full" href={isDisabled ? "#" : "/checkout"}>
+    <div className="flex flex-col gap-1.5 lg:gap-2 w-full">
+      {isDisabled ? (
+        <Button className="w-full h-10 lg:h-11 text-sm lg:text-base" size="lg" isDisabled>
           {label}
+        </Button>
+      ) : (
+        <Link 
+          href="/checkout" 
+          className="w-full"
+          onClick={handleCheckout}
+        >
+          <Button className="w-full h-10 lg:h-11 text-sm lg:text-base" size="lg">
+            {label}
+          </Button>
         </Link>
-      </Button>
+      )}
       {isBelowMinimum && (
-        <span className="text-xs text-[color:var(--warning-text)] text-center font-medium">
+        <span className="text-[10px] lg:text-xs text-[color:var(--warning-text)] text-center font-medium leading-tight">
           Haz tu pedido desde $30.000 COP y disfruta de nuestro servicio.
         </span>
       )}

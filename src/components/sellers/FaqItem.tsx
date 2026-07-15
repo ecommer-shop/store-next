@@ -1,33 +1,33 @@
 'use client';
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 interface FaqItemProps {
   question: string;
   answer: string;
+  defaultOpen?: boolean;
 }
 
-export function FaqItem({ question, answer }: FaqItemProps) {
-  const [open, setOpen] = useState(false);
+export function FaqItem({ question, answer, defaultOpen = false }: FaqItemProps) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white/80 dark:bg-[#12123F]/60 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-xl overflow-hidden transition-all hover:border-[#9969F8]/30">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex justify-between items-center px-6 py-5 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+        className="w-full flex justify-between items-center gap-4 px-6 py-5 text-left font-semibold text-[#12123F] dark:text-[#F1F1F1] hover:bg-black/5 dark:hover:bg-[#F1F1F1]/5 transition-colors cursor-pointer"
       >
         <span>{question}</span>
-        <svg
-          className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-          style={{ color: '#9969F8' }}
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-        >
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+        <ChevronDown
+          className={`w-5 h-5 flex-shrink-0 text-[#9969F8] transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        />
       </button>
-      {open && (
-        <div className="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+      <div
+        className={`overflow-hidden transition-all duration-200 ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+      >
+        <div className="px-6 pb-5 text-sm text-[#12123F]/70 dark:text-[#F1F1F1]/70 leading-relaxed">
           {answer}
         </div>
-      )}
+      </div>
     </div>
   );
 }

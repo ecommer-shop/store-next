@@ -57,7 +57,6 @@ export default clerkMiddleware(async (auth, req) => {
       const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
 
       const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
-
       signInUrl.searchParams.set("redirect_url", returnTo);
       return NextResponse.redirect(signInUrl);
     }

@@ -7,7 +7,7 @@ import {
     GetEligiblePaymentMethodsQuery,
     GetEligibleShippingMethodsQuery,
 } from '@/lib/vendure/shared/queries';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/navigation';
 import CheckoutFlow from './checkout-flow';
 import { CheckoutProvider } from './checkout-provider';
 import { noIndexRobots } from '@/lib/vendure/shared/metadata';
@@ -18,6 +18,8 @@ import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
 import { getAuthToken } from '@/lib/vendure/server/auth';
 import { Spinner } from '@heroui/react';
+
+const MESSENGER_DOMIS_SHIPPING_METHOD_CODE = 'messenger-domis-shipping';
 
 
 export const metadata: Metadata = {
@@ -34,7 +36,8 @@ interface CheckoutContentProps {
     uri: string;
 }
 
-export default async function CheckoutContent({ pb, uri }: CheckoutContentProps) {
+export default async function CheckoutContent({ pb, uri, params }: CheckoutContentProps) {
+    const { locale } = params;
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
     const token = await getAuthToken();
@@ -54,19 +57,22 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
     const activeOrder = orderRes.data.activeOrder;
 
     if (!activeOrder || activeOrder.lines.length === 0) {
-        return redirect('/cart');
+        return redirect({ href: '/cart', locale });
     }
 
     // If the order is no longer in AddingItems state, it's been completed
     // Redirect to the order confirmation page
     if (activeOrder.state !== 'AddingItems' && activeOrder.state !== 'ArrangingPayment') {
-        return redirect(`/order-confirmation/${activeOrder.code}`);
+        return redirect({ href: `/order-confirmation/${activeOrder.code}`, locale });
     }
 
     const addresses = addressesRes.data.activeCustomer?.addresses || [];
-    const shippingMethods = shippingMethodsRes.data.eligibleShippingMethods || [];
+    const shippingMethods = (shippingMethodsRes.data.eligibleShippingMethods || [])
+        .filter(method => method.code === MESSENGER_DOMIS_SHIPPING_METHOD_CODE)
+        .slice(0, 1);
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
+    const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
     return (
         <Suspense fallback={
@@ -84,6 +90,7 @@ export default async function CheckoutContent({ pb, uri }: CheckoutContentProps)
                     countries={countries}
                     shippingMethods={shippingMethods}
                     paymentMethods={paymentMethods}
+                    googleMapsApiKey={googleMapsApiKey}
                 >
                     <CheckoutFlow onSetShippingMethod={setShippingMethod} pb={pb} uri={uri}/>
                 </CheckoutProvider>

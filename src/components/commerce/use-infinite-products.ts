@@ -17,6 +17,7 @@ interface UseInfiniteProductsOptions {
     token?: string;
   };
   searchParams?: { [key: string]: string | string[] | undefined };
+  collectionSlug?: string;
 }
 
 interface PageData {
@@ -24,14 +25,16 @@ interface PageData {
   totalItems: number;
   token?: string;
   page: number;
+  storeNames?: Record<string, string>;
+  storeChannelCodes?: Record<string, string>;
 }
-export function useInfiniteProducts({ take, initialData, searchParams = {} }: UseInfiniteProductsOptions) {
+export function useInfiniteProducts({ take, initialData, searchParams = {}, collectionSlug }: UseInfiniteProductsOptions) {
   // Create a search params key for the query cache
   const searchParamsKey = JSON.stringify({
     facets: searchParams.facets || [],
     q: searchParams.q || '',
     sort: searchParams.sort || 'name-asc',
-    collection: searchParams.collection || '',
+    collection: searchParams.collection || collectionSlug || '',
   });
 
   dayjs.extend(duration);
@@ -46,6 +49,7 @@ export function useInfiniteProducts({ take, initialData, searchParams = {} }: Us
         take,
         token: undefined,
         searchParams, // Pass search params to the fetch function
+        collectionSlug,
       });
       return { ...result, page };
     },

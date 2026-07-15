@@ -1,13 +1,20 @@
-import { ProductCarousel } from "@/components/commerce/product-carousel";
+import { FeaturedProductsInfiniteGrid } from "@/components/commerce/featured-products-infinite-grid";
 import { query } from "@/lib/vendure/server/api";
-import { GetProductsFallbackQuery, SearchProductsQuery } from "@/lib/vendure/shared/queries";
+import { GetProductsFallbackQuery, GetProductsSellerNamesQuery, SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { Suspense } from "react";
 import { FeaturedProductsLoading } from './featured-products-loading';
 import { getTranslations } from "next-intl/server";
 import { I18N } from "@/i18n/keys";
 import { CurrencyCode } from "@/graphql/generated";
+import { readFragment } from "@/graphql";
+import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
 
-const getFeaturedCollectionProducts = async () => {
+const getFeaturedCollectionProducts = async (): Promise<{
+  items: any[];
+  totalItems: number;
+  storeNames: Record<string, string>;
+  storeChannelCodes: Record<string, string>;
+}> => {
   const result = await query(SearchProductsQuery, {
     input: {
       take: 12,
@@ -15,13 +22,43 @@ const getFeaturedCollectionProducts = async () => {
       groupByProduct: true,
     },
   });
-  
 
   const searchItems = result.data.search.items ?? [];
+  const totalItems = result.data.search.totalItems ?? 0;
+
   if (searchItems.length > 0) {
-    return searchItems;
+    // Fetch seller names in parallel using the product IDs from search results
+    const productIds = searchItems.map((item) => {
+      const p = readFragment(ProductCardFragment, item);
+      return p.productId;
+    });
+
+    let storeNames: Record<string, string> = {};
+    let storeChannelCodes: Record<string, string> = {};
+    try {
+      const sellerResult = await query(GetProductsSellerNamesQuery, {
+        options: {
+          filter: { id: { in: productIds } },
+          take: productIds.length,
+        },
+      });
+      for (const p of sellerResult.data.products.items ?? []) {
+        const shop = (p as any).sellerShop as { sellerName?: string; channelCode?: string } | null | undefined;
+        if (shop?.sellerName) {
+          storeNames[p.id] = shop.sellerName;
+        }
+        if (shop?.channelCode) {
+          storeChannelCodes[p.id] = shop.channelCode;
+        }
+      }
+    } catch {
+      // sellerShop may not be available on older backends — degrade gracefully
+    }
+
+    return { items: searchItems, totalItems, storeNames, storeChannelCodes };
   }
 
+  // Fallback: use products query (already has sellerShop)
   const fallback = await query(GetProductsFallbackQuery, {
     options: {
       take: 12,
@@ -31,10 +68,21 @@ const getFeaturedCollectionProducts = async () => {
     },
   });
 
-  const filteredProducts = (fallback.data.products.items ?? []).filter(product => product.variants && product.variants.length > 0);
+  const filteredProducts = (fallback.data.products.items ?? []).filter(
+    (product) => product.variants && product.variants.length > 0
+  );
 
-  return filteredProducts.map((product) => {
+  const storeNames: Record<string, string> = {};
+  const storeChannelCodes: Record<string, string> = {};
+  const mapped = filteredProducts.map((product) => {
     const firstVariant = product.variants?.[0];
+    const shop = (product as any).sellerShop as { sellerName?: string; channelCode?: string } | null | undefined;
+    if (shop?.sellerName) {
+      storeNames[product.id] = shop.sellerName;
+    }
+    if (shop?.channelCode) {
+      storeChannelCodes[product.id] = shop.channelCode;
+    }
     return {
       productId: product.id,
       productName: product.name,
@@ -52,18 +100,24 @@ const getFeaturedCollectionProducts = async () => {
       currencyCode: (firstVariant?.currencyCode ?? CurrencyCode.Cop) as CurrencyCode,
     };
   }) as any[];
-}
+
+  return { items: mapped, totalItems: mapped.length, storeNames, storeChannelCodes };
+};
 
 export async function FeaturedProducts() {
-  const products = await getFeaturedCollectionProducts();
+  const { items, totalItems, storeNames, storeChannelCodes } = await getFeaturedCollectionProducts();
   const t = await getTranslations("HeroSection");
 
   return (
     <Suspense fallback={<FeaturedProductsLoading />}>
-      <ProductCarousel
+      <FeaturedProductsInfiniteGrid
         title={t(I18N.HeroSection.featuredProducts)}
-        products={products}
+        initialItems={items}
+        initialTotalItems={totalItems}
+        storeNames={storeNames}
+        storeChannelCodes={storeChannelCodes}
+        take={12}
       />
     </Suspense>
-  )
+  );
 }

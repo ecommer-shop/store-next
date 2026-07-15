@@ -59,6 +59,15 @@ export const GetProductsFallbackQuery = graphql(`
                     priceWithTax
                     currencyCode
                 }
+                collections {
+                    id
+                    name
+                    slug
+                }
+                sellerShop {
+                    sellerName
+                    channelCode
+                }
             }
         }
     }
@@ -114,6 +123,8 @@ export const GetProductDetailQuery = graphql(`
                 slug
                 parent {
                     id
+                    name
+                    slug
                 }
             }
         }
@@ -167,6 +178,8 @@ export const GetProductDetailLegacyQuery = graphql(`
                 slug
                 parent {
                     id
+                    name
+                    slug
                 }
             }
         }
@@ -247,6 +260,12 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             billingAddress {
                 fullName
@@ -258,6 +277,12 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             shippingLines {
                 shippingMethod {
@@ -314,6 +339,12 @@ export const GetCustomerAddressesQuery = graphql(`
                     name
                 }
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
                 defaultShippingAddress
                 defaultBillingAddress
             }
@@ -424,6 +455,12 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             billingAddress {
                 fullName
@@ -435,6 +472,12 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
             }
             shippingLines {
                 shippingMethod {
@@ -475,6 +518,20 @@ export const GetOrderDetailQuery = graphql(`
             discounts {
                 description
                 amountWithTax
+            }
+        }
+    }
+`);
+
+export const GetProductsSellerNamesQuery = graphql(`
+    query GetProductsSellerNames($options: ProductListOptions) {
+        products(options: $options) {
+            items {
+                id
+                sellerShop {
+                    sellerName
+                    channelCode
+                }
             }
         }
     }
@@ -536,4 +593,102 @@ export const GetWompiSignatureQuery = graphql(`
     }
     `
 )
+
+export const GetProductVariantStockQuery = graphql(`
+    query GetProductStock($id: ID!) {
+        productVariant(id: $id) {
+            id
+            stockLevels {
+                stockOnHand
+                stockAllocated
+                stockLocationId
+            }
+        }
+    }
+
+`)
+
+export const GetMySubscriptionQuery = graphql(`
+    query GetMySubscription {
+        mySubscription {
+            id
+            status
+            startsAt
+            endsAt
+            autoRenew
+            plan {
+                id
+                name
+                price
+                billingInterval
+                description
+            }
+            paymentMethodType
+            paymentFlowType
+            productLimit
+            variationLimit
+            hasAIAccess
+            hasElectronicBilling
+        }
+    }
+`)
+
+export const GetAllPlansQuery = graphql(`
+    query GetAllPlans {
+        allPlans {
+            id
+            name
+            price
+            billingInterval
+            description
+            planFeatures {
+                id
+                feature {
+                    code
+                    name
+                    type
+                }
+                value
+            }
+        }
+    }
+`)
+
+export const CheckProductLimitQuery = graphql(`
+    query CheckProductLimit {
+        checkProductLimit {
+            allowed
+            current
+            limit
+        }
+    }
+`)
+
+export const CheckFeatureAccessQuery = graphql(`
+    query CheckFeatureAccess($featureCode: String!) {
+        checkFeatureAccess(featureCode: $featureCode)
+    }
+`)
+export const CalculateDeliveryCostQuery = graphql(`
+    query CalculateDeliveryCost($input: DeliveryCostInput!) {
+        calculateDeliveryCost(input: $input) {
+            success
+            price {
+                value
+                currency
+            }
+            distance {
+                value
+                unit
+                text
+            }
+            duration {
+                value
+                unit
+                text
+            }
+            error
+        }
+    }
+`);
 

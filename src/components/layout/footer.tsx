@@ -3,7 +3,9 @@ import { getTopCollections } from '@/lib/vendure/cached';
 
 import Image from "next/image";
 import Link from "next/link";
-import { CopyrightContent, FooterCategoriesLabel, FooterGitHubLink, UseLayoutText, UseAboutText } from './footer-content';
+import { getTranslations } from 'next-intl/server';
+import { I18N } from '@/i18n/keys';
+import { Users } from 'lucide-react';
 
 function FooterBrandName() {
     // Can hardcode or translate - for now keep as is since it's brand name
@@ -31,7 +33,12 @@ const getCachedTopCollections = async () => {
 export async function Footer() {
     /*'use cache'
     cacheLife('days');*/
-    const collections = await getCachedTopCollections();
+    const [collections, tLayout, tAbout, tUsers] = await Promise.all([
+        getCachedTopCollections(),
+        getTranslations('Layout'),
+        getTranslations('About'),
+        getTranslations('Users'),
+    ]);
 
     return (
         <footer className="border-t border-border mt-auto">
@@ -44,7 +51,7 @@ export async function Footer() {
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold mb-4"><FooterCategoriesLabel /></p>
+                        <p className="text-sm font-semibold mb-4">{tLayout(I18N.Layout.footer.sections.categories)}</p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             {collections.map((collection: TopCollection) => (
                                 <li key={collection.id}>
@@ -60,14 +67,23 @@ export async function Footer() {
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold mb-4"><UseLayoutText path={['footer', 'sections', 'about', 'title']} /></p>
+                        <p className="text-sm font-semibold mb-4">{tLayout(I18N.Layout.footer.sections.about.title)}</p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
                                 <Link
                                     href="/about-us"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseLayoutText path={['footer', 'sections', 'about', 'label']} />
+                                    {tLayout(I18N.Layout.footer.sections.about.label)}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/users"
+                                    className="hover:text-foreground transition-colors inline-flex items-center gap-1.5"
+                                >
+                                    <Users className="size-3.5 opacity-70" />
+                                    {tUsers('footer.link')}
                                 </Link>
                             </li>
                             <li>
@@ -77,7 +93,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents', 'terms']} />
+                                    {tAbout(I18N.About.documents.terms)}
                                 </a>
                             </li>
                             <li>
@@ -87,7 +103,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents', 'warranty']} />
+                                    {tAbout(I18N.About.documents.warranty)}
                                 </a>
                             </li>
                             <li>
@@ -97,7 +113,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents', 'withdrawal']} />
+                                    {tAbout(I18N.About.documents.withdrawal)}
                                 </a>
                             </li>
                             <li>
@@ -107,7 +123,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    <UseAboutText path={['documents', 'paymentReversal']} />
+                                    {tAbout(I18N.About.documents.paymentReversal)}
                                 </a>
                             </li>
                         </ul>
@@ -117,7 +133,9 @@ export async function Footer() {
                 {/* Bottom Section */}
                 <div
                     className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <CopyrightContent />
+                    <div>
+                        {tLayout(I18N.Layout.footer.copyright, {year: new Date().getFullYear()})}
+                    </div>
                     <div className="flex items-center gap-2">
 
                         <Image

@@ -113,7 +113,11 @@ async function fetchStoreCatalogProducts(
 }
 
 /** Catálogo del canal; el índice `search` suele devolver 0 en tiendas de vendedor. */
-export async function getStoreProducts(slug: string, locale: string): Promise<StoreProductCard[]> {
+export async function getStoreProducts(
+    slug: string,
+    locale: string,
+    searchParams: { [key: string]: string | string[] | undefined } = {},
+): Promise<StoreProductCard[]> {
     const opts = sellerStoreRequestOptions(slug, locale);
 
     try {
@@ -121,7 +125,7 @@ export async function getStoreProducts(slug: string, locale: string): Promise<St
             SearchProductsQuery,
             {
                 input: {
-                    ...buildSearchInput({ searchParams: {} }),
+                    ...buildSearchInput({ searchParams }),
                     take: 100,
                     skip: 0,
                 },
@@ -137,6 +141,21 @@ export async function getStoreProducts(slug: string, locale: string): Promise<St
     }
 
     return fetchStoreCatalogProducts(slug, locale);
+}
+
+export async function getStoreCollections(slug: string, locale: string): Promise<Array<{ id: string; name: string; slug: string }>> {
+    try {
+        const { data } = await query(
+            GetProductsFallbackQuery,
+            { options: { take: 100, skip: 0, filter: { enabled: { eq: true } } } },
+            sellerStoreRequestOptions(slug, locale),
+        );
+        const allCollections = (data.products.items ?? []).flatMap(p => p.collections ?? []);
+        return Array.from(new Map(allCollections.map(c => [c.id, c])).values());
+    } catch (e) {
+        console.warn('[store] getStoreCollections falló:', vendureMessage(e).slice(0, 200));
+        return [];
+    }
 }
 
 /** Destacados por IDs del plugin store-page (no depende del índice de búsqueda). */

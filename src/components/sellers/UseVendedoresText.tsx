@@ -15,5 +15,9 @@ export function UseVendedoresText({ path }: VendedoresTextProps) {
     I18N.Vendedores
   );
 
+  if (!key) {
+    return null;
+  }
+
   return <>{t(key)}</>;
 }

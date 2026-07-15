@@ -18,6 +18,7 @@ export default async function AddressesContent() {
 
   const addresses = addressesResult.data.activeCustomer?.addresses || [];
   const countries = countriesResult.data.availableCountries || [];
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
   const t = await getTranslations('Account.addresses');
   return (
     <div className="space-y-6">
@@ -28,7 +29,11 @@ export default async function AddressesContent() {
         </p>
       </div>
 
-      <AddressesClient addresses={addresses} countries={countries} />
+      <AddressesClient
+        addresses={addresses}
+        countries={countries}
+        googleMapsApiKey={googleMapsApiKey}
+      />
     </div>
   );
 }

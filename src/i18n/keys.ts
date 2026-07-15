@@ -29,6 +29,7 @@ export const I18N = {
     profile: 'profile',
     orders: 'orders',
     addresses: 'addresses',
+    billing: 'billing',
     logout: 'logout',
     login: 'login',
     signup: 'signup',
@@ -174,6 +175,35 @@ export const I18N = {
         deleting: 'deleteAccount.deleting',
         successTitle: 'deleteAccount.successTitle',
         errorTitle: 'deleteAccount.errorTitle'
+      }
+    },
+    billing: {
+      loading: {
+        title: 'billing.loading.title',
+        loading: 'billing.loading.loading',
+        description: 'billing.loading.description'
+      },
+      content: {
+        title: 'billing.content.title',
+        currentPlan: 'billing.content.currentPlan',
+        status: 'billing.content.status',
+        paymentMethod: 'billing.content.paymentMethod',
+        nextBilling: 'billing.content.nextBilling',
+        endsAt: 'billing.content.endsAt',
+        autoRenew: 'billing.content.autoRenew',
+        productsUsed: 'billing.content.productsUsed',
+        variationsUsed: 'billing.content.variationsUsed',
+        changePlan: 'billing.content.changePlan',
+        cancelSubscription: 'billing.content.cancelSubscription',
+        stopAutoRenew: 'billing.content.stopAutoRenew',
+        reactivate: 'billing.content.reactivate'
+      },
+      statusLabels: {
+        ACTIVE: 'billing.statusLabels.ACTIVE',
+        PENDING_PAYMENT: 'billing.statusLabels.PENDING_PAYMENT',
+        GRACE_PERIOD: 'billing.statusLabels.GRACE_PERIOD',
+        SUSPENDED: 'billing.statusLabels.SUSPENDED',
+        CANCELLED: 'billing.statusLabels.CANCELLED'
       }
     }
   },
@@ -469,8 +499,9 @@ export const I18N = {
       addToCart: 'productInfo.addToCart',
       addedToCart: 'productInfo.addedToCart',
       selectOptions: 'productInfo.selectOptions',
-      outOfStock: 'productInfo.outOfStock',
-      inStock: 'productInfo.inStock',
+      OUT_OF_STOCK: 'productInfo.OUT_OF_STOCK',
+      IN_STOCK: 'productInfo.IN_STOCK',
+      LOW_STOCK: 'productInfo.LOW_STOCK',
       storeLabel: 'productInfo.storeLabel',
       sku: 'productInfo.sku',
       quantity: 'productInfo.quantity',
@@ -480,8 +511,14 @@ export const I18N = {
         addedDescription: 'productInfo.toast.addedDescription',
         errorTitle: 'productInfo.toast.errorTitle',
         errorDescription: 'productInfo.toast.errorDescription',
-        goToCart: 'productInfo.toast.goToCart'
-      }
+        goToCart: 'productInfo.toast.goToCart',
+        shareSuccess: 'productInfo.toast.shareSuccess',
+        shareError: 'productInfo.toast.shareError',
+        copyLinkSuccess: 'productInfo.toast.copyLinkSuccess',
+        copyLinkError: 'productInfo.toast.copyLinkError'
+      },
+      shareProduct: 'productInfo.shareProduct',
+      shareText: 'productInfo.shareText'
     },
     relatedProducts: {
       title: 'relatedProducts.title'
@@ -547,12 +584,88 @@ export const I18N = {
         title: 'features.wompi.title',
         description: 'features.wompi.description'
       }
+    },
+    sellersCta: {
+      title: 'sellersCta.title',
+      description: 'sellersCta.description',
+      button: 'sellersCta.button'
     }
   },
 
   About: {
     title: 'title',
     description: 'description',
+    history: 'history',
+    mission: 'mission',
+    vision: 'vision',
+    audience: {
+      title: 'audience.title',
+      description: 'audience.description',
+      securePayments: 'audience.securePayments',
+      localDelivery: 'audience.localDelivery',
+      alwaysOpen: 'audience.alwaysOpen',
+      cta: 'audience.cta',
+    },
+    team: {
+      title: 'team.title',
+      leadership: {
+        label: 'team.leadership.label',
+        ceo: 'team.leadership.ceo',
+        accountant: 'team.leadership.accountant',
+        serverLead: 'team.leadership.serverLead',
+        eiaLead: 'team.leadership.eiaLead',
+        lawyer: 'team.leadership.lawyer',
+      },
+      server: {
+        label: 'team.server.label',
+        mary: 'team.server.mary',
+        brayan: 'team.server.brayan',
+        juanFelipe: 'team.server.juanFelipe',
+        william: 'team.server.william',
+        darwin: 'team.server.darwin',
+      },
+      eia: {
+        label: 'team.eia.label',
+        javier: 'team.eia.javier',
+        kevin: 'team.eia.kevin',
+        ivan: 'team.eia.ivan',
+      },
+    },
+    location: {
+      title: 'location.title',
+      text: 'location.text',
+    },
+    differentiators: {
+      title: 'differentiators.title',
+      description: 'differentiators.description',
+      simetria: 'differentiators.simetria',
+      messenger: 'differentiators.messenger',
+      compliance: 'differentiators.compliance',
+      incentives: 'differentiators.incentives',
+    },
+    faq: {
+      title: 'faq.title',
+      q1: {
+        q: 'faq.q1.q',
+        a: 'faq.q1.a',
+      },
+      q2: {
+        q: 'faq.q2.q',
+        a: 'faq.q2.a',
+      },
+      q3: {
+        q: 'faq.q3.q',
+        a: 'faq.q3.a',
+      },
+      q4: {
+        q: 'faq.q4.q',
+        a: 'faq.q4.a',
+      },
+      q5: {
+        q: 'faq.q5.q',
+        a: 'faq.q5.a',
+      },
+    },
     legal: {
       label: 'legal.label',
       rs: 'legal.rs',
@@ -572,7 +685,12 @@ export const I18N = {
       warranty: 'documents.warranty',
       withdrawal: 'documents.withdrawal',
       paymentReversal: 'documents.paymentReversal',
-    }
+    },
+    cta: {
+      title: 'cta.title',
+      register: 'cta.register',
+      discover: 'cta.discover',
+    },
   },
 
   Legal: {
@@ -584,13 +702,61 @@ export const I18N = {
     }
   },
 
+  Planes: {
+    free: 'Planes.free',
+    tienda: 'Planes.tienda',
+    omnichannel: 'Planes.omnichannel',
+    cta: 'Planes.cta',
+    products: 'Planes.products',
+    variations: 'Planes.variations',
+    aiAccess: 'Planes.aiAccess',
+    electronicBilling: 'Planes.electronicBilling',
+    currentPlan: 'Planes.currentPlan',
+    selectPlan: 'Planes.selectPlan',
+    subscribe: 'Planes.subscribe',
+    cancel: 'Planes.cancel',
+    perMonth: 'Planes.perMonth'
+  },
+
   Vendedores: {
     hero: {
       badge: 'hero.badge',
-      title: 'hero.title',
-      subtitle: 'hero.subtitle',
+      title: {
+        prefix: 'hero.title.prefix',
+        highlight: 'hero.title.highlight'
+      },
+      description: 'hero.description',
       demoButton: 'hero.demoButton',
+      secondaryButton: 'hero.secondaryButton',
+      existingStoreText: 'hero.existingStoreText',
+      goToStoreButton: 'hero.goToStoreButton',
+      floatingCard: 'hero.floatingCard',
       storeButton: 'hero.storeButton'
+    },
+    schedule: {
+      openButton: 'schedule.openButton',
+      selectDateTitle: 'schedule.selectDateTitle',
+      weekdaysOnly: 'schedule.weekdaysOnly',
+      selectTimeTitle: 'schedule.selectTimeTitle',
+      prevMonth: 'schedule.prevMonth',
+      nextMonth: 'schedule.nextMonth',
+      back: 'schedule.back',
+      confirm: 'schedule.confirm',
+      whatsappMessage: 'schedule.whatsappMessage'
+    },
+    loginPreview: {
+      businessNameLabel: 'loginPreview.businessNameLabel',
+      businessNameValue: 'loginPreview.businessNameValue',
+      emailLabel: 'loginPreview.emailLabel',
+      emailValue: 'loginPreview.emailValue',
+      category: 'loginPreview.category',
+      city: 'loginPreview.city',
+      activeStore: 'loginPreview.activeStore',
+      logoAlt: 'loginPreview.logoAlt'
+    },
+    pdf: {
+      loading: 'pdf.loading',
+      ariaLabel: 'pdf.ariaLabel'
     },
     beneficios: {
       title: 'beneficios.title',
@@ -630,6 +796,28 @@ export const I18N = {
       wompi: 'aliados.wompi',
       servientrega: 'aliados.servientrega'
     },
+    valorOperativo: {
+      title: 'valorOperativo.title',
+      subtitle: 'valorOperativo.subtitle',
+      cards: {
+        dian: {
+          title: 'valorOperativo.cards.dian.title',
+          description: 'valorOperativo.cards.dian.description'
+        },
+        wompi: {
+          title: 'valorOperativo.cards.wompi.title',
+          description: 'valorOperativo.cards.wompi.description'
+        },
+        logistica: {
+          title: 'valorOperativo.cards.logistica.title',
+          description: 'valorOperativo.cards.logistica.description'
+        },
+        panel: {
+          title: 'valorOperativo.cards.panel.title',
+          description: 'valorOperativo.cards.panel.description'
+        }
+      }
+    },
     sectores: {
       title: 'sectores.title',
       subtitle: 'sectores.subtitle',
@@ -646,24 +834,102 @@ export const I18N = {
         description: 'sectores.artesanias.description'
       }
     },
+    enfoqueSectorial: {
+      title: 'enfoqueSectorial.title',
+      subtitle: 'enfoqueSectorial.subtitle',
+      buttonText: 'enfoqueSectorial.buttonText',
+      items: {
+        cafe: {
+          badge: 'enfoqueSectorial.items.cafe.badge',
+          title: 'enfoqueSectorial.items.cafe.title',
+          description: 'enfoqueSectorial.items.cafe.description'
+        },
+        moda: {
+          badge: 'enfoqueSectorial.items.moda.badge',
+          title: 'enfoqueSectorial.items.moda.title',
+          description: 'enfoqueSectorial.items.moda.description'
+        },
+        artesanias: {
+          badge: 'enfoqueSectorial.items.artesanias.badge',
+          title: 'enfoqueSectorial.items.artesanias.title',
+          description: 'enfoqueSectorial.items.artesanias.description',
+          link: 'enfoqueSectorial.items.artesanias.link'
+        }
+      }
+    },
+    planes: {
+      title: 'planes.title',
+      subtitle: 'planes.subtitle',
+      popular: 'planes.popular',
+      cards: {
+        free: {
+          name: 'planes.cards.free.name',
+          price: 'planes.cards.free.price',
+          description: 'planes.cards.free.description',
+          features: {
+            products: 'planes.cards.free.features.products',
+            variations: 'planes.cards.free.features.variations'
+          },
+          buttonText: 'planes.cards.free.buttonText'
+        },
+        tienda: {
+          name: 'planes.cards.tienda.name',
+          price: 'planes.cards.tienda.price',
+          description: 'planes.cards.tienda.description',
+          features: {
+            products: 'planes.cards.tienda.features.products',
+            variations: 'planes.cards.tienda.features.variations',
+            simetria: 'planes.cards.tienda.features.simetria'
+          },
+          buttonText: 'planes.cards.tienda.buttonText'
+        },
+        omnichannel: {
+          name: 'planes.cards.omnichannel.name',
+          price: 'planes.cards.omnichannel.price',
+          description: 'planes.cards.omnichannel.description',
+          features: {
+            products: 'planes.cards.omnichannel.features.products',
+            variations: 'planes.cards.omnichannel.features.variations',
+            simetria: 'planes.cards.omnichannel.features.simetria'
+          },
+          buttonText: 'planes.cards.omnichannel.buttonText'
+        }
+      }
+    },
     faq: {
-      title: 'Preguntas Frecuentes',
+      title: 'faq.title',
       questions: {
+        gratis: {
+          question: 'faq.questions.gratis.question',
+          answer: 'faq.questions.gratis.answer'
+        },
         tecnicos: {
-          question: '¿Necesito conocimientos técnicos?',
-          answer: 'No. Ecommer está diseñada para que cualquier emprendedor pueda configurar su tienda en minutos, sin necesidad de saber programar. Nuestro equipo de soporte te acompaña en cada paso del proceso.'
+          question: 'faq.questions.tecnicos.question',
+          answer: 'faq.questions.tecnicos.answer'
+        },
+        cobro: {
+          question: 'faq.questions.cobro.question',
+          answer: 'faq.questions.cobro.answer'
         },
         envios: {
-          question: '¿Cómo funcionan los envíos con Servientrega?',
-          answer: 'Tu tienda está integrada directamente con Servientrega. Cuando un cliente hace un pedido, el sistema genera automáticamente la guía de envío y puedes rastrear el estado en tiempo real desde tu panel de administración.'
+          question: 'faq.questions.envios.question',
+          answer: 'faq.questions.envios.answer'
         },
-        comisiones: {
-          question: '¿Qué comisiones cobran por venta?',
-          answer: 'Ecommer cobra una comisión competitiva solo cuando vendes — no pagas nada si no hay ventas. Agenda una demo y te explicamos el detalle del modelo de precios adaptado a tu volumen de negocio.'
+        facturacion: {
+          question: 'faq.questions.facturacion.question',
+          answer: 'faq.questions.facturacion.answer'
         },
-        movil: {
-          question: '¿Puedo manejar mi tienda desde el celular?',
-          answer: 'Sí. El panel de administración está optimizado para móvil. Podés gestionar productos, ver pedidos, responder clientes y revisar métricas de ventas desde cualquier lugar.'
+        contabilidad: {
+          question: 'faq.questions.contabilidad.question',
+          answer: 'faq.questions.contabilidad.answer'
+        },
+        proteccion: {
+          question: 'faq.questions.proteccion.question',
+          answer: 'faq.questions.proteccion.answer'
+        },
+        atencion: {
+          question: 'faq.questions.atencion.question',
+          answer: 'faq.questions.atencion.answer'
         }
       }
     },

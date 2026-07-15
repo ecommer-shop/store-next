@@ -3,12 +3,11 @@
 import { use } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { ResultOf } from '@/graphql';
-import { Button } from '@heroui/react';
 import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
-import { Accordion } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { FacetsAccordionContent } from './facet-filters-responsive';
+import { FacetFiltersMobile } from './facet-filters-mobile';
 
 
 interface FacetFiltersProps {
@@ -17,9 +16,13 @@ interface FacetFiltersProps {
         token?: string;
     }>;
     searchParams?: { [key: string]: string | string[] | undefined };
+    activeCollectionSlug?: string;
+    activeCollectionName?: string;
 }
 
-export function FacetFilters({ productDataPromise, searchParams: serverSearchParams }: FacetFiltersProps) {
+const COLLECTION_SENTINEL = '__collection__';
+
+export function FacetFilters({ productDataPromise, searchParams: serverSearchParams, activeCollectionSlug, activeCollectionName }: FacetFiltersProps) {
     const result = use(productDataPromise);
     const searchResult = result.data.search;
     const pathname = usePathname();
@@ -52,10 +55,57 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
     }, {});
 
     const selectedFacets = urlSearchParams.getAll('facets');
+    if (activeCollectionSlug) {
+        selectedFacets.push(COLLECTION_SENTINEL);
+    }
+
+    // Build all groups, merging collection into existing Categoría if present
+    const allGroups: Record<string, FacetGroup> = {};
+
+    Object.entries(facetGroups).forEach(([key, group]) => {
+        allGroups[key] = group;
+    });
+
+    if (activeCollectionSlug) {
+        const categoriaGroup = Object.values(allGroups).find(
+            g => g.name.localeCompare('Categoría', 'es', { sensitivity: 'base' }) === 0
+        );
+
+        const collectionName = activeCollectionName || activeCollectionSlug;
+
+        const collectionEntry = {
+            id: COLLECTION_SENTINEL,
+            name: collectionName,
+            count: searchResult.totalItems,
+        };
+
+        if (categoriaGroup) {
+            // Cuando hay una colección activa, solo mostrar esa categoría
+            categoriaGroup.values = [collectionEntry];
+        } else {
+            allGroups[COLLECTION_SENTINEL] = {
+                id: COLLECTION_SENTINEL,
+                name: 'Categoría',
+                values: [collectionEntry],
+            };
+        }
+    }
 
     const toggleFacet = (facetId: string) => {
         const params = new URLSearchParams(urlSearchParams);
         const current = params.getAll('facets');
+
+        if (facetId === COLLECTION_SENTINEL) {
+            const hasOtherFacets = current.length > 0;
+            params.delete('page');
+
+            if (hasOtherFacets) {
+                router.push(`${pathname}?${params.toString()}`);
+            } else {
+                router.push(pathname);
+            }
+            return;
+        }
 
         if (current.includes(facetId)) {
             params.delete('facets');
@@ -74,12 +124,13 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
         const params = new URLSearchParams(urlSearchParams);
         params.delete('facets');
         params.delete('page');
-        router.push(`${pathname}?${params.toString()}`);
+        const qs = params.toString();
+        router.push(qs ? `${pathname}?${qs}` : pathname);
     };
 
     const hasActiveFilters = selectedFacets.length > 0;
 
-    if (Object.keys(facetGroups).length === 0) {
+    if (Object.keys(allGroups).length === 0) {
         return null;
     }
 
@@ -93,80 +144,51 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
     );
 
     return (
-        <div className="space-y-6">
-            {/* Desktop header con botón */}
+        <div className="flex flex-col space-y-6">
+            {/* Desktop header */}
             <div className="hidden md:flex items-center text-foreground justify-between">
-                <div className="flex items-center justify-between w-full gap-2">
-                    <h2 className="font-semibold text-lg text-foreground">
-                        {t(I18N.Commerce.facetFilters.filters)}
-                    </h2>
-                    {hasActiveFilters && (
-                        <Button
-                            className="bg-accent text-accent-foreground rounded-md"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                clearFilters();
-                            }}
-                        >
-                            {t(I18N.Commerce.facetFilters.clearFilters)}
-                        </Button>
-                    )}
-                </div>
+                <h2 className="font-semibold text-lg text-foreground">
+                    {t(I18N.Commerce.facetFilters.filters)}
+                </h2>
             </div>
 
             {/* Desktop filtros */}
             <div className="hidden md:block">
                 <FacetsAccordionContent
-                    facetGroups={facetGroups}
+                    facetGroups={allGroups}
                     selectedFacets={selectedFacets}
                     toggleFacet={toggleFacet}
                 />
             </div>
 
-            {/* Mobile: botón limpiar fuera del trigger */}
+            {/* Mobile: Tabs con overflow + TagGroup variants */}
             <div className="md:hidden space-y-2">
-                {hasActiveFilters && (
-                    <Button
-                        className="bg-accent text-accent-foreground rounded-md w-full"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            clearFilters();
-                        }}
-                    >
-                        {t(I18N.Commerce.facetFilters.clearFilters)}
-                    </Button>
-                )}
-                <Accordion>
-                    <Accordion.Item key="filters">
-                        <Accordion.Heading>
-                            <Accordion.Trigger className="w-full gap-3">
-                                <Accordion.Indicator>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                                        <path
-                                            className="text-foreground"
-                                            fill="currentColor"
-                                            fillRule="evenodd"
-                                            d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                </Accordion.Indicator>
-                                <h2 className="font-semibold text-lg text-foreground">
-                                    {t(I18N.Commerce.facetFilters.filters)}
-                                </h2>
-                            </Accordion.Trigger>
-                        </Accordion.Heading>
-
-                        <Accordion.Panel>
-                            <FacetsAccordionContent
-                                facetGroups={facetGroups}
-                                selectedFacets={selectedFacets}
-                                toggleFacet={toggleFacet}
-                            />
-                        </Accordion.Panel>
-                    </Accordion.Item>
-                </Accordion>
+                <h2 className="font-semibold text-lg text-foreground">
+                    {t(I18N.Commerce.facetFilters.filters)}
+                </h2>
+                <FacetFiltersMobile
+                    facetGroups={allGroups}
+                    selectedFacets={selectedFacets}
+                    toggleFacet={toggleFacet}
+                />
             </div>
+
+            {/* Botón limpiar filtros — siempre al fondo, visible solo si hay filtros activos */}
+            {hasActiveFilters && (
+                <button
+                    onClick={clearFilters}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold
+                               border border-red-300 dark:border-red-500/40
+                               text-red-500 dark:text-red-400
+                               hover:bg-red-50 dark:hover:bg-red-500/10
+                               transition-colors duration-200 cursor-pointer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    </svg>
+                    {t(I18N.Commerce.facetFilters.clearFilters)}
+                </button>
+            )}
         </div>
     );
 }

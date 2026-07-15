@@ -10,40 +10,48 @@ import { GetWompiSignatureQuery } from '../../shared/queries';
 
 
 export async function syncCustomerWithVendure() {
-    const {sessionId} = await auth();
-    const user = await currentUser();
-    
-    if (!user) return;
-    const email = user.emailAddresses[0]?.emailAddress;
-    if (!email) return;
-    const cookiesStore = await cookies();
-    const client = await clerkClient()
-    const token = await client.sessions.getToken(
-        sessionId!,
-        "vendure"
-    )
-    const result = await mutate(RegisterCustomerAccountMutation, {
-        input:{
-            emailAddress: email,
-            firstName: user.username ?? user.firstName,
-            lastName: user.lastName ?? '',
-            password: email,
-            phoneNumber: user.primaryPhoneNumber?.phoneNumber ?? '',
-        },
-        token
-    });
+    try {
+        const {sessionId} = await auth();
+        if (!sessionId) return;
 
-    const login = await mutate(AuthenticateWithClerk, {
-        token: token.jwt
-    })
+        const user = await currentUser();
 
-    await setAuthToken(login.token!);
-    await setJWT(token.jwt);
-    setAuthTokenOnCookies(cookiesStore, login.token!)
+        if (!user) return;
+        const email = user.emailAddresses[0]?.emailAddress;
+        if (!email) return;
+        const cookiesStore = await cookies();
+        const client = await clerkClient()
+        const token = await client.sessions.getToken(
+            sessionId,
+            "vendure"
+        )
+        if (!token?.jwt) return;
 
-    if (result.data.registerCustomerAccount.__typename !== 'Success') {
-        if ('errorCode' in result.data.registerCustomerAccount && result.data.registerCustomerAccount.errorCode === 'EMAIL_ADDRESS_CONFLICT_ERROR') {
-            return; // ya existe
+        const result = await mutate(RegisterCustomerAccountMutation, {
+            input:{
+                emailAddress: email,
+                firstName: user.username ?? user.firstName,
+                lastName: user.lastName ?? '',
+                password: email,
+                phoneNumber: user.primaryPhoneNumber?.phoneNumber ?? '',
+            },
+            token
+        });
+
+        const login = await mutate(AuthenticateWithClerk, {
+            token: token.jwt
+        })
+
+        await setAuthToken(login.token!);
+        await setJWT(token.jwt);
+        setAuthTokenOnCookies(cookiesStore, login.token!)
+
+        if (result.data.registerCustomerAccount.__typename !== 'Success') {
+            if ('errorCode' in result.data.registerCustomerAccount && result.data.registerCustomerAccount.errorCode === 'EMAIL_ADDRESS_CONFLICT_ERROR') {
+                return; // ya existe
+            }
         }
+    } catch (error) {
+        console.error('Failed to sync Clerk customer with Vendure', error);
     }
 }

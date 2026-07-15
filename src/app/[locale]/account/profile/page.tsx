@@ -1,6 +1,6 @@
 import { RedirectToSignIn, SignedOut, UserProfile } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
-import UserProfileClient from '../user-profile';
+import UserProfileClient from './user-profile';
 import { Suspense } from 'react';
 import { Spinner } from '@heroui/react';
 
