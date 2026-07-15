@@ -71,7 +71,7 @@ export function CountrySelect({
   }, [countries, query]);
 
   const selectedCountry = React.useMemo(() => {
-    return countries.find(c => c.id === value);
+    return countries.find(c => c.id === value || c.code === value);
   }, [countries, value]);
 
   const handleSelectionChange = (keys: Key | Set<Key> | null) => {
@@ -142,7 +142,7 @@ export function CountrySelect({
                     <ListBox
                       aria-label="Country list"
                       items={filteredCountries}
-                      selectedKeys={value ? new Set([value]) : new Set()}
+                      selectedKeys={selectedCountry ? new Set([selectedCountry.id]) : new Set()}
                       selectionMode="single"
                       onSelectionChange={handleSelectionChange}
                     >

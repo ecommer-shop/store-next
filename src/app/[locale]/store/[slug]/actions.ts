@@ -40,6 +40,7 @@ function fallbackStoreProfileFromSlug(slug: string): StoreProfileData {
         storeDescription: null,
         storeBannerUrl: null,
         socialLinks: [],
+        storeHeaderBannerUrl: null,
     };
 }
 
@@ -184,6 +185,7 @@ export interface StoreProfileData {
         displayName: string | null;
         inPipeline: boolean;
     }>;
+    storeHeaderBannerUrl: string | null;
 }
 
 export async function getStoreProfile(slug: string, locale: string): Promise<StoreProfileData | null> {
@@ -194,6 +196,7 @@ export async function getStoreProfile(slug: string, locale: string): Promise<Sto
             storeName: profile?.storeName ?? '',
             storeDescription: profile?.storeDescription ?? null,
             storeBannerUrl: profile?.storeBannerUrl ?? null,
+            storeHeaderBannerUrl: profile?.storeHeaderBannerUrl ?? null,
             socialLinks: profile?.socialLinks ?? [],
         } as StoreProfileData;
     } catch (e1) {

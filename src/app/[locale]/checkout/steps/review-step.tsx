@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { Loader2, MapPin, Truck, Pencil, CheckCircle2 } from 'lucide-react';
+import { Loader2, MapPin, Truck, Pencil } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';

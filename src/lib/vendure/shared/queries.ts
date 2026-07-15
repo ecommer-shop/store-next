@@ -4,7 +4,7 @@ import { ActiveCustomerFragment, ProductCardFragment } from './fragments';
 export const GetTopCollectionsQuery = graphql(`
     query GetTopCollections {
         collections(options: { filter: { parentId: { eq: "1" } }, 
-            take: 50 }) {
+            take: 3 }) {
             items {
                 id
                 name
@@ -261,10 +261,9 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 country
                 phoneNumber
                 customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
+                    matiasCityId
+                    dni
+                    identityDocumentId
                 }
             }
             billingAddress {
@@ -278,10 +277,9 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 country
                 phoneNumber
                 customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
+                    matiasCityId
+                    dni
+                    identityDocumentId
                 }
             }
             shippingLines {
@@ -340,10 +338,9 @@ export const GetCustomerAddressesQuery = graphql(`
                 }
                 phoneNumber
                 customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
+                    matiasCityId
+                    dni
+                    identityDocumentId
                 }
                 defaultShippingAddress
                 defaultBillingAddress
@@ -455,12 +452,6 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
-                customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
-                }
             }
             billingAddress {
                 fullName
@@ -472,12 +463,6 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
-                customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
-                }
             }
             shippingLines {
                 shippingMethod {
@@ -564,6 +549,7 @@ export const GetSellerStoreProfileQuery = graphql(`
                 displayName
                 inPipeline
             }
+            storeHeaderBannerUrl
         }
     }
 `);
