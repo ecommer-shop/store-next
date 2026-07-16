@@ -29,6 +29,10 @@ interface AddressInput {
         matiasCityId?: string;
         dni?: string;
         identityDocumentId?: string;
+        latitude?: number | string | null;
+        longitude?: number | string | null;
+        neighborhood?: string | null;
+        googlePlaceId?: string | null;
     };
 }
 

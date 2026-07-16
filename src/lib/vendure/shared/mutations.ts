@@ -164,6 +164,10 @@ export const CreateCustomerAddressMutation = graphql(`
                 matiasCityId
                 dni
                 identityDocumentId
+                latitude
+                longitude
+                neighborhood
+                googlePlaceId
             }
             defaultShippingAddress
             defaultBillingAddress
@@ -192,6 +196,10 @@ export const UpdateCustomerAddressMutation = graphql(`
                 matiasCityId
                 dni
                 identityDocumentId
+                latitude
+                longitude
+                neighborhood
+                googlePlaceId
             }
             defaultShippingAddress
             defaultBillingAddress

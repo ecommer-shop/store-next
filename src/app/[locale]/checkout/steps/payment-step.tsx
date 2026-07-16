@@ -11,8 +11,6 @@ import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { CurrencyCode, TransactionStatus } from '@/models/payment';
 import { Price } from '@/components/commerce/price';
 
-const WOMPI_MIN_TEST_AMOUNT_IN_CENTS = 1500 * 100;
-
 interface PaymentStepProps {
   onComplete: () => void;
   pb: string;
@@ -66,11 +64,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
     setErrorMessage(null);
     try {
-      // Calculate the correct total based on selected items
-      const correctTotal = getSelectedOrderTotal();
-      // TEMPORAL PARA PRUEBAS: Wompi no permite transacciones menores a $1.500 COP.
-      // Quitar este Math.max cuando las pruebas usen productos con valor real suficiente.
-      const amountInCents = Math.max(Math.round(correctTotal), WOMPI_MIN_TEST_AMOUNT_IN_CENTS);
+      const amountInCents = Math.round(getSelectedOrderTotal());
       const uniqueReference = `${order.code}-${crypto.randomUUID().replace(/-/g, '')}`;
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
 

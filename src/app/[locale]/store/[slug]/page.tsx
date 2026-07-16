@@ -18,7 +18,6 @@ import {
 } from '@/lib/vendure/shared/asset-url';
 import {
     channelCodeMatchesStoreSlug,
-    getStoreCollections,
     getStoreFeaturedProducts,
     getStoreMetadata,
     getStoreProducts,
@@ -77,7 +76,6 @@ export default async function StorePage({ params, searchParams }: Props) {
         getStoreProducts(slug, locale, resolvedSearchParams),
         getStoreProfile(slug, locale),
         getStoreFeaturedProducts(slug, locale),
-        getStoreCollections(slug, locale),
     ]);
 
     const channel = metadataResult.data.activeChannel;
