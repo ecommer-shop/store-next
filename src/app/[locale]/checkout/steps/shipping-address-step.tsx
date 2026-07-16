@@ -51,6 +51,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   const [useSameForBilling, setUseSameForBilling] = useState(true);
 
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+  console.log('Selected Address:', selectedAddress);
   const selectedAddressHasCoords = hasGoogleCoordinates(selectedAddress);
 
   const { reset } = useForm<AddressFormData>({
@@ -100,6 +101,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       reset();
       router.refresh();
       setSelectedAddressId(newAddress.id);
+      console.log('New address created:', newAddress);
     } catch (error) {
       console.error('Error creating address:', error);
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);

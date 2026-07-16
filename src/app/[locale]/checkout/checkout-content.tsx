@@ -37,7 +37,7 @@ interface CheckoutContentProps {
 }
 
 export default async function CheckoutContent({ pb, uri, params }: CheckoutContentProps) {
-    const { locale } = params;
+    const { locale } = await params;
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
     const token = await getAuthToken();
