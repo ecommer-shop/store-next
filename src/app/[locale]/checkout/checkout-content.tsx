@@ -28,16 +28,16 @@ export const metadata: Metadata = {
     robots: noIndexRobots(),
 };
 interface CheckoutContentProps {
-    params: {
+    params: Promise<{
         locale: string;
-    };
+    }>;
     searchParams: Record<string, string | string[] | undefined>;
     pb: string;
     uri: string;
 }
 
 export default async function CheckoutContent({ pb, uri, params }: CheckoutContentProps) {
-    const { locale } = params;
+    const { locale } = await params;
     const ts = await getTranslations('Checkout');
     const tsa = await getTranslations('Account')
     const token = await getAuthToken();
