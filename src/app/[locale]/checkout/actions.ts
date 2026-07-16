@@ -470,11 +470,8 @@ export async function calculateDeliveryCostQuote() {
     if (!activeOrder?.shippingAddress) {
         throw new Error('Primero selecciona una direccion de envio');
     }
-    console.log('Active Order:', activeOrder);
     const destinationGeo = await resolveShippingAddressGeo(activeOrder, token);
-    console.log('Destination Geo:', destinationGeo);
     const destination = destinationGeo.latLng;
-    console.log('Destination LatLng:', destination);
     if (!destination) {
         throw new Error('La direccion seleccionada no tiene coordenadas de Google Maps');
     }
@@ -580,7 +577,6 @@ export async function createCustomerAddress(address: AddressInput) {
     if (!result.data.createCustomerAddress) {
         throw new Error('Failed to create customer address');
     }
-    console.log('New address created:', result.data.createCustomerAddress);
     revalidatePath('/checkout');
     return result.data.createCustomerAddress;
 }
@@ -597,7 +593,6 @@ export async function updateCustomerAddress(id: string, address: AddressInput) {
     if (!result.data.updateCustomerAddress) {
         throw new Error('Failed to update customer address');
     }
-    console.log('Updated address:', result.data.updateCustomerAddress);
     revalidatePath('/checkout');
     return result.data.updateCustomerAddress;
 }
