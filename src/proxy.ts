@@ -15,8 +15,8 @@ export default clerkMiddleware(async (auth, req) => {
 
   const { pathname, search } = req.nextUrl;
   const cleanPathname = pathname.startsWith("/")
-  ? pathname.slice(1)
-  : pathname;
+    ? pathname.slice(1)
+    : pathname;
 
   const locale = req.nextUrl.locale ?? "es";
   if (cleanPathname === "/go") {
@@ -49,7 +49,9 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
-  if (isProtectedRoute(req)) {
+  const isServerActionRequest = req.headers.has("next-action");
+
+  if (isProtectedRoute(req) && !isServerActionRequest) {
     const { userId } = await auth();
 
     if (!userId) {
