@@ -1,7 +1,7 @@
 'use server';
 
 import { mutate, query } from '@/lib/vendure/server/api';
-import { getAuthTokenFromCookies } from '@/lib/vendure/server/auth';
+import { getAuthTokenFromCookies, requireClerkAuth } from '@/lib/vendure/server/auth';
 import {
     GetMySubscriptionQuery,
     GetAllPlansQuery,
@@ -17,6 +17,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
 const token = async () => {
+    await requireClerkAuth();
     const cookiesStore = await cookies();
     return getAuthTokenFromCookies(cookiesStore)!;
 };
