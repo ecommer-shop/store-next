@@ -76,7 +76,7 @@ export function GoogleMapPicker({
   initialLongitude,
   onLocationSelect,
   onClose,
-  defaultCenter = { lat: 4.6097, lng: -74.0817 }, // Bogotá, Colombia por defecto
+  defaultCenter = { lat: 2.4448, lng: -76.6147 }, // Popayán, Cauca por defecto
 }: GoogleMapPickerProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
