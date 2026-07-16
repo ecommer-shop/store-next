@@ -29,6 +29,7 @@ export const I18N = {
     profile: 'profile',
     orders: 'orders',
     addresses: 'addresses',
+    paymentMethods: 'paymentMethods',
     billing: 'billing',
     logout: 'logout',
     login: 'login',
