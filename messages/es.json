@@ -468,7 +468,7 @@
         "alreadySubmitted": "Reseña enviada",
         "title": "Escribe una reseña"
       },
-      "mustPurchaseFirst": "Debes comprar este producto antes de escribir una reseña.",
+      "mustPurchaseFirst": "Las reseñas están reservadas para clientes verificados.",
       "aiSummary": {
         "badge": "IA • Resumen Inteligente",
         "noReviewsTitle": "Todavía no hay un análisis disponible 💬",
@@ -768,8 +768,8 @@
     },
     "tracking": {
       "title": "Seguimiento de pedidos",
-      "description": "Una vez tu compra sea confirmada podrás conocer el estado de tu pedido desde la plataforma.",
-      "intro": "Durante el proceso podrás consultar información como:",
+      "description": "Una vez tu compra sea confirmada, podrás realizar el seguimiento completo de tu pedido directamente desde tu cuenta en la plataforma.",
+      "intro": "Durante el proceso podrás consultar estados como:",
       "statuses": {
         "received": "Pedido recibido",
         "confirmed": "Pago confirmado",
@@ -778,7 +778,7 @@
         "transit": "En camino",
         "delivered": "Entregado"
       },
-      "national": "En los envíos nacionales también podrás realizar el seguimiento utilizando la información suministrada por la empresa transportadora."
+      "national": "Para envíos nacionales realizados con Envia.com, recibirás un número de guía de rastreo que te permitirá hacer seguimiento en tiempo real del estado de tu paquete a través de la transportadora asignada. Podrás consultar información detallada como la ubicación actual, eventos de tránsito, intentos de entrega y fecha estimada de llegada. El sistema de Envia integra múltiples transportadoras nacionales, brindándote total visibilidad desde que el paquete sale del almacén hasta que llega a tu puerta."
     },
     "support": {
       "title": "Atención inteligente 24/7",
@@ -907,6 +907,8 @@
       "description": "Plataforma integral diseñada exclusivamente para fabricantes, artesanos y emprendedores colombianos. Escala tus ventas internacionales con herramientas de nivel corporativo adaptadas a tu realidad.",
       "demoButton": "Crea tu tienda en segundos →",
       "secondaryButton": "Ver Demo",
+      "existingStoreText": "¿Ya tienes Tu Tienda?",
+      "goToStoreButton": "Ir a tu tienda →",
       "floatingCard": "Nueva Venta $30,650 • 2 Productos • 1 Cliente",
       "storeButton": "Crear mi Tienda"
     },

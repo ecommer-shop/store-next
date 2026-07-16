@@ -729,6 +729,8 @@ export const I18N = {
       description: 'hero.description',
       demoButton: 'hero.demoButton',
       secondaryButton: 'hero.secondaryButton',
+      existingStoreText: 'hero.existingStoreText',
+      goToStoreButton: 'hero.goToStoreButton',
       floatingCard: 'hero.floatingCard',
       storeButton: 'hero.storeButton'
     },

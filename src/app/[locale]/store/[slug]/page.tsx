@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Select } from '@heroui/react';
 import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/commerce/product-card';
+import { FeaturedProductsCarousel } from '@/components/commerce/featured-products-carousel';
 import { readFragment } from '@/graphql';
 import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 import {
@@ -14,6 +16,7 @@ import {
 import { isDisplayableImageUrl, normalizeVendureAssetUrl } from '@/lib/vendure/shared/asset-url';
 import {
     channelCodeMatchesStoreSlug,
+    getStoreCollections,
     getStoreFeaturedProducts,
     getStoreMetadata,
     getStoreProducts,
@@ -51,6 +54,7 @@ export const dynamic = 'force-dynamic';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -87,13 +91,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-export default async function StorePage({ params }: Props) {
+export default async function StorePage({ params, searchParams }: Props) {
     const { slug, locale } = await params;
-    const [metadataResult, allProducts, profile, featuredProducts] = await Promise.all([
+    const resolvedSearchParams = await searchParams;
+    const [metadataResult, allProducts, profile, featuredProducts, uniqueCollections] = await Promise.all([
         getStoreMetadata(slug, locale),
-        getStoreProducts(slug, locale),
+        getStoreProducts(slug, locale, resolvedSearchParams),
         getStoreProfile(slug, locale),
         getStoreFeaturedProducts(slug, locale),
+        getStoreCollections(slug, locale),
     ]);
 
     const channel = metadataResult.data.activeChannel;
@@ -113,6 +119,11 @@ export default async function StorePage({ params }: Props) {
         product => !featuredSet.has(readFragment(ProductCardFragment, product).productId),
     );
 
+    type CollectionRef = { id: string; name: string; slug: string };
+
+    const activeCollectionSlug = typeof resolvedSearchParams.collection === 'string'
+        ? resolvedSearchParams.collection
+        : undefined;
     return (
         <main className="mt-16 space-y-10 pb-10">
             {/* Hero a ancho completo con fondo light/dark estilo home */}
@@ -165,24 +176,24 @@ export default async function StorePage({ params }: Props) {
 
             <div className="container mx-auto px-4 space-y-10">
                 <section className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    {storeBannerDisplayable && storeBannerUrl ? (
-                        <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden ring-2 ring-border shadow-md flex-shrink-0">
-                            <Image
-                                src={storeBannerUrl}
-                                alt={storeName}
-                                fill
-                                className="object-cover"
-                                sizes="80px"
-                                unoptimized
-                            />
-                        </div>
-                    ) : null}
+                {storeBannerDisplayable && storeBannerUrl ? (
+                    <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-2xl overflow-hidden ring-2 ring-[#6BB8FF]/40 shadow-md flex-shrink-0">
+                        <Image
+                            src={storeBannerUrl}
+                            alt={storeName}
+                            fill
+                            className="object-cover"
+                            sizes="112px"
+                            unoptimized
+                        />
+                    </div>
+                ) : null}
                     <div className="space-y-2">
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
                             {storeName}
                         </h1>
                         <div
-                            className="text-muted-foreground prose prose-sm max-w-2xl"
+                            className="text-muted-foreground prose prose-base sm:prose-lg max-w-2xl leading-relaxed"
                             dangerouslySetInnerHTML={{ __html: storeDescription }}
                         />
                     </div>
@@ -247,21 +258,59 @@ export default async function StorePage({ params }: Props) {
 
                 <section>
                     <h2 className="text-2xl font-semibold mb-4">Productos destacados</h2>
-                    {featuredProducts.length ? (
-                        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                            {featuredProducts.map((product, index) => (
-                                <ProductCard key={`featured-product-${index}`} product={product} storeName={storeName} />
-                            ))}
-                        </div>
+                    {featuredProducts.length > 0 ? (
+                        <FeaturedProductsCarousel products={featuredProducts} />
                     ) : (
                         <p className="text-muted-foreground">Esta tienda no tiene productos destacados por ahora.</p>
                     )}
                 </section>
 
                 <section>
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                         <h2 className="text-2xl font-semibold">Todos los productos</h2>
-                        <p className="text-sm text-muted-foreground">{allProducts.length} productos</p>
+                        <div className="flex items-center gap-3">
+                            <form action={`/${locale}/store/${slug}`} className="flex flex-wrap items-center gap-2">
+                                {uniqueCollections.length > 0 && (
+                                    <>
+                                        <label htmlFor="collection-filter" className="text-sm text-muted-foreground whitespace-nowrap">
+                                            Filtrar por:
+                                        </label>
+                                        <select
+                                            id="collection-filter"
+                                            name="collection"
+                                            defaultValue={activeCollectionSlug ?? ''}
+                                            className="text-sm rounded-lg border border-[#12123F]/15 dark:border-[#F1F1F1]/20 bg-background px-3 py-2 text-foreground"
+                                        >
+                                            <option value="">Todas las categorías</option>
+                                            {uniqueCollections.map(c => (
+                                                <option key={c.id} value={c.slug}>{c.name}</option>
+                                            ))}
+                                        </select>
+                                    </>
+                                )}
+                                <label htmlFor="sort-filter" className="text-sm text-muted-foreground whitespace-nowrap">
+                                    Ordenar por:
+                                </label>
+                                <select
+                                    id="sort-filter"
+                                    name="sort"
+                                    defaultValue={typeof resolvedSearchParams.sort === 'string' ? resolvedSearchParams.sort : 'name-asc'}
+                                    className="text-sm rounded-lg border border-[#12123F]/15 dark:border-[#F1F1F1]/20 bg-background px-3 py-2 text-foreground"
+                                >
+                                    <option value="name-asc">Nombre A-Z</option>
+                                    <option value="name-desc">Nombre Z-A</option>
+                                    <option value="price-asc">Precio: menor a mayor</option>
+                                    <option value="price-desc">Precio: mayor a menor</option>
+                                </select>
+                                <button
+                                    type="submit"
+                                    className="text-sm rounded-lg bg-[#12123F] dark:bg-[#F1F1F1] text-white dark:text-[#12123F] px-4 py-2 font-semibold hover:opacity-90 transition-opacity"
+                                >
+                                    Aplicar
+                                </button>
+                            </form>
+                            <p className="text-sm text-muted-foreground whitespace-nowrap">{allProducts.length} productos</p>
+                        </div>
                     </div>
                     {remainingProducts.length ? (
                         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">

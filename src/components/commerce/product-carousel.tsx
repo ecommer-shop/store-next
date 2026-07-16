@@ -63,7 +63,7 @@ export function ProductCarousel({title, products}: ProductCarouselClientProps) {
                     <button
                       key={index}
                       onClick={() => api?.scrollTo(index)}
-                      className={`h-2 rounded-full transition-all duration-300 ease-in-out ${
+                      className={`h-2 rounded-full transition-all duration-300 ease-in-out cursor-pointer ${
                         index === current
                           ? "bg-primary w-6"
                           : "bg-muted-foreground/30 w-2 hover:bg-muted-foreground/60"
