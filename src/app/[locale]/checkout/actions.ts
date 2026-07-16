@@ -11,13 +11,19 @@ import {
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
     SetOrderDynamicShippingMethod,
-    CreateDeliveryOrderMutation
+    CreateDeliveryOrderMutation,
+    InitWompiTransactionMutation,
+    InitWompiSavedCardTransactionMutation,
+    ConfirmWompiPaymentMutation,
+    CreateWompiPaymentSourceMutation,
 } from '@/lib/vendure/shared/mutations';
 import {
     CalculateDeliveryCostQuery,
     GetCustomerAddressesQuery,
     GetActiveOrderQuery,
-    GetWompiSignatureQuery
+    GetWompiSignatureQuery,
+    GetWompiTransactionStatusQuery,
+    SavedPaymentMethodsQuery,
 } from '@/lib/vendure/shared/queries';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -712,4 +718,111 @@ export async function getPaymentSignature(amountInCents: number, paymentReferenc
     })
 
     return signature.data.GetPaymentSignature;
+}
+
+export async function initWompiTransaction(input: {
+    token?: string;
+    acceptanceToken?: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    saveCard: boolean;
+    paymentMethodCode: string;
+    sessionId?: string;
+    deviceId?: string;
+    financialInstitutionCode?: string;
+    userType?: string;
+    userLegalIdType?: string;
+    userLegalId?: string;
+    paymentDescription?: string;
+    paymentMethodDetails?: Record<string, any>;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiTransaction;
+}
+
+export async function initWompiSavedCardTransaction(input: {
+    paymentSourceId: string;
+    acceptanceToken: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiSavedCardTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiSavedCardTransaction;
+}
+
+export async function confirmWompiPayment(transactionId: string, saveCard: boolean) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        ConfirmWompiPaymentMutation,
+        { input: { transactionId, saveCard } } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.confirmWompiPayment;
+}
+
+export async function getWompiTransactionStatus(transactionId: string) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await query(
+        GetWompiTransactionStatusQuery,
+        { transactionId },
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.getWompiTransactionStatus;
+}
+
+export async function getSavedPaymentMethodsForCheckout() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) return [];
+
+    try {
+        const result: any = await query(SavedPaymentMethodsQuery, {}, { token, useAuthToken: true });
+        return result.data?.savedPaymentMethods || [];
+    } catch {
+        return [];
+    }
+}
+
+export async function createWompiPaymentSource(input: {
+    token: string;
+    type: string;
+    customerEmail: string;
+    acceptanceToken: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        CreateWompiPaymentSourceMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.createWompiPaymentSource;
 }

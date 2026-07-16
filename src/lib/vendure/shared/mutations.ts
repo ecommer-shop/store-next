@@ -539,3 +539,84 @@ export const CancelSubscriptionMutation = graphql(`
         }
     }
 `);
+
+export const DeleteSavedPaymentMethodMutation = graphql(`
+    mutation DeleteSavedPaymentMethod($id: ID!) {
+        deleteSavedPaymentMethod(id: $id) {
+            success
+        }
+    }
+`);
+
+export const SetDefaultPaymentMethodMutation = graphql(`
+    mutation SetDefaultPaymentMethod($id: ID!) {
+        setDefaultPaymentMethod(id: $id) {
+            id
+            isDefault
+        }
+    }
+`);
+
+export const InitWompiTransactionMutation = graphql(`
+    mutation InitWompiTransaction($input: InitWompiTransactionInput!) {
+        initWompiTransaction(input: $input) {
+            transactionId
+            status
+            reference
+            amountInCents
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            asyncPaymentUrl
+            qrImage
+        }
+    }
+`);
+
+export const InitWompiSavedCardTransactionMutation = graphql(`
+    mutation InitWompiSavedCardTransaction($input: InitWompiSavedCardTransactionInput!) {
+        initWompiSavedCardTransaction(input: $input) {
+            transactionId
+            status
+            reference
+            amountInCents
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            asyncPaymentUrl
+            qrImage
+        }
+    }
+`);
+
+export const ConfirmWompiPaymentMutation = graphql(`
+    mutation ConfirmWompiPayment($input: ConfirmWompiPaymentInput!) {
+        confirmWompiPayment(input: $input) {
+            success
+            orderCode
+            errorMessage
+            receiptUrl
+        }
+    }
+`);
+
+export const CreateWompiPaymentSourceMutation = graphql(`
+    mutation CreateWompiPaymentSource($input: CreateWompiPaymentSourceInput!) {
+        createWompiPaymentSource(input: $input) {
+            id
+            type
+            status
+            publicData
+        }
+    }
+`);

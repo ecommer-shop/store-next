@@ -689,3 +689,38 @@ export const CalculateDeliveryCostQuery = graphql(`
     }
 `);
 
+export const SavedPaymentMethodsQuery = graphql(`
+    query SavedPaymentMethods {
+        savedPaymentMethods {
+            id
+            type
+            wompiPaymentSourceId
+            lastFour
+            brand
+            expiryMonth
+            expiryYear
+            cardHolderName
+            isDefault
+            createdAt
+        }
+    }
+`);
+
+export const GetWompiTransactionStatusQuery = graphql(`
+    query GetWompiTransactionStatus($transactionId: String!) {
+        getWompiTransactionStatus(transactionId: $transactionId) {
+            id
+            status
+            statusMessage
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+        }
+    }
+`);
+
