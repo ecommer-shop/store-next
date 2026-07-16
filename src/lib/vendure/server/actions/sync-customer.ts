@@ -4,7 +4,7 @@ import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { query } from '@/lib/vendure/server/api';
 import { AuthenticateWithClerk, RegisterCustomerAccountMutation } from '@/lib/vendure/shared/mutations';
 import { mutate } from '../api';
-import { setAuthToken, setAuthTokenOnCookies, setJWT } from '../auth';
+import { getAuthTokenFromCookies, setAuthToken, setAuthTokenOnCookies, setJWT } from '../auth';
 import { cookies } from 'next/headers';
 import { GetWompiSignatureQuery } from '../../shared/queries';
 
@@ -38,9 +38,10 @@ export async function syncCustomerWithVendure() {
             token
         });
 
+        const guestToken = getAuthTokenFromCookies(cookiesStore);
         const login = await mutate(AuthenticateWithClerk, {
             token: token.jwt
-        })
+        }, { token: guestToken, useAuthToken: true })
 
         await setAuthToken(login.token!);
         await setJWT(token.jwt);
