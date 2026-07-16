@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Price } from '@/components/commerce/price';
 import { notFound } from "next/navigation";
 import { I18N } from '@/i18n/keys';
+import { PurchaseTracker } from './purchase-tracker';
 
 const GetOrderByCodeQuery = graphql(`
     query GetOrderByCode($code: String!) {
@@ -28,6 +29,9 @@ const GetOrderByCodeQuery = graphql(`
                         id
                         name
                         slug
+                        sellerShop {
+                            sellerName
+                        }
                         featuredAsset {
                             id
                             preview
@@ -77,6 +81,18 @@ export async function OrderConfirmation({ params, t }: OrderConfirmationProps) {
 
     return (
         <div className="container mx-auto px-4 py-16">
+            <PurchaseTracker
+                orderCode={order.code}
+                value={order.totalWithTax}
+                currency={order.currencyCode}
+                items={order.lines.map((line) => ({
+                    item_id: line.productVariant.id,
+                    item_name: line.productVariant.product.name,
+                    price: line.linePriceWithTax / line.quantity,
+                    quantity: line.quantity,
+                    seller_name: (line.productVariant.product as any).sellerShop?.sellerName,
+                }))}
+            />
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-8">
                     <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />

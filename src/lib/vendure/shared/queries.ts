@@ -59,6 +59,15 @@ export const GetProductsFallbackQuery = graphql(`
                     priceWithTax
                     currencyCode
                 }
+                collections {
+                    id
+                    name
+                    slug
+                }
+                sellerShop {
+                    sellerName
+                    channelCode
+                }
             }
         }
     }
@@ -114,6 +123,8 @@ export const GetProductDetailQuery = graphql(`
                 slug
                 parent {
                     id
+                    name
+                    slug
                 }
             }
         }
@@ -167,6 +178,8 @@ export const GetProductDetailLegacyQuery = graphql(`
                 slug
                 parent {
                     id
+                    name
+                    slug
                 }
             }
         }
@@ -490,6 +503,20 @@ export const GetOrderDetailQuery = graphql(`
             discounts {
                 description
                 amountWithTax
+            }
+        }
+    }
+`);
+
+export const GetProductsSellerNamesQuery = graphql(`
+    query GetProductsSellerNames($options: ProductListOptions) {
+        products(options: $options) {
+            items {
+                id
+                sellerShop {
+                    sellerName
+                    channelCode
+                }
             }
         }
     }

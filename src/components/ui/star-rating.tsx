@@ -46,18 +46,21 @@ export function StarRating({
     setHoveredRating(null);
   };
 
-  const getStarColor = (starIndex: number) => {
+  const getStarFillPercentage = (starIndex: number) => {
     const rating = hoveredRating ?? currentRating;
     
+    // Estrella completamente llena
     if (rating >= starIndex) {
-      return 'text-yellow-400 fill-yellow-400';
+      return 100;
     }
     
-    if (rating >= starIndex - 0.5 && rating < starIndex) {
-      return 'text-yellow-400 fill-transparent';
+    // Media estrella o fracción
+    if (rating > starIndex - 1 && rating < starIndex) {
+      return (rating - (starIndex - 1)) * 100;
     }
     
-    return 'text-gray-300';
+    // Estrella vacía
+    return 0;
   };
 
   const sizeClasses = {
@@ -68,13 +71,12 @@ export function StarRating({
 
   return (
     <div
-      className={cn('flex gap-1', className)}
+      className={cn('flex gap-0.5', className)}
       onMouseLeave={handleMouseLeave}
     >
       {Array.from({ length: maxStars }, (_, index) => {
         const starIndex = index + 1;
-        const isHalfStar = (hoveredRating ?? currentRating) >= starIndex - 0.5 && 
-                          (hoveredRating ?? currentRating) < starIndex;
+        const fillPercentage = getStarFillPercentage(starIndex);
 
         return (
           <button
@@ -84,16 +86,35 @@ export function StarRating({
             onClick={() => handleStarClick(starIndex)}
             onMouseEnter={() => handleStarHover(starIndex)}
             className={cn(
-              'transition-colors duration-200',
-              interactive && !disabled && 'cursor-pointer hover:scale-110',
-              getStarColor(starIndex)
+              'relative transition-transform duration-200',
+              interactive && !disabled && 'cursor-pointer hover:scale-110'
             )}
             aria-label={`Calificar ${starIndex} de ${maxStars}`}
           >
-            <Star className={sizeClasses[size]} />
-            {isHalfStar && (
-              <div className="absolute inset-0 overflow-hidden">
-                <Star className={cn(sizeClasses[size], 'text-yellow-400 fill-yellow-400')} />
+            {/* Star outline (background) */}
+            <Star 
+              className={cn(
+                sizeClasses[size], 
+                'text-gray-300 dark:text-gray-600'
+              )} 
+              strokeWidth={1.5}
+            />
+            
+            {/* Star fill (overlay) */}
+            {fillPercentage > 0 && (
+              <div 
+                className="absolute inset-0 overflow-hidden"
+                style={{ 
+                  clipPath: `inset(0 ${100 - fillPercentage}% 0 0)` 
+                }}
+              >
+                <Star 
+                  className={cn(
+                    sizeClasses[size], 
+                    'text-yellow-400 fill-yellow-400 dark:text-yellow-500 dark:fill-yellow-500'
+                  )}
+                  strokeWidth={1.5}
+                />
               </div>
             )}
           </button>

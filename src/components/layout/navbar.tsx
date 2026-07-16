@@ -7,6 +7,7 @@ import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
 import {SearchInputSkeleton} from '@/components/shared/skeletons/search-input-skeleton';
+import {NavbarCtaButtons} from '@/components/layout/navbar/navbar-cta-buttons';
 
 
 export function Navbar() {
@@ -65,6 +66,9 @@ export function Navbar() {
                         <SearchInput />
                         </Suspense>
                     </div>
+
+                    {/* CTA buttons: Registrarse + Crea tu tienda (desktop only) */}
+                    <NavbarCtaButtons />
 
                     <div className="flex-shrink-0">
                         <Suspense>

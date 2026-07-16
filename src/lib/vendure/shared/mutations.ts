@@ -10,6 +10,10 @@ export const AuthenticateWithClerk = graphql(`
                 id
                 identifier
             }
+            ... on ErrorResult {
+                errorCode
+                message
+            }
         }
     }
 `);
@@ -89,6 +93,10 @@ export const AdjustCartItemMutation = graphql(`
                 id
                 code
                 totalQuantity
+                lines {
+                    id
+                    quantity
+                }
             }
             ... on ErrorResult {
                 errorCode

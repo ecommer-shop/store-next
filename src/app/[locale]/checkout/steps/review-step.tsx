@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { Loader2, MapPin, Truck, Edit } from 'lucide-react';
+import { Loader2, MapPin, Truck, Pencil } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
-import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { Price } from '@/components/commerce/price';
 import { I18N } from '@/i18n/keys';
-import { placeOrder as placeOrderAction } from '../actions';
 
 interface ReviewStepProps {
   onComplete: () => void;
@@ -18,104 +16,80 @@ interface ReviewStepProps {
 export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProps) {
   const { order } = useCheckout();
   const [loading, setLoading] = useState(false);
-  const [testPaymentLoading, setTestPaymentLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { selectedLineIds } = useSelectedItems();
 
   const handlePlaceOrder = async () => {
-    // Solo avanzar al paso de pago; la orden se coloca en PaymentStep
     if (!order.shippingAddress || !order.shippingLines?.length) return;
     setLoading(true);
     onComplete();
     setLoading(false);
   };
 
-  const handleTestPayment = async () => {
-    if (!order.shippingAddress || !order.shippingLines?.length) return;
-    setTestPaymentLoading(true);
-    setErrorMessage(null);
-    try {
-      await placeOrderAction('wompi', selectedLineIds);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-        throw error;
-      }
-      console.error('Error finalizing test order:', error);
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'No se pudo finalizar el pedido de prueba.',
-      );
-      setTestPaymentLoading(false);
-    }
-  };
+  const canProceed = !!(order.shippingAddress && order.shippingLines?.length);
 
   return (
-    <>
-      <div className="space-y-6">
-      <h3 className="font-semibold text-lg text-foreground">{t(I18N.Checkout.review.title)}</h3>
+    <div className="space-y-5 pt-2">
+      <p className="text-sm text-muted-foreground">{t(I18N.Checkout.review.title)}</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Shipping Address */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.shippingAddress)}</h4>
-          </div>
-          {order.shippingAddress ? (
-            <div className="text-sm space-y-3">
-              <div>
-                <p className="font- text-foreground">{order.shippingAddress.fullName}</p>
-                <p className="text-muted-foreground">
-                  {order.shippingAddress.streetLine1}
-                  {order.shippingAddress.streetLine2 && `, ${order.shippingAddress.streetLine2}`}
-                </p>
-                <p className="text-muted-foreground">
-                  {order.shippingAddress.city}, {order.shippingAddress.province} {order.shippingAddress.postalCode}
-                </p>
-                <p className="text-muted-foreground">{order.shippingAddress.country}</p>
-                <p className="text-muted-foreground">{order.shippingAddress.phoneNumber}</p>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {/* Shipping address card */}
+        <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#9969F8]/10 text-[#9969F8]">
+                <MapPin className="w-3.5 h-3.5" />
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onEditStep('shipping')}
-                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
-              >
-                <Edit className="h-4 w-4 mr-1" />
-                {t(I18N.Checkout.review.edit)}
-              </Button>
+              {t(I18N.Checkout.review.shippingAddress)}
+            </div>
+            <button
+              type="button"
+              onClick={() => onEditStep('shipping')}
+              className="inline-flex items-center gap-1 text-xs text-[#9969F8] hover:opacity-80 transition font-medium"
+            >
+              <Pencil className="w-3 h-3" />
+              {t(I18N.Checkout.review.edit)}
+            </button>
+          </div>
+
+          {order.shippingAddress ? (
+            <div className="text-sm space-y-0.5 text-muted-foreground">
+              <p className="font-semibold text-foreground">{order.shippingAddress.fullName}</p>
+              <p>{order.shippingAddress.streetLine1}{order.shippingAddress.streetLine2 && `, ${order.shippingAddress.streetLine2}`}</p>
+              <p>{order.shippingAddress.city}, {order.shippingAddress.province} {order.shippingAddress.postalCode}</p>
+              <p>{order.shippingAddress.country}</p>
+              <p>{order.shippingAddress.phoneNumber}</p>
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">{t(I18N.Checkout.review.noAddressSet)}</p>
           )}
         </div>
 
-        {/* Delivery Method */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Truck className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium text-foreground">{t(I18N.Checkout.review.deliveryMethod)}</h4>
-          </div>
-          {order.shippingLines && order.shippingLines.length > 0 ? (
-            <div className="text-sm space-y-3">
-              <div>
-                <p className="font-medium text-foreground">{order.shippingLines[0].shippingMethod.name}</p>
-                <p className="text-muted-foreground">
-                  {order.shippingLines[0].priceWithTax === 0
-                    ? t(I18N.Checkout.delivery.free)
-                    : <Price value={order.shippingLines[0].priceWithTax} currencyCode={order.currencyCode} />}
-                </p>
+        {/* Delivery method card */}
+        <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#9969F8]/10 text-[#9969F8]">
+                <Truck className="w-3.5 h-3.5" />
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onEditStep('delivery')}
-                className="rounded-md bg-[#6BB8FF] dark:bg-[#9969F8]"
-              >
-                <Edit className="h-4 w-4 mr-1" />
-                {t(I18N.Checkout.review.edit)}
-              </Button>
+              {t(I18N.Checkout.review.deliveryMethod)}
+            </div>
+            <button
+              type="button"
+              onClick={() => onEditStep('delivery')}
+              className="inline-flex items-center gap-1 text-xs text-[#9969F8] hover:opacity-80 transition font-medium"
+            >
+              <Pencil className="w-3 h-3" />
+              {t(I18N.Checkout.review.edit)}
+            </button>
+          </div>
+
+          {order.shippingLines?.length ? (
+            <div className="text-sm space-y-0.5">
+              <p className="font-semibold text-foreground">{order.shippingLines[0].shippingMethod.name}</p>
+              <p className="text-muted-foreground">
+                {order.shippingLines[0].priceWithTax === 0
+                  ? t(I18N.Checkout.delivery.free)
+                  : <Price value={order.shippingLines[0].priceWithTax} currencyCode={order.currencyCode} />}
+              </p>
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">{t(I18N.Checkout.review.noMethodSet)}</p>
@@ -123,42 +97,21 @@ export default function ReviewStep({ onEditStep, t, onComplete }: ReviewStepProp
         </div>
       </div>
 
-      <div className="rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-950">
-        <p className="mb-3 text-sm font-medium">
-          Prueba temporal: finaliza el pedido sin abrir Wompi para validar si se emite la factura.
-        </p>
-        <Button
-          onClick={handleTestPayment}
-          isDisabled={testPaymentLoading || loading || !order.shippingAddress || !order.shippingLines?.length}
-          variant="bordered"
-          className="w-full border-amber-500 text-amber-950"
-        >
-          {testPaymentLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Prueba: finalizar sin Wompi y emitir factura
-        </Button>
-      </div>
-
-      {errorMessage && (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {errorMessage}
-        </p>
+      {/* Completion warning */}
+      {!canProceed && (
+        <div className="flex items-center gap-2 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
+          {t(I18N.Checkout.review.completeSteps)}
+        </div>
       )}
 
       <Button
         onClick={handlePlaceOrder}
-        size="lg"
-        className="w-full rounded-md"
+        isDisabled={!canProceed || loading}
+        className="w-full rounded-xl bg-[#9969F8] text-white hover:opacity-90 transition font-semibold h-11"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {t(I18N.Checkout.review.placeOrder)}
       </Button>
-
-      {(!order.shippingAddress || !order.shippingLines?.length) && (
-        <p className="text-sm text-destructive text-center">
-          {t(I18N.Checkout.review.completeSteps)}
-        </p>
-      )}
     </div>
-    </>
   );
 }

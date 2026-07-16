@@ -9,6 +9,7 @@ import {
     AddPaymentToOrderMutation,
     RemoveFromCartMutation,
     CreateCustomerAddressMutation,
+    UpdateCustomerAddressMutation,
     TransitionOrderToStateMutation,
     SetOrderDynamicShippingMethod,
     UpdateCustomerMutation
@@ -36,6 +37,10 @@ interface AddressInput {
         matiasCityId?: string;
         dni?: string;
         identityDocumentId?: string;
+        latitude?: number | string | null;
+        longitude?: number | string | null;
+        neighborhood?: string | null;
+        googlePlaceId?: string | null;
     };
 }
 
@@ -179,6 +184,26 @@ function normalizeInvoiceAddressInput(address: AddressInput): AddressInput {
     };
 }
 
+export async function updateCustomerAddress(id: string, address: AddressInput) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) {
+        throw new Error('AUTH_REQUIRED');
+    }
+    const result = await mutate(
+        UpdateCustomerAddressMutation,
+        { input: { id, ...normalizeInvoiceAddressInput(address) } } as any,
+        { token, useAuthToken: true }
+    );
+
+    if (!result.data.updateCustomerAddress) {
+        throw new Error('Failed to update customer address');
+    }
+
+    revalidatePath('/checkout');
+    return result.data.updateCustomerAddress;
+}
+
 export async function transitionToArrangingPayment() {
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
@@ -198,7 +223,12 @@ export async function transitionToArrangingPayment() {
     revalidatePath('/checkout');
 }
 
-export async function placeOrder(paymentMethodCode: string, selectedLineIds?: string[]) {
+export async function placeOrder(
+    paymentMethodCode: string,
+    selectedLineIds?: string[],
+    _shippingMethodIds?: string[],
+    _shippingPriceWithTax?: number,
+) {
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
 

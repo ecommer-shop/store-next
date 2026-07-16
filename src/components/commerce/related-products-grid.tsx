@@ -71,7 +71,7 @@ export function RelatedProductsGrid({
 
   return (
     <section className="space-y-6">
-      {title && <h2 className="text-2xl font-bold">{title}</h2>}
+      {/* Title hidden - shown in parent page.tsx instead */}
       <InfiniteScroll
         pageStart={1}
         loadMore={() => { if (!isFetchingNextPage) fetchNextPage(); }}

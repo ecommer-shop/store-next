@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+<<<<<<< HEAD
 import { useTranslations } from 'next-intl';
 import { Button, Checkbox, Radio, RadioGroup } from '@heroui/react';
 import { Input } from '@/components/ui/input';
@@ -8,14 +9,30 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
+=======
+import { Button } from '@heroui/react';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Loader2, MapPin, Plus, CheckCircle2, AlertCircle, Pencil } from 'lucide-react';
+>>>>>>> origin/dev
 import { useRouter } from 'next/navigation';
 import { useAuth, useClerk } from '@clerk/nextjs';
 import { useCheckout } from '../checkout-provider';
+<<<<<<< HEAD
 import { setShippingAddress, createCustomerAddress } from '../actions';
+=======
+import { setShippingAddress, createCustomerAddress, updateCustomerAddress } from '../actions';
+>>>>>>> origin/dev
 import { I18N } from '@/i18n/keys';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
+import { useTranslations } from 'next-intl';
+import { trackAddShippingInfo } from '@/lib/analytics/events';
 import clsx from 'clsx';
+<<<<<<< HEAD
 import { getMatiasCity, MATIAS_COLOMBIA_CITIES } from '@/lib/matias-cities';
+=======
+import { useForm } from 'react-hook-form';
+>>>>>>> origin/dev
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
@@ -26,28 +43,32 @@ interface ShippingAddressStepProps {
 export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
   const td = useTranslations('Account.addresses');
   const router = useRouter();
+<<<<<<< HEAD
   const { isLoaded, isSignedIn } = useAuth();
   const { redirectToSignIn } = useClerk();
   const { addresses, countries, order } = useCheckout();
+=======
+  const { addresses, countries, order, googleMapsApiKey } = useCheckout();
+
+>>>>>>> origin/dev
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
-    // If order already has a shipping address, try to match it with saved addresses
     if (order.shippingAddress) {
-      const matchingAddress = addresses.find(
+      const match = addresses.find(
         (a) =>
           a.streetLine1 === order.shippingAddress?.streetLine1 &&
-          a.postalCode === order.shippingAddress?.postalCode
+          a.postalCode === order.shippingAddress?.postalCode,
       );
-      if (matchingAddress) return matchingAddress.id;
+      if (match) return match.id;
     }
-    // Otherwise use default shipping address
-    const defaultAddress = addresses.find((a) => a.defaultShippingAddress);
-    return defaultAddress?.id || null;
+    return addresses.find((a) => a.defaultShippingAddress)?.id ?? null;
   });
 
   const [dialogOpen, setDialogOpen] = useState(addresses.length === 0);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [useSameForBilling, setUseSameForBilling] = useState(true);
+<<<<<<< HEAD
   const resolveMatiasCityForAddress = (address: (typeof addresses)[number]) => {
     const savedCity = getMatiasCity(address.customFields?.matiasCityId);
     if (savedCity) return savedCity;
@@ -74,10 +95,20 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
     }
     return true;
   };
+=======
+
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+  const selectedAddressHasCoords = hasGoogleCoordinates(selectedAddress);
+
+  const { reset } = useForm<AddressFormData>({
+    defaultValues: { countryCode: countries[0]?.id ?? 'CO' },
+  });
+>>>>>>> origin/dev
 
   const handleSelectExistingAddress = async () => {
     if (!ensureSignedIn()) return;
     if (!selectedAddressId) return;
+<<<<<<< HEAD
     const selectedAddress = addresses.find(a => a.id === selectedAddressId);
     if (!selectedAddress) return;
     const fiscalDni = selectedAddress.customFields?.dni?.trim();
@@ -109,6 +140,28 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
         identityDocumentId,
       }, useSameForBilling, fiscalDni, identityDocumentId);
 
+=======
+    setLoading(true);
+    try {
+      const addr = addresses.find((a) => a.id === selectedAddressId);
+      if (!addr) return;
+      await setShippingAddress(
+        {
+          fullName: addr.fullName || '',
+          company: addr.company || '',
+          streetLine1: addr.streetLine1,
+          streetLine2: addr.streetLine2 || '',
+          city: addr.city || '',
+          province: addr.province || '',
+          postalCode: addr.postalCode || '',
+          countryCode: addr.country.code,
+          phoneNumber: addr.phoneNumber || '',
+          customFields: addr.customFields || undefined,
+        },
+        useSameForBilling,
+      );
+      trackAddShippingInfo({ shipping_tier: 'standard' });
+>>>>>>> origin/dev
       router.refresh();
       onComplete();
     } catch (error) {
@@ -125,34 +178,58 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
     if (!ensureSignedIn()) return;
     setSaving(true);
     try {
-      const country = countries.find(c => c.id === data.countryCode || c.code === data.countryCode);
+      const country = countries.find(
+        (c) => c.id === data.countryCode || c.code === data.countryCode,
+      );
       if (!country) throw new Error('Invalid country');
-      // First create the address in Vendure
-      const newAddress = await createCustomerAddress({
-        ...data,
-        countryCode: country.code
-      });
-
-      // Close dialog and reset form
+      const newAddress = await createCustomerAddress({ ...data, countryCode: country.code });
       setDialogOpen(false);
+<<<<<<< HEAD
       // Refresh to get updated addresses list
+=======
+      reset();
+>>>>>>> origin/dev
       router.refresh();
-
-      // Select the newly created address
       setSelectedAddressId(newAddress.id);
     } catch (error) {
       console.error('Error creating address:', error);
+<<<<<<< HEAD
       if (error instanceof Error && error.message.includes('AUTH_REQUIRED')) {
         redirectToClerkSignIn();
         return;
       }
       alert(`Error creating address: ${error instanceof Error ? error.message : 'Unknown error'}`);
+=======
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const onSaveEditedAddress = async (data: AddressFormData) => {
+    if (!editingAddressId) return;
+    setSaving(true);
+    try {
+      const country = countries.find(
+        (c) => c.id === data.countryCode || c.code === data.countryCode,
+      );
+      if (!country) throw new Error('Invalid country');
+      await updateCustomerAddress(editingAddressId, { ...data, countryCode: country.code });
+      setDialogOpen(false);
+      setEditingAddressId(null);
+      reset();
+      router.refresh();
+    } catch (error) {
+      console.error('Error updating address:', error);
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+>>>>>>> origin/dev
     } finally {
       setSaving(false);
     }
   };
 
   return (
+<<<<<<< HEAD
     <div
       className="flex w-full flex-col items-center space-y-6"
     >
@@ -168,45 +245,62 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
             value={selectedAddressId || ''}
           >
             {addresses.map((address) => (
+=======
+    <div className="space-y-5 pt-2">
+>>>>>>> origin/dev
 
-              <Radio key={address.id} value={address.id} id={address.id} className={clsx(
-                "group relative flex-col gap-3 rounded-xl border border-transparent bg-primary-foreground dark:bg-primary-foreground px-5 py-4 transition-all data-[selected=true]:border-accent data-[selected=true]:bg-accent/10",
-                "data-[focus-visible=true]:border-accent data-[focus-visible=true]:bg-accent/10"
-              )}>
-                <Label htmlFor={address.id} className="flex-1 cursor-pointer w-full">
-                  <Radio.Control className="absolute top-3 right-4 size-5">
-                    <Radio.Indicator />
-                  </Radio.Control>
-                  <Radio.Content className="mt-1">
-                    <Card className="p-4" variant='tertiary'>
-                      <div className="leading-tight space-y-0">
-                        <p className="font-medium">{address.fullName}</p>
-                        {address.company && <p className="text-sm text-muted-foreground">{address.company}</p>}
-                        <p className="text-sm text-muted-foreground">
+      {/* Address cards */}
+      {addresses.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">{t(I18N.Checkout.shippingAddress.selectSaved)}</p>
+
+          <div className="space-y-2">
+            {addresses.map((address) => {
+              const hasCoords = hasGoogleCoordinates(address);
+              const isSelected = selectedAddressId === address.id;
+
+              return (
+                <div
+                  key={address.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedAddressId(address.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedAddressId(address.id);
+                    }
+                  }}
+                  className={clsx(
+                    'w-full text-left rounded-xl border-2 p-4 transition-all duration-150 cursor-pointer',
+                    isSelected
+                      ? 'border-[#9969F8] bg-[#9969F8]/5 shadow-sm'
+                      : 'border-border bg-card hover:border-[#9969F8]/40 hover:bg-muted/30',
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className={clsx(
+                        'mt-0.5 flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors',
+                        isSelected ? 'border-[#9969F8] bg-[#9969F8]' : 'border-muted-foreground/40',
+                      )}>
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+
+                      <div className="min-w-0 space-y-0.5">
+                        <p className="font-semibold text-sm text-foreground">{address.fullName}</p>
+                        <p className="text-sm text-muted-foreground truncate">
                           {address.streetLine1}
                           {address.streetLine2 && `, ${address.streetLine2}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {address.city}, {address.province} {address.postalCode}
                         </p>
-                        <p className="text-sm text-muted-foreground">{address.country.name}</p>
                         <p className="text-sm text-muted-foreground">{address.phoneNumber}</p>
                       </div>
-                    </Card>
-                  </Radio.Content>
-                </Label>
-              </Radio>
-            ))}
-          </RadioGroup>
-          { }
-          <Checkbox className="flex items-center space-x-2" id="same-billing"
-            isSelected={useSameForBilling}
-            onChange={(checked) => setUseSameForBilling(checked === true)}>
-            <Checkbox.Control>
-              <Checkbox.Indicator />
-            </Checkbox.Control>
-            <Checkbox.Content
+                    </div>
 
+<<<<<<< HEAD
             >
               <label
                 htmlFor="same-billing"
@@ -261,9 +355,164 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                 />
               </DialogContent>
             </Dialog>
+=======
+                    <div className="flex-shrink-0 flex items-start gap-2">
+                      {/* Coords badge */}
+                      <div>
+                        {hasCoords ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Maps
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">
+                            <AlertCircle className="w-3 h-3" />
+                            Sin coords
+                          </span>
+                        )}
+                      </div>
+                      {/* Edit button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingAddressId(address.id);
+                          setDialogOpen(true);
+                        }}
+                        className="text-muted-foreground hover:text-[#9969F8] transition-colors"
+                        title="Edit address"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+>>>>>>> origin/dev
           </div>
         </div>
       )}
+
+      {/* No coordinates warning */}
+      {selectedAddressId && !selectedAddressHasCoords && (
+        <div className="flex items-start gap-2 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
+          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <span>Esta dirección no tiene coordenadas de Google Maps. Agrega una nueva dirección seleccionándola desde el autocomplete.</span>
+        </div>
+      )}
+
+      {/* Same billing checkbox */}
+      <label className="flex items-center gap-3 py-1 cursor-pointer select-none">
+        <div
+          className={clsx(
+            'w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0',
+            useSameForBilling ? 'bg-[#9969F8] border-[#9969F8]' : 'bg-background border-border',
+          )}
+        >
+          {useSameForBilling && (
+            <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+        <input
+          id="same-billing"
+          type="checkbox"
+          className="sr-only"
+          checked={useSameForBilling}
+          onChange={(e) => setUseSameForBilling(e.target.checked)}
+        />
+        <span className={clsx('text-sm font-medium', useSameForBilling ? 'text-[#9969F8]' : 'text-foreground')}>
+          {t(I18N.Checkout.shippingAddress.sameBilling)}
+        </span>
+      </label>
+
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button
+          onClick={handleSelectExistingAddress}
+          isDisabled={!selectedAddressId || loading || !selectedAddressHasCoords}
+          className="flex-1 rounded-xl bg-[#9969F8] text-white hover:opacity-90 transition font-semibold h-11"
+        >
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {t(I18N.Checkout.shippingAddress.continueWithSelected)}
+        </Button>
+
+        <Dialog open={dialogOpen} onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) {
+            setEditingAddressId(null);
+            reset();
+          }
+        }}>
+          <DialogTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              className="rounded-xl border-2 border-[#9969F8]/40 text-[#9969F8] hover:bg-[#9969F8]/10 transition font-medium h-11 gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              {t(I18N.Checkout.shippingAddress.addNew)}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#9969F8]" />
+                {editingAddressId
+                  ? td(I18N.Account.addresses.form.actions.editAddress)
+                  : td(I18N.Account.addresses.form.actions.addNewAddress)}
+              </DialogTitle>
+              <DialogDescription>
+                {editingAddressId
+                  ? td(I18N.Account.addresses.form.actions.updateDetails)
+                  : td(I18N.Account.addresses.form.actions.fillForm)}
+              </DialogDescription>
+            </DialogHeader>
+            <AddressForm
+              key={editingAddressId || 'create'}
+              countries={countries}
+              defaultValues={editingAddressId ? (() => {
+                const addr = addresses.find(a => a.id === editingAddressId);
+                return addr ? {
+                  fullName: addr.fullName || '',
+                  company: addr.company || '',
+                  streetLine1: addr.streetLine1,
+                  streetLine2: addr.streetLine2 || '',
+                  city: addr.city || '',
+                  province: addr.province || '',
+                  postalCode: addr.postalCode || '',
+                  countryCode: addr.country.id,
+                  phoneNumber: addr.phoneNumber || '',
+                  customFields: addr.customFields || undefined,
+                } : undefined;
+              })() : undefined}
+              googleMapsApiKey={googleMapsApiKey}
+              isSubmitting={saving}
+              requireGoogleCoordinates
+              onSubmit={editingAddressId ? onSaveEditedAddress : onSaveNewAddress}
+              onCancel={() => {
+                setDialogOpen(false);
+                setEditingAddressId(null);
+              }}
+              labels={{
+                fullName: td(I18N.Account.addresses.form.fields.fullName.label),
+                company: td(I18N.Account.addresses.form.fields.company.label),
+                streetLine1: td(I18N.Account.addresses.form.fields.streetLine1.label),
+                streetLine2: td(I18N.Account.addresses.form.fields.streetLine2.label),
+                city: td(I18N.Account.addresses.form.fields.city.label),
+                province: td(I18N.Account.addresses.form.fields.province.label),
+                postalCode: td(I18N.Account.addresses.form.fields.postalCode.label),
+                country: td(I18N.Account.addresses.form.fields.countryCode.label),
+                phoneNumber: td(I18N.Account.addresses.form.fields.phoneNumber.label),
+                cancel: td(I18N.Account.addresses.form.actions.cancel),
+                submit: td(I18N.Account.addresses.form.actions.save),
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

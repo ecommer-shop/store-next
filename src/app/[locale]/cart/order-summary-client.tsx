@@ -47,27 +47,27 @@ export function OrderSummaryClient({
 
   return (
     <>
-      <div className="flex justify-between text-sm">
+      <div className="flex justify-between text-xs lg:text-sm">
         <span className="text-muted-foreground">{t(tBase.subtotal)}</span>
-        <span>
+        <span className="font-medium">
           <Price value={selectedLinesTotal} currencyCode={currencyCode} />
         </span>
       </div>
       {discounts && discounts.length > 0 && (
         <>
           {discounts.map((discount, index) => (
-            <div key={index} className="flex justify-between text-sm text-green-600">
-              <span>{discount.description}</span>
-              <span>
+            <div key={index} className="flex justify-between text-xs lg:text-sm text-green-600">
+              <span className="truncate mr-2">{discount.description}</span>
+              <span className="font-medium whitespace-nowrap">
                 <Price value={discount.amountWithTax} currencyCode={currencyCode} />
               </span>
             </div>
           ))}
         </>
       )}
-      <div className="flex justify-between text-sm">
+      <div className="flex justify-between text-xs lg:text-sm">
         <span className="text-muted-foreground">{t(tBase.shipping)}</span>
-        <span>
+        <span className="font-medium">
           {shippingWithTax > 0 ? (
             <Price value={shippingWithTax} currencyCode={currencyCode} />
           ) : (
@@ -76,15 +76,15 @@ export function OrderSummaryClient({
         </span>
       </div>
 
-      <div className="border-t pt-4">
-        <div className="flex justify-between font-bold text-lg">
+      <div className="border-t pt-2.5 lg:pt-4">
+        <div className="flex justify-between font-bold text-base lg:text-lg">
           <span>{t(tBase.total)}</span>
           <span>
             <Price value={finalTotal} currencyCode={currencyCode} />
           </span>
         </div>
         {selectedLineIds.length !== lines.length && (
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-[10px] lg:text-xs text-muted-foreground mt-1.5 lg:mt-2">
             ({selectedLineIds.length} / {lines.length})
           </p>
         )}

@@ -1,14 +1,15 @@
 'use client';
 
-import { Button, Card } from '@heroui/react';
-import { CreditCard } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@heroui/react';
+import { CreditCard, Shield, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import Script from 'next/script';
 import { useCheckout } from '../checkout-provider';
-import { getPaymentSignature } from '../actions';
-import { useEffect, useState } from 'react';
-import { placeOrder as placeOrderAction } from '../actions';
+import { trackAddPaymentInfo } from '@/lib/analytics/events';
+import { getPaymentSignature, placeOrder as placeOrderAction } from '../actions';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { CurrencyCode, TransactionStatus } from '@/models/payment';
+import { Price } from '@/components/commerce/price';
 
 const WOMPI_MIN_TEST_AMOUNT_IN_CENTS = 1500 * 100;
 
@@ -19,34 +20,26 @@ interface PaymentStepProps {
 }
 
 export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
-  const { order, addresses, selectedPaymentMethodCode, setSelectedPaymentMethodCode } = useCheckout();
+  const { order, selectedPaymentMethodCode, setSelectedPaymentMethodCode } = useCheckout();
   const { selectedLineIds } = useSelectedItems();
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Calculate total based on selected lines from context
   const getSelectedOrderTotal = () => {
-    // Filter lines to only selected ones
     const selectedLines = order.lines.filter((line) => selectedLineIds.includes(line.id));
-
-    // Calculate subtotal from selected lines
-    const selectedSubtotal = selectedLines.reduce((sum, line) => sum + line.linePriceWithTax, 0);
-
-    // Add shipping and discounts to get final total
+    const subtotal = selectedLines.reduce((sum, line) => sum + line.linePriceWithTax, 0);
     const discountTotal = order.discounts?.reduce((sum, d) => sum + d.amountWithTax, 0) ?? 0;
-    const total = selectedSubtotal + order.shippingWithTax - discountTotal;
-
-    return total;
+    return subtotal + order.shippingWithTax - discountTotal;
   };
 
-  const selectedShippingMethodIds = () => (
+  const selectedShippingMethodIds = () =>
     order.shippingLines
       ?.map((line) => line.shippingMethod?.id)
-      .filter((id): id is string => Boolean(id)) ?? []
-  );
+      .filter((id): id is string => Boolean(id)) ?? [];
 
   const finalizeOrder = async (paymentMethodCode: string) => {
+    trackAddPaymentInfo({ payment_type: paymentMethodCode });
     setLoading(true);
     setErrorMessage(null);
     try {
@@ -58,59 +51,37 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       );
       onComplete();
     } catch (error) {
-      // Check if this is a Next.js redirect (which is expected)
-      if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-        // This is a redirect, not an error - let it propagate
-        throw error;
-      }
-      console.error('Error finalizing order:', error);
+      if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) throw error;
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'El pago fue aprobado, pero no se pudo finalizar el pedido. Intenta finalizarlo de nuevo.',
+          : 'El pago fue aprobado, pero no se pudo finalizar el pedido. Intenta de nuevo.',
       );
       setLoading(false);
     }
   };
 
-  const handlePlaceOrder = async () => {
-    if (!selectedPaymentMethodCode) return;
-    await finalizeOrder(selectedPaymentMethodCode);
-  };
-
   const openWompi = async () => {
-    if (!pb) {
-      console.error('[Wompi] PAYMENT_PUBLIC_KEY no está definida. Verifica las variables de entorno.');
-      return;
-    }
-
+    if (!pb) return;
     setLoading(true);
     setErrorMessage(null);
-
     try {
       // Calculate the correct total based on selected items
       const correctTotal = getSelectedOrderTotal();
       // TEMPORAL PARA PRUEBAS: Wompi no permite transacciones menores a $1.500 COP.
       // Quitar este Math.max cuando las pruebas usen productos con valor real suficiente.
       const amountInCents = Math.max(Math.round(correctTotal), WOMPI_MIN_TEST_AMOUNT_IN_CENTS);
-
-      // Generar una referencia única para cada intento de pago usando UUID
-      const uniqueId = crypto.randomUUID().replace(/-/g, '');
-      const uniqueReference = `${order.code}-${uniqueId}`;
-
-      // Obtener la firma usando la referencia única
+      const uniqueReference = `${order.code}-${crypto.randomUUID().replace(/-/g, '')}`;
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
-      
+
       // @ts-ignore
       const checkout = new window.WidgetCheckout({
         currency: CurrencyCode.COP,
-        amountInCents: amountInCents,
+        amountInCents,
         reference: uniqueReference,
         publicKey: pb,
         redirectUrl: `https://ecommer.shop/order-confirmation/${order.code}`,
-        signature: {
-          integrity: signature,
-        },
+        signature: { integrity: signature },
         customerData: {
           email: order.customer?.emailAddress,
           fullName: order.customer?.firstName,
@@ -118,37 +89,26 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       });
 
       checkout.open(async ({ transaction }: any) => {
-        
-
-        // Verificar si el pago fue exitoso
-        if (transaction.status === TransactionStatus.APPROVED || transaction.status === TransactionStatus.APPROVED.toLowerCase()) {
+        const status = transaction.status?.toUpperCase();
+        if (status === TransactionStatus.APPROVED || status === 'APPROVED') {
           setSelectedPaymentMethodCode('wompi');
           setPaymentSuccess(true);
           await finalizeOrder('wompi');
-        } else if (transaction.status === 'DECLINED' || transaction.status === 'declined') {
-          console.error('Payment declined');
-          setErrorMessage('El pago fue rechazado. Intenta con otro metodo de pago.');
+        } else if (status === 'DECLINED') {
+          setErrorMessage('El pago fue rechazado. Intenta con otro método de pago.');
           setLoading(false);
-        } else if (transaction.status === 'PENDING' || transaction.status === 'pending') {
-          setErrorMessage('El pago quedo pendiente. Revisa el estado antes de intentar nuevamente.');
+        } else if (status === 'PENDING') {
+          setErrorMessage('El pago quedó pendiente. Revisa el estado antes de intentar nuevamente.');
           setLoading(false);
         }
       });
     } catch (error) {
-      console.error('Error opening Wompi checkout:', error);
       setErrorMessage(error instanceof Error ? error.message : 'No se pudo abrir Wompi.');
       setLoading(false);
     }
   };
 
-  const handleButtonClick = () => {
-    if (paymentSuccess) {
-      void finalizeOrder('wompi');
-      return;
-    }
-
-    void openWompi();
-  };
+  const totalAmount = getSelectedOrderTotal();
 
   const handleTestPayment = () => {
     setSelectedPaymentMethodCode('wompi');
@@ -157,31 +117,71 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className={`p-6 flex items-center gap-4 ${paymentSuccess ? 'bg-green-50 border-green-200' : ''}`}>
-        <CreditCard className="h-6 w-6 text-muted-foreground" />
-        <div>
-          <p className="font-medium text-foreground">
-            {paymentSuccess ? '✓ Pago completado' : 'Pago con Wompi'}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {paymentSuccess ? 'Tu pago fue procesado exitosamente' : 'Tarjeta, PSE, Nequi, Bancolombia'}
-          </p>
-        </div>
-      </Card>
+    <div className="space-y-5 pt-2">
 
+      {/* Payment method card */}
+      <div className={`
+        rounded-xl border-2 p-4 transition-all
+        ${paymentSuccess
+          ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20'
+          : 'border-[#9969F8]/40 bg-[#9969F8]/5'}
+      `}>
+        <div className="flex items-center gap-4">
+          <div className={`
+            flex items-center justify-center w-11 h-11 rounded-full
+            ${paymentSuccess ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600' : 'bg-[#9969F8]/15 text-[#9969F8]'}
+          `}>
+            {paymentSuccess
+              ? <CheckCircle2 className="w-5 h-5" />
+              : <CreditCard className="w-5 h-5" />}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-foreground">
+              {paymentSuccess ? 'Pago completado' : 'Pagar con Wompi'}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {paymentSuccess
+                ? 'Tu pago fue procesado exitosamente'
+                : 'Tarjeta de crédito/débito, PSE, Nequi, Bancolombia'}
+            </p>
+          </div>
+          {!paymentSuccess && (
+            <div className="text-right flex-shrink-0">
+              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="font-bold text-foreground">
+                <Price value={totalAmount} currencyCode={order.currencyCode} />
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Security note */}
+      {!paymentSuccess && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Shield className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+          <span>Pago 100% seguro procesado por Wompi. Tu información está protegida con encriptación SSL.</span>
+        </div>
+      )}
+
+      {/* Error */}
       {errorMessage && (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <div className="flex items-start gap-2 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           {errorMessage}
-        </p>
+        </div>
       )}
 
       <Button
-        onClick={handleButtonClick}
+        onClick={paymentSuccess ? () => finalizeOrder('wompi') : openWompi}
         isDisabled={loading}
-        className="w-full sticky bottom-0"
+        className="w-full rounded-xl bg-[#9969F8] text-white hover:opacity-90 transition font-semibold h-12 text-base"
       >
-        {loading ? 'Cargando...' : paymentSuccess ? 'Finalizar pedido' : 'Pagar con Wompi'}
+        {loading
+          ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Procesando…</>
+          : paymentSuccess
+          ? 'Finalizar pedido'
+          : 'Pagar con Wompi'}
       </Button>
 
       <Button
@@ -194,10 +194,9 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       </Button>
 
       <Script
-        onChange={() => setSelectedPaymentMethodCode('wompi')}
         src="https://checkout.wompi.co/widget.js"
         strategy="afterInteractive"
-        className='sticky top-11'
+        onChange={() => setSelectedPaymentMethodCode('wompi')}
       />
     </div>
   );

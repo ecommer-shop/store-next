@@ -18,6 +18,7 @@ import {
 } from '@/lib/vendure/shared/asset-url';
 import {
     channelCodeMatchesStoreSlug,
+    getStoreCollections,
     getStoreFeaturedProducts,
     getStoreMetadata,
     getStoreProducts,
@@ -29,6 +30,7 @@ export const dynamic = 'force-dynamic';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -67,13 +69,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-export default async function StorePage({ params }: Props) {
+export default async function StorePage({ params, searchParams }: Props) {
     const { slug, locale } = await params;
+    const resolvedSearchParams = await searchParams;
     const [metadataResult, allProducts, profile, featuredProducts] = await Promise.all([
         getStoreMetadata(slug, locale),
-        getStoreProducts(slug, locale),
+        getStoreProducts(slug, locale, resolvedSearchParams),
         getStoreProfile(slug, locale),
         getStoreFeaturedProducts(slug, locale),
+        getStoreCollections(slug, locale),
     ]);
 
     const channel = metadataResult.data.activeChannel;
