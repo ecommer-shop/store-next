@@ -264,6 +264,10 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                     matiasCityId
                     dni
                     identityDocumentId
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
                 }
             }
             billingAddress {
@@ -280,6 +284,10 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                     matiasCityId
                     dni
                     identityDocumentId
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
                 }
             }
             shippingLines {
@@ -341,6 +349,10 @@ export const GetCustomerAddressesQuery = graphql(`
                     matiasCityId
                     dni
                     identityDocumentId
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
                 }
                 defaultShippingAddress
                 defaultBillingAddress
