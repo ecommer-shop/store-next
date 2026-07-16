@@ -33,6 +33,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     const [flowStep, setFlowStep] = useState<PaymentFlowStep>('select');
     const [loading, setLoading] = useState(false);
     const [saveCard, setSaveCard] = useState(false);
+    const [installments, setInstallments] = useState(1);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     // Saved cards state
@@ -198,14 +199,11 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         setCardData(data);
         setFlowStep('processing');
 
-        const acceptanceToken = await getAcceptanceToken(pb);
-
         try {
             const paymentSource = await createWompiPaymentSource({
                 token: data.token,
                 type: 'CARD',
                 customerEmail: order.customer?.emailAddress || '',
-                acceptanceToken,
             });
 
             const total = getSelectedOrderTotal();
@@ -214,11 +212,13 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
 
             const result = await initWompiSavedCardTransaction({
                 paymentSourceId: String(paymentSource.id),
-                acceptanceToken,
+                acceptanceToken: '',
                 customerEmail: order.customer?.emailAddress || '',
                 amountInCents,
                 reference: uniqueReference,
                 currency: CurrencyCode.COP,
+                type: 'CARD',
+                installments,
             });
 
             if (result?.transactionId) {
@@ -249,14 +249,11 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         setNequiPhone(data.cardHolder);
         setFlowStep('processing');
 
-        const acceptanceToken = await getAcceptanceToken(pb);
-
         try {
             const paymentSource = await createWompiPaymentSource({
                 token: data.token,
                 type: 'NEQUI',
                 customerEmail: order.customer?.emailAddress || '',
-                acceptanceToken,
             });
 
             const total = getSelectedOrderTotal();
@@ -265,11 +262,13 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
 
             const result = await initWompiSavedCardTransaction({
                 paymentSourceId: String(paymentSource.id),
-                acceptanceToken,
+                acceptanceToken: '',
                 customerEmail: order.customer?.emailAddress || '',
                 amountInCents,
                 reference: uniqueReference,
                 currency: CurrencyCode.COP,
+                type: 'NEQUI',
+                installments: 1,
             });
 
             if (result?.transactionId) {
@@ -293,14 +292,11 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         setDaviplataPhone(data.cardHolder);
         setFlowStep('processing');
 
-        const acceptanceToken = await getAcceptanceToken(pb);
-
         try {
             const paymentSource = await createWompiPaymentSource({
                 token: data.token,
                 type: 'DAVIPLATA',
                 customerEmail: order.customer?.emailAddress || '',
-                acceptanceToken,
             });
 
             const total = getSelectedOrderTotal();
@@ -309,11 +305,13 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
 
             const result = await initWompiSavedCardTransaction({
                 paymentSourceId: String(paymentSource.id),
-                acceptanceToken,
+                acceptanceToken: '',
                 customerEmail: order.customer?.emailAddress || '',
                 amountInCents,
                 reference: uniqueReference,
                 currency: CurrencyCode.COP,
+                type: 'DAVIPLATA',
+                installments: 1,
             });
 
             if (result?.transactionId) {
@@ -481,6 +479,28 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                                 />
                                 Guardar esta tarjeta para futuras compras
                             </label>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Número de cuotas
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {[1, 2, 3, 6, 12, 24, 36].map((n) => (
+                                        <button
+                                            key={n}
+                                            type="button"
+                                            onClick={() => setInstallments(n)}
+                                            className={`px-4 py-2 rounded-xl border-2 text-sm font-medium transition-all ${
+                                                installments === n
+                                                    ? 'border-[#9969F8] bg-[#9969F8]/10 text-[#9969F8]'
+                                                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-[#9969F8]/40'
+                                            }`}
+                                        >
+                                            {n === 1 ? 'Contado' : `${n} cuotas`}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     )}
 
