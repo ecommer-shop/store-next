@@ -468,23 +468,6 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                     </Button>
                 </div>
 
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full text-[#9969F8] dark:text-[#9969F8] border-2 border-[#9969F8] hover:bg-[#9969F8]/10"
-                    isDisabled={!canAddToCart || isBuyingNow || isAdding}
-                    onPress={handleBuyNow}
-                >
-                    {isBuyingNow ? (
-                        <>
-                            <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                            {t(I18N.Commerce.productInfo.adding)}
-                        </>
-                    ) : (
-                        'Comprar ahora'
-                    )}
-                </Button>
-
                 {showGoToCart && (
                     <div className="flex flex-row gap-2 w-full">
                         <ContinueShoppingButton size="lg" className="flex-1 min-w-0" />
