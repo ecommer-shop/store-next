@@ -26,8 +26,6 @@ export function ConsentBanner() {
         const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
         if (!stored) {
             setVisible(true);
-        } else {
-            updateConsent(stored === 'granted');
         }
     }, []);
 
