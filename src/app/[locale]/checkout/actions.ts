@@ -1,7 +1,7 @@
 'use server';
 
 import { mutate, query } from '@/lib/vendure/server/api';
-import { getAuthTokenFromCookies } from '@/lib/vendure/server/auth';
+import { getAuthTokenFromCookies, requireClerkAuth } from '@/lib/vendure/server/auth';
 import {
     SetOrderShippingAddressMutation,
     SetOrderBillingAddressMutation,
@@ -374,6 +374,7 @@ export async function setShippingAddress(
     shippingAddress: AddressInput,
     useSameForBilling: boolean
 ) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     const shippingResult = await mutate(
@@ -398,6 +399,7 @@ export async function setShippingAddress(
 }
 
 export async function setShippingMethod(shippingMethodId: string) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
@@ -414,6 +416,7 @@ export async function setShippingMethod(shippingMethodId: string) {
 }
 
 export async function setDynamicShippingPrice(price: number) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     await mutate(
@@ -456,6 +459,7 @@ async function reapplyShippingSelection(
 }
 
 export async function calculateDeliveryCostQuote() {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
@@ -562,6 +566,7 @@ async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, 
 }
 
 export async function createCustomerAddress(address: AddressInput) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
@@ -579,6 +584,7 @@ export async function createCustomerAddress(address: AddressInput) {
 }
 
 export async function updateCustomerAddress(id: string, address: AddressInput) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
@@ -596,6 +602,7 @@ export async function updateCustomerAddress(id: string, address: AddressInput) {
 }
 
 export async function transitionToArrangingPayment() {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
@@ -621,6 +628,7 @@ export async function placeOrder(
     shippingMethodIds?: string[],
     shippingPriceWithTax?: number,
 ) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
@@ -719,6 +727,7 @@ export async function placeOrder(
 }
 
 export async function getPaymentSignature(amountInCents: number, paymentReference: string) {
+    await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
