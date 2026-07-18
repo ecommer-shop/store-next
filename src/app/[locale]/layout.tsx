@@ -207,16 +207,30 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
               {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
-                  
-                  const isLocalhost = typeof window !== \'undefined\' && (window.location.hostname === \'localhost\' || window.location.hostname === \'127.0.0.1\');
-                  
-                  gtag(\'consent\', \'default\', {
-                      ad_storage: isLocalhost ? \'granted\' : \'denied\',
-                      ad_user_data: isLocalhost ? \'granted\' : \'denied\',
-                      ad_personalization: isLocalhost ? \'granted\' : \'denied\',
-                      analytics_storage: isLocalhost ? \'granted\' : \'denied\',
+
+                  var isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+                  var storedConsent = null;
+                  try {
+                      storedConsent = localStorage.getItem('ecommer_cookie_consent');
+                  } catch (e) {}
+
+                  gtag('consent', 'default', {
+                      ad_storage: isLocalhost ? 'granted' : 'denied',
+                      ad_user_data: isLocalhost ? 'granted' : 'denied',
+                      ad_personalization: isLocalhost ? 'granted' : 'denied',
+                      analytics_storage: isLocalhost ? 'granted' : 'denied',
                       wait_for_update: 500
                   });
+
+                  if (storedConsent === 'granted') {
+                      gtag('consent', 'update', {
+                          ad_storage: 'granted',
+                          ad_user_data: 'granted',
+                          ad_personalization: 'granted',
+                          analytics_storage: 'granted'
+                      });
+                  }
               `}
           </Script>
           {gtmId && <GoogleTagManager gtmId={gtmId} />}

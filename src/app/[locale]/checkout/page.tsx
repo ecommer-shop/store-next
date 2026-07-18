@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
   searchParams: Record<string, string | string[] | undefined>;
 }
 

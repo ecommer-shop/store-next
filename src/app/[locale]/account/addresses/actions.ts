@@ -1,7 +1,7 @@
 'use server';
 
 import {mutate} from '@/lib/vendure/server/api';
-import { getAuthTokenFromCookies } from '@/lib/vendure/server/auth';
+import { getAuthTokenFromCookies, requireClerkAuth } from '@/lib/vendure/server/auth';
 import {
     CreateCustomerAddressMutation,
     UpdateCustomerAddressMutation,
@@ -41,6 +41,7 @@ interface UpdateAddressInput extends AddressInput {
 }
 
 const token = async () => {
+    await requireClerkAuth();
     const cookiesStore = await cookies();
     const tokenAuth = getAuthTokenFromCookies(cookiesStore);
     return tokenAuth!
