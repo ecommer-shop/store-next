@@ -39,6 +39,7 @@ function fallbackStoreProfileFromSlug(slug: string): StoreProfileData {
         storeName,
         storeDescription: null,
         storeBannerUrl: null,
+        storeHeaderBannerUrl: null,
     };
 }
 
@@ -175,6 +176,7 @@ export interface StoreProfileData {
     storeName: string;
     storeDescription: string | null;
     storeBannerUrl: string | null;
+    storeHeaderBannerUrl: string | null;
 }
 
 export async function getStoreProfile(slug: string, locale: string): Promise<StoreProfileData | null> {

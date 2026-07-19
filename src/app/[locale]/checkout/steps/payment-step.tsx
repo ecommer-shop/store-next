@@ -64,8 +64,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     setLoading(true);
     setErrorMessage(null);
     try {
-      const total = getSelectedOrderTotal();
-      const amountInCents = Math.round(total);
+      const amountInCents = Math.round(getSelectedOrderTotal());
       const uniqueReference = `${order.code}-${crypto.randomUUID().replace(/-/g, '')}`;
       const signature = await getPaymentSignature(amountInCents, uniqueReference);
 
@@ -104,6 +103,12 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
   };
 
   const totalAmount = getSelectedOrderTotal();
+
+  const handleTestPayment = () => {
+    setSelectedPaymentMethodCode('wompi');
+    setPaymentSuccess(true);
+    void finalizeOrder('wompi');
+  };
 
   return (
     <div className="space-y-5 pt-2">
@@ -171,6 +176,15 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
           : paymentSuccess
           ? 'Finalizar pedido'
           : 'Pagar con Wompi'}
+      </Button>
+
+      <Button
+        onClick={handleTestPayment}
+        isDisabled={loading}
+        variant="bordered"
+        className="w-full"
+      >
+        Prueba: finalizar sin Wompi
       </Button>
 
       <Script
