@@ -26,9 +26,9 @@ interface AddressInput {
     dni?: string;
     identityDocumentId?: string;
     customFields?: {
-        matiasCityId?: string;
-        dni?: string;
-        identityDocumentId?: string;
+        matiasCityId?: string | null;
+        dni?: string | null;
+        identityDocumentId?: string | null;
         latitude?: number | string | null;
         longitude?: number | string | null;
         neighborhood?: string | null;
