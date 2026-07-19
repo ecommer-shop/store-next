@@ -731,6 +731,9 @@ export const GetWompiTransactionStatusQuery = graphql(`
                     threeDsMethodData
                 }
             }
+            url
+            asyncPaymentUrl
+            qrImage
         }
     }
 `);

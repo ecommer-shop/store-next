@@ -575,6 +575,7 @@ export const InitWompiTransactionMutation = graphql(`
             }
             asyncPaymentUrl
             qrImage
+            url
         }
     }
 `);
@@ -596,6 +597,7 @@ export const InitWompiSavedCardTransactionMutation = graphql(`
             }
             asyncPaymentUrl
             qrImage
+            url
         }
     }
 `);
@@ -618,6 +620,23 @@ export const CreateWompiPaymentSourceMutation = graphql(`
             type
             status
             publicData
+        }
+    }
+`);
+
+export const SaveWompiPaymentMethodMutation = graphql(`
+    mutation SaveWompiPaymentMethod($input: SaveWompiPaymentMethodInput!) {
+        saveWompiPaymentMethod(input: $input) {
+            id
+            type
+            wompiPaymentSourceId
+            lastFour
+            brand
+            expiryMonth
+            expiryYear
+            cardHolderName
+            isDefault
+            createdAt
         }
     }
 `);
