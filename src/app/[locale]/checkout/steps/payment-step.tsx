@@ -181,7 +181,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
       <Button
         onClick={handleTestPayment}
         isDisabled={loading}
-        variant="bordered"
+        variant="outline"
         className="w-full"
       >
         Prueba: finalizar sin Wompi
