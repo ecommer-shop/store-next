@@ -7,7 +7,7 @@ import { CardBrandIcon } from './card-brand-icon';
 import type { SavedPaymentMethod } from '@/types/saved-payment';
 
 interface SavedCardItemProps {
-    card: SavedPaymentMethod;
+    card: SavedPaymentMethod & { type?: string };
     onDelete: (id: string) => void;
     onSetDefault: (id: string) => void;
     isDeleting?: boolean;
@@ -46,19 +46,27 @@ export function SavedCardItem({ card, onDelete, onSetDefault, isDeleting }: Save
                                 </span>
                             </div>
 
-                            <div className="font-mono text-base text-gray-600 dark:text-gray-300 mb-2">
-                                •••• •••• •••• {card.lastFour}
-                            </div>
-
-                            {card.cardHolderName && (
-                                <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                    {card.cardHolderName}
+                            {card.type === 'CARD' ? (
+                                <div className="font-mono text-base text-gray-600 dark:text-gray-300 mb-2">
+                                    •••• •••• •••• {card.lastFour}
+                                </div>
+                            ) : (
+                                <div className="font-mono text-base text-gray-600 dark:text-gray-300 mb-2">
+                                    •••• {card.lastFour}
                                 </div>
                             )}
 
-                            <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                Expira {card.expiryMonth}/{card.expiryYear}
-                            </div>
+                            {card.cardHolderName && (
+                                <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    {card.type === 'CARD' ? card.cardHolderName : `Tel: ${card.cardHolderName}`}
+                                </div>
+                            )}
+
+                            {card.type === 'CARD' && (
+                                <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                    Expira {card.expiryMonth}/{card.expiryYear}
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -1,7 +1,8 @@
 'use client';
 
-import { CreditCard, Smartphone, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CardBrandIcon } from './card-brand-icon';
 
 interface SavedMethod {
     id: string;
@@ -19,13 +20,6 @@ interface SavedMethodSelectorProps {
     selectedId: string | null;
     onSelect: (method: SavedMethod) => void;
     onUseNewCard: () => void;
-}
-
-function BrandIcon({ type, brand }: { type: string; brand: string }) {
-    if (type === 'NEQUI' || type === 'DAVIPLATA') {
-        return <Smartphone className="w-5 h-5" />;
-    }
-    return <CreditCard className="w-5 h-5" />;
 }
 
 export function SavedMethodSelector({ methods, selectedId, onSelect, onUseNewCard }: SavedMethodSelectorProps) {
@@ -63,14 +57,8 @@ export function SavedMethodSelector({ methods, selectedId, onSelect, onUseNewCar
                                 }
                             `}
                         >
-                            <div className={`
-                                flex items-center justify-center w-10 h-10 rounded-full
-                                ${method.type === 'CARD'
-                                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-500'
-                                    : 'bg-green-100 dark:bg-green-900/20 text-green-500'
-                                }
-                            `}>
-                                <BrandIcon type={method.type} brand={method.brand} />
+                            <div className="flex items-center justify-center w-12 h-8 rounded-md overflow-hidden">
+                                <CardBrandIcon brand={method.brand} />
                             </div>
 
                             <div className="flex-1 min-w-0">

@@ -17,6 +17,7 @@ import {
     InitWompiSavedCardTransactionMutation,
     ConfirmWompiPaymentMutation,
     CreateWompiPaymentSourceMutation,
+    SaveWompiPaymentMethodMutation,
 } from '@/lib/vendure/shared/mutations';
 import {
     CalculateDeliveryCostQuery,
@@ -841,4 +842,25 @@ export async function createWompiPaymentSource(input: {
     );
 
     return result.data?.createWompiPaymentSource;
+}
+
+export async function saveWompiPaymentMethod(input: {
+    wompiPaymentSourceId: string;
+    type: string;
+    lastFour: string;
+    brand: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+    cardHolderName?: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        SaveWompiPaymentMethodMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.saveWompiPaymentMethod;
 }

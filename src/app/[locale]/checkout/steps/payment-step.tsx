@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Shield } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { trackAddPaymentInfo } from '@/lib/analytics/events';
-import { getPaymentSignature, placeOrder as placeOrderAction, initWompiTransaction, initWompiSavedCardTransaction, confirmWompiPayment, getWompiTransactionStatus, getSavedPaymentMethodsForCheckout, createWompiPaymentSource } from '../actions';
+import { getPaymentSignature, placeOrder as placeOrderAction, initWompiTransaction, initWompiSavedCardTransaction, confirmWompiPayment, getWompiTransactionStatus, getSavedPaymentMethodsForCheckout, createWompiPaymentSource, saveWompiPaymentMethod } from '../actions';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { CurrencyCode } from '@/models/payment';
 import { Price } from '@/components/commerce/price';
@@ -144,6 +144,15 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         setSelectedMethod(method.type);
         setErrorMessage(null);
 
+        if (method.type === 'CARD') {
+            setFlowStep('form');
+            return;
+        }
+
+        await proceedWithSavedMethod(method, 1);
+    };
+
+    const proceedWithSavedMethod = async (method: any, installmentsCount: number) => {
         const total = getSelectedOrderTotal();
         const amountInCents = Math.round(total);
         const uniqueReference = `${order.code}-${Date.now()}`;
@@ -159,6 +168,8 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                 amountInCents,
                 reference: uniqueReference,
                 currency: CurrencyCode.COP,
+                type: method.type,
+                installments: installmentsCount,
             });
 
             if (result?.transactionId) {
@@ -233,6 +244,19 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
 
                 const confirmResult = await confirmWompiPayment(result.transactionId, saveCard);
                 if (confirmResult?.success) {
+                    if (saveCard && paymentSource?.id) {
+                        try {
+                            await saveWompiPaymentMethod({
+                                wompiPaymentSourceId: String(paymentSource.id),
+                                type: 'CARD',
+                                lastFour: data.lastFour,
+                                brand: data.brand,
+                                expiryMonth: data.expiryMonth,
+                                expiryYear: data.expiryYear,
+                                cardHolderName: data.cardHolder,
+                            });
+                        } catch { }
+                    }
                     setFlowStep('complete');
                     await finalizeOrder();
                 } else {
@@ -276,6 +300,15 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                 await pollTransactionStatus(result.transactionId);
                 const confirmResult = await confirmWompiPayment(result.transactionId, false);
                 if (confirmResult?.success) {
+                    try {
+                        await saveWompiPaymentMethod({
+                            wompiPaymentSourceId: String(paymentSource.id),
+                            type: 'NEQUI',
+                            lastFour: data.lastFour,
+                            brand: data.brand,
+                            cardHolderName: data.cardHolder,
+                        });
+                    } catch { }
                     setFlowStep('complete');
                     await finalizeOrder();
                 } else {
@@ -319,6 +352,15 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                 await pollTransactionStatus(result.transactionId);
                 const confirmResult = await confirmWompiPayment(result.transactionId, false);
                 if (confirmResult?.success) {
+                    try {
+                        await saveWompiPaymentMethod({
+                            wompiPaymentSourceId: String(paymentSource.id),
+                            type: 'DAVIPLATA',
+                            lastFour: data.lastFour,
+                            brand: data.brand,
+                            cardHolderName: data.cardHolder,
+                        });
+                    } catch { }
                     setFlowStep('complete');
                     await finalizeOrder();
                 } else {
@@ -330,6 +372,9 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
             setFlowStep('form');
         }
     };
+
+    const [manualPolling, setManualPolling] = useState(false);
+    const [paymentExtra, setPaymentExtra] = useState<Record<string, any> | null>(null);
 
     const handleManualPayment = async (method: string, pseData?: PseData) => {
         setFlowStep('processing');
@@ -353,15 +398,14 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                 paymentDescription: pseData?.paymentDescription,
             });
 
-            if (result?.asyncPaymentUrl || result?.qrImage) {
-                setAsyncPaymentUrl(result.asyncPaymentUrl);
-                setQrImage(result.qrImage);
+            if (result?.transactionId) {
+                setTransactionId(result.transactionId);
+                setAsyncPaymentUrl(result.asyncPaymentUrl || null);
+                setQrImage(result.qrImage || null);
+                setPaymentExtra(null);
+                setManualPolling(true);
                 setFlowStep('async_payment');
-
-                if (result.transactionId) {
-                    setTransactionId(result.transactionId);
-                    waitForManualPayment(result.transactionId);
-                }
+                pollManualTransaction(result.transactionId);
             } else if (result?.status === 'APPROVED') {
                 const confirmResult = await confirmWompiPayment(result.transactionId, false);
                 if (confirmResult?.success) {
@@ -375,18 +419,41 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         }
     };
 
-    const waitForManualPayment = async (txId: string) => {
-        try {
-            await pollTransactionStatus(txId);
-            const confirmResult = await confirmWompiPayment(txId, false);
-            if (confirmResult?.success) {
-                setFlowStep('complete');
-                await finalizeOrder();
+    const pollManualTransaction = async (txId: string) => {
+        let attempts = 0;
+        const maxAttempts = 60;
+        const poll = setInterval(async () => {
+            attempts++;
+            try {
+                const status = await getWompiTransactionStatus(txId);
+                if (!status) return;
+
+                if (status.url) setAsyncPaymentUrl(status.url);
+                if (status.asyncPaymentUrl) setAsyncPaymentUrl(status.asyncPaymentUrl);
+                if (status.qrImage) setQrImage(status.qrImage);
+                if (status.paymentMethodExtra) setPaymentExtra(status.paymentMethodExtra as any);
+
+                if (status.status === 'APPROVED') {
+                    clearInterval(poll);
+                    setManualPolling(false);
+                    const confirmResult = await confirmWompiPayment(txId, false);
+                    if (confirmResult?.success) {
+                        setFlowStep('complete');
+                        await finalizeOrder();
+                    }
+                } else if (status.status === 'DECLINED' || status.status === 'ERROR') {
+                    clearInterval(poll);
+                    setManualPolling(false);
+                    setErrorMessage(status.statusMessage || 'El pago fue rechazado');
+                    setFlowStep('async_payment');
+                }
+            } catch { }
+            if (attempts >= maxAttempts) {
+                clearInterval(poll);
+                setManualPolling(false);
+                setErrorMessage('Tiempo de espera agotado. Contacta a soporte.');
             }
-        } catch (err: any) {
-            setErrorMessage(err.message || 'El pago aún está pendiente. Puedes verificar el estado en tu perfil.');
-            setFlowStep('async_payment');
-        }
+        }, 2000);
     };
 
     const handlePseConfirm = async (pseData: PseData) => {
@@ -447,14 +514,70 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
             {/* Step: Form */}
             {flowStep === 'form' && selectedMethod && (
                 <div className="space-y-4">
-                    <button
-                        onClick={() => { setFlowStep('select'); setSelectedMethod(null); setErrorMessage(null); }}
-                        className="text-sm text-[#9969F8] hover:underline"
-                    >
-                        ← Cambiar método de pago
-                    </button>
+                    {!selectedSavedId && (
+                        <button
+                            onClick={() => { setFlowStep('select'); setSelectedMethod(null); setErrorMessage(null); }}
+                            className="text-sm text-[#9969F8] hover:underline"
+                        >
+                            ← Cambiar método de pago
+                        </button>
+                    )}
 
-                    {selectedMethod === 'CARD' && (
+                    {selectedMethod === 'CARD' && selectedSavedId && (
+                        <div className="space-y-4">
+                            <button
+                                onClick={() => { setFlowStep('select'); setSelectedSavedId(null); setSelectedMethod(null); setErrorMessage(null); }}
+                                className="text-sm text-[#9969F8] hover:underline"
+                            >
+                                ← Cambiar método de pago
+                            </button>
+
+                            {savedMethods.find(m => m.id === selectedSavedId) && (
+                                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                                        {savedMethods.find(m => m.id === selectedSavedId)?.brand} •••• {savedMethods.find(m => m.id === selectedSavedId)?.lastFour}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        Tarjeta guardada
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Número de cuotas
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {[1, 2, 3, 6, 12, 24, 36].map((n) => (
+                                        <button
+                                            key={n}
+                                            type="button"
+                                            onClick={() => {
+                                                setInstallments(n);
+                                                const method = savedMethods.find(m => m.id === selectedSavedId);
+                                                if (method) proceedWithSavedMethod(method, n);
+                                            }}
+                                            className={`px-4 py-2 rounded-xl border-2 text-sm font-medium transition-all ${
+                                                installments === n
+                                                    ? 'border-[#9969F8] bg-[#9969F8]/10 text-[#9969F8]'
+                                                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-[#9969F8]/40'
+                                            }`}
+                                        >
+                                            {n === 1 ? 'Contado' : `${n} cuotas`}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {errorMessage && (
+                                <div className="flex items-start gap-2 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+                                    {errorMessage}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {selectedMethod === 'CARD' && !selectedSavedId && (
                         <div className="space-y-4">
                             {cardData && (
                                 <CardPreview
@@ -470,16 +593,6 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                                 onTokenize={handleCardTokenized}
                                 isLoading={loading}
                             />
-                            <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={saveCard}
-                                    onChange={(e) => setSaveCard(e.target.checked)}
-                                    className="accent-[#9969F8]"
-                                />
-                                Guardar esta tarjeta para futuras compras
-                            </label>
-
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Número de cuotas
@@ -501,6 +614,17 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                                     ))}
                                 </div>
                             </div>
+                            <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={saveCard}
+                                    onChange={(e) => setSaveCard(e.target.checked)}
+                                    className="accent-[#9969F8]"
+                                />
+                                Guardar esta tarjeta para futuras compras
+                            </label>
+
+                            
                         </div>
                     )}
 
@@ -587,7 +711,10 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                 <ManualPaymentDisplay
                     asyncPaymentUrl={asyncPaymentUrl}
                     qrImage={qrImage}
+                    url={asyncPaymentUrl}
                     methodName={methodNames[selectedMethod] || selectedMethod}
+                    isPolling={manualPolling}
+                    extra={paymentExtra}
                 />
             )}
 
