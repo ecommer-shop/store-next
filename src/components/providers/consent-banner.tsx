@@ -6,15 +6,9 @@ import Link from 'next/link';
 
 const CONSENT_STORAGE_KEY = 'ecommer_cookie_consent';
 
-declare global {
-    interface Window {
-        dataLayer?: unknown[];
-    }
-}
-
 function updateConsent(granted: boolean) {
     window.dataLayer = window.dataLayer || [];
-    function gtag(...args: unknown[]) {
+    function gtag(...args: Object[]) {
         window.dataLayer!.push(args);
     }
     gtag('consent', 'update', {
