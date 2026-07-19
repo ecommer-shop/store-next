@@ -58,16 +58,10 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
-  const isServerActionRequest = req.headers.has("next-action");
-
-  if (isProtectedRoute(req) && !isServerActionRequest) {
+  if (isProtectedRoute(req) && !isServerActionRequest(req)) {
     const { userId } = await auth();
 
     if (!userId) {
-      if (isServerActionRequest(req)) {
-        return NextResponse.next();
-      }
-
       const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
       const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
 
