@@ -39,7 +39,8 @@ function fallbackStoreProfileFromSlug(slug: string): StoreProfileData {
         storeName,
         storeDescription: null,
         storeBannerUrl: null,
-        socialLinks: [],
+          socialLinks: [],
+          storeHeaderBannerUrl: null,
     };
 }
 
@@ -175,15 +176,16 @@ export async function getStoreFeaturedProducts(slug: string, locale: string): Pr
 export interface StoreProfileData {
     storeName: string;
     storeDescription: string | null;
-    storeBannerUrl: string | null;
-    socialLinks: Array<{
-        platform: string;
-        username: string;
-        dmLink: string;
-        profileUrl: string;
-        displayName: string | null;
-        inPipeline: boolean;
-    }>;
+      storeBannerUrl: string | null;
+      storeHeaderBannerUrl: string | null;
+      socialLinks: Array<{
+          platform: string;
+          username: string;
+          dmLink: string;
+          profileUrl: string;
+          displayName: string | null;
+          inPipeline: boolean;
+      }>;
 }
 
 export async function getStoreProfile(slug: string, locale: string): Promise<StoreProfileData | null> {

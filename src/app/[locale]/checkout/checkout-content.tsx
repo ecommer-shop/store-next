@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     robots: noIndexRobots(),
 };
 interface CheckoutContentProps {
-    params: {
+    params: Promise<{
         locale: string;
-    };
+    }>;
     searchParams: Record<string, string | string[] | undefined>;
     pb: string;
     uri: string;

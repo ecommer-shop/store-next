@@ -59,9 +59,20 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     const [nequiPhone, setNequiPhone] = useState<string | null>(null);
     const [daviplataPhone, setDaviplataPhone] = useState<string | null>(null);
 
+<<<<<<< HEAD
     useEffect(() => {
         loadSavedMethods();
     }, []);
+=======
+  const openWompi = async () => {
+    if (!pb) return;
+    setLoading(true);
+    setErrorMessage(null);
+    try {
+      const amountInCents = Math.round(getSelectedOrderTotal());
+      const uniqueReference = `${order.code}-${crypto.randomUUID().replace(/-/g, '')}`;
+      const signature = await getPaymentSignature(amountInCents, uniqueReference);
+>>>>>>> c25cbe9d343bd8c5a4c6cabae07b4ce039f4f2cd
 
     async function loadSavedMethods() {
         try {
@@ -80,10 +91,21 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         return subtotal + order.shippingWithTax - discountTotal;
     };
 
+<<<<<<< HEAD
     const selectedShippingMethodIds = () =>
         order.shippingLines
             ?.map((line) => line.shippingMethod?.id)
             .filter((id): id is string => Boolean(id)) ?? [];
+=======
+  const handleTestPayment = () => {
+    setSelectedPaymentMethodCode('wompi');
+    setPaymentSuccess(true);
+    void finalizeOrder('wompi');
+  };
+
+  return (
+    <div className="space-y-5 pt-2">
+>>>>>>> c25cbe9d343bd8c5a4c6cabae07b4ce039f4f2cd
 
     const finalizeOrder = async () => {
         trackAddPaymentInfo({ payment_type: selectedMethod || '' });
@@ -733,6 +755,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                 </div>
             )}
         </div>
+<<<<<<< HEAD
     );
 }
 
@@ -749,4 +772,52 @@ async function getAcceptanceToken(publicKey: string): Promise<string> {
     } catch {
         return '';
     }
+=======
+      </div>
+
+      {/* Security note */}
+      {!paymentSuccess && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Shield className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+          <span>Pago 100% seguro procesado por Wompi. Tu información está protegida con encriptación SSL.</span>
+        </div>
+      )}
+
+      {/* Error */}
+      {errorMessage && (
+        <div className="flex items-start gap-2 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          {errorMessage}
+        </div>
+      )}
+
+      <Button
+        onClick={paymentSuccess ? () => finalizeOrder('wompi') : openWompi}
+        isDisabled={loading}
+        className="w-full rounded-xl bg-[#9969F8] text-white hover:opacity-90 transition font-semibold h-12 text-base"
+      >
+        {loading
+          ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Procesando…</>
+          : paymentSuccess
+          ? 'Finalizar pedido'
+          : 'Pagar con Wompi'}
+      </Button>
+
+      <Button
+        onClick={handleTestPayment}
+        isDisabled={loading}
+        variant="outline"
+        className="w-full"
+      >
+        Prueba: finalizar sin Wompi
+      </Button>
+
+      <Script
+        src="https://checkout.wompi.co/widget.js"
+        strategy="afterInteractive"
+        onChange={() => setSelectedPaymentMethodCode('wompi')}
+      />
+    </div>
+  );
+>>>>>>> c25cbe9d343bd8c5a4c6cabae07b4ce039f4f2cd
 }

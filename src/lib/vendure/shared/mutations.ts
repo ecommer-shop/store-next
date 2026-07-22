@@ -161,6 +161,9 @@ export const CreateCustomerAddressMutation = graphql(`
             }
             phoneNumber
             customFields {
+                matiasCityId
+                dni
+                identityDocumentId
                 latitude
                 longitude
                 neighborhood
@@ -190,6 +193,9 @@ export const UpdateCustomerAddressMutation = graphql(`
             }
             phoneNumber
             customFields {
+                matiasCityId
+                dni
+                identityDocumentId
                 latitude
                 longitude
                 neighborhood
@@ -226,12 +232,6 @@ export const SetOrderShippingAddressMutation = graphql(`
                     postalCode
                     country
                     phoneNumber
-                    customFields {
-                        latitude
-                        longitude
-                        neighborhood
-                        googlePlaceId
-                    }
                 }
             }
             ... on ErrorResult {
@@ -259,12 +259,6 @@ export const SetOrderBillingAddressMutation = graphql(`
                     postalCode
                     country
                     phoneNumber
-                    customFields {
-                        latitude
-                        longitude
-                        neighborhood
-                        googlePlaceId
-                    }
                 }
             }
             ... on ErrorResult {
@@ -276,22 +270,8 @@ export const SetOrderBillingAddressMutation = graphql(`
 `);
 
 export const SetOrderDynamicShippingMethod = graphql(`
-    mutation SetDynamicShippingPrice($price: Int!) {
+    mutation SetOrderDynamicShippingPrice($price: Int!) {
         setDynamicShippingPrice(price: $price)
-    }
-`)
-
-export const CreateDeliveryOrderMutation = graphql(`
-    mutation CreateDeliveryOrder($input: CreateDeliveryOrderInput!) {
-        createDeliveryOrder(input: $input) {
-            success
-            message
-            id_documento
-            fecha_creacion
-            error
-            missing_fields
-            required_fields
-        }
     }
 `)
 

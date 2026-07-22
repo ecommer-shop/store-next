@@ -11,12 +11,21 @@ const isProtectedRoute = createRouteMatcher([
   "/:locale/account/profile(.*)",
 ]);
 
+function isServerActionRequest(req: Request): boolean {
+  return (
+    req.method === 'POST' &&
+    (req.headers.has('next-action') ||
+      req.headers.get('accept')?.includes('text/x-component') ||
+      req.headers.has('rsc'))
+  );
+}
+
 export default clerkMiddleware(async (auth, req) => {
 
   const { pathname, search } = req.nextUrl;
   const cleanPathname = pathname.startsWith("/")
-  ? pathname.slice(1)
-  : pathname;
+    ? pathname.slice(1)
+    : pathname;
 
   const locale = req.nextUrl.locale ?? "es";
   if (cleanPathname === "/go") {
@@ -49,7 +58,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
-  if (isProtectedRoute(req)) {
+  if (isProtectedRoute(req) && !isServerActionRequest(req)) {
     const { userId } = await auth();
 
     if (!userId) {

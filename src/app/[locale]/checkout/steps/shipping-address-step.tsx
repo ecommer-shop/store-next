@@ -2,34 +2,41 @@
 
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2, MapPin, Plus, CheckCircle2, AlertCircle, Pencil } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAuth, useClerk } from '@clerk/nextjs';
 import { useCheckout } from '../checkout-provider';
 import { setShippingAddress, createCustomerAddress, updateCustomerAddress } from '../actions';
 import { I18N } from '@/i18n/keys';
-import { CustomerAddress } from '../../account/addresses/addresses-client';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
 import { useTranslations } from 'next-intl';
 import { trackAddShippingInfo } from '@/lib/analytics/events';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
+import { getMatiasCity, MATIAS_COLOMBIA_CITIES } from '@/lib/matias-cities';
 
 interface ShippingAddressStepProps {
   onComplete: () => void;
   t: (key: string) => string;
 }
 
-function hasGoogleCoordinates(address?: CustomerAddress | null) {
+function hasGoogleCoordinates(address?: {
+  customFields?: {
+    latitude?: number | string | null;
+    longitude?: number | string | null;
+  } | null;
+} | null) {
   const latitude = Number(address?.customFields?.latitude);
   const longitude = Number(address?.customFields?.longitude);
-  return Number.isFinite(latitude) && Number.isFinite(longitude);
+  return Number.isFinite(latitude) && Number.isFinite(longitude) && !(latitude === 0 && longitude === 0);
 }
 
 export default function ShippingAddressStep({ onComplete, t }: ShippingAddressStepProps) {
   const td = useTranslations('Account.addresses');
   const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
+  const { redirectToSignIn } = useClerk();
   const { addresses, countries, order, googleMapsApiKey } = useCheckout();
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
@@ -57,38 +64,89 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
     defaultValues: { countryCode: countries[0]?.id ?? 'CO' },
   });
 
+  const resolveMatiasCityForAddress = (address: (typeof addresses)[number]) => {
+    const savedCity = getMatiasCity(address.customFields?.matiasCityId);
+    if (savedCity) return savedCity;
+    const addressCity = address.city?.trim().toLocaleLowerCase('es') ?? '';
+    const addressDepartment = address.province?.trim().toLocaleLowerCase('es') ?? '';
+    return MATIAS_COLOMBIA_CITIES.find(
+      (city) =>
+        city.city.toLocaleLowerCase('es') === addressCity &&
+        city.department.toLocaleLowerCase('es') === addressDepartment,
+    );
+  };
+
+  const redirectToClerkSignIn = () => {
+    void redirectToSignIn({
+      redirectUrl: window.location.href,
+    });
+  };
+
+  const ensureSignedIn = () => {
+    if (!isLoaded) return false;
+    if (!isSignedIn) {
+      redirectToClerkSignIn();
+      return false;
+    }
+    return true;
+  };
+
   const handleSelectExistingAddress = async () => {
+    if (!ensureSignedIn()) return;
     if (!selectedAddressId) return;
+
+    const selected = addresses.find((a) => a.id === selectedAddressId);
+    if (!selected) return;
+
+    const fiscalDni = selected.customFields?.dni?.trim();
+    const identityDocumentId = selected.customFields?.identityDocumentId || '1';
+    if (!fiscalDni) {
+      alert('Esta dirección no tiene documento/NIT para facturación. Edita la dirección y agrega los datos fiscales.');
+      return;
+    }
+    const matiasCity = resolveMatiasCityForAddress(selected);
+    if (!matiasCity) {
+      alert('No se pudo asociar la ciudad/departamento de esta dirección con el catálogo de Matias. Edita la dirección y selecciona la ciudad.');
+      return;
+    }
+
     setLoading(true);
     try {
-      const addr = addresses.find((a) => a.id === selectedAddressId);
-      if (!addr) return;
       await setShippingAddress(
         {
-          fullName: addr.fullName || '',
-          company: addr.company || '',
-          streetLine1: addr.streetLine1,
-          streetLine2: addr.streetLine2 || '',
-          city: addr.city || '',
-          province: addr.province || '',
-          postalCode: addr.postalCode || '',
-          countryCode: addr.country.code,
-          phoneNumber: addr.phoneNumber || '',
-          customFields: addr.customFields || undefined,
+          fullName: selected.fullName || '',
+          company: selected.company || '',
+          streetLine1: selected.streetLine1,
+          streetLine2: selected.streetLine2 || '',
+          city: matiasCity.city,
+          province: matiasCity.department,
+          postalCode: selected.postalCode || '',
+          countryCode: selected.country.code,
+          phoneNumber: selected.phoneNumber || '',
+          matiasCityId: matiasCity.id,
+          dni: fiscalDni,
+          identityDocumentId,
+          customFields: selected.customFields || undefined,
         },
         useSameForBilling,
+        fiscalDni,
+        identityDocumentId,
       );
       trackAddShippingInfo({ shipping_tier: 'standard' });
       router.refresh();
       onComplete();
     } catch (error) {
       console.error('Error setting address:', error);
+      if (error instanceof Error && error.message.includes('AUTH_REQUIRED')) {
+        redirectToClerkSignIn();
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const onSaveNewAddress = async (data: AddressFormData) => {
+    if (!ensureSignedIn()) return;
     setSaving(true);
     try {
       const country = countries.find(
@@ -102,6 +160,10 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       setSelectedAddressId(newAddress.id);
     } catch (error) {
       console.error('Error creating address:', error);
+      if (error instanceof Error && error.message.includes('AUTH_REQUIRED')) {
+        redirectToClerkSignIn();
+        return;
+      }
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
@@ -109,6 +171,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   };
 
   const onSaveEditedAddress = async (data: AddressFormData) => {
+    if (!ensureSignedIn()) return;
     if (!editingAddressId) return;
     setSaving(true);
     try {
@@ -123,6 +186,10 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
       router.refresh();
     } catch (error) {
       console.error('Error updating address:', error);
+      if (error instanceof Error && error.message.includes('AUTH_REQUIRED')) {
+        redirectToClerkSignIn();
+        return;
+      }
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
@@ -132,7 +199,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   return (
     <div className="space-y-5 pt-2">
 
-      {/* Address cards */}
       {addresses.length > 0 && (
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">{t(I18N.Checkout.shippingAddress.selectSaved)}</p>
@@ -184,7 +250,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                     </div>
 
                     <div className="flex-shrink-0 flex items-start gap-2">
-                      {/* Coords badge */}
                       <div>
                         {hasCoords ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
@@ -198,7 +263,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                           </span>
                         )}
                       </div>
-                      {/* Edit button */}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -220,7 +284,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
         </div>
       )}
 
-      {/* No coordinates warning */}
       {selectedAddressId && !selectedAddressHasCoords && (
         <div className="flex items-start gap-2 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
           <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -228,7 +291,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
         </div>
       )}
 
-      {/* Same billing checkbox */}
       <label className="flex items-center gap-3 py-1 cursor-pointer select-none">
         <div
           className={clsx(
@@ -254,7 +316,6 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
         </span>
       </label>
 
-      {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
           onClick={handleSelectExistingAddress}
@@ -311,6 +372,9 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
                   postalCode: addr.postalCode || '',
                   countryCode: addr.country.id,
                   phoneNumber: addr.phoneNumber || '',
+                  matiasCityId: addr.customFields?.matiasCityId ?? undefined,
+                  dni: addr.customFields?.dni ?? undefined,
+                  identityDocumentId: addr.customFields?.identityDocumentId ?? '1',
                   customFields: addr.customFields || undefined,
                 } : undefined;
               })() : undefined}
