@@ -597,7 +597,11 @@
   "About": {
     "title": "About Us",
     "description": "We connect entrepreneurs and merchants from the region with their customers. No complications. No technological barriers. With Cauca pride.",
+    "hero": {
+      "badge": "ABOUT ECOMMER"
+    },
     "history": "Ecommer was born from a concrete observation: while large companies dominate digital commerce, most Colombian micro-entrepreneurs remain on the sidelines. Fragmented tools, high costs, technical barriers, and a market where 96% of businesses in Cauca are micro-enterprises, with over 56% operating informally. There was no solution built for them. We decided to build it.",
+    "historyTitle": "Our story",
     "mission": "To empower Colombian micro-entrepreneurs with accessible, integrated, and scalable e-commerce technology — so they can sell online with the same power as big brands.",
     "vision": "To be the reference platform for digital commerce for MSMEs in LATAM — enabling thousands of local businesses to digitize their sales, scale their operations, and connect with customers on any channel. We start in Popayán. We scale by metrics, not by maps.",
     "audience": {

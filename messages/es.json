@@ -596,7 +596,11 @@
   "About": {
     "title": "Quiénes somos",
     "description": "Conectamos a los emprendedores y comerciantes de la región con sus clientes. Sin complicaciones. Sin barreras tecnológicas. Con orgullo caucano.",
+    "hero": {
+      "badge": "SOBRE ECOMMER"
+    },
     "history": "Ecommer nació de una observación concreta: mientras las grandes empresas dominan el comercio digital, la mayoría de los micro-empresarios colombianos siguen al margen. Herramientas fragmentadas, costos altos, barreras técnicas y un mercado donde el 96% de los negocios en Cauca son microempresas, con más del 56% operando en la informalidad. No había una solución construida para ellos. Decidimos construirla.",
+    "historyTitle": "Nuestra historia",
     "mission": "Empoderar a los microempresarios colombianos con tecnología de e-commerce accesible, integrada y escalable — para que vendan online con la misma fuerza que las grandes marcas.",
     "vision": "Ser la plataforma de referencia para el comercio digital de las MiPyMEs en LATAM — habilitando a miles de negocios locales para digitalizar sus ventas, escalar sus operaciones y conectar con clientes en cualquier canal. Empezamos en Popayán. Escalamos por métricas, no por mapas.",
     "audience": {

@@ -38,7 +38,7 @@ export async function generateStaticParams() {
     try {
         const { data } = await query(GetBlogPostsQuery, { options: { take: 50 } as any } as any);
         const slugs = (data as any)?.blogPosts?.items?.map((p: any) => p.slug as string) ?? [];
-        return ['es', 'en'].flatMap(locale => slugs.map(slug => ({ locale, slug })));
+        return ['es', 'en'].flatMap(locale => slugs.map((slug: string) => ({ locale, slug })));
     } catch {
         return [];
     }
