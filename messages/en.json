@@ -21,6 +21,7 @@
     "profile": "My Profile",
     "orders": "My Orders",
     "addresses": "My Addresses",
+    "paymentMethods": "Payment Methods",
     "billing": "Billing",
     "logout": "Sign Out",
     "login": "Sign In",

@@ -554,6 +554,14 @@ export const GetSellerStoreProfileQuery = graphql(`
             storeDescription
             storeBannerUrl
             storeHeaderBannerUrl
+            socialLinks {
+                platform
+                username
+                dmLink
+                profileUrl
+                displayName
+                inPipeline
+            }
         }
     }
 `);
@@ -651,3 +659,78 @@ export const GetAllPlansQuery = graphql(`
     }
 `)
 
+export const CheckProductLimitQuery = graphql(`
+    query CheckProductLimit {
+        checkProductLimit {
+            allowed
+            current
+            limit
+        }
+    }
+`)
+
+export const CheckFeatureAccessQuery = graphql(`
+    query CheckFeatureAccess($featureCode: String!) {
+        checkFeatureAccess(featureCode: $featureCode)
+    }
+`)
+export const CalculateDeliveryCostQuery = graphql(`
+    query CalculateDeliveryCost($input: DeliveryCostInput!) {
+        calculateDeliveryCost(input: $input) {
+            success
+            price {
+                value
+                currency
+            }
+            distance {
+                value
+                unit
+                text
+            }
+            duration {
+                value
+                unit
+                text
+            }
+            error
+        }
+    }
+`);
+
+export const SavedPaymentMethodsQuery = graphql(`
+    query SavedPaymentMethods {
+        savedPaymentMethods {
+            id
+            type
+            wompiPaymentSourceId
+            lastFour
+            brand
+            expiryMonth
+            expiryYear
+            cardHolderName
+            isDefault
+            createdAt
+        }
+    }
+`);
+
+export const GetWompiTransactionStatusQuery = graphql(`
+    query GetWompiTransactionStatus($transactionId: String!) {
+        getWompiTransactionStatus(transactionId: $transactionId) {
+            id
+            status
+            statusMessage
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            url
+            asyncPaymentUrl
+            qrImage
+        }
+    }
+`);

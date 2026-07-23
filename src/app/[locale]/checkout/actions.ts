@@ -12,10 +12,22 @@ import {
     UpdateCustomerAddressMutation,
     TransitionOrderToStateMutation,
     SetOrderDynamicShippingMethod,
-    UpdateCustomerMutation
+    CreateDeliveryOrderMutation,
+    InitWompiTransactionMutation,
+    InitWompiSavedCardTransactionMutation,
+    ConfirmWompiPaymentMutation,
+    CreateWompiPaymentSourceMutation,
+    SaveWompiPaymentMethodMutation,
+    UpdateCustomerMutation,
 } from '@/lib/vendure/shared/mutations';
-import { GetActiveOrderQuery } from '@/lib/vendure/shared/queries';
-import { GetWompiSignatureQuery } from '@/lib/vendure/shared/queries';
+import {
+    CalculateDeliveryCostQuery,
+    GetCustomerAddressesQuery,
+    GetActiveOrderQuery,
+    GetWompiSignatureQuery,
+    GetWompiTransactionStatusQuery,
+    SavedPaymentMethodsQuery,
+} from '@/lib/vendure/shared/queries';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
@@ -136,7 +148,55 @@ export async function setDynamicShippingPrice(price: number) {
     revalidatePath('/checkout');
 }
 
-export async function calculateDeliveryCostQuote(): Promise<DeliveryCostQuote> {
+async function reapplyShippingSelection(
+    token: string,
+    shippingMethodIds?: string[],
+    shippingPriceWithTax?: number,
+) {
+    const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
+
+    if (uniqueShippingMethodIds.length === 0) {
+        return;
+    }
+
+    const result = await mutate(
+        SetOrderShippingMethodMutation,
+        { shippingMethodId: uniqueShippingMethodIds },
+        { token, useAuthToken: true }
+    );
+
+    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
+        throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
+    }
+
+    if (typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+        await mutate(
+            SetOrderDynamicShippingMethod,
+            { price: Math.round(shippingPriceWithTax) },
+            { token, useAuthToken: true }
+        );
+    }
+}
+
+export async function calculateDeliveryCostQuote() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const activeOrder = await getActiveOrderDeliveryContext(token);
+
+    if (!activeOrder?.shippingAddress) {
+        throw new Error('Primero selecciona una direccion de envio');
+    }
+    const destinationGeo = await resolveShippingAddressGeo(activeOrder, token);
+    const destination = destinationGeo.latLng;
+    if (!destination) {
+        throw new Error('La direccion seleccionada no tiene coordenadas de Google Maps');
+    }
+
+    const groups = groupOrderLinesBySellerOrigin(activeOrder);
+    const quotes = await calculateDeliveryQuotesForGroups(groups, destination, token);
+    const totalDeliveryCost = quotes.reduce((sum, item) => sum + (item.quote.price?.value ?? 0), 0);
+
     return {
         price: {
             value: DEFAULT_DELIVERY_PRICE_COP,
@@ -167,7 +227,6 @@ export async function createCustomerAddress(address: AddressInput) {
     if (!result.data.createCustomerAddress) {
         throw new Error('Failed to create customer address');
     }
-
     revalidatePath('/checkout');
     return result.data.createCustomerAddress;
 }
@@ -204,7 +263,6 @@ export async function updateCustomerAddress(id: string, address: AddressInput) {
     if (!result.data.updateCustomerAddress) {
         throw new Error('Failed to update customer address');
     }
-
     revalidatePath('/checkout');
     return result.data.updateCustomerAddress;
 }
@@ -332,4 +390,134 @@ export async function getPaymentSignature(amountInCents: number, paymentReferenc
     })
 
     return signature.data.GetPaymentSignature;
+}
+
+export async function initWompiTransaction(input: {
+    token?: string;
+    acceptanceToken?: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    saveCard: boolean;
+    paymentMethodCode: string;
+    sessionId?: string;
+    deviceId?: string;
+    financialInstitutionCode?: string;
+    userType?: string;
+    userLegalIdType?: string;
+    userLegalId?: string;
+    paymentDescription?: string;
+    paymentMethodDetails?: Record<string, any>;
+    installments?: number;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiTransaction;
+}
+
+export async function initWompiSavedCardTransaction(input: {
+    paymentSourceId: string;
+    acceptanceToken: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    type?: string;
+    installments?: number;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiSavedCardTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiSavedCardTransaction;
+}
+
+export async function confirmWompiPayment(transactionId: string, saveCard: boolean) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        ConfirmWompiPaymentMutation,
+        { input: { transactionId, saveCard } } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.confirmWompiPayment;
+}
+
+export async function getWompiTransactionStatus(transactionId: string) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await query(
+        GetWompiTransactionStatusQuery,
+        { transactionId },
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.getWompiTransactionStatus;
+}
+
+export async function getSavedPaymentMethodsForCheckout() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) return [];
+
+    try {
+        const result: any = await query(SavedPaymentMethodsQuery, {}, { token, useAuthToken: true });
+        return result.data?.savedPaymentMethods || [];
+    } catch {
+        return [];
+    }
+}
+
+export async function createWompiPaymentSource(input: {
+    token: string;
+    type: string;
+    customerEmail: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        CreateWompiPaymentSourceMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.createWompiPaymentSource;
+}
+
+export async function saveWompiPaymentMethod(input: {
+    wompiPaymentSourceId: string;
+    type: string;
+    lastFour: string;
+    brand: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+    cardHolderName?: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        SaveWompiPaymentMethodMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.saveWompiPaymentMethod;
 }
