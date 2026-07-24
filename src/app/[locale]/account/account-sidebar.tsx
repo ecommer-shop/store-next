@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   Store,
+  CreditCard,
 } from "lucide-react";
 
 const iconMap = {

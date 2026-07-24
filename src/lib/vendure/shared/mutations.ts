@@ -275,6 +275,20 @@ export const SetOrderDynamicShippingMethod = graphql(`
     }
 `)
 
+export const CreateDeliveryOrderMutation = graphql(`
+    mutation CreateDeliveryOrder($input: CreateDeliveryOrderInput!) {
+        createDeliveryOrder(input: $input) {
+            success
+            message
+            id_documento
+            fecha_creacion
+            error
+            missing_fields
+            required_fields
+        }
+    }
+`)
+
 export const SetOrderShippingMethodMutation = graphql(`
     mutation SetOrderShippingMethod($shippingMethodId: [ID!]!) {
         setOrderShippingMethod(shippingMethodId: $shippingMethodId) {
