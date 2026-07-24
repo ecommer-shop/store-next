@@ -17,12 +17,14 @@ import {
   Menu,
   X,
   Store,
+  CreditCard,
 } from "lucide-react";
 
 const iconMap = {
   package: Package,
   mapPin: MapPin,
   user: User,
+  creditCard: CreditCard,
 };
 
 type IconKey = keyof typeof iconMap;
