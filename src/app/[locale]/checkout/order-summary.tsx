@@ -25,10 +25,12 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
     (sum: number, line: OrderLine) => sum + (line.linePriceWithTax ?? 0),
     0,
   );
-  const discountTotal =
-    order.discounts?.reduce((sum: number, d: { amountWithTax: number }) => sum + (d.amountWithTax ?? 0), 0) ?? 0;
-  const finalTotal = selectedSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
-
+  
+  const selectedLinesSubtotal = displayedLines.reduce((sum: number, line: OrderLine) => sum + (line.linePriceWithTax ?? 0), 0);
+  const discountTotal = order.discounts?.reduce((sum: number, d: { amountWithTax: number }) => sum + (d.amountWithTax ?? 0), 0) ?? 0;
+  
+  const finalTotal = discountTotal < 0 ? selectedLinesSubtotal + (order.shippingWithTax ?? 0) + discountTotal : selectedLinesSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
+  
   return (
     <div className="sticky top-11 rounded-2xl border border-border bg-card shadow-xl shadow-[#12123F]/10 dark:shadow-white/5 overflow-hidden">
 

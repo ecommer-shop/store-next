@@ -22,6 +22,18 @@ interface AddressInput {
     phoneNumber: string;
     company?: string;
     countryCode: string
+    matiasCityId?: string;
+    dni?: string;
+    identityDocumentId?: string;
+    customFields?: {
+        matiasCityId?: string | null;
+        dni?: string | null;
+        identityDocumentId?: string | null;
+        latitude?: number | string | null;
+        longitude?: number | string | null;
+        neighborhood?: string | null;
+        googlePlaceId?: string | null;
+    };
 }
 
 interface UpdateAddressInput extends AddressInput {
@@ -38,7 +50,7 @@ const token = async () => {
 export async function createAddress(address: CreateAddressPayload) {
     const result = await mutate(
         CreateCustomerAddressMutation,
-        {input: address},
+        {input: normalizeInvoiceAddressInput(address)} as any,
         {token: (await token()), useAuthToken: true}     
     );
 
@@ -54,8 +66,8 @@ export async function updateAddress(address: UpdateAddressPayload) {
     const result = await mutate(
         UpdateCustomerAddressMutation,
         {
-            input: address
-        },
+            input: normalizeInvoiceAddressInput(address)
+        } as any,
         {token: (await token()), useAuthToken: true}     
     );
 
@@ -65,6 +77,24 @@ export async function updateAddress(address: UpdateAddressPayload) {
 
     revalidatePath('/account/addresses');
     return result.data.updateCustomerAddress;
+}
+
+function normalizeInvoiceAddressInput(
+    address: CreateAddressPayload | UpdateAddressPayload,
+) {
+    const { matiasCityId, dni, identityDocumentId, customFields, ...rest } = address;
+    const cityId = matiasCityId || customFields?.matiasCityId;
+    const fiscalDni = dni || customFields?.dni;
+    const fiscalDocumentType = identityDocumentId || customFields?.identityDocumentId;
+    return {
+        ...rest,
+        customFields: {
+            ...customFields,
+            ...(cityId ? { matiasCityId: cityId } : {}),
+            ...(fiscalDni ? { dni: fiscalDni } : {}),
+            ...(fiscalDocumentType ? { identityDocumentId: fiscalDocumentType } : {}),
+        },
+    };
 }
 
 export async function deleteAddress(id: string) {

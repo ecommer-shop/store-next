@@ -18,9 +18,10 @@ export default async function AccountLayout({ children }: LayoutProps<'/account'
   const sellersUrl = getSellersLandingUrl();
 
   const navItems: NavItem[] = [
-    { href: '/account/orders',    label: tr(I18N.UserBar.orders),    icon: 'package' },
-    { href: '/account/addresses', label: tr(I18N.UserBar.addresses), icon: 'mapPin'  },
-    { href: '/account/profile',   label: tr(I18N.UserBar.profile),   icon: 'user'    },
+    { href: '/account/orders',           label: tr(I18N.UserBar.orders),          icon: 'package'    },
+    { href: '/account/addresses',        label: tr(I18N.UserBar.addresses),       icon: 'mapPin'     },
+    { href: '/account/payment-methods',  label: tr(I18N.UserBar.paymentMethods),  icon: 'creditCard' },
+    { href: '/account/profile',          label: tr(I18N.UserBar.profile),         icon: 'user'       },
   ];
 
   return (
