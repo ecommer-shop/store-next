@@ -307,6 +307,7 @@ export const SetOrderShippingMethodMutation = graphql(`
                 shippingLines {
                     shippingMethod {
                         id
+                        code
                         name
                         description
                     }
