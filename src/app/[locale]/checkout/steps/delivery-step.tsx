@@ -14,6 +14,8 @@ import {
 } from '../actions';
 import { Price } from '@/components/commerce/price';
 
+const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
+
 interface DeliveryStepProps {
   onComplete: () => void;
   t: (key: string) => string;
@@ -37,11 +39,21 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     (line) => line.shippingMethod.id === selectedMethodId,
   );
 
+  const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId);
+  const isEnvia = selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE;
+
   useEffect(() => {
     if (!selectedMethodId || !order.shippingAddress) {
       setQuotedPriceWithTax(null);
       return;
     }
+
+    if (selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE) {
+      setQuotedPriceWithTax(null);
+      setQuoting(false);
+      return;
+    }
+
     let cancelled = false;
     setQuoting(true);
     setErrorMessage(null);
@@ -58,7 +70,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
       .finally(() => { if (!cancelled) setQuoting(false); });
 
     return () => { cancelled = true; };
-  }, [selectedMethodId, order.shippingAddress]);
+  }, [selectedMethodId, order.shippingAddress, selectedMethod?.code]);
 
   const handleContinue = async () => {
     if (!selectedMethodId) return;
@@ -66,7 +78,9 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     setSubmitting(true);
     try {
       await setShippingMethodAction(selectedMethodId);
-      await calculateAndSetDeliveryCost();
+      if (!isEnvia) {
+        await calculateAndSetDeliveryCost();
+      }
       router.refresh();
       onComplete();
     } catch (error) {
