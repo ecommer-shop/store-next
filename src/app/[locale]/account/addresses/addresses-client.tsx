@@ -57,6 +57,9 @@ export type CreateAddressPayload = {
     postalCode?: string;
     phoneNumber?: string;
     countryCode: string;
+    matiasCityId?: string;
+    dni?: string;
+    identityDocumentId?: string;
     customFields?: AddressGeoCustomFields;
 };
 
@@ -151,6 +154,9 @@ export function AddressesClient({ addresses, countries, googleMapsApiKey }: Addr
                 postalCode: data.postalCode,
                 phoneNumber: data.phoneNumber,
                 countryCode: country.code,
+                matiasCityId: data.matiasCityId,
+                dni: data.dni,
+                identityDocumentId: data.identityDocumentId,
                 customFields: data.customFields,
             };
 
@@ -334,16 +340,19 @@ export function AddressesClient({ addresses, countries, googleMapsApiKey }: Addr
                         countries={countries}
                         googleMapsApiKey={googleMapsApiKey}
                         defaultValues={editingAddress ? {
-                            fullName: editingAddress.fullName || '',
-                            company: editingAddress.company || '',
+                            fullName: editingAddress.fullName ?? '',
+                            company: editingAddress.company ?? '',
                             streetLine1: editingAddress.streetLine1,
-                            streetLine2: editingAddress.streetLine2 || '',
-                            city: editingAddress.city || '',
-                            province: editingAddress.province || '',
-                            postalCode: editingAddress.postalCode || '',
-                            phoneNumber: editingAddress.phoneNumber || '',
+                            streetLine2: editingAddress.streetLine2 ?? '',
+                            city: editingAddress.city ?? '',
+                            province: editingAddress.province ?? '',
+                            postalCode: editingAddress.postalCode ?? '',
                             countryCode: editingAddress.country.id,
-                            customFields: editingAddress.customFields || undefined,
+                            phoneNumber: editingAddress.phoneNumber ?? '',
+                            matiasCityId: editingAddress.customFields?.matiasCityId ?? undefined,
+                            dni: editingAddress.customFields?.dni ?? undefined,
+                            identityDocumentId: editingAddress.customFields?.identityDocumentId ?? '1',
+                            customFields: editingAddress.customFields ?? undefined,
                         } : undefined}
                         labels={{
                             fullName: t(I18N.Account.addresses.form.fields.fullName.label),

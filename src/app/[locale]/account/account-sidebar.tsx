@@ -14,10 +14,10 @@ import {
   Package,
   MapPin,
   User,
-  CreditCard,
   Menu,
   X,
   Store,
+  CreditCard,
 } from "lucide-react";
 
 const iconMap = {

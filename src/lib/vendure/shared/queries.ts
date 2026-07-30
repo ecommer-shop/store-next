@@ -4,7 +4,7 @@ import { ActiveCustomerFragment, ProductCardFragment } from './fragments';
 export const GetTopCollectionsQuery = graphql(`
     query GetTopCollections {
         collections(options: { filter: { parentId: { eq: "1" } }, 
-            take: 50 }) {
+            take: 3 }) {
             items {
                 id
                 name
@@ -261,6 +261,9 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 country
                 phoneNumber
                 customFields {
+                    matiasCityId
+                    dni
+                    identityDocumentId
                     latitude
                     longitude
                     neighborhood
@@ -278,6 +281,9 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
                 country
                 phoneNumber
                 customFields {
+                    matiasCityId
+                    dni
+                    identityDocumentId
                     latitude
                     longitude
                     neighborhood
@@ -340,6 +346,9 @@ export const GetCustomerAddressesQuery = graphql(`
                 }
                 phoneNumber
                 customFields {
+                    matiasCityId
+                    dni
+                    identityDocumentId
                     latitude
                     longitude
                     neighborhood
@@ -455,12 +464,6 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
-                customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
-                }
             }
             billingAddress {
                 fullName
@@ -472,12 +475,6 @@ export const GetOrderDetailQuery = graphql(`
                 postalCode
                 country
                 phoneNumber
-                customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
-                }
             }
             shippingLines {
                 shippingMethod {
@@ -556,6 +553,15 @@ export const GetSellerStoreProfileQuery = graphql(`
             storeName
             storeDescription
             storeBannerUrl
+            storeHeaderBannerUrl
+            socialLinks {
+                platform
+                username
+                dmLink
+                profileUrl
+                displayName
+                inPipeline
+            }
         }
     }
 `);
@@ -605,7 +611,6 @@ export const GetProductVariantStockQuery = graphql(`
             }
         }
     }
-
 `)
 
 export const GetMySubscriptionQuery = graphql(`
@@ -692,3 +697,40 @@ export const CalculateDeliveryCostQuery = graphql(`
     }
 `);
 
+export const SavedPaymentMethodsQuery = graphql(`
+    query SavedPaymentMethods {
+        savedPaymentMethods {
+            id
+            type
+            wompiPaymentSourceId
+            lastFour
+            brand
+            expiryMonth
+            expiryYear
+            cardHolderName
+            isDefault
+            createdAt
+        }
+    }
+`);
+
+export const GetWompiTransactionStatusQuery = graphql(`
+    query GetWompiTransactionStatus($transactionId: String!) {
+        getWompiTransactionStatus(transactionId: $transactionId) {
+            id
+            status
+            statusMessage
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            url
+            asyncPaymentUrl
+            qrImage
+        }
+    }
+`);

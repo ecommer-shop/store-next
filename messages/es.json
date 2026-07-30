@@ -21,6 +21,7 @@
     "profile": "Mi Perfil",
     "orders": "Mis Pedidos",
     "addresses": "Mis Direcciones",
+    "paymentMethods": "Métodos de pago",
     "billing": "Facturación",
     "logout": "Cerrar Sesión",
     "login": "Iniciar Sesión",

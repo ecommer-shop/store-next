@@ -5,6 +5,8 @@ import { Input } from '@heroui/react';
 import { Controller, useForm } from 'react-hook-form';
 import { Loader2, MapPin } from 'lucide-react';
 import { CountrySelect } from '@/components/shared/country-select';
+import { getMatiasCity, MATIAS_COLOMBIA_CITIES } from '@/lib/matias-cities';
+import { MATIAS_IDENTITY_DOCUMENT_TYPES } from '@/lib/matias-document-types';
 import {
   GoogleAddressAutocomplete,
   GoogleAddressSelection,
@@ -25,6 +27,9 @@ export interface AddressGeoCustomFields {
   longitude?: number | null;
   neighborhood?: string | null;
   googlePlaceId?: string | null;
+  matiasCityId?: string | null;
+  dni?: string | null;
+  identityDocumentId?: string | null;
 }
 
 export interface AddressFormData {
@@ -37,6 +42,9 @@ export interface AddressFormData {
   countryCode: string;
   phoneNumber: string;
   company?: string;
+  matiasCityId?: string;
+  dni?: string;
+  identityDocumentId?: string;
   customFields?: AddressGeoCustomFields;
 }
 
@@ -76,6 +84,20 @@ function hasUsableCoordinates(latitude: number | null, longitude: number | null)
   return latitude !== null && longitude !== null && !(latitude === 0 && longitude === 0);
 }
 
+function matchMatiasCity(cityName?: string | null, provinceName?: string | null) {
+  if (!cityName) return undefined;
+  const cityLower = cityName.trim().toLocaleLowerCase('es');
+  const provinceLower = provinceName?.trim().toLocaleLowerCase('es');
+  return (
+    MATIAS_COLOMBIA_CITIES.find(
+      (city) =>
+        city.city.toLocaleLowerCase('es') === cityLower &&
+        (!provinceLower || city.department.toLocaleLowerCase('es') === provinceLower),
+    ) ??
+    MATIAS_COLOMBIA_CITIES.find((city) => city.city.toLocaleLowerCase('es') === cityLower)
+  );
+}
+
 export function AddressForm({
   countries,
   defaultValues,
@@ -90,18 +112,42 @@ export function AddressForm({
     useForm<AddressFormData>({
       mode: 'onBlur',
       defaultValues: {
-        countryCode: countries[0]?.id ?? 'CO',
+        countryCode: countries[0]?.id ?? countries[0]?.code ?? 'CO',
+        identityDocumentId: '1',
         ...defaultValues,
       },
     });
   const geoFields = watch('customFields');
   const selectedStreetLine = watch('streetLine1');
-  const selectedCity = watch('city');
-  const selectedProvince = watch('province');
-  const selectedPostalCode = watch('postalCode');
+  const selectedDepartment = watch('province');
+  const selectedMatiasCity = getMatiasCity(watch('matiasCityId'));
   const [geoError, setGeoError] = useState<string | null>(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const hasGoogleMapsApiKey = Boolean(googleMapsApiKey || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+
+  const matiasDepartments = Array.from(
+    new Set(MATIAS_COLOMBIA_CITIES.map((city) => city.department)),
+  ).sort((a, b) => a.localeCompare(b, 'es'));
+  const matiasCitiesForDepartment = selectedDepartment
+    ? MATIAS_COLOMBIA_CITIES.filter((city) => city.department === selectedDepartment)
+    : MATIAS_COLOMBIA_CITIES;
+
+  const applyMatiasMatch = useCallback(
+    (cityName?: string | null, provinceName?: string | null, postalCode?: string | null) => {
+      const matched = matchMatiasCity(cityName, provinceName);
+      if (!matched) return;
+      setValue('matiasCityId', matched.id, { shouldDirty: true, shouldValidate: true });
+      setValue('city', matched.city, { shouldDirty: true, shouldValidate: true });
+      setValue('province', matched.department, { shouldDirty: true, shouldValidate: true });
+      if (matched.postalCode || postalCode) {
+        setValue('postalCode', matched.postalCode || postalCode || '', {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+      }
+    },
+    [setValue],
+  );
 
   const handleGoogleAddressSelect = useCallback((selection: GoogleAddressSelection) => {
     const selectedAddress = selection.formattedAddress || selection.streetLine1;
@@ -127,6 +173,8 @@ export function AddressForm({
       }
     }
 
+    applyMatiasMatch(selection.city, selection.province, selection.postalCode);
+
     setValue(
       'customFields',
       {
@@ -139,7 +187,7 @@ export function AddressForm({
       { shouldDirty: true, shouldValidate: true },
     );
     setGeoError(null);
-  }, [countries, getValues, setValue]);
+  }, [applyMatiasMatch, countries, getValues, setValue]);
 
   const handleStreetLineManualChange = useCallback((value: string) => {
     setValue('streetLine1', value, { shouldDirty: true, shouldValidate: true });
@@ -181,6 +229,8 @@ export function AddressForm({
       }
     }
 
+    applyMatiasMatch(selection.city, selection.province, selection.postalCode);
+
     setValue(
       'customFields',
       {
@@ -195,7 +245,7 @@ export function AddressForm({
 
     setGeoError(null);
     setIsMapPickerOpen(false);
-  }, [countries, getValues, setValue]);
+  }, [applyMatiasMatch, countries, getValues, setValue]);
 
   const latitude = normalizeCoordinate(geoFields?.latitude);
   const longitude = normalizeCoordinate(geoFields?.longitude);
@@ -213,29 +263,32 @@ export function AddressForm({
 
     await onSubmit({
       ...data,
-      customFields: hasCoordinates
-        ? {
-            ...data.customFields,
-            latitude,
-            longitude,
-          }
-        : undefined,
+      customFields: {
+        ...data.customFields,
+        ...(hasCoordinates
+          ? {
+              latitude,
+              longitude,
+            }
+          : {}),
+        ...(data.matiasCityId ? { matiasCityId: data.matiasCityId } : {}),
+        ...(data.dni ? { dni: data.dni } : {}),
+        ...(data.identityDocumentId ? { identityDocumentId: data.identityDocumentId } : {}),
+      },
     });
   });
 
   return (
     <Form onSubmit={submitForm}>
-      {/* Hidden geo fields */}
+      <input type="hidden" {...register('city', { required: labels.city })} />
       <input type="hidden" {...register('customFields.latitude')} />
       <input type="hidden" {...register('customFields.longitude')} />
       <input type="hidden" {...register('customFields.neighborhood')} />
       <input type="hidden" {...register('customFields.googlePlaceId')} />
-      {/* company hidden — not needed for individual buyers */}
       <input type="hidden" {...register('company')} />
 
       <div className="space-y-5">
 
-        {/* Nombre completo */}
         <Controller
           name="fullName"
           control={control}
@@ -256,15 +309,13 @@ export function AddressForm({
           )}
         />
 
-        {/* Dirección principal */}
         {hasGoogleMapsApiKey ? (
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {labels.streetLine1} <span className="text-[#9969F8]">*</span>
               </Label>
-              
-              {/* Botón para abrir selector de mapa */}
+
               <Button
                 type="button"
                 variant="ghost"
@@ -276,8 +327,7 @@ export function AddressForm({
                 Seleccionar ubicación en el mapa
               </Button>
             </div>
-            
-            {/* Si ya tiene coordenadas válidas del mapa, mostrar input simple sin autocompletado */}
+
             {hasValidCoordinates ? (
               <TextField>
                 <Input
@@ -285,7 +335,6 @@ export function AddressForm({
                   autoComplete="address-line1"
                   value={selectedStreetLine || ''}
                   onChange={(e) => {
-                    // Si edita manualmente, limpiar las coordenadas
                     const newValue = e.target.value;
                     setValue('streetLine1', newValue, { shouldDirty: true, shouldValidate: true });
                     setValue('customFields', {
@@ -344,7 +393,6 @@ export function AddressForm({
           />
         )}
 
-        {/* Coordenadas confirmadas */}
         {hasValidCoordinates && latitude !== null && longitude !== null && (
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300">
             <p className="font-semibold flex items-center gap-1.5">
@@ -365,14 +413,12 @@ export function AddressForm({
           </div>
         )}
 
-        {/* Geo error */}
         {geoError && (
           <div className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/30 dark:border-red-800 px-4 py-3 text-sm text-red-600 dark:text-red-400">
             {geoError}
           </div>
         )}
 
-        {/* Apartamento / Suite */}
         <Controller
           name="streetLine2"
           control={control}
@@ -391,48 +437,118 @@ export function AddressForm({
           )}
         />
 
-        {/* Ciudad + Departamento */}
         <div className="grid grid-cols-2 gap-4">
-          <Controller
-            name="city"
-            control={control}
-            rules={{ required: labels.city }}
-            render={({ field }) => (
-              <TextField>
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-                  {labels.city} <span className="text-[#9969F8]">*</span>
-                </Label>
-                <Input
-                  {...field}
-                  value={field.value || ''}
+          <TextField>
+            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+              {labels.province} <span className="text-[#9969F8]">*</span>
+            </Label>
+            <Controller
+              name="province"
+              control={control}
+              rules={{ required: labels.province }}
+              render={({ field }) => (
+                <select
                   className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-                />
-                <FieldError className="text-xs text-red-500 mt-1">{errors.city?.message}</FieldError>
-              </TextField>
-            )}
-          />
+                  value={field.value ?? ''}
+                  onChange={(event) => {
+                    const department = event.target.value;
+                    field.onChange(department);
+                    if (selectedMatiasCity && selectedMatiasCity.department !== department) {
+                      setValue('matiasCityId', '', { shouldValidate: true });
+                      setValue('city', '', { shouldValidate: true });
+                    }
+                  }}
+                >
+                  <option value="">Selecciona departamento</option>
+                  {matiasDepartments.map((department) => (
+                    <option key={department} value={department}>
+                      {department}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+            <FieldError className="text-xs text-red-500 mt-1">{errors.province?.message}</FieldError>
+          </TextField>
 
-          <Controller
-            name="province"
-            control={control}
-            rules={{ required: labels.province }}
-            render={({ field }) => (
-              <TextField>
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-                  {labels.province} <span className="text-[#9969F8]">*</span>
-                </Label>
-                <Input
-                  {...field}
-                  value={field.value || ''}
+          <TextField>
+            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+              {labels.city} <span className="text-[#9969F8]">*</span>
+            </Label>
+            <Controller
+              name="matiasCityId"
+              control={control}
+              rules={{ required: labels.city }}
+              render={({ field }) => (
+                <select
                   className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-                />
-                <FieldError className="text-xs text-red-500 mt-1">{errors.province?.message}</FieldError>
-              </TextField>
-            )}
-          />
+                  value={field.value ?? ''}
+                  onChange={(event) => {
+                    const city = getMatiasCity(event.target.value);
+                    field.onChange(event.target.value);
+                    if (city) {
+                      setValue('city', city.city, { shouldValidate: true });
+                      setValue('province', city.department, { shouldValidate: true });
+                      if (city.postalCode) {
+                        setValue('postalCode', city.postalCode, { shouldValidate: true });
+                      }
+                    }
+                  }}
+                >
+                  <option value="">Selecciona ciudad</option>
+                  {matiasCitiesForDepartment.map((city) => (
+                    <option key={city.id} value={city.id}>
+                      {city.city}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+            <FieldError className="text-xs text-red-500 mt-1">{errors.matiasCityId?.message}</FieldError>
+          </TextField>
         </div>
 
-        {/* Código postal + País */}
+        <div className="grid gap-4 rounded-xl border border-border p-4">
+          <p className="text-sm font-semibold text-foreground">Datos para facturación electrónica</p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <TextField>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                Tipo de documento <span className="text-[#9969F8]">*</span>
+              </Label>
+              <Controller
+                name="identityDocumentId"
+                control={control}
+                rules={{ required: 'Tipo de documento' }}
+                render={({ field }) => (
+                  <select
+                    className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                    value={field.value ?? '1'}
+                    onChange={field.onChange}
+                  >
+                    {MATIAS_IDENTITY_DOCUMENT_TYPES.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.label} ({type.code})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+              <FieldError className="text-xs text-red-500 mt-1">{errors.identityDocumentId?.message}</FieldError>
+            </TextField>
+
+            <TextField>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                Documento / NIT <span className="text-[#9969F8]">*</span>
+              </Label>
+              <Input
+                {...register('dni', { required: 'Documento / NIT' })}
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+              />
+              <FieldError className="text-xs text-red-500 mt-1">{errors.dni?.message}</FieldError>
+            </TextField>
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <Controller
             name="postalCode"
@@ -473,7 +589,6 @@ export function AddressForm({
           </TextField>
         </div>
 
-        {/* Teléfono */}
         <div>
           <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
             {labels.phoneNumber} <span className="text-[#9969F8]">*</span>
@@ -545,7 +660,6 @@ export function AddressForm({
         </Button>
       </div>
 
-      {/* Map Picker Modal */}
       {isMapPickerOpen && (
         <GoogleMapPicker
           apiKey={googleMapsApiKey}

@@ -12,70 +12,26 @@ import {
     UpdateCustomerAddressMutation,
     TransitionOrderToStateMutation,
     SetOrderDynamicShippingMethod,
-    CreateDeliveryOrderMutation
+    CreateDeliveryOrderMutation,
+    InitWompiTransactionMutation,
+    InitWompiSavedCardTransactionMutation,
+    ConfirmWompiPaymentMutation,
+    CreateWompiPaymentSourceMutation,
+    SaveWompiPaymentMethodMutation,
+    UpdateCustomerMutation,
 } from '@/lib/vendure/shared/mutations';
 import {
     CalculateDeliveryCostQuery,
     GetCustomerAddressesQuery,
     GetActiveOrderQuery,
-    GetWompiSignatureQuery
+    GetWompiSignatureQuery,
+    GetWompiTransactionStatusQuery,
+    SavedPaymentMethodsQuery,
 } from '@/lib/vendure/shared/queries';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
 import { parse } from 'graphql';
-
-const GetActiveOrderDeliveryContextDocument = parse(`
-    query GetActiveOrderDeliveryContext {
-        activeOrder {
-            id
-            code
-            subTotalWithTax
-            shippingWithTax
-            customer {
-                id
-                firstName
-                lastName
-                emailAddress
-            }
-            shippingAddress {
-                fullName
-                company
-                streetLine1
-                streetLine2
-                city
-                province
-                postalCode
-                country
-                phoneNumber
-                customFields {
-                    latitude
-                    longitude
-                    neighborhood
-                    googlePlaceId
-                }
-            }
-            lines {
-                id
-                quantity
-                linePriceWithTax
-                productVariant {
-                    product {
-                        id
-                        name
-                        sellerShop {
-                            channelCode
-                            sellerName
-                            pickupAddress
-                            pickupLatLng
-                            pickupNeighborhood
-                        }
-                    }
-                }
-            }
-        }
-    }
-`);
 
 interface AddressInput {
     fullName: string;
@@ -87,7 +43,18 @@ interface AddressInput {
     countryCode: string;
     phoneNumber: string;
     company?: string;
-    customFields?: AddressGeoCustomFields;
+    matiasCityId?: string;
+    dni?: string;
+    identityDocumentId?: string;
+    customFields?: {
+        matiasCityId?: string | null;
+        dni?: string | null;
+        identityDocumentId?: string | null;
+        latitude?: number | string | null;
+        longitude?: number | string | null;
+        neighborhood?: string | null;
+        googlePlaceId?: string | null;
+    };
 }
 
 interface AddressGeoCustomFields {
@@ -184,7 +151,60 @@ interface CustomerAddressWithGeo {
     customFields?: AddressGeoCustomFields | null;
 }
 
+const DEFAULT_DELIVERY_PRICE_COP = 8500;
 const POST_PAYMENT_DELIVERY_TIMEOUT_MS = 15000;
+
+const GetActiveOrderDeliveryContextDocument = parse(`
+    query GetActiveOrderDeliveryContext {
+        activeOrder {
+            id
+            code
+            subTotalWithTax
+            shippingWithTax
+            customer {
+                id
+                firstName
+                lastName
+                emailAddress
+            }
+            shippingAddress {
+                fullName
+                company
+                streetLine1
+                streetLine2
+                city
+                province
+                postalCode
+                country
+                phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
+            }
+            lines {
+                id
+                quantity
+                linePriceWithTax
+                productVariant {
+                    product {
+                        id
+                        name
+                        sellerShop {
+                            channelCode
+                            sellerName
+                            pickupAddress
+                            pickupLatLng
+                            pickupNeighborhood
+                        }
+                    }
+                }
+            }
+        }
+    }
+`);
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -370,149 +390,6 @@ async function calculateDeliveryQuotesForGroups(
     }));
 }
 
-export async function setShippingAddress(
-    shippingAddress: AddressInput,
-    useSameForBilling: boolean
-) {
-    await requireClerkAuth();
-    const cookiesStore = await cookies()
-    const token = getAuthTokenFromCookies(cookiesStore)!;
-    const shippingResult = await mutate(
-        SetOrderShippingAddressMutation,
-        { input: shippingAddress },
-        { token, useAuthToken: true }
-    );
-
-    if (shippingResult.data.setOrderShippingAddress.__typename !== 'Order') {
-        throw new Error('Failed to set shipping address');
-    }
-
-    if (useSameForBilling) {
-        await mutate(
-            SetOrderBillingAddressMutation,
-            { input: shippingAddress },
-            { token, useAuthToken: true }
-        );
-    }
-
-    revalidatePath('/checkout');
-}
-
-export async function setShippingMethod(shippingMethodId: string) {
-    await requireClerkAuth();
-    const cookiesStore = await cookies()
-    const token = getAuthTokenFromCookies(cookiesStore)!;
-    const result = await mutate(
-        SetOrderShippingMethodMutation,
-        { shippingMethodId: [shippingMethodId] },
-        { token, useAuthToken: true }
-    );
-    
-    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
-        throw new Error('Failed to set shipping method');
-    }
-
-    revalidatePath('/checkout');
-}
-
-export async function setDynamicShippingPrice(price: number) {
-    await requireClerkAuth();
-    const cookiesStore = await cookies()
-    const token = getAuthTokenFromCookies(cookiesStore)!;
-    await mutate(
-        SetOrderDynamicShippingMethod,
-        { price },
-
-        { token, useAuthToken: true }
-    );
-    revalidatePath('/checkout');
-}
-
-const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
-
-async function reapplyShippingSelection(
-    token: string,
-    shippingMethodIds?: string[],
-    shippingPriceWithTax?: number,
-): Promise<boolean> {
-    const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
-
-    if (uniqueShippingMethodIds.length === 0) {
-        return false;
-    }
-
-    const result = await mutate(
-        SetOrderShippingMethodMutation,
-        { shippingMethodId: uniqueShippingMethodIds },
-        { token, useAuthToken: true }
-    );
-
-    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
-        throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
-    }
-
-    const orderData = result.data.setOrderShippingMethod as {
-        shippingLines?: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null;
-    };
-    const isEnvia = orderData.shippingLines?.some(
-        (line) => line?.shippingMethod?.code === ENVIA_SHIPPING_METHOD_CODE,
-    ) ?? false;
-
-    if (!isEnvia && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
-        await mutate(
-            SetOrderDynamicShippingMethod,
-            { price: Math.round(shippingPriceWithTax) },
-            { token, useAuthToken: true }
-        );
-    }
-
-    return isEnvia;
-}
-
-export async function calculateDeliveryCostQuote() {
-    await requireClerkAuth();
-    const cookiesStore = await cookies()
-    const token = getAuthTokenFromCookies(cookiesStore)!;
-
-    const activeOrder = await getActiveOrderDeliveryContext(token);
-
-    if (!activeOrder?.shippingAddress) {
-        throw new Error('Primero selecciona una direccion de envio');
-    }
-
-    const destinationGeo = await resolveShippingAddressGeo(activeOrder, token);
-    const destination = destinationGeo.latLng;
-
-    if (!destination) {
-        throw new Error('La direccion seleccionada no tiene coordenadas de Google Maps');
-    }
-
-    const groups = groupOrderLinesBySellerOrigin(activeOrder);
-    const quotes = await calculateDeliveryQuotesForGroups(groups, destination, token);
-    const totalDeliveryCost = quotes.reduce((sum, item) => sum + (item.quote.price?.value ?? 0), 0);
-
-    return {
-        success: true,
-        price: {
-            value: totalDeliveryCost,
-            currency: quotes[0]?.quote.price?.currency || 'COP',
-        },
-        distance: quotes[0]?.quote.distance,
-        duration: quotes[0]?.quote.duration,
-        error: null,
-    } satisfies DeliveryCostQuote;
-}
-
-export async function calculateAndSetDeliveryCost() {
-    const quote = await calculateDeliveryCostQuote();
-    const totalDeliveryCost = quote.price?.value ?? 0;
-
-    await setDynamicShippingPrice(toVendureMoneyFromPesos(totalDeliveryCost));
-    revalidatePath('/checkout');
-
-    return quote;
-}
-
 async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, paymentMethodCode: string, token: string) {
     const shippingAddress = order?.shippingAddress;
     const destinationGeo = await resolveShippingAddressGeo(order, token);
@@ -576,38 +453,222 @@ async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, 
     }
 }
 
-export async function createCustomerAddress(address: AddressInput) {
+export async function setShippingAddress(
+    shippingAddress: AddressInput,
+    useSameForBilling: boolean,
+    fiscalDni?: string,
+    identityDocumentId?: string
+) {
+    await requireClerkAuth();
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) {
+        throw new Error('AUTH_REQUIRED');
+    }
+    const fiscalDniFromAddress = fiscalDni || shippingAddress.dni || shippingAddress.customFields?.dni;
+    const identityDocumentIdFromAddress =
+        identityDocumentId || shippingAddress.identityDocumentId || shippingAddress.customFields?.identityDocumentId || '1';
+
+    if (fiscalDniFromAddress?.trim()) {
+        await mutate(
+            UpdateCustomerMutation,
+            {
+                input: {
+                    customFields: {
+                        dni: fiscalDniFromAddress.trim(),
+                        identityDocumentId: identityDocumentIdFromAddress,
+                    },
+                },
+            } as any,
+            { token, useAuthToken: true }
+        );
+    }
+
+    const input = normalizeInvoiceAddressInput(shippingAddress);
+    const shippingResult = await mutate(
+        SetOrderShippingAddressMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    if (shippingResult.data.setOrderShippingAddress.__typename !== 'Order') {
+        throw new Error('Failed to set shipping address');
+    }
+
+    if (useSameForBilling) {
+        await mutate(
+            SetOrderBillingAddressMutation,
+            { input } as any,
+            { token, useAuthToken: true }
+        );
+    }
+
+    revalidatePath('/checkout');
+}
+
+export async function setShippingMethod(shippingMethodId: string) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
     const result = await mutate(
+        SetOrderShippingMethodMutation,
+        { shippingMethodId: [shippingMethodId] },
+        { token, useAuthToken: true }
+    );
+    
+    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
+        throw new Error('Failed to set shipping method');
+    }
+
+    revalidatePath('/checkout');
+}
+
+export async function setDynamicShippingPrice(price: number) {
+    await requireClerkAuth();
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+    await mutate(
+        SetOrderDynamicShippingMethod,
+        { price: Math.round(price) },
+
+        { token, useAuthToken: true }
+    );
+    revalidatePath('/checkout');
+}
+
+const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
+
+async function reapplyShippingSelection(
+    token: string,
+    shippingMethodIds?: string[],
+    shippingPriceWithTax?: number,
+): Promise<boolean> {
+    const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
+
+    if (uniqueShippingMethodIds.length === 0) {
+        return false;
+    }
+
+    const result = await mutate(
+        SetOrderShippingMethodMutation,
+        { shippingMethodId: uniqueShippingMethodIds },
+        { token, useAuthToken: true }
+    );
+
+    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
+        throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
+    }
+
+    const orderData = result.data.setOrderShippingMethod as {
+        shippingLines?: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null;
+    };
+    const isEnvia = orderData.shippingLines?.some(
+        (line) => line?.shippingMethod?.code === ENVIA_SHIPPING_METHOD_CODE,
+    ) ?? false;
+
+    if (!isEnvia && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+        await mutate(
+            SetOrderDynamicShippingMethod,
+            { price: Math.round(shippingPriceWithTax) },
+            { token, useAuthToken: true }
+        );
+    }
+
+    return isEnvia;
+}
+
+export async function calculateDeliveryCostQuote() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const activeOrder = await getActiveOrderDeliveryContext(token);
+
+    if (!activeOrder?.shippingAddress) {
+        throw new Error('Primero selecciona una direccion de envio');
+    }
+    const destinationGeo = await resolveShippingAddressGeo(activeOrder, token);
+    const destination = destinationGeo.latLng;
+    if (!destination) {
+        throw new Error('La direccion seleccionada no tiene coordenadas de Google Maps');
+    }
+
+    const groups = groupOrderLinesBySellerOrigin(activeOrder);
+    const quotes = await calculateDeliveryQuotesForGroups(groups, destination, token);
+    const totalDeliveryCost = quotes.reduce((sum, item) => sum + (item.quote.price?.value ?? 0), 0);
+
+    return {
+        success: true,
+        price: {
+            value: totalDeliveryCost,
+            currency: quotes[0]?.quote.price?.currency || 'COP',
+        },
+        distance: quotes[0]?.quote.distance,
+        duration: quotes[0]?.quote.duration,
+        error: null,
+    } satisfies DeliveryCostQuote;
+}
+
+export async function calculateAndSetDeliveryCost() {
+    const quote = await calculateDeliveryCostQuote();
+    if (quote.price?.value) {
+        // Convertir pesos → centavos (Vendure usa centavos internamente)
+        await setDynamicShippingPrice(Math.round(quote.price.value * 100));
+    }
+    return quote;
+}
+
+export async function createCustomerAddress(address: AddressInput) {
+    await requireClerkAuth();
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) {
+        throw new Error('AUTH_REQUIRED');
+    }
+    const result = await mutate(
         CreateCustomerAddressMutation,
-        { input: address },
+        { input: normalizeInvoiceAddressInput(address) } as any,
         { token, useAuthToken: true }
     );
 
     if (!result.data.createCustomerAddress) {
         throw new Error('Failed to create customer address');
     }
-
     revalidatePath('/checkout');
     return result.data.createCustomerAddress;
+}
+
+function normalizeInvoiceAddressInput(address: AddressInput): AddressInput {
+    const { matiasCityId, dni, identityDocumentId, customFields, ...rest } = address;
+    const cityId = matiasCityId || customFields?.matiasCityId;
+    const fiscalDni = dni || customFields?.dni;
+    const fiscalDocumentType = identityDocumentId || customFields?.identityDocumentId;
+    return {
+        ...rest,
+        customFields: {
+            ...customFields,
+            ...(cityId ? { matiasCityId: cityId } : {}),
+            ...(fiscalDni ? { dni: fiscalDni } : {}),
+            ...(fiscalDocumentType ? { identityDocumentId: fiscalDocumentType } : {}),
+        },
+    };
 }
 
 export async function updateCustomerAddress(id: string, address: AddressInput) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
-    const token = getAuthTokenFromCookies(cookiesStore)!;
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) {
+        throw new Error('AUTH_REQUIRED');
+    }
     const result = await mutate(
         UpdateCustomerAddressMutation,
-        { input: { id, ...address } },
+        { input: { id, ...normalizeInvoiceAddressInput(address) } } as any,
         { token, useAuthToken: true }
     );
 
     if (!result.data.updateCustomerAddress) {
         throw new Error('Failed to update customer address');
     }
-
     revalidatePath('/checkout');
     return result.data.updateCustomerAddress;
 }
@@ -624,9 +685,8 @@ export async function transitionToArrangingPayment() {
 
     if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
         const errorResult = result.data.transitionOrderToState;
-        const reason = errorResult.transitionError || errorResult.message;
         throw new Error(
-            `No se pudo preparar la orden para pago: ${errorResult.errorCode} - ${reason}`
+            `Failed to transition order state: ${errorResult.errorCode} - ${errorResult.message}`
         );
     }
 
@@ -745,11 +805,141 @@ export async function getPaymentSignature(amountInCents: number, paymentReferenc
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
     const signature = await query(GetWompiSignatureQuery, {
-        amountInCents: amountInCents!,
-        paymentReference: paymentReference
+        amountInCents,
+        paymentReference
     }, {
         token
     })
 
     return signature.data.GetPaymentSignature;
+}
+
+export async function initWompiTransaction(input: {
+    token?: string;
+    acceptanceToken?: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    saveCard: boolean;
+    paymentMethodCode: string;
+    sessionId?: string;
+    deviceId?: string;
+    financialInstitutionCode?: string;
+    userType?: string;
+    userLegalIdType?: string;
+    userLegalId?: string;
+    paymentDescription?: string;
+    paymentMethodDetails?: Record<string, any>;
+    installments?: number;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiTransaction;
+}
+
+export async function initWompiSavedCardTransaction(input: {
+    paymentSourceId: string;
+    acceptanceToken: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    type?: string;
+    installments?: number;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiSavedCardTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiSavedCardTransaction;
+}
+
+export async function confirmWompiPayment(transactionId: string, saveCard: boolean) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        ConfirmWompiPaymentMutation,
+        { input: { transactionId, saveCard } } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.confirmWompiPayment;
+}
+
+export async function getWompiTransactionStatus(transactionId: string) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await query(
+        GetWompiTransactionStatusQuery,
+        { transactionId },
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.getWompiTransactionStatus;
+}
+
+export async function getSavedPaymentMethodsForCheckout() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) return [];
+
+    try {
+        const result: any = await query(SavedPaymentMethodsQuery, {}, { token, useAuthToken: true });
+        return result.data?.savedPaymentMethods || [];
+    } catch {
+        return [];
+    }
+}
+
+export async function createWompiPaymentSource(input: {
+    token: string;
+    type: string;
+    customerEmail: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        CreateWompiPaymentSourceMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.createWompiPaymentSource;
+}
+
+export async function saveWompiPaymentMethod(input: {
+    wompiPaymentSourceId: string;
+    type: string;
+    lastFour: string;
+    brand: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+    cardHolderName?: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        SaveWompiPaymentMethodMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.saveWompiPaymentMethod;
 }

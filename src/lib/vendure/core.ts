@@ -9,7 +9,7 @@ export const VENDURE_API_URL =
 export const VENDURE_CHANNEL_TOKEN =
   process.env.VENDURE_CHANNEL_TOKEN ||
   process.env.NEXT_PUBLIC_VENDURE_CHANNEL_TOKEN ||
-  '__default_channel__';
+  '';
 
 export const VENDURE_AUTH_TOKEN_HEADER =
   process.env.VENDURE_AUTH_TOKEN_HEADER || 'vendure-auth-token';
@@ -55,8 +55,10 @@ export async function executeVendureRequest<TResult, TVariables>(
     headers.Authorization = `Bearer ${authToken}`;
   }
 
-  headers[VENDURE_CHANNEL_TOKEN_HEADER] =
-    options.channelToken || VENDURE_CHANNEL_TOKEN;
+  const channelToken = options.channelToken || VENDURE_CHANNEL_TOKEN;
+  if (channelToken) {
+    headers[VENDURE_CHANNEL_TOKEN_HEADER] = channelToken;
+  }
 
   // Agregar header de idioma si está disponible
   if (options.languageCode) {
