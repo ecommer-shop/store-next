@@ -112,7 +112,8 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         try {
             const methods = await getSavedPaymentMethodsForCheckout();
             if (Array.isArray(methods)) {
-                setSavedMethods(methods);
+                // REMOVE_WHEN_CARD_ENABLED: filter(Boolean) para reactivar tarjetas guardadas
+                setSavedMethods(methods.filter((m: any) => m.type !== 'CARD'));
             }
         } catch {
         }
@@ -558,6 +559,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                         <MethodSelector
                             selectedCode={selectedMethod}
                             onSelect={handleMethodSelect}
+                            excludedMethods={['CARD']} // REMOVE_WHEN_CARD_ENABLED: quitar para reactivar tarjetas
                         />
                     </div>
                 </div>
