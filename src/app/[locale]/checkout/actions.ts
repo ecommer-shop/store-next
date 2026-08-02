@@ -617,6 +617,30 @@ export async function calculateAndSetDeliveryCost() {
     return quote;
 }
 
+async function syncCustomerFiscalFields(
+    token: string,
+    address: AddressInput,
+) {
+    const fiscalDni = (address.dni || address.customFields?.dni || '').trim();
+    const identityDocumentId =
+        address.identityDocumentId || address.customFields?.identityDocumentId || '1';
+    if (!fiscalDni) {
+        return;
+    }
+    await mutate(
+        UpdateCustomerMutation,
+        {
+            input: {
+                customFields: {
+                    dni: fiscalDni,
+                    identityDocumentId,
+                },
+            },
+        } as any,
+        { token, useAuthToken: true },
+    );
+}
+
 export async function createCustomerAddress(address: AddressInput) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
@@ -624,6 +648,7 @@ export async function createCustomerAddress(address: AddressInput) {
     if (!token) {
         throw new Error('AUTH_REQUIRED');
     }
+    await syncCustomerFiscalFields(token, address);
     const result = await mutate(
         CreateCustomerAddressMutation,
         { input: normalizeInvoiceAddressInput(address) } as any,
@@ -639,16 +664,17 @@ export async function createCustomerAddress(address: AddressInput) {
 
 function normalizeInvoiceAddressInput(address: AddressInput): AddressInput {
     const { matiasCityId, dni, identityDocumentId, customFields, ...rest } = address;
-    const cityId = matiasCityId || customFields?.matiasCityId;
-    const fiscalDni = dni || customFields?.dni;
-    const fiscalDocumentType = identityDocumentId || customFields?.identityDocumentId;
+    const cityId = matiasCityId || customFields?.matiasCityId || null;
+    const fiscalDni = (dni || customFields?.dni || '').trim() || null;
+    const fiscalDocumentType =
+        (identityDocumentId || customFields?.identityDocumentId || '').trim() || null;
     return {
         ...rest,
         customFields: {
             ...customFields,
-            ...(cityId ? { matiasCityId: cityId } : {}),
-            ...(fiscalDni ? { dni: fiscalDni } : {}),
-            ...(fiscalDocumentType ? { identityDocumentId: fiscalDocumentType } : {}),
+            matiasCityId: cityId,
+            dni: fiscalDni,
+            identityDocumentId: fiscalDocumentType,
         },
     };
 }
@@ -660,6 +686,7 @@ export async function updateCustomerAddress(id: string, address: AddressInput) {
     if (!token) {
         throw new Error('AUTH_REQUIRED');
     }
+    await syncCustomerFiscalFields(token, address);
     const result = await mutate(
         UpdateCustomerAddressMutation,
         { input: { id, ...normalizeInvoiceAddressInput(address) } } as any,
