@@ -20,9 +20,6 @@ export const getTopCollections = async () => {
     return result.data.collections.items;
 }
 
-/**
- * All collections used for category → /collection/{slug} URL mapping.
- */
 export const getCollectionsForRouting = cache(async (): Promise<Array<{ id: string; name: string; slug: string }>> => {
     const locale = await getVendureLanguageCode();
     const items: Array<{ id: string; name: string; slug: string }> = [];
