@@ -14,7 +14,6 @@ export const GetTopCollectionsQuery = graphql(`
     }
 `);
 
-/** All public collections used to map category facets → canonical /collection/{slug} routes. */
 export const GetCollectionsForRoutingQuery = graphql(`
     query GetCollectionsForRouting($options: CollectionListOptions) {
         collections(options: $options) {
@@ -27,7 +26,7 @@ export const GetCollectionsForRoutingQuery = graphql(`
     }
 `);
 
-/** Facet catalog for resolving readable URL tokens (code/name) → Vendure facet value IDs. */
+
 export const GetFacetsCatalogQuery = graphql(`
     query GetFacetsCatalog {
         facets(options: { take: 100 }) {

@@ -1,10 +1,3 @@
-/**
- * URL architecture for facets & collections:
- * - Category ("Categoría") → canonical `/collection/{slug}` when a matching collection exists
- * - Other facets → `?facets={code|slugified-name}` (never raw Vendure IDs in new URLs)
- * - Vendure search still requires facet value IDs; resolve tokens before calling the API
- */
-
 export const CATEGORY_FACET_NAMES = ['categoría', 'categoria', 'category', 'categories'];
 
 export function slugifyFacetToken(value: string): string {
