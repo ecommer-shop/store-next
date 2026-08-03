@@ -1,8 +1,8 @@
 import { query } from "@/lib/vendure/server/api";
 import { GetCollectionProductsQuery, SearchProductsQuery } from "@/lib/vendure/shared/queries";
-import { buildSearchInput } from "@/lib/vendure/shared/search-helpers";
+import { buildResolvedSearchInput } from "@/lib/vendure/shared/build-resolved-search-input";
 
-export const getCollectionProducts = (
+export const getCollectionProducts = async (
     slug: string,
     searchParams: { [key: string]: string | string[] | undefined },
     locale: string
@@ -10,7 +10,7 @@ export const getCollectionProducts = (
     return query(
         SearchProductsQuery,
         {
-            input: buildSearchInput({
+            input: await buildResolvedSearchInput({
                 searchParams,
                 collectionSlug: slug,
             }),

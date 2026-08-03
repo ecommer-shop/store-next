@@ -14,6 +14,37 @@ export const GetTopCollectionsQuery = graphql(`
     }
 `);
 
+/** All public collections used to map category facets → canonical /collection/{slug} routes. */
+export const GetCollectionsForRoutingQuery = graphql(`
+    query GetCollectionsForRouting($options: CollectionListOptions) {
+        collections(options: $options) {
+            items {
+                id
+                name
+                slug
+            }
+        }
+    }
+`);
+
+/** Facet catalog for resolving readable URL tokens (code/name) → Vendure facet value IDs. */
+export const GetFacetsCatalogQuery = graphql(`
+    query GetFacetsCatalog {
+        facets(options: { take: 100 }) {
+            items {
+                id
+                code
+                name
+                values {
+                    id
+                    code
+                    name
+                }
+            }
+        }
+    }
+`);
+
 export const GetActiveCustomerQuery = graphql(`
     query GetActiveCustomer {
         activeCustomer {
@@ -33,11 +64,21 @@ export const SearchProductsQuery = graphql(`
                 count
                 facetValue {
                     id
+                    code
                     name
                     facet {
                         id
+                        code
                         name
                     }
+                }
+            }
+            collections {
+                count
+                collection {
+                    id
+                    name
+                    slug
                 }
             }
         }

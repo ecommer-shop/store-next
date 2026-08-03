@@ -12,7 +12,7 @@ import {
     SearchProductsQuery,
 } from '@/lib/vendure/shared/queries';
 import { channelTokenFromStoreSlug, storePathSlugToChannelCode } from '@/lib/vendure/shared/seller-store-channel';
-import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
+import { buildResolvedSearchInput } from '@/lib/vendure/shared/build-resolved-search-input';
 
 export type StoreProductCard = FragmentOf<typeof ProductCardFragment>;
 
@@ -126,7 +126,7 @@ export async function getStoreProducts(
             SearchProductsQuery,
             {
                 input: {
-                    ...buildSearchInput({ searchParams }),
+                    ...(await buildResolvedSearchInput({ searchParams })),
                     take: 100,
                     skip: 0,
                 },
