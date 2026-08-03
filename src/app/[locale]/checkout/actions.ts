@@ -536,15 +536,17 @@ export async function setDynamicShippingPrice(price: number) {
     revalidatePath('/checkout');
 }
 
+const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
+
 async function reapplyShippingSelection(
     token: string,
     shippingMethodIds?: string[],
     shippingPriceWithTax?: number,
-) {
+): Promise<boolean> {
     const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
 
     if (uniqueShippingMethodIds.length === 0) {
-        return;
+        return false;
     }
 
     const result = await mutate(
@@ -557,13 +559,22 @@ async function reapplyShippingSelection(
         throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
     }
 
-    if (typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+    const orderData = result.data.setOrderShippingMethod as {
+        shippingLines?: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null;
+    };
+    const isEnvia = orderData.shippingLines?.some(
+        (line) => line?.shippingMethod?.code === ENVIA_SHIPPING_METHOD_CODE,
+    ) ?? false;
+
+    if (!isEnvia && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
         await mutate(
             SetOrderDynamicShippingMethod,
             { price: Math.round(shippingPriceWithTax) },
             { token, useAuthToken: true }
         );
     }
+
+    return isEnvia;
 }
 
 export async function calculateDeliveryCostQuote() {
@@ -740,8 +751,9 @@ export async function placeOrder(
         }
     }
 
-    // Reaplicar seleccion de envio + precio dinamico antes de finalizar
-    await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
+    const isEnviaShipping = await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
+
+    const orderForDelivery = await getActiveOrderDeliveryContext(token);
 
     // First, transition the order to ArrangingPayment state
     await transitionToArrangingPayment();
@@ -776,6 +788,18 @@ export async function placeOrder(
     }
 
     const orderCode = result.data.addPaymentToOrder.code;
+
+    if (!isEnviaShipping) {
+        try {
+            await withTimeout(
+                createExternalDeliveryOrders(orderForDelivery, paymentMethodCode, token),
+                POST_PAYMENT_DELIVERY_TIMEOUT_MS,
+                'La creacion de domicilios externos tardo demasiado y continuara fuera del flujo de pago',
+            );
+        } catch (err) {
+            console.error('Failed to create external delivery order', err);
+        }
+    }
 
     // Update the cart tag to immediately invalidate cached cart data
     // After placing the order, remove items from the active cart

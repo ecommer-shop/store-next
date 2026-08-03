@@ -26,8 +26,6 @@ const navBtnBase =
   'flex items-center gap-1.5 h-9 px-3 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer select-none';
 
 export function NavbarCollectionsClient({ collections }: NavbarCollectionsClientProps) {
-  const rest = collections.slice(3);
-
   const openSimetriaChat = () => {
     window.dispatchEvent(new Event('toggle-simetria-chat'));
   };
@@ -39,7 +37,7 @@ export function NavbarCollectionsClient({ collections }: NavbarCollectionsClient
         <NavigationMenuTrigger>Categorías</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="grid grid-cols-2 gap-1 p-3 w-[320px]">
-            {rest.map((collection) => (
+            {collections.map((collection) => (
               <li key={collection.slug}>
                 <NavigationMenuLink
                   asChild
