@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { query } from '@/lib/vendure/server/api';
-import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
+import { buildResolvedSearchInput } from '@/lib/vendure/shared/build-resolved-search-input';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   });
 
   // Usa la misma lógica que el SSR
-  const input = buildSearchInput({ searchParams: inputParams });
+  const input = await buildResolvedSearchInput({ searchParams: inputParams });
   const result = await query(SearchProductsQuery, { input });
   return NextResponse.json({
     items: result.data.search.items,

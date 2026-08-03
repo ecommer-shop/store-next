@@ -2,7 +2,7 @@
 import { GetProductsSellerNamesQuery, SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { query } from '@/lib/vendure/server/api';
 import { ResultOf, readFragment } from '@/graphql';
-import { buildSearchInput } from '@/lib/vendure/shared/search-helpers';
+import { buildResolvedSearchInput } from '@/lib/vendure/shared/build-resolved-search-input';
 import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 
 interface FetchNextPageArgs {
@@ -24,7 +24,7 @@ export async function fetchNextProductPage({ page, take, token, searchParams = {
   if (token && token.length > 128) throw new Error('Token too long');
 
   // Build the search input from params
-  const input = buildSearchInput({ 
+  const input = await buildResolvedSearchInput({ 
     searchParams: {
       ...searchParams,
       page: String(page),
