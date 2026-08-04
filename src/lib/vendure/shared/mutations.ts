@@ -275,6 +275,20 @@ export const SetOrderDynamicShippingMethod = graphql(`
     }
 `)
 
+export const CreateDeliveryOrderMutation = graphql(`
+    mutation CreateDeliveryOrder($input: CreateDeliveryOrderInput!) {
+        createDeliveryOrder(input: $input) {
+            success
+            message
+            id_documento
+            fecha_creacion
+            error
+            missing_fields
+            required_fields
+        }
+    }
+`)
+
 export const SetOrderShippingMethodMutation = graphql(`
     mutation SetOrderShippingMethod($shippingMethodId: [ID!]!) {
         setOrderShippingMethod(shippingMethodId: $shippingMethodId) {
@@ -287,6 +301,7 @@ export const SetOrderShippingMethodMutation = graphql(`
                 shippingLines {
                     shippingMethod {
                         id
+                        code
                         name
                         description
                     }
@@ -516,6 +531,106 @@ export const CancelSubscriptionMutation = graphql(`
             id
             status
             plan { name }
+        }
+    }
+`);
+
+export const DeleteSavedPaymentMethodMutation = graphql(`
+    mutation DeleteSavedPaymentMethod($id: ID!) {
+        deleteSavedPaymentMethod(id: $id) {
+            success
+        }
+    }
+`);
+
+export const SetDefaultPaymentMethodMutation = graphql(`
+    mutation SetDefaultPaymentMethod($id: ID!) {
+        setDefaultPaymentMethod(id: $id) {
+            id
+            isDefault
+        }
+    }
+`);
+
+export const InitWompiTransactionMutation = graphql(`
+    mutation InitWompiTransaction($input: InitWompiTransactionInput!) {
+        initWompiTransaction(input: $input) {
+            transactionId
+            status
+            reference
+            amountInCents
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            asyncPaymentUrl
+            qrImage
+            url
+        }
+    }
+`);
+
+export const InitWompiSavedCardTransactionMutation = graphql(`
+    mutation InitWompiSavedCardTransaction($input: InitWompiSavedCardTransactionInput!) {
+        initWompiSavedCardTransaction(input: $input) {
+            transactionId
+            status
+            reference
+            amountInCents
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            asyncPaymentUrl
+            qrImage
+            url
+        }
+    }
+`);
+
+export const ConfirmWompiPaymentMutation = graphql(`
+    mutation ConfirmWompiPayment($input: ConfirmWompiPaymentInput!) {
+        confirmWompiPayment(input: $input) {
+            success
+            orderCode
+            errorMessage
+            receiptUrl
+        }
+    }
+`);
+
+export const CreateWompiPaymentSourceMutation = graphql(`
+    mutation CreateWompiPaymentSource($input: CreateWompiPaymentSourceInput!) {
+        createWompiPaymentSource(input: $input) {
+            id
+            type
+            status
+            publicData
+        }
+    }
+`);
+
+export const SaveWompiPaymentMethodMutation = graphql(`
+    mutation SaveWompiPaymentMethod($input: SaveWompiPaymentMethodInput!) {
+        saveWompiPaymentMethod(input: $input) {
+            id
+            type
+            wompiPaymentSourceId
+            lastFour
+            brand
+            expiryMonth
+            expiryYear
+            cardHolderName
+            isDefault
+            createdAt
         }
     }
 `);

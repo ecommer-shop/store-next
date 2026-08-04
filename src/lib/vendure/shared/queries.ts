@@ -4,7 +4,7 @@ import { ActiveCustomerFragment, ProductCardFragment } from './fragments';
 export const GetTopCollectionsQuery = graphql(`
     query GetTopCollections {
         collections(options: { filter: { parentId: { eq: "1" } }, 
-            take: 3 }) {
+            take: 50 }) {
             items {
                 id
                 name
@@ -594,6 +594,14 @@ export const GetSellerStoreProfileQuery = graphql(`
             storeDescription
             storeBannerUrl
             storeHeaderBannerUrl
+            socialLinks {
+                platform
+                username
+                dmLink
+                profileUrl
+                displayName
+                inPipeline
+            }
         }
     }
 `);
@@ -691,3 +699,78 @@ export const GetAllPlansQuery = graphql(`
     }
 `)
 
+export const CheckProductLimitQuery = graphql(`
+    query CheckProductLimit {
+        checkProductLimit {
+            allowed
+            current
+            limit
+        }
+    }
+`)
+
+export const CheckFeatureAccessQuery = graphql(`
+    query CheckFeatureAccess($featureCode: String!) {
+        checkFeatureAccess(featureCode: $featureCode)
+    }
+`)
+export const CalculateDeliveryCostQuery = graphql(`
+    query CalculateDeliveryCost($input: DeliveryCostInput!) {
+        calculateDeliveryCost(input: $input) {
+            success
+            price {
+                value
+                currency
+            }
+            distance {
+                value
+                unit
+                text
+            }
+            duration {
+                value
+                unit
+                text
+            }
+            error
+        }
+    }
+`);
+
+export const SavedPaymentMethodsQuery = graphql(`
+    query SavedPaymentMethods {
+        savedPaymentMethods {
+            id
+            type
+            wompiPaymentSourceId
+            lastFour
+            brand
+            expiryMonth
+            expiryYear
+            cardHolderName
+            isDefault
+            createdAt
+        }
+    }
+`);
+
+export const GetWompiTransactionStatusQuery = graphql(`
+    query GetWompiTransactionStatus($transactionId: String!) {
+        getWompiTransactionStatus(transactionId: $transactionId) {
+            id
+            status
+            statusMessage
+            paymentMethodExtra {
+                isThreeDs
+                threeDsAuth {
+                    currentStep
+                    currentStepStatus
+                    threeDsMethodData
+                }
+            }
+            url
+            asyncPaymentUrl
+            qrImage
+        }
+    }
+`);

@@ -12,13 +12,26 @@ import {
     UpdateCustomerAddressMutation,
     TransitionOrderToStateMutation,
     SetOrderDynamicShippingMethod,
-    UpdateCustomerMutation
+    CreateDeliveryOrderMutation,
+    InitWompiTransactionMutation,
+    InitWompiSavedCardTransactionMutation,
+    ConfirmWompiPaymentMutation,
+    CreateWompiPaymentSourceMutation,
+    SaveWompiPaymentMethodMutation,
+    UpdateCustomerMutation,
 } from '@/lib/vendure/shared/mutations';
-import { GetActiveOrderQuery } from '@/lib/vendure/shared/queries';
-import { GetWompiSignatureQuery } from '@/lib/vendure/shared/queries';
+import {
+    CalculateDeliveryCostQuery,
+    GetCustomerAddressesQuery,
+    GetActiveOrderQuery,
+    GetWompiSignatureQuery,
+    GetWompiTransactionStatusQuery,
+    SavedPaymentMethodsQuery,
+} from '@/lib/vendure/shared/queries';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
+import { parse } from 'graphql';
 
 interface AddressInput {
     fullName: string;
@@ -44,14 +57,401 @@ interface AddressInput {
     };
 }
 
-const DEFAULT_DELIVERY_PRICE_COP = 8500;
+interface AddressGeoCustomFields {
+    [key: string]: unknown;
+    latitude?: number | string | null;
+    longitude?: number | string | null;
+    neighborhood?: string | null;
+    googlePlaceId?: string | null;
+}
 
-export type DeliveryCostQuote = {
-    price: {
+interface DeliveryCostQuote {
+    success: boolean;
+    price?: {
         value: number;
-        currencyCode: 'COP';
+        currency: string;
+    } | null;
+    distance?: {
+        value: number;
+        unit: string;
+        text?: string | null;
+    } | null;
+    duration?: {
+        value: number;
+        unit: string;
+        text?: string | null;
+    } | null;
+    error?: string | null;
+}
+
+interface CreateDeliveryOrderResponse {
+    success: boolean;
+    message?: string | null;
+    id_documento?: string | null;
+    fecha_creacion?: number | null;
+    error?: string | null;
+    missing_fields?: string[] | null;
+    required_fields?: string[] | null;
+}
+
+interface SellerShopOrigin {
+    channelCode: string;
+    sellerName: string;
+    pickupAddress?: string | null;
+    pickupLatLng?: string | null;
+    pickupNeighborhood?: string | null;
+}
+
+interface DeliveryContextLine {
+    id: string;
+    quantity: number;
+    linePriceWithTax: number;
+    productVariant: {
+        product: {
+            id: string;
+            name: string;
+            sellerShop?: SellerShopOrigin | null;
+        };
     };
-};
+}
+
+interface DeliveryContextOrder {
+    id: string;
+    code: string;
+    subTotalWithTax: number;
+    shippingWithTax: number;
+    customer?: {
+        id?: string | null;
+        firstName?: string | null;
+        lastName?: string | null;
+        emailAddress?: string | null;
+    } | null;
+    shippingAddress?: any;
+    lines: DeliveryContextLine[];
+}
+
+interface DeliveryOriginGroup {
+    key: string;
+    sellerChannelCode: string;
+    sellerName: string;
+    originLatLng: string;
+    originNeighborhood: string;
+    pickupAddress?: string | null;
+    lines: DeliveryContextLine[];
+    subtotalWithTax: number;
+}
+
+interface CustomerAddressWithGeo {
+    streetLine1: string;
+    streetLine2?: string | null;
+    city?: string | null;
+    province?: string | null;
+    postalCode?: string | null;
+    phoneNumber?: string | null;
+    customFields?: AddressGeoCustomFields | null;
+}
+
+const DEFAULT_DELIVERY_PRICE_COP = 8500;
+const POST_PAYMENT_DELIVERY_TIMEOUT_MS = 15000;
+
+const GetActiveOrderDeliveryContextDocument = parse(`
+    query GetActiveOrderDeliveryContext {
+        activeOrder {
+            id
+            code
+            subTotalWithTax
+            shippingWithTax
+            customer {
+                id
+                firstName
+                lastName
+                emailAddress
+            }
+            shippingAddress {
+                fullName
+                company
+                streetLine1
+                streetLine2
+                city
+                province
+                postalCode
+                country
+                phoneNumber
+                customFields {
+                    latitude
+                    longitude
+                    neighborhood
+                    googlePlaceId
+                }
+            }
+            lines {
+                id
+                quantity
+                linePriceWithTax
+                productVariant {
+                    product {
+                        id
+                        name
+                        sellerShop {
+                            channelCode
+                            sellerName
+                            pickupAddress
+                            pickupLatLng
+                            pickupNeighborhood
+                        }
+                    }
+                }
+            }
+        }
+    }
+`);
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    try {
+        return await Promise.race([
+            promise,
+            new Promise<T>((_, reject) => {
+                timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+            }),
+        ]);
+    } finally {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    }
+}
+
+function toFiniteNumber(value: unknown) {
+    const numberValue = typeof value === 'string' ? Number(value) : value;
+    return typeof numberValue === 'number' && Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function getAddressLatLng(customFields?: AddressGeoCustomFields | Record<string, unknown> | null) {
+    const latitude = toFiniteNumber(customFields?.latitude);
+    const longitude = toFiniteNumber(customFields?.longitude);
+
+    if (latitude == null || longitude == null) {
+        return null;
+    }
+
+    return `${latitude},${longitude}`;
+}
+
+function normalizeAddressValue(value: unknown) {
+    return String(value ?? '').trim().toLowerCase();
+}
+
+function addressMatchesOrderAddress(
+    customerAddress: CustomerAddressWithGeo,
+    orderAddress: any,
+) {
+    return (
+        normalizeAddressValue(customerAddress.streetLine1) === normalizeAddressValue(orderAddress?.streetLine1) &&
+        normalizeAddressValue(customerAddress.postalCode) === normalizeAddressValue(orderAddress?.postalCode) &&
+        normalizeAddressValue(customerAddress.phoneNumber) === normalizeAddressValue(orderAddress?.phoneNumber)
+    );
+}
+
+async function findSavedAddressCustomFieldsForOrderAddress(orderAddress: any, token: string) {
+    if (!orderAddress) return null;
+
+    const result = await query(
+        GetCustomerAddressesQuery as any,
+        {},
+        { token, useAuthToken: true },
+    ) as { data: { activeCustomer?: { addresses?: CustomerAddressWithGeo[] | null } | null } };
+
+    const addresses = result.data.activeCustomer?.addresses ?? [];
+    const matchingAddress = addresses.find(address => addressMatchesOrderAddress(address, orderAddress));
+
+    return matchingAddress?.customFields ?? null;
+}
+
+async function resolveShippingAddressGeo(order: DeliveryContextOrder | null, token: string) {
+    const shippingAddress = order?.shippingAddress;
+    const orderAddressCustomFields = shippingAddress?.customFields as AddressGeoCustomFields | undefined;
+    const orderAddressLatLng = getAddressLatLng(orderAddressCustomFields);
+
+    if (orderAddressLatLng) {
+        return {
+            customFields: orderAddressCustomFields,
+            latLng: orderAddressLatLng,
+        };
+    }
+
+    const savedAddressCustomFields = await findSavedAddressCustomFieldsForOrderAddress(shippingAddress, token);
+    const savedAddressLatLng = getAddressLatLng(savedAddressCustomFields);
+
+    if (savedAddressLatLng) {
+        return {
+            customFields: savedAddressCustomFields,
+            latLng: savedAddressLatLng,
+        };
+    }
+
+    return {
+        customFields: orderAddressCustomFields ?? savedAddressCustomFields ?? null,
+        latLng: null,
+    };
+}
+
+function toVendureMoneyFromPesos(value: number) {
+    return Math.round(value * 100);
+}
+
+function toPesosString(valueInVendureMoney: number) {
+    return String(Math.round(valueInVendureMoney / 100));
+}
+
+function buildAddressText(address: any) {
+    return [
+        address?.streetLine1,
+        address?.streetLine2,
+        address?.city,
+        address?.province,
+        address?.postalCode,
+        address?.country,
+    ].filter(Boolean).join(', ');
+}
+
+async function getActiveOrderDeliveryContext(token: string) {
+    const result = await query(
+        GetActiveOrderDeliveryContextDocument as any,
+        {},
+        { token, useAuthToken: true }
+    ) as { data: { activeOrder: DeliveryContextOrder | null } };
+
+    return result.data.activeOrder;
+}
+
+function groupOrderLinesBySellerOrigin(order: DeliveryContextOrder): DeliveryOriginGroup[] {
+    const groups = new Map<string, DeliveryOriginGroup>();
+
+    for (const line of order.lines) {
+        const product = line.productVariant.product;
+        const sellerShop = product.sellerShop;
+
+        if (!sellerShop) {
+            throw new Error(`El producto "${product.name}" no tiene una tienda asociada para calcular el domicilio`);
+        }
+
+        if (!sellerShop.pickupLatLng) {
+            throw new Error(`La tienda "${sellerShop.sellerName}" no tiene direccion de recogida configurada`);
+        }
+
+        const key = `${sellerShop.channelCode}:${sellerShop.pickupLatLng}`;
+        const existing = groups.get(key);
+        if (existing) {
+            existing.lines.push(line);
+            existing.subtotalWithTax += line.linePriceWithTax;
+            continue;
+        }
+
+        groups.set(key, {
+            key,
+            sellerChannelCode: sellerShop.channelCode,
+            sellerName: sellerShop.sellerName,
+            originLatLng: sellerShop.pickupLatLng,
+            originNeighborhood: sellerShop.pickupNeighborhood || sellerShop.sellerName,
+            pickupAddress: sellerShop.pickupAddress,
+            lines: [line],
+            subtotalWithTax: line.linePriceWithTax,
+        });
+    }
+
+    return [...groups.values()];
+}
+
+async function calculateDeliveryQuotesForGroups(
+    groups: DeliveryOriginGroup[],
+    destination: string,
+    token: string,
+) {
+    return Promise.all(groups.map(async (group) => {
+        const result = await query(
+            CalculateDeliveryCostQuery as any,
+            {
+                input: {
+                    origin: group.originLatLng,
+                    destination,
+                },
+            },
+            { token, useAuthToken: true }
+        ) as { data: { calculateDeliveryCost: DeliveryCostQuote } };
+
+        const quote = result.data.calculateDeliveryCost;
+        if (!quote.success || !quote.price) {
+            throw new Error(quote.error || `No se pudo calcular el costo de envio para ${group.sellerName}`);
+        }
+
+        return { group, quote };
+    }));
+}
+
+async function createExternalDeliveryOrders(order: DeliveryContextOrder | null, paymentMethodCode: string, token: string) {
+    const shippingAddress = order?.shippingAddress;
+    const destinationGeo = await resolveShippingAddressGeo(order, token);
+    const destination = destinationGeo.latLng;
+
+    if (!shippingAddress || !destination) {
+        throw new Error('La orden no tiene direccion de envio con coordenadas');
+    }
+
+    const groups = groupOrderLinesBySellerOrigin(order);
+    const quotes = await calculateDeliveryQuotesForGroups(groups, destination, token);
+    const customFields = destinationGeo.customFields as AddressGeoCustomFields | undefined;
+    const customerName = [order.customer?.firstName, order.customer?.lastName].filter(Boolean).join(' ');
+
+    const deliveryOrderResults = await Promise.allSettled(quotes.map(async ({ group, quote }) => {
+        const serviceValue = quote.price?.value ?? 0;
+        const deliveryOrderResult = await mutate(
+            CreateDeliveryOrderMutation as any,
+            {
+                input: {
+                    orderId: order.id,
+                    orderCode: order.code,
+                    sellerChannelCode: group.sellerChannelCode,
+                    sellerName: group.sellerName,
+                    barrio_origen: group.originNeighborhood,
+                    barrio_destino: customFields?.neighborhood || shippingAddress.city || 'Destino',
+                    origen_lat_lng: group.originLatLng,
+                    destino_lat_lng: destination,
+                    valor_producto: toPesosString(group.subtotalWithTax),
+                    valor_servicio: String(Math.round(serviceValue)),
+                    metodo_pago: paymentMethodCode === 'wompi' ? 'Transferencia' : 'Efectivo',
+                    id_cliente: order.customer?.id || order.customer?.emailAddress || order.code,
+                    creado_por: shippingAddress.fullName || customerName || order.code,
+                    telefono_cliente: shippingAddress.phoneNumber || '',
+                    observacion: [
+                        buildAddressText(shippingAddress),
+                        `Tienda: ${group.sellerName}`,
+                        group.pickupAddress ? `Origen: ${group.pickupAddress}` : null,
+                    ].filter(Boolean).join(' | '),
+                    imagen: '',
+                    tiempo_aproximado: quote.duration?.text || undefined,
+                },
+            },
+            { token, useAuthToken: true }
+        ) as { data: { createDeliveryOrder: CreateDeliveryOrderResponse } };
+
+        if (!deliveryOrderResult.data.createDeliveryOrder.success) {
+            throw new Error(
+                deliveryOrderResult.data.createDeliveryOrder.error ||
+                deliveryOrderResult.data.createDeliveryOrder.message ||
+                `No se pudo crear el domicilio externo para ${group.sellerName}`
+            );
+        }
+    }));
+
+    const failedResult = deliveryOrderResults.find(result => result.status === 'rejected');
+    if (failedResult?.status === 'rejected') {
+        throw failedResult.reason instanceof Error
+            ? failedResult.reason
+            : new Error('No se pudo crear uno de los domicilios externos');
+    }
+}
 
 export async function setShippingAddress(
     shippingAddress: AddressInput,
@@ -136,18 +536,84 @@ export async function setDynamicShippingPrice(price: number) {
     revalidatePath('/checkout');
 }
 
-export async function calculateDeliveryCostQuote(): Promise<DeliveryCostQuote> {
-    return {
-        price: {
-            value: DEFAULT_DELIVERY_PRICE_COP,
-            currencyCode: 'COP',
-        },
+const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
+
+async function reapplyShippingSelection(
+    token: string,
+    shippingMethodIds?: string[],
+    shippingPriceWithTax?: number,
+): Promise<boolean> {
+    const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
+
+    if (uniqueShippingMethodIds.length === 0) {
+        return false;
+    }
+
+    const result = await mutate(
+        SetOrderShippingMethodMutation,
+        { shippingMethodId: uniqueShippingMethodIds },
+        { token, useAuthToken: true }
+    );
+
+    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
+        throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
+    }
+
+    const orderData = result.data.setOrderShippingMethod as {
+        shippingLines?: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null;
     };
+    const isEnvia = orderData.shippingLines?.some(
+        (line) => line?.shippingMethod?.code === ENVIA_SHIPPING_METHOD_CODE,
+    ) ?? false;
+
+    if (!isEnvia && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+        await mutate(
+            SetOrderDynamicShippingMethod,
+            { price: Math.round(shippingPriceWithTax) },
+            { token, useAuthToken: true }
+        );
+    }
+
+    return isEnvia;
+}
+
+export async function calculateDeliveryCostQuote() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const activeOrder = await getActiveOrderDeliveryContext(token);
+
+    if (!activeOrder?.shippingAddress) {
+        throw new Error('Primero selecciona una direccion de envio');
+    }
+    const destinationGeo = await resolveShippingAddressGeo(activeOrder, token);
+    const destination = destinationGeo.latLng;
+    if (!destination) {
+        throw new Error('La direccion seleccionada no tiene coordenadas de Google Maps');
+    }
+
+    const groups = groupOrderLinesBySellerOrigin(activeOrder);
+    const quotes = await calculateDeliveryQuotesForGroups(groups, destination, token);
+    const totalDeliveryCost = quotes.reduce((sum, item) => sum + (item.quote.price?.value ?? 0), 0);
+
+    return {
+        success: true,
+        price: {
+            value: totalDeliveryCost,
+            currency: quotes[0]?.quote.price?.currency || 'COP',
+        },
+        distance: quotes[0]?.quote.distance,
+        duration: quotes[0]?.quote.duration,
+        error: null,
+    } satisfies DeliveryCostQuote;
 }
 
 export async function calculateAndSetDeliveryCost() {
     const quote = await calculateDeliveryCostQuote();
-    await setDynamicShippingPrice(quote.price.value);
+    if (quote.price?.value) {
+        // Convertir pesos → centavos (Vendure usa centavos internamente)
+        await setDynamicShippingPrice(Math.round(quote.price.value * 100));
+    }
     return quote;
 }
 
@@ -192,7 +658,6 @@ export async function createCustomerAddress(address: AddressInput) {
     if (!result.data.createCustomerAddress) {
         throw new Error('Failed to create customer address');
     }
-
     revalidatePath('/checkout');
     return result.data.createCustomerAddress;
 }
@@ -231,7 +696,6 @@ export async function updateCustomerAddress(id: string, address: AddressInput) {
     if (!result.data.updateCustomerAddress) {
         throw new Error('Failed to update customer address');
     }
-
     revalidatePath('/checkout');
     return result.data.updateCustomerAddress;
 }
@@ -259,8 +723,8 @@ export async function transitionToArrangingPayment() {
 export async function placeOrder(
     paymentMethodCode: string,
     selectedLineIds?: string[],
-    _shippingMethodIds?: string[],
-    _shippingPriceWithTax?: number,
+    shippingMethodIds?: string[],
+    shippingPriceWithTax?: number,
 ) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
@@ -286,6 +750,10 @@ export async function placeOrder(
             }
         }
     }
+
+    const isEnviaShipping = await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
+
+    const orderForDelivery = await getActiveOrderDeliveryContext(token);
 
     // First, transition the order to ArrangingPayment state
     await transitionToArrangingPayment();
@@ -321,6 +789,18 @@ export async function placeOrder(
 
     const orderCode = result.data.addPaymentToOrder.code;
 
+    if (!isEnviaShipping) {
+        try {
+            await withTimeout(
+                createExternalDeliveryOrders(orderForDelivery, paymentMethodCode, token),
+                POST_PAYMENT_DELIVERY_TIMEOUT_MS,
+                'La creacion de domicilios externos tardo demasiado y continuara fuera del flujo de pago',
+            );
+        } catch (err) {
+            console.error('Failed to create external delivery order', err);
+        }
+    }
+
     // Update the cart tag to immediately invalidate cached cart data
     // After placing the order, remove items from the active cart
     try {
@@ -352,11 +832,141 @@ export async function getPaymentSignature(amountInCents: number, paymentReferenc
     const token = getAuthTokenFromCookies(cookiesStore)!;
 
     const signature = await query(GetWompiSignatureQuery, {
-        amountInCents: amountInCents!,
-        paymentReference: paymentReference
+        amountInCents,
+        paymentReference
     }, {
         token
     })
 
     return signature.data.GetPaymentSignature;
+}
+
+export async function initWompiTransaction(input: {
+    token?: string;
+    acceptanceToken?: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    saveCard: boolean;
+    paymentMethodCode: string;
+    sessionId?: string;
+    deviceId?: string;
+    financialInstitutionCode?: string;
+    userType?: string;
+    userLegalIdType?: string;
+    userLegalId?: string;
+    paymentDescription?: string;
+    paymentMethodDetails?: Record<string, any>;
+    installments?: number;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiTransaction;
+}
+
+export async function initWompiSavedCardTransaction(input: {
+    paymentSourceId: string;
+    acceptanceToken: string;
+    customerEmail: string;
+    amountInCents: number;
+    reference: string;
+    currency: string;
+    type?: string;
+    installments?: number;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        InitWompiSavedCardTransactionMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.initWompiSavedCardTransaction;
+}
+
+export async function confirmWompiPayment(transactionId: string, saveCard: boolean) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        ConfirmWompiPaymentMutation,
+        { input: { transactionId, saveCard } } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.confirmWompiPayment;
+}
+
+export async function getWompiTransactionStatus(transactionId: string) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await query(
+        GetWompiTransactionStatusQuery,
+        { transactionId },
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.getWompiTransactionStatus;
+}
+
+export async function getSavedPaymentMethodsForCheckout() {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore);
+    if (!token) return [];
+
+    try {
+        const result: any = await query(SavedPaymentMethodsQuery, {}, { token, useAuthToken: true });
+        return result.data?.savedPaymentMethods || [];
+    } catch {
+        return [];
+    }
+}
+
+export async function createWompiPaymentSource(input: {
+    token: string;
+    type: string;
+    customerEmail: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        CreateWompiPaymentSourceMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.createWompiPaymentSource;
+}
+
+export async function saveWompiPaymentMethod(input: {
+    wompiPaymentSourceId: string;
+    type: string;
+    lastFour: string;
+    brand: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+    cardHolderName?: string;
+}) {
+    const cookiesStore = await cookies()
+    const token = getAuthTokenFromCookies(cookiesStore)!;
+
+    const result: any = await mutate(
+        SaveWompiPaymentMethodMutation,
+        { input } as any,
+        { token, useAuthToken: true }
+    );
+
+    return result.data?.saveWompiPaymentMethod;
 }
