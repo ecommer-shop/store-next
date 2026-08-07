@@ -15,6 +15,7 @@ import {
 import { Price } from '@/components/commerce/price';
 
 const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
+const SELLER_OWN_DELIVERY_METHOD_CODE = 'seller-own-delivery';
 
 interface DeliveryStepProps {
   onComplete: () => void;
@@ -41,6 +42,8 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
 
   const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId);
   const isEnvia = selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE;
+  const isOwnDelivery = selectedMethod?.code === SELLER_OWN_DELIVERY_METHOD_CODE;
+  const skipLiveQuote = isEnvia || isOwnDelivery;
 
   useEffect(() => {
     if (!selectedMethodId || !order.shippingAddress) {
@@ -48,7 +51,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
       return;
     }
 
-    if (selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE) {
+    if (skipLiveQuote) {
       setQuotedPriceWithTax(null);
       setQuoting(false);
       return;
@@ -78,7 +81,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     setSubmitting(true);
     try {
       await setShippingMethodAction(selectedMethodId);
-      if (!isEnvia) {
+      if (!isEnvia && !isOwnDelivery) {
         await calculateAndSetDeliveryCost();
       }
       router.refresh();
