@@ -539,7 +539,7 @@ export async function setDynamicShippingPrice(price: number) {
 const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
 const SELLER_OWN_DELIVERY_METHOD_CODE = 'seller-own-delivery';
 
-function isExternalDeliverySkipped(shippingLines: Array<{ shippingMethod?: { code?: string | null } | null } | null> | undefined): boolean {
+function isExternalDeliverySkipped(shippingLines: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null | undefined): boolean {
     return shippingLines?.some(
         (line) => {
             const code = line?.shippingMethod?.code;
