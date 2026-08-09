@@ -69,6 +69,7 @@ export default async function CheckoutContent({ pb, uri, params }: CheckoutConte
     const addresses = addressesRes.data.activeCustomer?.addresses || [];
     const shippingMethods = (shippingMethodsRes.data.eligibleShippingMethods || [])
         .filter(method => method.code === MESSENGER_DOMIS_SHIPPING_METHOD_CODE)
+        .filter((method, index, arr) => arr.findIndex(m => m.id === method.id) === index)
         .slice(0, 1);
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];

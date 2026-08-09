@@ -253,7 +253,13 @@
       "description": "Enter your discount code below",
       "placeholder": "Enter code",
       "apply": "Apply",
-      "remove": "Remove"
+      "remove": "Remove",
+      "error": {
+        "invalid": "This code is not valid or not available for your store",
+        "expired": "This coupon is no longer active (expired)",
+        "limit": "This coupon has reached its usage limit",
+        "network": "Could not connect, please try again"
+      }
     }
   },
   "Checkout": {
