@@ -236,7 +236,13 @@ export const I18N = {
       description: 'promotionCode.description',
       placeholder: 'promotionCode.placeholder',
       apply: 'promotionCode.apply',
-      remove: 'promotionCode.remove'
+      remove: 'promotionCode.remove',
+      error: {
+        invalid: 'promotionCode.error.invalid',
+        expired: 'promotionCode.error.expired',
+        limit: 'promotionCode.error.limit',
+        network: 'promotionCode.error.network'
+      }
     }
   },
   Checkout: {
