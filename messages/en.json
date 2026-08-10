@@ -308,6 +308,7 @@
       "selectMethod": "Select delivery method",
       "noMethods": "No shipping methods available. Please check your address.",
       "free": "FREE",
+      "loading": "Loading shipping methods…",
       "continuePayment": "Continue to payment"
     },
     "payment": {

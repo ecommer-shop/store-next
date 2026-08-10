@@ -20,17 +20,16 @@ interface DeliveryStepProps {
 
 export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
   const router = useRouter();
-  const { shippingMethods, order } = useCheckout();
+  const { shippingMethods: initialShippingMethods, order } = useCheckout();
 
-  const deliveryMethods = shippingMethods
+  const [methods, setMethods] = useState<typeof initialShippingMethods>([]);
+  const [loadingMethods, setLoadingMethods] = useState(true);
+
+  const deliveryMethods = methods
     .filter((method) => ALLOWED_SHIPPING_METHOD_CODES.includes(method.code))
     .filter((method, index, arr) => arr.findIndex((m) => m.code === method.code) === index);
 
-  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(() => {
-    if (order.shippingLines?.length) return order.shippingLines[0].shippingMethod.id;
-    return deliveryMethods.length === 1 ? deliveryMethods[0].id : null;
-  });
-
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [quoting, setQuoting] = useState(false);
   const [quotedPriceWithTax, setQuotedPriceWithTax] = useState<number | null>(null);
@@ -40,8 +39,48 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     (line) => line.shippingMethod.id === selectedMethodId,
   );
 
-  const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId);
+  const selectedMethod = deliveryMethods.find((m) => m.id === selectedMethodId);
   const isEnvia = selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (order.shippingLines?.length) {
+      setSelectedMethodId(order.shippingLines[0].shippingMethod.id);
+    }
+
+    fetch('/api/checkout/shipping/methods', { method: 'POST' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.error) {
+          setErrorMessage(data.error);
+        } else {
+          setMethods(data.methods ?? []);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setErrorMessage(error instanceof Error ? error.message : 'No se pudieron cargar los métodos de envío');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingMethods(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order.shippingAddress?.postalCode, order.shippingAddress?.city]);
+
+  useEffect(() => {
+    if (selectedMethodId) return;
+    if (deliveryMethods.length === 1) {
+      setSelectedMethodId(deliveryMethods[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deliveryMethods]);
 
   useEffect(() => {
     if (!selectedMethodId || !order.shippingAddress) {
@@ -104,6 +143,15 @@ return () => { cancelled = true; };
       setSubmitting(false);
     }
   };
+
+  if (loadingMethods) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-8 text-center">
+        <Loader2 className="w-10 h-10 animate-spin text-muted-foreground/40" />
+        <p className="text-muted-foreground">{t(I18N.Checkout.delivery.loading)}</p>
+      </div>
+    );
+  }
 
   if (deliveryMethods.length === 0) {
     return (
