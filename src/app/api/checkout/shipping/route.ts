@@ -4,7 +4,7 @@ import { setShippingMethod, calculateAndSetDeliveryCost } from '@/app/[locale]/c
 
 export async function POST(req: Request) {
   try {
-    const { shippingMethodId } = await req.json();
+    const { shippingMethodId, isEnvia } = await req.json();
 
     if (!shippingMethodId) {
       return NextResponse.json(
@@ -14,7 +14,9 @@ export async function POST(req: Request) {
     }
 
     await setShippingMethod(shippingMethodId);
-    await calculateAndSetDeliveryCost();
+    if (!isEnvia) {
+      await calculateAndSetDeliveryCost();
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

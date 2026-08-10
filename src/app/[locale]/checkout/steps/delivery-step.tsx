@@ -8,25 +8,27 @@ import { useCheckout } from '../checkout-provider';
 import { I18N } from '@/i18n/keys';
 import clsx from 'clsx';
 import { Price } from '@/components/commerce/price';
+import {
+    ALLOWED_SHIPPING_METHOD_CODES,
+    ENVIA_SHIPPING_METHOD_CODE,
+} from '@/lib/checkout/shipping-methods';
 
 interface DeliveryStepProps {
   onComplete: () => void;
   t: (key: string) => string;
 }
 
-const MESSENGER_DOMIS_SHIPPING_METHOD_CODE = 'messenger-domis-shipping';
-
 export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
   const router = useRouter();
   const { shippingMethods, order } = useCheckout();
 
-  const messengerMethods = shippingMethods
-    .filter((method) => method.code === MESSENGER_DOMIS_SHIPPING_METHOD_CODE)
-    .filter((method, index, arr) => arr.findIndex((m) => m.id === method.id) === index);
+  const deliveryMethods = shippingMethods
+    .filter((method) => ALLOWED_SHIPPING_METHOD_CODES.includes(method.code))
+    .filter((method, index, arr) => arr.findIndex((m) => m.code === method.code) === index);
 
   const [selectedMethodId, setSelectedMethodId] = useState<string | null>(() => {
     if (order.shippingLines?.length) return order.shippingLines[0].shippingMethod.id;
-    return messengerMethods.length === 1 ? messengerMethods[0].id : null;
+    return deliveryMethods.length === 1 ? deliveryMethods[0].id : null;
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -38,11 +40,21 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     (line) => line.shippingMethod.id === selectedMethodId,
   );
 
+  const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId);
+  const isEnvia = selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE;
+
   useEffect(() => {
     if (!selectedMethodId || !order.shippingAddress) {
       setQuotedPriceWithTax(null);
       return;
     }
+
+    if (selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE) {
+      setQuotedPriceWithTax(null);
+      setQuoting(false);
+      return;
+    }
+
     let cancelled = false;
     setQuoting(true);
     setErrorMessage(null);
@@ -67,10 +79,8 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
         if (!cancelled) setQuoting(false);
       });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedMethodId, order.shippingAddress]);
+return () => { cancelled = true; };
+  }, [selectedMethodId, order.shippingAddress, selectedMethod?.code]);
 
   const handleContinue = async () => {
     if (!selectedMethodId) return;
@@ -80,7 +90,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
       const res = await fetch('/api/checkout/shipping', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shippingMethodId: selectedMethodId }),
+        body: JSON.stringify({ shippingMethodId: selectedMethodId, isEnvia }),
       });
       const data = await res.json();
       if (!res.ok || data.ok !== true) {
@@ -95,7 +105,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     }
   };
 
-  if (messengerMethods.length === 0) {
+  if (deliveryMethods.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 py-8 text-center">
         <Truck className="w-10 h-10 text-muted-foreground/40" />
@@ -115,7 +125,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
       )}
 
       <div className="space-y-3">
-        {messengerMethods.map((method) => {
+        {deliveryMethods.map((method) => {
           const isSelected = selectedMethodId === method.id;
           const methodPrice =
             isSelected && quotedPriceWithTax != null

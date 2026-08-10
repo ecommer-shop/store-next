@@ -18,9 +18,7 @@ import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
 import { getAuthToken } from '@/lib/vendure/server/auth';
 import { Spinner } from '@heroui/react';
-
-const MESSENGER_DOMIS_SHIPPING_METHOD_CODE = 'messenger-domis-shipping';
-
+import { ALLOWED_SHIPPING_METHOD_CODES } from '@/lib/checkout/shipping-methods';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -68,9 +66,8 @@ export default async function CheckoutContent({ pb, uri, params }: CheckoutConte
 
     const addresses = addressesRes.data.activeCustomer?.addresses || [];
     const shippingMethods = (shippingMethodsRes.data.eligibleShippingMethods || [])
-        .filter(method => method.code === MESSENGER_DOMIS_SHIPPING_METHOD_CODE)
-        .filter((method, index, arr) => arr.findIndex(m => m.id === method.id) === index)
-        .slice(0, 1);
+        .filter(method => ALLOWED_SHIPPING_METHOD_CODES.includes(method.code))
+        .filter((method, index, arr) => arr.findIndex(m => m.code === method.code) === index);
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
     const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
