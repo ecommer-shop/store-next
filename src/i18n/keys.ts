@@ -291,6 +291,7 @@ export const I18N = {
       selectMethod: 'delivery.selectMethod',
       noMethods: 'delivery.noMethods',
       free: 'delivery.free',
+      loading: 'delivery.loading',
       continuePayment: 'delivery.continuePayment'
     },
     payment: {

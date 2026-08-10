@@ -278,6 +278,7 @@
       "selectMethod": "Selecciona el método de entrega",
       "noMethods": "No hay métodos de envío disponibles. Por favor verifica tu dirección.",
       "free": "GRATIS",
+      "loading": "Cargando métodos de envío…",
       "continuePayment": "Continuar al pago"
     },
     "payment": {
