@@ -155,7 +155,7 @@ export function NavbarUser() {
                     onPress={() => {
                       trackLogin({ method: 'Clerk/Modal' });
                       onClose();
-                      openSignIn();
+                      openSignIn({ redirectUrl: window.location.href });
                     }}
                     className="hover:bg-[#6BB8FF] dark:hover:bg-[#6BB8FF]/30 text-lg rounded-[2px]"
                   >
@@ -171,7 +171,7 @@ export function NavbarUser() {
                       trackSignup({ method: 'Clerk/Modal' }); 
                       onClose();
                       openSignUp({
-
+                        redirectUrl: window.location.href,
                       });
                     }}
                     className="bg-[#6BB8FF]/60 hover:bg-[#6BB8FF] dark:bg-[#9969F8]/60 dark:hover:bg-[#9969F8] text-lg rounded-[2px]"
