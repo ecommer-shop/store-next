@@ -10,6 +10,7 @@ import {
 import { redirect } from '@/i18n/navigation';
 import CheckoutFlow from './checkout-flow';
 import { CheckoutProvider } from './checkout-provider';
+import { CheckoutAuthSync } from './auth-sync';
 import { noIndexRobots } from '@/lib/vendure/shared/metadata';
 import { getAvailableCountriesCached } from '@/lib/vendure/cached';
 import { Suspense } from 'react';
@@ -81,6 +82,7 @@ export default async function CheckoutContent({ pb, uri, params }: CheckoutConte
 
         }>
             <div className="container mx-auto px-4 py-8">
+                <CheckoutAuthSync orderId={activeOrder.id} />
                 <h1 className="text-3xl font-bold mb-8 mt-10">{ts(I18N.Checkout.title)}</h1>
                 <CheckoutProvider
                     order={activeOrder}

@@ -3,9 +3,9 @@
 import { Button } from '@heroui/react';
 import { Link } from '@/i18n/navigation';
 import { useSelectedItems } from './selected-items-context';
-import { useUser, useClerk } from '@clerk/nextjs';
-import React, { useEffect, useRef } from 'react';
-import { useRouter } from '@/i18n/navigation';
+import { useUser } from '@clerk/nextjs';
+import { useLocale } from 'next-intl';
+import React from 'react';
 
 export default function CheckoutButtonClient({
   label,
@@ -16,9 +16,7 @@ export default function CheckoutButtonClient({
 }) {
   const { selectedLineIds } = useSelectedItems();
   const { isSignedIn, isLoaded } = useUser();
-  const { openSignUp } = useClerk();
-  const router = useRouter();
-  const hasAuthenticatedRef = useRef(false);
+  const locale = useLocale() || 'es';
 
   let isDisabled = selectedLineIds.length === 0;
   let isBelowMinimum = false;
@@ -35,34 +33,12 @@ export default function CheckoutButtonClient({
     }
   }
 
-  // Detectar cuando el usuario se autentica y sincronizar con Vendure
-  useEffect(() => {
-    if (isLoaded && isSignedIn && !hasAuthenticatedRef.current) {
-      hasAuthenticatedRef.current = true;
-      
-      // Autenticar con Vendure para fusionar el carrito anónimo
-      fetch('/api/authenticate-vendure', {
-        method: 'POST',
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            // Recargar la página para mostrar el carrito fusionado
-            router.refresh();
-          } else {
-            console.error('[Cart] Vendure authentication failed:', data.error);
-          }
-        })
-        .catch((error) => {
-          console.error('[Cart] Error authenticating with Vendure:', error);
-        });
-    }
-  }, [isLoaded, isSignedIn, router]);
-
   const handleCheckout = (e: React.MouseEvent) => {
-    if (!isSignedIn) {
+    if (!isSignedIn || !isLoaded) {
       e.preventDefault();
-      openSignUp();
+      const signInUrl = new URL(`/${locale}/sign-in`, window.location.origin);
+      signInUrl.searchParams.set('redirect_url', `${window.location.origin}/${locale}/checkout`);
+      window.location.assign(signInUrl.toString());
     }
   };
 

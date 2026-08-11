@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { mutate } from '@/lib/vendure/server/api';
-import { setAuthToken } from '@/lib/vendure/server/auth';
+import { cookies } from 'next/headers';
+import { getAuthTokenFromCookies, setAuthToken } from '@/lib/vendure/server/auth';
 import { AuthenticateWithClerk } from '@/lib/vendure/shared/mutations';
 
 /**
@@ -35,10 +36,12 @@ export async function POST() {
     }
 
     // Autenticar con Vendure usando el token de Clerk
-    // Esto automáticamente fusiona el carrito anónimo si existe
+    // Pasamos el token de invitado (cookie) para que Vendure pueda
+    // fusionar el carrito anónimo con la cuenta del usuario.
+    const guestToken = await getAuthTokenFromCookies(await cookies());
     const result = await mutate(AuthenticateWithClerk, {
       token: vendureToken.jwt,
-    });
+    }, { token: guestToken, useAuthToken: true });
 
     const authResult = result.data.authenticate;
 

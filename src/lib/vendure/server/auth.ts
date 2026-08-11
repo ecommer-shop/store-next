@@ -55,10 +55,22 @@ export async function requireClerkAuth() {
   if (userId) return;
 
   const headersList = await headers();
-  const returnTo = headersList.get('referer') || process.env.NEXT_PUBLIC_SITE_URL!;
+  const referer = headersList.get('referer') || process.env.NEXT_PUBLIC_SITE_URL!;
 
-  const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
-  signInUrl.searchParams.set('redirect_url', returnTo);
+  let refererUrl: URL;
+  try {
+    refererUrl = new URL(referer);
+  } catch {
+    refererUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+  }
+
+  const path = refererUrl.pathname;
+  const localeMatch = path.match(/^\/(es|en)\b/);
+  const locale = localeMatch ? localeMatch[1] : 'es';
+
+  const domain = new URL(refererUrl.origin || process.env.NEXT_PUBLIC_SITE_URL!);
+  const signInUrl = new URL(`/${locale}/sign-in`, domain);
+  signInUrl.searchParams.set('redirect_url', refererUrl.toString());
 
   redirect(signInUrl.toString());
 }
