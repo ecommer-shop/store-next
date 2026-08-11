@@ -118,6 +118,8 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       dynamic
       afterSignOutUrl="/"
       localization={localClerk}
+      signInUrl={buildCanonicalUrl(`/${locale}/sign-in`)}
+      signUpUrl={buildCanonicalUrl(`/${locale}/sign-in`)}
       signInFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       appearance={{

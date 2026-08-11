@@ -9,6 +9,7 @@ import { getPaymentSignature, placeOrder as placeOrderAction, initWompiTransacti
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { CurrencyCode } from '@/models/payment';
 import { Price } from '@/components/commerce/price';
+import { discountedTotal } from '@/lib/checkout/totals';
 import { MethodSelector } from '@/components/payment/method-selector';
 import { SavedMethodSelector } from '@/components/payment/saved-method-selector';
 import { CardForm } from '@/components/payment/card-form';
@@ -112,7 +113,8 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
         try {
             const methods = await getSavedPaymentMethodsForCheckout();
             if (Array.isArray(methods)) {
-                setSavedMethods(methods);
+                // REMOVE_WHEN_CARD_ENABLED: filter(Boolean) para reactivar tarjetas guardadas
+                setSavedMethods(methods.filter((m: any) => m.type !== 'CARD'));
             }
         } catch {
         }
@@ -121,8 +123,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
     const getSelectedOrderTotal = () => {
         const selectedLines = order.lines.filter((line) => selectedLineIds.includes(line.id));
         const subtotal = selectedLines.reduce((sum, line) => sum + line.linePriceWithTax, 0);
-        const discountTotal = order.discounts?.reduce((sum, d) => sum + d.amountWithTax, 0) ?? 0;
-        return subtotal + order.shippingWithTax - discountTotal;
+        return discountedTotal(subtotal, order.shippingWithTax, order.discounts);
     };
 
     const selectedShippingMethodIds = () =>
@@ -558,6 +559,7 @@ export default function PaymentStep({ pb, uri, onComplete }: PaymentStepProps) {
                         <MethodSelector
                             selectedCode={selectedMethod}
                             onSelect={handleMethodSelect}
+                            excludedMethods={['CARD']} // REMOVE_WHEN_CARD_ENABLED: quitar para reactivar tarjetas
                         />
                     </div>
                 </div>

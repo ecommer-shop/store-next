@@ -10,6 +10,7 @@ import {
 import { redirect } from '@/i18n/navigation';
 import CheckoutFlow from './checkout-flow';
 import { CheckoutProvider } from './checkout-provider';
+import { CheckoutAuthSync } from './auth-sync';
 import { noIndexRobots } from '@/lib/vendure/shared/metadata';
 import { getAvailableCountriesCached } from '@/lib/vendure/cached';
 import { Suspense } from 'react';
@@ -18,6 +19,7 @@ import { getTranslations } from 'next-intl/server';
 import { setShippingMethod } from './actions';
 import { getAuthToken } from '@/lib/vendure/server/auth';
 import { Spinner } from '@heroui/react';
+import { ALLOWED_SHIPPING_METHOD_CODES } from '@/lib/checkout/shipping-methods';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -64,7 +66,9 @@ export default async function CheckoutContent({ pb, uri, params }: CheckoutConte
     }
 
     const addresses = addressesRes.data.activeCustomer?.addresses || [];
-    const shippingMethods = (shippingMethodsRes.data.eligibleShippingMethods || []);
+    const shippingMethods = (shippingMethodsRes.data.eligibleShippingMethods || [])
+        .filter(method => ALLOWED_SHIPPING_METHOD_CODES.includes(method.code))
+        .filter((method, index, arr) => arr.findIndex(m => m.code === method.code) === index);
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
     const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
@@ -78,6 +82,7 @@ export default async function CheckoutContent({ pb, uri, params }: CheckoutConte
 
         }>
             <div className="container mx-auto px-4 py-8">
+                <CheckoutAuthSync orderId={activeOrder.id} />
                 <h1 className="text-3xl font-bold mb-8 mt-10">{ts(I18N.Checkout.title)}</h1>
                 <CheckoutProvider
                     order={activeOrder}
