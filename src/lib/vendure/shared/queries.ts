@@ -14,6 +14,36 @@ export const GetTopCollectionsQuery = graphql(`
     }
 `);
 
+export const GetCollectionsForRoutingQuery = graphql(`
+    query GetCollectionsForRouting($options: CollectionListOptions) {
+        collections(options: $options) {
+            items {
+                id
+                name
+                slug
+            }
+        }
+    }
+`);
+
+
+export const GetFacetsCatalogQuery = graphql(`
+    query GetFacetsCatalog {
+        facets(options: { take: 100 }) {
+            items {
+                id
+                code
+                name
+                values {
+                    id
+                    code
+                    name
+                }
+            }
+        }
+    }
+`);
+
 export const GetActiveCustomerQuery = graphql(`
     query GetActiveCustomer {
         activeCustomer {
@@ -33,11 +63,21 @@ export const SearchProductsQuery = graphql(`
                 count
                 facetValue {
                     id
+                    code
                     name
                     facet {
                         id
+                        code
                         name
                     }
+                }
+            }
+            collections {
+                count
+                collection {
+                    id
+                    name
+                    slug
                 }
             }
         }

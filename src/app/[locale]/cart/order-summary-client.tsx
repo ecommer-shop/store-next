@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Price } from '@/components/commerce/price';
+import { discountedTotal } from '@/lib/checkout/totals';
 import { useSelectedItems } from './selected-items-context';
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
@@ -42,9 +43,7 @@ export function OrderSummaryClient({
     .filter((line) => selectedLineIds.includes(line.id))
     .reduce((sum, line) => sum + line.linePriceWithTax, 0);
 
-  const discountTotal = discounts?.reduce((sum, d) => sum + d.amountWithTax, 0) ?? 0;
-  
-  const finalTotal = discountTotal < 0 ? selectedLinesTotal + shippingWithTax + discountTotal : selectedLinesTotal + shippingWithTax - discountTotal;
+  const finalTotal = discountedTotal(selectedLinesTotal, shippingWithTax, discounts);
   
   return (
     <>

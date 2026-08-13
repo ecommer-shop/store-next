@@ -2,19 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from '@heroui/react';
-import { Loader2, Truck, Clock, CheckCircle2 } from 'lucide-react';
+import { Loader2, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '../checkout-provider';
 import { I18N } from '@/i18n/keys';
 import clsx from 'clsx';
-import {
-  calculateAndSetDeliveryCost,
-  calculateDeliveryCostQuote,
-  setShippingMethod as setShippingMethodAction,
-} from '../actions';
 import { Price } from '@/components/commerce/price';
+import {
+    ALLOWED_SHIPPING_METHOD_CODES,
+    ENVIA_SHIPPING_METHOD_CODE,
+} from '@/lib/checkout/shipping-methods';
 
-const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
 const SELLER_OWN_DELIVERY_METHOD_CODE = 'seller-own-delivery';
 
 interface DeliveryStepProps {
@@ -24,13 +22,16 @@ interface DeliveryStepProps {
 
 export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
   const router = useRouter();
-  const { shippingMethods, order } = useCheckout();
+  const { shippingMethods: initialShippingMethods, order } = useCheckout();
 
-  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(() => {
-    if (order.shippingLines?.length) return order.shippingLines[0].shippingMethod.id;
-    return shippingMethods.length === 1 ? shippingMethods[0].id : null;
-  });
+  const [methods, setMethods] = useState<typeof initialShippingMethods>([]);
+  const [loadingMethods, setLoadingMethods] = useState(true);
 
+  const deliveryMethods = methods
+    .filter((method) => ALLOWED_SHIPPING_METHOD_CODES.includes(method.code))
+    .filter((method, index, arr) => arr.findIndex((m) => m.code === method.code) === index);
+
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [quoting, setQuoting] = useState(false);
   const [quotedPriceWithTax, setQuotedPriceWithTax] = useState<number | null>(null);
@@ -40,10 +41,50 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     (line) => line.shippingMethod.id === selectedMethodId,
   );
 
-  const selectedMethod = shippingMethods.find((m) => m.id === selectedMethodId);
+  const selectedMethod = deliveryMethods.find((m) => m.id === selectedMethodId);
   const isEnvia = selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE;
   const isOwnDelivery = selectedMethod?.code === SELLER_OWN_DELIVERY_METHOD_CODE;
   const skipLiveQuote = isEnvia || isOwnDelivery;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (order.shippingLines?.length) {
+      setSelectedMethodId(order.shippingLines[0].shippingMethod.id);
+    }
+
+    fetch('/api/checkout/shipping/methods', { method: 'POST' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.error) {
+          setErrorMessage(data.error);
+        } else {
+          setMethods(data.methods ?? []);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setErrorMessage(error instanceof Error ? error.message : 'No se pudieron cargar los métodos de envío');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingMethods(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order.shippingAddress?.postalCode, order.shippingAddress?.city]);
+
+  useEffect(() => {
+    if (selectedMethodId) return;
+    if (deliveryMethods.length === 1) {
+      setSelectedMethodId(deliveryMethods[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deliveryMethods]);
 
   useEffect(() => {
     if (!selectedMethodId || !order.shippingAddress) {
@@ -60,9 +101,16 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     let cancelled = false;
     setQuoting(true);
     setErrorMessage(null);
-    calculateDeliveryCostQuote()
-      .then((quote) => {
-        if (!cancelled) setQuotedPriceWithTax(Math.round((quote.price?.value ?? 0) * 100));
+    fetch('/api/checkout/shipping/quote', { method: 'POST' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.error) {
+          setQuotedPriceWithTax(null);
+          setErrorMessage(data.error);
+        } else {
+          setQuotedPriceWithTax(Math.round((data.quote?.price?.value ?? 0) * 100));
+        }
       })
       .catch((error) => {
         if (!cancelled) {
@@ -70,9 +118,11 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
           setErrorMessage(error instanceof Error ? error.message : 'No se pudo calcular el envío');
         }
       })
-      .finally(() => { if (!cancelled) setQuoting(false); });
+      .finally(() => {
+        if (!cancelled) setQuoting(false);
+      });
 
-    return () => { cancelled = true; };
+return () => { cancelled = true; };
   }, [selectedMethodId, order.shippingAddress, selectedMethod?.code]);
 
   const handleContinue = async () => {
@@ -80,9 +130,14 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     setErrorMessage(null);
     setSubmitting(true);
     try {
-      await setShippingMethodAction(selectedMethodId);
-      if (!isEnvia && !isOwnDelivery) {
-        await calculateAndSetDeliveryCost();
+      const res = await fetch('/api/checkout/shipping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shippingMethodId: selectedMethodId, isEnvia, isOwnDelivery }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok !== true) {
+        throw new Error(data.error || 'No se pudo establecer el método de envío');
       }
       router.refresh();
       onComplete();
@@ -93,7 +148,16 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
     }
   };
 
-  if (shippingMethods.length === 0) {
+  if (loadingMethods) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-8 text-center">
+        <Loader2 className="w-10 h-10 animate-spin text-muted-foreground/40" />
+        <p className="text-muted-foreground">{t(I18N.Checkout.delivery.loading)}</p>
+      </div>
+    );
+  }
+
+  if (deliveryMethods.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 py-8 text-center">
         <Truck className="w-10 h-10 text-muted-foreground/40" />
@@ -113,7 +177,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
       )}
 
       <div className="space-y-3">
-        {shippingMethods.map((method) => {
+        {deliveryMethods.map((method) => {
           const isSelected = selectedMethodId === method.id;
           const methodPrice =
             isSelected && quotedPriceWithTax != null

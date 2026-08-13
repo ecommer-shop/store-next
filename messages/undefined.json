@@ -222,7 +222,13 @@
       "description": "Ingresa tu código de descuento a continuación",
       "placeholder": "Ingresa código",
       "apply": "Aplicar",
-      "remove": "Eliminar"
+      "remove": "Eliminar",
+      "error": {
+        "invalid": "Este código no es válido o no está disponible para tu tienda",
+        "expired": "Este cupón ya no está activo (vencido)",
+        "limit": "Este cupón agotó su límite de usos",
+        "network": "No se pudo conectar, intenta de nuevo"
+      }
     }
   },
 
@@ -272,6 +278,7 @@
       "selectMethod": "Selecciona el método de entrega",
       "noMethods": "No hay métodos de envío disponibles. Por favor verifica tu dirección.",
       "free": "GRATIS",
+      "loading": "Cargando métodos de envío…",
       "continuePayment": "Continuar al pago"
     },
     "payment": {
