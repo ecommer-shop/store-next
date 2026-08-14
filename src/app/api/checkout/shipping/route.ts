@@ -4,18 +4,18 @@ import { setShippingMethod, calculateAndSetDeliveryCost } from '@/app/[locale]/c
 
 export async function POST(req: Request) {
   try {
-    const { shippingMethodId, isEnvia } = await req.json();
+    const { shippingMethodId, isEnvia, isOwnDelivery } = await req.json();
 
     if (!shippingMethodId) {
-      return NextResponse.json(
-        { ok: false, error: 'Falta el método de envío a asignar' },
-        { status: 400 },
-      );
+        return NextResponse.json(
+            { ok: false, error: 'Falta el método de envío a asignar' },
+            { status: 400 },
+        );
     }
 
     await setShippingMethod(shippingMethodId);
-    if (!isEnvia) {
-      await calculateAndSetDeliveryCost();
+    if (!isEnvia && !isOwnDelivery) {
+        await calculateAndSetDeliveryCost();
     }
 
     return NextResponse.json({ ok: true });

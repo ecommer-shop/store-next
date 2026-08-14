@@ -537,6 +537,16 @@ export async function setDynamicShippingPrice(price: number) {
 }
 
 const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
+const SELLER_OWN_DELIVERY_METHOD_CODE = 'seller-own-delivery';
+
+function isExternalDeliverySkipped(shippingLines: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null | undefined): boolean {
+    return shippingLines?.some(
+        (line) => {
+            const code = line?.shippingMethod?.code;
+            return code === ENVIA_SHIPPING_METHOD_CODE || code === SELLER_OWN_DELIVERY_METHOD_CODE;
+        },
+    ) ?? false;
+}
 
 async function reapplyShippingSelection(
     token: string,
@@ -562,11 +572,9 @@ async function reapplyShippingSelection(
     const orderData = result.data.setOrderShippingMethod as {
         shippingLines?: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null;
     };
-    const isEnvia = orderData.shippingLines?.some(
-        (line) => line?.shippingMethod?.code === ENVIA_SHIPPING_METHOD_CODE,
-    ) ?? false;
+    const skipExternalDelivery = isExternalDeliverySkipped(orderData.shippingLines);
 
-    if (!isEnvia && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+    if (!skipExternalDelivery && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
         await mutate(
             SetOrderDynamicShippingMethod,
             { price: Math.round(shippingPriceWithTax) },
@@ -574,7 +582,7 @@ async function reapplyShippingSelection(
         );
     }
 
-    return isEnvia;
+    return skipExternalDelivery;
 }
 
 export async function calculateDeliveryCostQuote() {
@@ -751,7 +759,7 @@ export async function placeOrder(
         }
     }
 
-    const isEnviaShipping = await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
+    const skipExternalDelivery = await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
 
     const orderForDelivery = await getActiveOrderDeliveryContext(token);
 
@@ -789,7 +797,7 @@ export async function placeOrder(
 
     const orderCode = result.data.addPaymentToOrder.code;
 
-    if (!isEnviaShipping) {
+    if (!skipExternalDelivery) {
         try {
             await withTimeout(
                 createExternalDeliveryOrders(orderForDelivery, paymentMethodCode, token),
