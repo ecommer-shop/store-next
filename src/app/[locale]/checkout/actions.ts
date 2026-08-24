@@ -28,6 +28,7 @@ import {
     GetWompiTransactionStatusQuery,
     SavedPaymentMethodsQuery,
 } from '@/lib/vendure/shared/queries';
+import { ENVIA_SHIPPING_METHOD_CODE, SELLER_OWN_DELIVERY_METHOD_CODE } from '@/lib/checkout/shipping-methods';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
@@ -535,9 +536,6 @@ export async function setDynamicShippingPrice(price: number) {
     );
     revalidatePath('/checkout');
 }
-
-const ENVIA_SHIPPING_METHOD_CODE = 'envia-nacional';
-const SELLER_OWN_DELIVERY_METHOD_CODE = 'seller-own-delivery';
 
 function isExternalDeliverySkipped(shippingLines: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null | undefined): boolean {
     return shippingLines?.some(
