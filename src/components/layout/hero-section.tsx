@@ -118,10 +118,10 @@ export function HeroSection() {
                    flex flex-col items-center gap-2 pb-4 pt-8"
         style={{ background: 'linear-gradient(to top, rgba(18,18,63,0.65) 0%, transparent 100%)' }}
       >
-        {/* Botón Explorar — centrado y prominente */}
+        {/* Botón Explorar — centrado y prominente - Oculto en móvil */}
         <Link href="/search" onClick={() => trackClickExplore()}>
           <button
-            className="inline-flex items-center px-7 py-2.5 rounded-full
+            className="hidden md:inline-flex items-center px-7 py-2.5 rounded-full
                        font-bold text-sm text-white shadow-lg
                        transition-all hover:scale-105 active:scale-95 cursor-pointer"
             style={{ background: 'linear-gradient(90deg, #6BB8FF, #9969F8)' }}
