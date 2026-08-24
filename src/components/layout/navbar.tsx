@@ -68,8 +68,8 @@ export function Navbar() {
                 {/* DERECHA */}
                 <div className="flex items-center gap-1 sm:gap-3 flex-1 justify-end min-w-0 pl-2">
 
-                    {/* Search ocupa todo en mobile */}
-                    <div className="flex-1 w-0 sm:flex-none sm:w-[160px] md:w-[220px] lg:w-[280px]">
+                    {/* Search ocupa todo en mobile - Oculto en móvil porque está en bottom nav */}
+                    <div className="hidden md:flex flex-1 w-0 sm:flex-none sm:w-[160px] md:w-[220px] lg:w-[280px]">
                         <Suspense fallback={<SearchInputSkeleton />}>
                         <SearchInput />
                         </Suspense>
@@ -78,13 +78,15 @@ export function Navbar() {
                     {/* CTA buttons: Registrarse + Crea tu tienda (desktop only) */}
                     <NavbarCtaButtons />
 
-                    <div className="flex-shrink-0">
+                    {/* Cart - Oculto en móvil porque está en bottom nav */}
+                    <div className="flex-shrink-0 hidden md:block">
                         <Suspense>
                             <NavbarCart />
                         </Suspense>
                     </div>
 
-                    <div className="flex-shrink-0">
+                    {/* User/Profile - Oculto en móvil porque está en bottom nav */}
+                    <div className="flex-shrink-0 hidden md:block">
                         <Suspense fallback={<NavbarUserSkeleton />}>
                             <NavbarUser />
                         </Suspense>

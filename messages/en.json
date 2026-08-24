@@ -563,12 +563,12 @@
       "placeholder": "Search products..."
     },
     "footer": {
-      "copyright": "© {year} Ecommer Shop. All rights reserved.",
+      "copyright": "© {year} Ecommer. All rights reserved.",
       "sections": {
         "categories": "Categories",
         "about": {
-          "label": "About Us",
-          "title": "About Us"
+          "label": "About us",
+          "title": "About"
         },
         "contact": "Contact"
       },
@@ -1145,7 +1145,5 @@
     "relatedProducts": "Related Products",
     "minRead": "{minutes} min read",
     "by": "By"
-  }
-}
   }
 }

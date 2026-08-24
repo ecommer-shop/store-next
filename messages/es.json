@@ -553,21 +553,21 @@
       "home": "Inicio",
       "search": "Buscar",
       "cart": "Carrito",
-      "account": "Cuenta",
-      "signIn": "Iniciar sesión",
+      "account": "Perfil",
+      "signIn": "Entrar",
       "signUp": "Registrarse",
-      "signOut": "Cerrar sesión"
+      "signOut": "Salir"
     },
     "searchInput": {
       "placeholder": "Buscar productos..."
     },
     "footer": {
-      "copyright": "© {year} Ecommer Shop. Todos los derechos reservados.",
+      "copyright": "© {year} Ecommer. Todos los derechos reservados.",
       "sections": {
         "categories": "Categorías",
         "about": {
-          "label": "Quiénes somos",
-          "title": "Sobre nosotros"
+          "label": "Sobre nosotros",
+          "title": "Acerca de"
         },
         "contact": "Contacto"
       },
