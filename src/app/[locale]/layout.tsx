@@ -25,6 +25,7 @@ import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
 import Script from 'next/script';
 import { ConsentBanner } from '@/components/providers/consent-banner';
+import { Toast } from '@heroui/react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -205,7 +206,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
         <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
-          <Script id="consent-default" strategy="beforeInteractive">
+          <Script id="consent-default" strategy="afterInteractive">
               {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
@@ -237,6 +238,7 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
           </Script>
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
           <Providers>
+            <Toast.Provider placement="bottom end" />
             <NextIntlClientProvider
                 locale={locale}
                 messages={messages}
@@ -253,7 +255,6 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 </div>
                 <ConsentBanner />
               </NextIntlClientProvider>
-              <Toaster />
           </Providers>
         </body>
       </html>
