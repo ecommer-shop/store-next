@@ -178,7 +178,7 @@ export default async function OrdersContent(props: PageProps) {
                                                 return (
                                                     <PaginationItem key={page}>
                                                         <PaginationLink
-                                                            href={`/src/app/%5Blocale%5D/account/orders?page=${page}`}
+                                                            href={`/account/orders?page=${page}`}
                                                             isActive={page === currentPage}
                                                         >
                                                             {page}

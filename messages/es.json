@@ -1127,5 +1127,33 @@
       "demoButton": "Agendar Demo",
       "storeButton": "Crear mi Tienda"
     }
+  },
+  "Layout": {
+    "navbar": {
+      "home": "Inicio",
+      "search": "Buscar",
+      "cart": "Carrito",
+      "account": "Perfil",
+      "signIn": "Entrar",
+      "signUp": "Registrarse",
+      "signOut": "Salir"
+    },
+    "searchInput": {
+      "placeholder": "Buscar productos..."
+    },
+    "footer": {
+      "copyright": "© 2025 Ecommer. Todos los derechos reservados.",
+      "sections": {
+        "categories": "Categorías",
+        "about": {
+          "label": "Sobre nosotros",
+          "title": "Acerca de"
+        },
+        "contact": "Contacto"
+      },
+      "links": {
+        "github": "GitHub"
+      }
+    }
   }
 }

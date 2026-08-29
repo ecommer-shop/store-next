@@ -9,6 +9,9 @@ import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { BottomNavWrapper } from "@/components/layout/bottom-nav-wrapper";
+import { Suspense } from "react";
+import { BottomNavSkeleton } from "@/components/shared/skeletons/bottom-nav-skeleton";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/vendure/shared/metadata";
 import {
@@ -247,11 +250,14 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 <WompiScrollGuard />
                 <div className="flex flex-col min-h-screen overflow-x-hidden">
                   <Navbar />
-                  <main className="flex-1">
+                  <main className="flex-1 pb-0 md:pb-0">
                     {children}
                   </main>
                   <Footer />
                   <ChatWidget />
+                  <Suspense fallback={<BottomNavSkeleton />}>
+                    <BottomNavWrapper />
+                  </Suspense>
                 </div>
                 <ConsentBanner />
               </NextIntlClientProvider>

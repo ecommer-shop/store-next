@@ -13,6 +13,8 @@ import {
     ENVIA_SHIPPING_METHOD_CODE,
 } from '@/lib/checkout/shipping-methods';
 
+const SELLER_OWN_DELIVERY_METHOD_CODE = 'seller-own-delivery';
+
 interface DeliveryStepProps {
   onComplete: () => void;
   t: (key: string) => string;
@@ -41,6 +43,8 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
 
   const selectedMethod = deliveryMethods.find((m) => m.id === selectedMethodId);
   const isEnvia = selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE;
+  const isOwnDelivery = selectedMethod?.code === SELLER_OWN_DELIVERY_METHOD_CODE;
+  const skipLiveQuote = isEnvia || isOwnDelivery;
 
   useEffect(() => {
     let cancelled = false;
@@ -88,7 +92,7 @@ export default function DeliveryStep({ onComplete, t }: DeliveryStepProps) {
       return;
     }
 
-    if (selectedMethod?.code === ENVIA_SHIPPING_METHOD_CODE) {
+    if (skipLiveQuote) {
       setQuotedPriceWithTax(null);
       setQuoting(false);
       return;
@@ -129,7 +133,7 @@ return () => { cancelled = true; };
       const res = await fetch('/api/checkout/shipping', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shippingMethodId: selectedMethodId, isEnvia }),
+        body: JSON.stringify({ shippingMethodId: selectedMethodId, isEnvia, isOwnDelivery }),
       });
       const data = await res.json();
       if (!res.ok || data.ok !== true) {
