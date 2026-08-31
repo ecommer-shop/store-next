@@ -459,6 +459,7 @@ export const GetCustomerOrdersQuery = graphql(`
                             product {
                                 id
                                 name
+                                description
                                 featuredAsset {
                                     id
                                     preview
