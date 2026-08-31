@@ -11,9 +11,9 @@ import { cookies } from 'next/headers';
 export async function addToCart(variantId: string, quantity: number = 1) {
   try {
     const cookiesStore = await cookies()
-    const token = getAuthTokenFromCookies(cookiesStore)!
+    const token = getAuthTokenFromCookies(cookiesStore)
 
-    const result = await mutate(AddToCartMutation, { variantId, quantity }, { token, useAuthToken: true });
+    const result = await mutate(AddToCartMutation, { variantId, quantity }, { token: token ?? undefined, useAuthToken: true });
     
     // Only store the auth token if we don't have one yet (new session)
     const existingToken = await getAuthToken();
@@ -29,7 +29,8 @@ export async function addToCart(variantId: string, quantity: number = 1) {
     } else {
       return { success: false, error: result.data.addItemToOrder.message };
     }
-  } catch {
+  } catch (error) {
+    console.error('addToCart failed:', error);
     return { success: false, error: 'Failed to add item to cart' };
   }
 }
