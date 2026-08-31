@@ -449,6 +449,7 @@ export const GetCustomerOrdersQuery = graphql(`
                     totalWithTax
                     currencyCode
                     createdAt
+                    orderPlacedAt
                     updatedAt
                     lines {
                         id
