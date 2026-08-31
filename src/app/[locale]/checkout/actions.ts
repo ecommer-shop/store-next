@@ -507,18 +507,77 @@ export async function setShippingAddress(
     revalidatePath('/checkout');
 }
 
+type SetOrderShippingMethodResult = {
+    __typename: string;
+    errorCode?: string;
+    message?: string;
+};
+
+function formatSetOrderShippingMethodError(result: SetOrderShippingMethodResult): string {
+    switch (result.__typename) {
+        case 'IneligibleShippingMethodError':
+            return (
+                result.message ||
+                'El método de envío no está disponible para esta dirección o pedido. ' +
+                'Para domicilio local (Messenger Domis) la ciudad debe ser Popayán; para envío nacional revisa la dirección completa.'
+            );
+        case 'NoActiveOrderError':
+            return 'No hay un pedido activo. Vuelve al carrito e intenta de nuevo.';
+        case 'OrderModificationError':
+            return (
+                result.message ||
+                'El pedido ya no permite cambiar el envío en este paso. Recarga la página o vacía el carrito y vuelve a intentar.'
+            );
+        default:
+            return result.message || 'No se pudo establecer el método de envío seleccionado.';
+    }
+}
+
+async function ensureOrderCanModifyShipping(token: string): Promise<void> {
+    const orderRes = await query(GetActiveOrderQuery, {}, { token, useAuthToken: true });
+    const order = orderRes.data.activeOrder;
+    if (!order) {
+        throw new Error('No hay un pedido activo. Vuelve al carrito e intenta de nuevo.');
+    }
+
+    if (order.state === 'AddingItems' || order.state === 'Draft') {
+        return;
+    }
+
+    if (order.state === 'ArrangingPayment') {
+        const result = await mutate(
+            TransitionOrderToStateMutation,
+            { state: 'AddingItems' },
+            { token, useAuthToken: true },
+        );
+        if (result.data.transitionOrderToState?.__typename !== 'Order') {
+            throw new Error(
+                'El pedido quedó en pago pendiente y no se pudo reiniciar para cambiar el envío. Vacía el carrito y vuelve a intentar.',
+            );
+        }
+        return;
+    }
+
+    throw new Error(
+        `El pedido está en estado «${order.state}» y no permite cambiar el método de envío.`,
+    );
+}
+
 export async function setShippingMethod(shippingMethodId: string) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
+    await ensureOrderCanModifyShipping(token);
+
     const result = await mutate(
         SetOrderShippingMethodMutation,
         { shippingMethodId: [shippingMethodId] },
         { token, useAuthToken: true }
     );
-    
-    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
-        throw new Error('Failed to set shipping method');
+
+    const payload = result.data.setOrderShippingMethod as SetOrderShippingMethodResult;
+    if (payload.__typename !== 'Order') {
+        throw new Error(formatSetOrderShippingMethodError(payload));
     }
 
     revalidatePath('/checkout');
