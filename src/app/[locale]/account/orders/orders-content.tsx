@@ -16,6 +16,7 @@ import { Button } from "@heroui/react";
 import { Price } from '@/components/commerce/price';
 import { OrderStatusBadge } from '@/components/commerce/order-status-badge';
 import { formatDate } from '@/lib/vendure/shared/format';
+import Image from 'next/image';
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Protect, RedirectToSignIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
@@ -33,6 +34,12 @@ interface PageProps {
     };
     searchParams: Record<string, string | string[] | undefined>;
 }
+
+function stripHtml(html?: string | null): string {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, '').trim();
+}
+
 export default async function OrdersContent(props: PageProps) {
     const token = await getAuthToken();
     const t = await getTranslations('Account.orders');
@@ -47,7 +54,7 @@ export default async function OrdersContent(props: PageProps) {
             options: {
                 take: ITEMS_PER_PAGE,
                 skip,
-                sort: { createdAt: 'DESC' },
+                sort: { orderPlacedAt: 'DESC' },
                 filter: { type: { notEq: 'Seller' } }
             },
         },
@@ -97,15 +104,35 @@ export default async function OrdersContent(props: PageProps) {
                                                 </Link>
                                             </Button>
                                         </TableCell>
-                                        <TableCell>
-                                            {formatDate(order.createdAt)}
-                                        </TableCell>
+                        <TableCell>
+                            {formatDate(order.orderPlacedAt)}
+                        </TableCell>
                                         <TableCell>
                                             <OrderStatusBadge state={order.state} />
                                         </TableCell>
                                         <TableCell>
-                                            {order.lines.length}{' '}
-                                            {order.lines.length === 1 ? t(I18N.Account.orders.list.itemSingular) : t(I18N.Account.orders.list.itemPlural)}
+                                            <div className="flex items-center gap-3">
+                                                {order.lines[0]?.productVariant?.product?.featuredAsset && (
+                                                    <div className="relative h-10 w-10 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                                                        <Image
+                                                            src={order.lines[0].productVariant.product.featuredAsset.preview}
+                                                            alt={order.lines[0].productVariant.product.name}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    </div>
+                                                )}
+                                                <div className="min-w-0">
+                                                    <p className="text-sm line-clamp-1">
+                                                        {stripHtml(order.lines[0]?.productVariant?.product?.description) || order.lines[0]?.productVariant?.product?.name}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {order.lines.length}{' '}
+                                                        {order.lines.length === 1 ? t(I18N.Account.orders.list.itemSingular) : t(I18N.Account.orders.list.itemPlural)}
+                                                        {order.lines.length > 1 && ` · +${order.lines.length - 1} más`}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
@@ -125,7 +152,7 @@ export default async function OrdersContent(props: PageProps) {
                                         <Link href={`/account/orders/${order.code}`} className="font-medium hover:underline">
                                             {order.code}
                                         </Link>
-                                        <p className="text-sm text-muted-foreground mt-1">{formatDate(order.createdAt)}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">{formatDate(order.orderPlacedAt)}</p>
                                     </div>
 
                                     <div className="text-right">
@@ -138,9 +165,28 @@ export default async function OrdersContent(props: PageProps) {
                                     </div>
                                 </div>
 
-                                <div className="mt-3 flex items-center justify-between">
-                                    <p className="text-sm text-muted-foreground">{order.lines.length} {order.lines.length === 1 ? t(I18N.Account.orders.list.itemSingular) : t(I18N.Account.orders.list.itemPlural)}</p>
-                                    <Button variant="ghost" size="sm" className="rounded-md">
+                                <div className="mt-3 flex items-center gap-3">
+                                    {order.lines[0]?.productVariant?.product?.featuredAsset && (
+                                        <div className="relative h-10 w-10 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                                            <Image
+                                                src={order.lines[0].productVariant.product.featuredAsset.preview}
+                                                alt={order.lines[0].productVariant.product.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm line-clamp-1">
+                                            {stripHtml(order.lines[0]?.productVariant?.product?.description) || order.lines[0]?.productVariant?.product?.name}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {order.lines.length}{' '}
+                                            {order.lines.length === 1 ? t(I18N.Account.orders.list.itemSingular) : t(I18N.Account.orders.list.itemPlural)}
+                                            {order.lines.length > 1 && ` · +${order.lines.length - 1} más`}
+                                        </p>
+                                    </div>
+                                    <Button variant="ghost" size="sm" className="rounded-md flex-shrink-0">
                                         <Link href={`/account/orders/${order.code}`}>{t(I18N.Account.orders.list.table.orderNumber)}</Link>
                                     </Button>
                                 </div>

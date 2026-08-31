@@ -16,7 +16,7 @@ import { ReviewsList } from './reviews-list';
 import { ReviewFormInline } from './review-form-inline';
 import { AISummary } from './ai-summary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Star } from 'lucide-react';
 import { getToken } from './getToken';
 
 interface ReviewsSectionProps {
@@ -209,7 +209,7 @@ export function ReviewsSection({ productId, variantId }: ReviewsSectionProps) {
                 <div key={rating} className="flex items-center gap-2">
                   <div className="flex items-center gap-1 w-12">
                     <span className="text-xs text-muted-foreground">{rating}</span>
-                    <StarRating value={1} interactive={false} size="sm" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" strokeWidth={1.5} />
                   </div>
                   <div className="flex-1 bg-muted rounded-full h-1.5">
                     <div
