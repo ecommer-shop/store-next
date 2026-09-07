@@ -449,6 +449,7 @@ export const GetCustomerOrdersQuery = graphql(`
                     totalWithTax
                     currencyCode
                     createdAt
+                    orderPlacedAt
                     updatedAt
                     lines {
                         id
@@ -458,6 +459,7 @@ export const GetCustomerOrdersQuery = graphql(`
                             product {
                                 id
                                 name
+                                description
                                 featuredAsset {
                                     id
                                     preview
