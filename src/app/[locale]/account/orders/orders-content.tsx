@@ -105,7 +105,7 @@ export default async function OrdersContent(props: PageProps) {
                                             </Button>
                                         </TableCell>
                         <TableCell>
-                            {formatDate(order.orderPlacedAt)}
+                            {order.orderPlacedAt ? formatDate(order.orderPlacedAt) : '—'}
                         </TableCell>
                                         <TableCell>
                                             <OrderStatusBadge state={order.state} />
@@ -152,7 +152,7 @@ export default async function OrdersContent(props: PageProps) {
                                         <Link href={`/account/orders/${order.code}`} className="font-medium hover:underline">
                                             {order.code}
                                         </Link>
-                                        <p className="text-sm text-muted-foreground mt-1">{formatDate(order.orderPlacedAt)}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">{order.orderPlacedAt ? formatDate(order.orderPlacedAt) : '—'}</p>
                                     </div>
 
                                     <div className="text-right">
