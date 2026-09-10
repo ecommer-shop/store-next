@@ -12,7 +12,8 @@ import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 import {
     SITE_NAME,
     truncateDescription,
-    buildCanonicalUrl,
+    buildAlternates,
+    buildLocalizedUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
 import { getCollectionMetadata, getCollectionProducts } from './actions';
@@ -39,18 +40,17 @@ export async function generateMetadata({
     const description =
         truncateDescription(collection.description) ||
         `Browse our ${collection.name} collection at ${SITE_NAME}`;
+    const path = `/collection/${collection.slug}`;
 
     return {
         title: collection.name,
         description,
-        alternates: {
-            canonical: buildCanonicalUrl(`/collection/${collection.slug}`),
-        },
+        alternates: buildAlternates(locale, path),
         openGraph: {
             title: collection.name,
             description,
             type: 'website',
-            url: buildCanonicalUrl(`/collection/${collection.slug}`),
+            url: buildLocalizedUrl(locale, path),
             images: buildOgImages(collection.featuredAsset?.preview, collection.name),
         },
         twitter: {

@@ -7,7 +7,8 @@ import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 import {
     SITE_NAME,
     truncateDescription,
-    buildCanonicalUrl,
+    buildAlternates,
+    buildLocalizedUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
 import {
@@ -78,18 +79,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         truncateDescription(profile.storeDescription) || `Conoce la tienda ${title} en ${SITE_NAME}`;
     const ogImage =
         profile.storeHeaderBannerUrl || profile.storeBannerUrl;
+    const path = `/store/${slug}`;
 
     return {
         title,
         description,
-        alternates: {
-            canonical: buildCanonicalUrl(`/store/${slug}`),
-        },
+        alternates: buildAlternates(locale, path),
         openGraph: {
             title,
             description,
             type: 'website',
-            url: buildCanonicalUrl(`/store/${slug}`),
+            url: buildLocalizedUrl(locale, path),
             images: buildOgImages(ogImage, title),
         },
     };

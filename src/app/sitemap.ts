@@ -2,13 +2,14 @@ import { MetadataRoute } from "next";
 import { query } from "@/lib/vendure/server/api";
 import { graphql } from "@/graphql";
 import { routing } from "@/i18n/routing";
+import { buildAlternates } from "@/lib/vendure/shared/metadata";
 
 export const revalidate = 3600;
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://ecommer.shop"
 ).replace(/\/$/, "");
-const { locales, defaultLocale } = routing;
+const { locales } = routing;
 
 // Fechas fijas para páginas estáticas.
 // Antes usaba `new Date()` que cambia en cada request.
@@ -47,14 +48,11 @@ const GetCollectionsForSitemapQuery = graphql(`
 // Helper para construir alternates con x-default.
 // x-default le dice a Google qué versión mostrar cuando el idioma
 // del usuario no coincide con ninguna de las variantes declaradas.
-function buildAlternates(path: string) {
+// Reutiliza el helper compartido para que el hreflang del sitemap sea
+// idéntico al emitido en el HTML de cada página.
+function buildSitemapAlternates(path: string) {
   return {
-    languages: {
-      "x-default": `${SITE_URL}/${defaultLocale}${path}`,
-      ...Object.fromEntries(
-        locales.map((locale) => [locale, `${SITE_URL}/${locale}${path}`]),
-      ),
-    },
+    languages: buildAlternates(locales[0], path).languages,
   };
 }
 
@@ -77,7 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(STATIC_LAST_MODIFIED[path]),
         changeFrequency: path === "" ? "daily" : "monthly",
         priority: path === "" ? 1.0 : 0.8,
-        alternates: buildAlternates(path),
+        alternates: buildSitemapAlternates(path),
       });
     }
   }
@@ -109,7 +107,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             : new Date(),
           changeFrequency: "weekly",
           priority: 0.7,
-          alternates: buildAlternates(path),
+          alternates: buildSitemapAlternates(path),
         });
       }
     }
@@ -148,7 +146,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             : new Date(),
           changeFrequency: "weekly",
           priority: 0.9,
-          alternates: buildAlternates(path),
+          alternates: buildSitemapAlternates(path),
         });
       }
     }
