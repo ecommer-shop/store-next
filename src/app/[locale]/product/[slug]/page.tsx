@@ -14,7 +14,8 @@ import Image from 'next/image';
 import {
     SITE_NAME,
     truncateDescription,
-    buildCanonicalUrl,
+    buildAlternates,
+    buildLocalizedUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
 import { ProductInfo } from '@/components/commerce/product-info/product-info';
@@ -64,18 +65,17 @@ export async function generateMetadata({
 
     const description = truncateDescription(product.description);
     const ogImage = product.assets?.[0]?.preview;
+    const path = `/product/${product.slug}`;
 
     return {
         title: product.name,
         description: description || `Shop ${product.name} at ${SITE_NAME}`,
-        alternates: {
-            canonical: buildCanonicalUrl(`/product/${product.slug}`),
-        },
+        alternates: buildAlternates(locale, path),
         openGraph: {
             title: product.name,
             description: description || `Shop ${product.name} at ${SITE_NAME}`,
             type: 'website',
-            url: buildCanonicalUrl(`/product/${product.slug}`),
+            url: buildLocalizedUrl(locale, path),
             images: buildOgImages(ogImage, product.name),
         },
         twitter: {
