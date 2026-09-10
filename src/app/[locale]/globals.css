@@ -368,6 +368,16 @@ body.wompi-open .checkout-container {
   .button--primary{
     @apply bg-accent text-accent-foreground rounded-md
   }
+  .radio-group{
+    @apply gap-2;
+  }
+  .radio__content{
+    @apply flex w-full cursor-pointer items-center justify-between gap-4 rounded-xl border bg-white dark:bg-[#1C1C56] px-5 py-4 transition-all;
+  }
+  .radio__content[data-selected="true"],
+  .radio__content[aria-checked="true"]{
+    @apply border-accent bg-accent/10;
+  }
 }
 
 /* Scrollbar personalizado para carruseles de filtros */

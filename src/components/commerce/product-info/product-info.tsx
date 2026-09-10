@@ -1,7 +1,7 @@
 'use client';
 import {useState, useMemo, useEffect} from 'react';
 import { trackViewItem, trackAddToCart } from '@/lib/analytics/events';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import NextLink from 'next/link';
 import {RadioGroup, Label, Button, Radio, toast} from '@heroui/react';
 import {ShoppingCart, CheckCircle2, Share2, Download, Star, BadgeCheck, Truck, ShieldCheck, RotateCcw} from 'lucide-react';
@@ -61,9 +61,7 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product, searchParams, storeLink, productImageUrl, primaryCollection }: ProductInfoProps) {
-    const pathname = usePathname();
     const router = useRouter();
-    const currentSearchParams = useSearchParams();
     const [isAdding, setIsAdding] = useState(false);
     const [isBuyingNow, setIsBuyingNow] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
@@ -115,22 +113,45 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
 
     // Find the matching variant based on selected options
     const selectedVariant = useMemo(() => {
-        if (product.variants.length === 1) {
-            return product.variants[0];
-        }
-
-        // If not all option groups have a selection, return null
-        if (Object.keys(selectedOptions).length !== product.optionGroups.length) {
+        const variants = product.variants;
+        if (variants.length === 0) {
             return null;
         }
+        if (variants.length === 1) {
+            return variants[0];
+        }
 
-        // Find variant that matches all selected options
-        return product.variants.find((variant) => {
+        const selectedOptionIds = Object.values(selectedOptions).filter(Boolean);
+
+        // Sin opción seleccionada → default a una variante sin opciones (si existe)
+        // para que precio/stock carguen al entrar. Si todas las variantes tienen
+        // opciones, se requiere selección.
+        if (selectedOptionIds.length === 0) {
+            return variants.find((variant) => variant.options.length === 0) ?? null;
+        }
+
+        // Match exacto: la variante contiene todas las opciones seleccionadas
+        const exact = variants.find((variant) => {
             const variantOptionIds = variant.options.map((opt) => opt.id);
-            const selectedOptionIds = Object.values(selectedOptions);
             return selectedOptionIds.every((optId) => variantOptionIds.includes(optId));
         });
-    }, [selectedOptions, product.variants, product.optionGroups]);
+        if (exact) {
+            return exact;
+        }
+
+        // Fallback: variante que cubre la mayor cantidad de opciones seleccionadas
+        let best: (typeof variants)[number] | null = null;
+        let bestHits = -1;
+        for (const variant of variants) {
+            const variantOptionIds = variant.options.map((opt) => opt.id);
+            const hits = selectedOptionIds.filter((optId) => variantOptionIds.includes(optId)).length;
+            if (hits > bestHits) {
+                best = variant;
+                bestHits = hits;
+            }
+        }
+        return best;
+    }, [selectedOptions, product.variants]);
 
     useEffect(() => {
         setQuantity(1);
@@ -141,22 +162,11 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
             ...prev,
             [groupId]: optionId,
         }));
-
-        // Find the option group and option to get their codes
-        const group = product.optionGroups.find((g) => g.id === groupId);
-        const option = group?.options.find((opt) => opt.id === optionId);
-
-        if (group && option) {
-            // Update URL with option code
-            const params = new URLSearchParams(currentSearchParams);
-            params.set(group.code, option.code);
-            router.push(`${pathname}?${params.toString()}`, { scroll: false });
-        }
     };
 
     const handleAddToCart = async () => {
         if (!selectedVariant) {
-            setIsAdded(true)
+            toast.warning(t(I18N.Commerce.productInfo.selectOptions));
             return;
         }
 
@@ -198,7 +208,7 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
     };
     const handleBuyNow = async () => {
         if (!selectedVariant) {
-            setIsAdded(true);
+            toast.warning(t(I18N.Commerce.productInfo.selectOptions));
             return;
         }
 
@@ -319,24 +329,22 @@ export function ProductInfo({ product, searchParams, storeLink, productImageUrl,
                                 <div className="grid gap-x-4 md:grid-cols-2">
                                     {group.options.map((option) => (
                                         <div key={option.id}>
-                                            <Radio
-                                                value={option.id}
-                                                id={option.id}
-                                                className={clsx(
-                                                    "group relative flex-col gap-4 rounded-xl border border-transparent bg-surface px-5 py-4 transition-all",
-                                                    "data-[selected=true]:border-accent data-[selected=true]:bg-accent/10")}
-                                            >
-                                                <Radio.Control className="absolute top-3 right-4 size-5">
-                                                    <Radio.Indicator />
-                                                </Radio.Control>
-                                                <Radio.Content className="flex flex-row items-start justify-start gap-4">
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label
-                                                            htmlFor={option.id}
-                                                        >
-                                                            {option.name}
-                                                        </Label>
-                                                    </div>
+                                            <Radio value={option.id}>
+                                                <Radio.Content className="group data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-primary/20">
+                                                    <span className="text-base font-semibold text-foreground">
+                                                        {option.name}
+                                                    </span>
+                                                    <Radio.Control className={clsx(
+                                                        "relative flex size-5 shrink-0 items-center justify-center rounded-full border-2 bg-transparent shadow-none transition-colors",
+                                                        "group-data-[selected=true]:border-accent border-muted-foreground/40",
+                                                    )}>
+                                                        <Radio.Indicator className="flex items-center justify-center">
+                                                            <span className={clsx(
+                                                                "block size-2.5 rounded-full bg-accent transition-transform scale-0",
+                                                                "group-data-[selected=true]:scale-100",
+                                                            )} />
+                                                        </Radio.Indicator>
+                                                    </Radio.Control>
                                                 </Radio.Content>
                                             </Radio>
                                         </div>
