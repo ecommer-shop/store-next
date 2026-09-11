@@ -3,6 +3,12 @@ import Link from "next/link";
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
+import {NavbarLink} from '@/components/layout/navbar/navbar-link';
+import {
+    NavigationMenu,
+    NavigationMenuList,
+    NavigationMenuItem,
+} from '@/components/ui/navigation-menu';
 import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
@@ -50,11 +56,16 @@ export function Navbar() {
                     </Link>
 
                     {/* Collections solo desktop */}
-                    <nav className="hidden md:flex md:items-center md:gap-6">
+                    <NavigationMenu className="hidden md:flex">
+                    <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavbarLink href="/blog">Blog</NavbarLink>
+                    </NavigationMenuItem>
                     <Suspense>
                         <NavbarCollections />
                     </Suspense>
-                    </nav>
+                    </NavigationMenuList>
+                    </NavigationMenu>
                 </div>
 
                 {/* DERECHA */}

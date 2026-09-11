@@ -1,9 +1,33 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 @tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));
+
+/* Prose customization */
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-links: var(--foreground);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-quotes: var(--muted-foreground);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-hr: var(--border);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+}
+
+.prose-lg h1,
+.prose-lg h2,
+.prose-lg h3,
+.prose-lg h4,
+.prose-lg h5,
+.prose-lg h6 {
+  font-family: var(--font-gilroy);
+}
 
 html {
   font-size: 16px;

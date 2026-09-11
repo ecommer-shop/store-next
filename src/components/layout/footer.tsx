@@ -93,7 +93,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    {tAbout(I18N.About.documents.terms)}
+                                    {tAbout('documents.terms')}
                                 </a>
                             </li>
                             <li>
@@ -103,7 +103,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    {tAbout(I18N.About.documents.warranty)}
+                                    {tAbout('documents.warranty')}
                                 </a>
                             </li>
                             <li>
@@ -113,7 +113,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    {tAbout(I18N.About.documents.withdrawal)}
+                                    {tAbout('documents.withdrawal')}
                                 </a>
                             </li>
                             <li>
@@ -123,7 +123,7 @@ export async function Footer() {
                                     rel="noopener noreferrer"
                                     className="hover:text-foreground transition-colors"
                                 >
-                                    {tAbout(I18N.About.documents.paymentReversal)}
+                                    {tAbout('documents.paymentReversal')}
                                 </a>
                             </li>
                         </ul>
