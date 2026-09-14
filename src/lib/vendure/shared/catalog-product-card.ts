@@ -28,5 +28,6 @@ export function mapCatalogProductToProductCard(product: CatalogProduct): Fragmen
             value: firstVariant?.priceWithTax ?? 0,
         },
         currencyCode: (firstVariant?.currencyCode ?? CurrencyCode.Cop) as CurrencyCode,
+        inStock: true, // Por defecto true, se puede actualizar si el catálogo incluye info de stock
     } as unknown as FragmentOf<typeof ProductCardFragment>;
 }

@@ -209,8 +209,11 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
         <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
-          <Script id="consent-default" strategy="afterInteractive">
-              {`
+          <Script 
+            id="consent-default" 
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
 
@@ -237,8 +240,9 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                           analytics_storage: 'granted'
                       });
                   }
-              `}
-          </Script>
+              `
+            }}
+          />
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
           <Providers>
             <Toast.Provider placement="bottom end" />
