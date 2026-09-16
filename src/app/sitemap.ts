@@ -21,6 +21,7 @@ const STATIC_LAST_MODIFIED: Record<string, string> = {
   "/sellers": "2026-03-01",
   "/legal/terms": "2026-02-01",
   "/legal/privacy": "2026-02-01",
+  "/blog": "2026-03-01",
 };
 
 const GetProductsForSitemapQuery = graphql(`
@@ -41,6 +42,18 @@ const GetCollectionsForSitemapQuery = graphql(`
         slug
         updatedAt
       }
+    }
+  }
+`);
+
+const GetBlogPostsForSitemapQuery = graphql(`
+  query GetBlogPostsForSitemap($options: BlogPostListOptions) {
+    blogPosts(options: $options) {
+      items {
+        slug
+        publishedAt
+      }
+      totalItems
     }
   }
 `);
@@ -66,6 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/sellers",
     "/legal/terms",
     "/legal/privacy",
+    "/blog",
   ];
 
   for (const path of staticPaths) {
@@ -152,6 +166,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch (error) {
     console.error("Error al generar sitemap para productos:", error);
+  }
+
+  // 4. Blog posts — una entrada por locale, con hreflang como el resto
+  try {
+    let posts: Array<{ slug: string | null; publishedAt: string | null }> = [];
+    let skip = 0;
+    const take = 100;
+    let hasMore = true;
+
+    while (hasMore) {
+      const result = await query(GetBlogPostsForSitemapQuery, {
+        options: { take, skip } as any,
+      });
+      const data = result.data as unknown as {
+        blogPosts?: {
+          items?: Array<{ slug: string | null; publishedAt: string | null }>;
+        } | null;
+      } | null;
+      const items = data?.blogPosts?.items ?? [];
+      posts = posts.concat(items);
+      skip += take;
+      hasMore = items.length === take;
+    }
+
+    for (const post of posts) {
+      // Solo posts publicados (con slug y fecha de publicación)
+      if (!post.slug || !post.publishedAt) continue;
+
+      const path = `/blog/${post.slug}`;
+      for (const locale of locales) {
+        sitemapItems.push({
+          url: `${SITE_URL}/${locale}${path}`,
+          lastModified: new Date(post.publishedAt),
+          changeFrequency: "monthly",
+          priority: 0.6,
+          alternates: buildSitemapAlternates(path),
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error al generar sitemap para blog:", error);
   }
 
   return sitemapItems;

@@ -3,16 +3,23 @@ import { query } from "@/lib/vendure/server/api";
 import { GetBlogPostsQuery } from "@/lib/vendure/shared/blog";
 import Link from "next/link";
 import Image from "next/image";
-import { SITE_NAME, buildCanonicalUrl } from "@/lib/vendure/shared/metadata";
+import { SITE_NAME, buildAlternates, buildLocalizedUrl } from "@/lib/vendure/shared/metadata";
 import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: `Blog | ${SITE_NAME}`,
-  description: "Read our latest articles and updates.",
-  alternates: {
-    canonical: buildCanonicalUrl("/blog"),
-  },
-};
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: `Blog | ${SITE_NAME}`,
+    description: "Read our latest articles and updates.",
+    alternates: buildAlternates(locale, "/blog"),
+    openGraph: {
+      title: `Blog | ${SITE_NAME}`,
+      description: "Read our latest articles and updates.",
+      type: "website",
+      url: buildLocalizedUrl(locale, "/blog"),
+    },
+  };
+}
 
 interface PageProps {
   params: Promise<{ locale: string }>;
