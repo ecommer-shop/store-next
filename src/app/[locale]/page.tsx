@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/layout/hero-section";
 import { FeaturedProducts } from "@/components/commerce/featured-products";
-import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/vendure/shared/metadata";
+import { SITE_NAME, buildAlternates, buildLocalizedUrl } from "@/lib/vendure/shared/metadata";
 import { Suspense } from "react";
 import { HomeFeatures } from "@/components/home/home-features";
 import { BenefitBar } from "@/components/home/benefit-bar";
@@ -11,23 +11,26 @@ import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { readFragment } from "@/graphql";
 import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
 
-export const metadata: Metadata = {
-    title: {
-        absolute: `${SITE_NAME}`,
-    },
-    description:
-        "Descubre productos de alta calidad a precios competitivos. Compra en Ecommer: electrónica, moda, hogar y más.",
-    alternates: {
-        canonical: buildCanonicalUrl("/"),
-    },
-    openGraph: {
-        title: `${SITE_NAME} - Marketplace Colombia`,
+export async function generateMetadata(
+    _props: PageProps<'/[locale]'>
+): Promise<Metadata> {
+    const { locale } = await _props.params;
+    return {
+        title: {
+            absolute: `${SITE_NAME}`,
+        },
         description:
-            "Descubre productos de alta calidad a precios competitivos. Compra en Ecommer.",
-        type: "website",
-        url: SITE_URL,
-    },
-};
+            "Descubre productos de alta calidad a precios competitivos. Compra en Ecommer: electrónica, moda, hogar y más.",
+        alternates: buildAlternates(locale, "/"),
+        openGraph: {
+            title: `${SITE_NAME} - Marketplace Colombia`,
+            description:
+                "Descubre productos de alta calidad a precios competitivos. Compra en Ecommer.",
+            type: "website",
+            url: buildLocalizedUrl(locale, "/"),
+        },
+    };
+}
 
 async function getFeaturedProductIds(): Promise<string[]> {
     try {

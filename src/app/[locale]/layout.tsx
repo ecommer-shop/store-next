@@ -13,7 +13,7 @@ import { BottomNavWrapper } from "@/components/layout/bottom-nav-wrapper";
 import { Suspense } from "react";
 import { BottomNavSkeleton } from "@/components/shared/skeletons/bottom-nav-skeleton";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/vendure/shared/metadata";
+import { SITE_NAME, SITE_URL, buildCanonicalUrl, noIndexRobots } from "@/lib/vendure/shared/metadata";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
@@ -56,46 +56,56 @@ const gilroy = localFont({
   variable: "--font-gilroy",
   display: "swap",
 });
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
-  description:
-    "Shop the best products at Ecommer. Quality products, competitive prices, and fast delivery.",
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const allowIndexing = process.env.ALLOW_INDEXING === "true";
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
     },
-  },
-  icons: {
-    icon: [
-      {
-        url: "/logo-dark.webp",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/logo-light.webp",
-        media: "(prefers-color-scheme: dark)",
-      },
-    ],
-  }
-};
+    description:
+      "Shop the best products at Ecommer. Quality products, competitive prices, and fast delivery.",
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: locale === "es" ? "es_MX" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+    robots: allowIndexing
+      ? {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+          },
+        }
+      : noIndexRobots(),
+    icons: {
+      icon: [
+        {
+          url: "/logo-dark.webp",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/logo-light.webp",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+    },
+  };
+}
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
