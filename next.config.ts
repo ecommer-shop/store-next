@@ -48,9 +48,6 @@ const nextConfig: NextConfig = {
             }
         ],
     },
-    experimental: {
-        rootParams: true
-    },
     // turbopack: {
     //     root: projectRoot,
     //     resolveAlias: {
