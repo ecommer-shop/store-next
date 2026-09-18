@@ -42,7 +42,6 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer', store
 
   const productHref = `/product/${product.slug}`;
   
-  // @ts-expect-error - inStock puede no estar en el tipo aún hasta que se regenere GraphQL
   const isOutOfStock = product.inStock === false;
   
   // Si no hay storeChannelCode pero hay storeName (no es "Ecommer"), crear un slug del nombre
