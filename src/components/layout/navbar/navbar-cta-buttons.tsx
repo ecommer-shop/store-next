@@ -16,7 +16,7 @@ export function NavbarCtaButtons() {
                 <button
                     onClick={() => {
                         trackSignup({ method: 'Clerk/Modal' });
-                        openSignUp();
+                        openSignUp({ redirectUrl: window.location.href });
                     }}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border border-[#6BB8FF]/60 text-[#6BB8FF] hover:bg-[#6BB8FF]/10 transition-colors duration-200 whitespace-nowrap cursor-pointer"
                 >

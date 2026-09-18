@@ -27,7 +27,7 @@ export default clerkMiddleware(async (auth, req) => {
     ? pathname.slice(1)
     : pathname;
 
-  const locale = req.nextUrl.locale ?? "es";
+  const locale = pathname.match(/^\/(es|en)\b/)?.[1] ?? "es";
   if (cleanPathname === "/go") {
     const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
     const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
@@ -62,10 +62,10 @@ export default clerkMiddleware(async (auth, req) => {
     const { userId } = await auth();
 
     if (!userId) {
-      const signInUrl = new URL(process.env.CLERK_SIGN_IN_URL!);
-      const domain = new URL(process.env.NEXT_PUBLIC_SITE_URL!);
+      const origin = req.nextUrl.origin || process.env.NEXT_PUBLIC_SITE_URL!;
 
-      const returnTo = new URL(`${locale}${pathname}${search}`, domain).toString();
+      const returnTo = new URL(`${pathname}${search}`, origin).toString();
+      const signInUrl = new URL(`/${locale}/sign-in`, origin);
       signInUrl.searchParams.set("redirect_url", returnTo);
       return NextResponse.redirect(signInUrl);
     }

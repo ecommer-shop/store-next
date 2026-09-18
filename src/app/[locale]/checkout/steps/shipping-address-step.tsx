@@ -5,12 +5,12 @@ import { Button } from '@heroui/react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2, MapPin, Plus, CheckCircle2, AlertCircle, Pencil } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useClerk } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { useCheckout } from '../checkout-provider';
 import { setShippingAddress, createCustomerAddress, updateCustomerAddress } from '../actions';
 import { I18N } from '@/i18n/keys';
 import { AddressForm, AddressFormData } from '../../account/addresses/address-form';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { trackAddShippingInfo } from '@/lib/analytics/events';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
@@ -36,7 +36,7 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   const td = useTranslations('Account.addresses');
   const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
-  const { redirectToSignIn } = useClerk();
+  const locale = useLocale() || 'es';
   const { addresses, countries, order, googleMapsApiKey } = useCheckout();
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
@@ -77,9 +77,9 @@ export default function ShippingAddressStep({ onComplete, t }: ShippingAddressSt
   };
 
   const redirectToClerkSignIn = () => {
-    void redirectToSignIn({
-      redirectUrl: window.location.href,
-    });
+    const signInUrl = new URL(`/${locale}/sign-in`, window.location.origin);
+    signInUrl.searchParams.set('redirect_url', window.location.href);
+    window.location.assign(signInUrl.toString());
   };
 
   const ensureSignedIn = () => {

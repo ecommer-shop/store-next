@@ -98,6 +98,7 @@ export function FacetFiltersMobile({
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         <TagGroup
+                            aria-label={activeGroup.name}
                             selectionMode="multiple"
                             selectedKeys={new Set(selectedFacets.filter(id => activeGroup.values.some(v => v.id === id)))}
                             onSelectionChange={(keys) => {

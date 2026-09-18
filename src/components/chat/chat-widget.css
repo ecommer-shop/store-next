@@ -34,10 +34,10 @@
 /* BOTÓN FLOTANTE */
 .chat-button {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 68px;
-    height: 68px;
+    bottom: 88px; /* Más arriba para quedar sobre la bottom nav (16px de la barra + 72px) */
+    right: 20px;
+    width: 56px; /* Más pequeño (era 68px) */
+    height: 56px; /* Más pequeño (era 68px) */
     background: linear-gradient(135deg, #6BB8FF 0%, #9969F8 100%);
     border-radius: 50%;
     display: flex;
@@ -60,6 +60,15 @@
     opacity: 0;
     pointer-events: none;
     transform: scale(0.8);
+}
+
+/* Responsive para desktop: mantener posición original */
+@media (min-width: 768px) {
+    .chat-button {
+        bottom: 24px;
+        width: 68px;
+        height: 68px;
+    }
 }
 
 /* VENTANA DEL CHAT */

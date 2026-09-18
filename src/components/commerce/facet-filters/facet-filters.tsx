@@ -1,13 +1,19 @@
 'use client';
 
 import { use } from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { ResultOf } from '@/graphql';
 import { SearchProductsQuery } from "@/lib/vendure/shared/queries";
 import { useTranslations } from 'next-intl';
 import { I18N } from '@/i18n/keys';
 import { FacetsAccordionContent } from './facet-filters-responsive';
 import { FacetFiltersMobile } from './facet-filters-mobile';
+import {
+    getFacetUrlToken,
+    isCategoryFacetName,
+    matchCollectionSlug,
+} from '@/lib/vendure/shared/facet-url';
 
 
 interface FacetFiltersProps {
@@ -18,11 +24,37 @@ interface FacetFiltersProps {
     searchParams?: { [key: string]: string | string[] | undefined };
     activeCollectionSlug?: string;
     activeCollectionName?: string;
+    /** All site collections — used to map Categoría facets to /collection/{slug}. */
+    collections?: Array<{ slug: string; name: string }>;
 }
 
 const COLLECTION_SENTINEL = '__collection__';
 
-export function FacetFilters({ productDataPromise, searchParams: serverSearchParams, activeCollectionSlug, activeCollectionName }: FacetFiltersProps) {
+interface FacetValueEntry {
+    id: string;
+    name: string;
+    count: number;
+    urlToken: string;
+    collectionSlug?: string;
+}
+
+interface FacetGroup {
+    id: string;
+    name: string;
+    values: FacetValueEntry[];
+}
+
+function buildQueryString(params: URLSearchParams): string {
+    const qs = params.toString();
+    return qs ? `?${qs}` : '';
+}
+
+export function FacetFilters({
+    productDataPromise,
+    activeCollectionSlug,
+    activeCollectionName,
+    collections = [],
+}: FacetFiltersProps) {
     const result = use(productDataPromise);
     const searchResult = result.data.search;
     const pathname = usePathname();
@@ -30,12 +62,13 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
     const router = useRouter();
     const t = useTranslations('Commerce');
 
-    // Group facet values by facet
-    interface FacetGroup {
-        id: string;
-        name: string;
-        values: Array<{ id: string; name: string; count: number }>;
-    }
+    const routingCollections =
+        collections.length > 0
+            ? collections
+            : (searchResult.collections ?? []).map((item) => ({
+                  slug: item.collection.slug,
+                  name: item.collection.name,
+              }));
 
     const facetGroups = searchResult.facetValues.reduce((acc: Record<string, FacetGroup>, item) => {
         const facetName = item.facetValue.facet.name;
@@ -46,18 +79,23 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
                 values: []
             };
         }
+
+        const urlToken = getFacetUrlToken(item.facetValue);
+        const collectionSlug = isCategoryFacetName(facetName)
+            ? matchCollectionSlug(item.facetValue, routingCollections)
+            : undefined;
+
         acc[facetName].values.push({
             id: item.facetValue.id,
             name: item.facetValue.name,
-            count: item.count
+            count: item.count,
+            urlToken,
+            collectionSlug,
         });
         return acc;
     }, {});
 
     const selectedFacets = urlSearchParams.getAll('facets');
-    if (activeCollectionSlug) {
-        selectedFacets.push(COLLECTION_SENTINEL);
-    }
 
     // Build all groups, merging collection into existing Categoría if present
     const allGroups: Record<string, FacetGroup> = {};
@@ -73,10 +111,12 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
 
         const collectionName = activeCollectionName || activeCollectionSlug;
 
-        const collectionEntry = {
+        const collectionEntry: FacetValueEntry = {
             id: COLLECTION_SENTINEL,
             name: collectionName,
             count: searchResult.totalItems,
+            urlToken: COLLECTION_SENTINEL,
+            collectionSlug: activeCollectionSlug,
         };
 
         if (categoriaGroup) {
@@ -91,57 +131,117 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
         }
     }
 
-    const toggleFacet = (facetId: string) => {
-        const params = new URLSearchParams(urlSearchParams);
-        const current = params.getAll('facets');
+    const selectedTokens = new Set(selectedFacets);
 
-        if (facetId === COLLECTION_SENTINEL) {
-            const hasOtherFacets = current.length > 0;
-            params.delete('page');
+    // Selection keys used by UI components (urlToken / sentinel)
+    const selectedKeys = [
+        ...selectedFacets,
+        ...(activeCollectionSlug ? [COLLECTION_SENTINEL] : []),
+    ];
 
-            if (hasOtherFacets) {
-                router.push(`${pathname}?${params.toString()}`);
-            } else {
-                router.push(pathname);
-            }
+    const toggleFacet = (facetKey: string) => {
+        const params = new URLSearchParams(urlSearchParams.toString());
+        params.delete('page');
+
+        // Leaving the active collection → return to search with remaining filters
+        if (facetKey === COLLECTION_SENTINEL) {
+            params.delete('facets');
+            const remaining = urlSearchParams.getAll('facets');
+            remaining.forEach((token) => params.append('facets', token));
+            router.push(`/search${buildQueryString(params)}`);
             return;
         }
 
-        if (current.includes(facetId)) {
+        // Locate the facet value metadata from current groups
+        const allValues = Object.values(allGroups).flatMap((g) => g.values);
+        const value = allValues.find(
+            (v) => v.urlToken === facetKey || v.id === facetKey || v.collectionSlug === facetKey
+        );
+
+        // Category with a matching collection → canonical collection route
+        if (value?.collectionSlug) {
+            const isActiveCollection = activeCollectionSlug === value.collectionSlug;
+            if (isActiveCollection) {
+                const remaining = urlSearchParams.getAll('facets');
+                params.delete('facets');
+                remaining.forEach((token) => params.append('facets', token));
+                router.push(`/search${buildQueryString(params)}`);
+                return;
+            }
+
+            // Preserve non-category facet tokens
+            const current = params.getAll('facets');
             params.delete('facets');
-            current.filter(id => id !== facetId).forEach(id => params.append('facets', id));
-        } else {
-            params.append('facets', facetId);
+            current
+                .filter((token) => {
+                    const other = allValues.find((v) => v.urlToken === token || v.id === token);
+                    return !other?.collectionSlug;
+                })
+                .forEach((token) => {
+                    const other = allValues.find((v) => v.urlToken === token || v.id === token);
+                    params.append('facets', other?.urlToken ?? token);
+                });
+
+            router.push(`/collection/${value.collectionSlug}${buildQueryString(params)}`);
+            return;
         }
 
-        // Reset to page 1 when filters change
-        params.delete('page');
+        const urlToken = value?.urlToken ?? facetKey;
+        const current = params.getAll('facets');
+        const isSelected =
+            current.includes(urlToken) ||
+            current.includes(facetKey) ||
+            (value ? current.includes(value.id) : false);
 
-        router.push(`${pathname}?${params.toString()}`);
+        params.delete('facets');
+        if (isSelected) {
+            current
+                .filter((token) => token !== urlToken && token !== facetKey && token !== value?.id)
+                .forEach((token) => {
+                    const other = allValues.find((v) => v.urlToken === token || v.id === token);
+                    params.append('facets', other?.urlToken ?? token);
+                });
+        } else {
+            current.forEach((token) => {
+                const other = allValues.find((v) => v.urlToken === token || v.id === token);
+                params.append('facets', other?.urlToken ?? token);
+            });
+            params.append('facets', urlToken);
+        }
+
+        router.push(`${pathname}${buildQueryString(params)}`);
     };
 
     const clearFilters = () => {
-        const params = new URLSearchParams(urlSearchParams);
+        const params = new URLSearchParams(urlSearchParams.toString());
         params.delete('facets');
         params.delete('page');
-        const qs = params.toString();
-        router.push(qs ? `${pathname}?${qs}` : pathname);
+
+        if (activeCollectionSlug) {
+            router.push(`/search${buildQueryString(params)}`);
+            return;
+        }
+
+        router.push(`${pathname}${buildQueryString(params)}`);
     };
 
-    const hasActiveFilters = selectedFacets.length > 0;
+    const hasActiveFilters = selectedTokens.size > 0 || Boolean(activeCollectionSlug);
 
     if (Object.keys(allGroups).length === 0) {
         return null;
     }
 
-    // Header solo con texto, sin botón
-    const FiltersHeader = (
-        <div className="flex items-center justify-between w-full gap-2">
-            <h2 className="font-semibold text-lg text-foreground">
-                {t(I18N.Commerce.facetFilters.filters)}
-            </h2>
-        </div>
-    );
+    // Map groups so UI compares against urlToken (readable) instead of raw IDs
+    const uiGroups: Record<string, FacetGroup> = {};
+    for (const [key, group] of Object.entries(allGroups)) {
+        uiGroups[key] = {
+            ...group,
+            values: group.values.map((v) => ({
+                ...v,
+                id: v.urlToken,
+            })),
+        };
+    }
 
     return (
         <div className="flex flex-col space-y-6">
@@ -155,8 +255,8 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
             {/* Desktop filtros */}
             <div className="hidden md:block">
                 <FacetsAccordionContent
-                    facetGroups={allGroups}
-                    selectedFacets={selectedFacets}
+                    facetGroups={uiGroups}
+                    selectedFacets={selectedKeys}
                     toggleFacet={toggleFacet}
                 />
             </div>
@@ -167,8 +267,8 @@ export function FacetFilters({ productDataPromise, searchParams: serverSearchPar
                     {t(I18N.Commerce.facetFilters.filters)}
                 </h2>
                 <FacetFiltersMobile
-                    facetGroups={allGroups}
-                    selectedFacets={selectedFacets}
+                    facetGroups={uiGroups}
+                    selectedFacets={selectedKeys}
                     toggleFacet={toggleFacet}
                 />
             </div>

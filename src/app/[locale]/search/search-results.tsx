@@ -1,13 +1,21 @@
 import { Suspense } from "react";
 import { FacetFilters } from "@/components/commerce/facet-filters/facet-filters";
-import { ProductGridSkeleton } from "@/components/shared/product-grid-skeleton";
 import { ProductGrid } from "@/components/commerce/product-grid";
-import { buildSearchInput, getCurrentPage } from "@/lib/vendure/shared/search-helpers";
+import { getCurrentPage } from "@/lib/vendure/shared/search-helpers";
+import { buildResolvedSearchInput } from "@/lib/vendure/shared/build-resolved-search-input";
 import { query } from "@/lib/vendure/server/api";
 import { SearchProductsQuery, GetProductsSellerNamesQuery } from "@/lib/vendure/shared/queries";
 import { readFragment } from "@/graphql";
 import { ProductCardFragment } from "@/lib/vendure/shared/fragments";
 import { Spinner } from "@heroui/react";
+import { redirect } from "@/i18n/navigation";
+import { getCollectionsForRouting, getFacetsCatalog } from "@/lib/vendure/cached";
+import {
+    extractFacetTokens,
+    findCategoryCollectionRedirect,
+    getFacetUrlToken,
+} from "@/lib/vendure/shared/facet-url";
+import { getLocale } from "next-intl/server";
 
 interface SearchResultsProps {
     searchParams: Promise<{
@@ -18,9 +26,61 @@ interface SearchResultsProps {
 export async function SearchResults({ searchParams }: SearchResultsProps) {
     const searchParamsResolved = await searchParams;
     const page = getCurrentPage(searchParamsResolved);
+    const locale = await getLocale();
+
+    const [catalog, collections] = await Promise.all([
+        getFacetsCatalog(),
+        getCollectionsForRouting(),
+    ]);
+
+    // If a Categoría facet maps to a collection, use the canonical collection URL
+    const facetTokens = extractFacetTokens(searchParamsResolved);
+    const categoryRedirect = findCategoryCollectionRedirect(facetTokens, catalog, collections);
+    if (categoryRedirect) {
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(searchParamsResolved)) {
+            if (key === 'facets' || key === 'page' || value == null) continue;
+            if (Array.isArray(value)) {
+                value.forEach((v) => params.append(key, v));
+            } else {
+                params.set(key, value);
+            }
+        }
+        categoryRedirect.remainingFacetTokens.forEach((token) => params.append('facets', token));
+        const qs = params.toString();
+        redirect({
+            href: qs
+                ? `/collection/${categoryRedirect.collectionSlug}?${qs}`
+                : `/collection/${categoryRedirect.collectionSlug}`,
+            locale,
+        });
+    }
+
+    // Normalize legacy numeric facet IDs in the URL to readable tokens when possible
+    const normalizedTokens = facetTokens.map((token) => {
+        const entry = catalog.find((e) => e.id === token);
+        return entry ? getFacetUrlToken(entry) : token;
+    });
+    const needsNormalize =
+        facetTokens.length > 0 &&
+        normalizedTokens.some((token, i) => token !== facetTokens[i]);
+    if (needsNormalize) {
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(searchParamsResolved)) {
+            if (key === 'facets' || value == null) continue;
+            if (Array.isArray(value)) {
+                value.forEach((v) => params.append(key, v));
+            } else {
+                params.set(key, value);
+            }
+        }
+        normalizedTokens.forEach((token) => params.append('facets', token));
+        const qs = params.toString();
+        redirect({ href: qs ? `/search?${qs}` : '/search', locale });
+    }
 
     const productDataPromise = query(SearchProductsQuery, {
-        input: buildSearchInput({ searchParams: searchParamsResolved })
+        input: await buildResolvedSearchInput({ searchParams: searchParamsResolved })
     });
 
     // Fetch seller names for the first page server-side
@@ -50,7 +110,11 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
             {/* Filters Sidebar */}
             <aside className="lg:col-span-1">
                 <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-                    <FacetFilters productDataPromise={productDataPromise} searchParams={searchParamsResolved} />
+                    <FacetFilters
+                        productDataPromise={productDataPromise}
+                        searchParams={searchParamsResolved}
+                        collections={collections}
+                    />
                 </Suspense>
             </aside>
 

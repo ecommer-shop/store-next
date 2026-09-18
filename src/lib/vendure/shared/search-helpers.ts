@@ -1,3 +1,9 @@
+import {
+    extractFacetTokens,
+    resolveFacetTokensToIds,
+    type FacetCatalogEntry,
+} from './facet-url';
+
 export interface SearchInputParams {
     term?: string;
     collectionSlug?: string;
@@ -12,25 +18,27 @@ export interface SearchInputParams {
 interface BuildSearchInputOptions {
     searchParams: { [key: string]: string | string[] | undefined };
     collectionSlug?: string;
+    /** Pre-resolved Vendure facet value IDs. When omitted, raw `facets` tokens are used as IDs (legacy). */
+    facetValueIds?: string[];
 }
 
-export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchInputOptions): SearchInputParams {
+export function buildSearchInput({
+    searchParams,
+    collectionSlug,
+    facetValueIds: resolvedFacetValueIds,
+}: BuildSearchInputOptions): SearchInputParams {
     const page = Number(searchParams.page) || 1;
     const take = 12;
     const skip = (page - 1) * take;
     const sort = (searchParams.sort as string) || 'name-asc';
     const searchTerm = searchParams.q as string;
-    
+
     // Get collection slug from searchParams if provided
     const collectionSlugFromParams = searchParams.collection as string;
 
-    
-    // Extract facet value IDs from search params
-    const facetValueIds = searchParams.facets
-        ? Array.isArray(searchParams.facets)
-            ? searchParams.facets
-            : [searchParams.facets]
-        : [];
+    const facetValueIds =
+        resolvedFacetValueIds ??
+        extractFacetTokens(searchParams);
 
     // Map sort parameter to Vendure SearchResultSortParameter
     const sortMapping: Record<string, { name?: 'ASC' | 'DESC'; price?: 'ASC' | 'DESC' }> = {
@@ -53,6 +61,18 @@ export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchIn
         }),
         inStock: true,
     };
+}
+
+/**
+ * Build search input resolving readable facet tokens (code/name) to Vendure IDs.
+ */
+export function buildSearchInputFromCatalog(
+    options: BuildSearchInputOptions,
+    catalog: FacetCatalogEntry[]
+): SearchInputParams {
+    const tokens = extractFacetTokens(options.searchParams);
+    const facetValueIds = resolveFacetTokensToIds(tokens, catalog);
+    return buildSearchInput({ ...options, facetValueIds });
 }
 
 export function getCurrentPage(searchParams: { [key: string]: string | string[] | undefined }): number {

@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
+import { routing } from '@/i18n/routing';
 
 export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Ecommer';
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://ecommer.shop';
+
+const { locales, defaultLocale } = routing;
 
 /**
  * Truncate text to a maximum length, preserving word boundaries.
@@ -34,6 +37,50 @@ export function buildCanonicalUrl(path: string): string {
   const baseUrl = SITE_URL.replace(/\/$/, ''); // Remove trailing slash
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   return `${baseUrl}${cleanPath}`;
+}
+
+/**
+ * Build a locale-prefixed absolute URL, matching the URLs emitted by the
+ * sitemap (`/{locale}/...`). `path === '/'` maps to the home of the locale
+ * without a trailing slash (`https://site.com/es`).
+ */
+export function buildLocalizedUrl(locale: string, path: string): string {
+  const baseUrl = SITE_URL.replace(/\/$/, ''); // Remove trailing slash
+  const cleanPath =
+    path === '' || path === '/'
+      ? ''
+      : path.startsWith('/')
+        ? path
+        : `/${path}`;
+  return `${baseUrl}/${locale}${cleanPath}`;
+}
+
+/**
+ * Build canonical + hreflang alternates for a localized page.
+ * Keeps the HTML on-page signals consistent with `sitemap.ts` so Google can
+ * reconcile the canonical across locales (fixes "duplicate / no canonical").
+ */
+export function buildAlternates(
+  locale: string,
+  path: string
+): { canonical: string; languages: Record<string, string> } {
+  const cleanPath =
+    path === '' || path === '/'
+      ? ''
+      : path.startsWith('/')
+        ? path
+        : `/${path}`;
+
+  const languages: Record<string, string> = {};
+  for (const l of locales) {
+    languages[l] = buildLocalizedUrl(l, cleanPath);
+  }
+  languages['x-default'] = buildLocalizedUrl(defaultLocale, cleanPath);
+
+  return {
+    canonical: buildLocalizedUrl(locale, cleanPath),
+    languages,
+  };
 }
 
 /**

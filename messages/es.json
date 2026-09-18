@@ -237,7 +237,13 @@
       "description": "Ingresa tu código de descuento a continuación",
       "placeholder": "Ingresa código",
       "apply": "Aplicar",
-      "remove": "Eliminar"
+      "remove": "Eliminar",
+      "error": {
+        "invalid": "Este código no es válido o no está disponible para tu tienda",
+        "expired": "Este cupón ya no está activo (vencido)",
+        "limit": "Este cupón agotó su límite de usos",
+        "network": "No se pudo conectar, intenta de nuevo"
+      }
     }
   },
   "Checkout": {
@@ -286,6 +292,7 @@
       "selectMethod": "Selecciona el método de entrega",
       "noMethods": "No hay métodos de envío disponibles. Por favor verifica tu dirección.",
       "free": "GRATIS",
+      "loading": "Cargando métodos de envío…",
       "continuePayment": "Continuar al pago"
     },
     "payment": {
@@ -597,7 +604,11 @@
   "About": {
     "title": "Quiénes somos",
     "description": "Conectamos a los emprendedores y comerciantes de la región con sus clientes. Sin complicaciones. Sin barreras tecnológicas. Con orgullo caucano.",
+    "hero": {
+      "badge": "SOBRE ECOMMER"
+    },
     "history": "Ecommer nació de una observación concreta: mientras las grandes empresas dominan el comercio digital, la mayoría de los micro-empresarios colombianos siguen al margen. Herramientas fragmentadas, costos altos, barreras técnicas y un mercado donde el 96% de los negocios en Cauca son microempresas, con más del 56% operando en la informalidad. No había una solución construida para ellos. Decidimos construirla.",
+    "historyTitle": "Nuestra historia",
     "mission": "Empoderar a los microempresarios colombianos con tecnología de e-commerce accesible, integrada y escalable — para que vendan online con la misma fuerza que las grandes marcas.",
     "vision": "Ser la plataforma de referencia para el comercio digital de las MiPyMEs en LATAM — habilitando a miles de negocios locales para digitalizar sus ventas, escalar sus operaciones y conectar con clientes en cualquier canal. Empezamos en Popayán. Escalamos por métricas, no por mapas.",
     "audience": {
@@ -1120,5 +1131,47 @@
       "demoButton": "Agendar Demo",
       "storeButton": "Crear mi Tienda"
     }
+  },
+  "Layout": {
+    "navbar": {
+      "home": "Inicio",
+      "search": "Buscar",
+      "cart": "Carrito",
+      "account": "Perfil",
+      "signIn": "Entrar",
+      "signUp": "Registrarse",
+      "signOut": "Salir"
+    },
+    "searchInput": {
+      "placeholder": "Buscar productos..."
+    },
+    "footer": {
+      "copyright": "© 2025 Ecommer. Todos los derechos reservados.",
+      "sections": {
+        "categories": "Categorías",
+        "about": {
+          "label": "Sobre nosotros",
+          "title": "Acerca de"
+        },
+        "contact": "Contacto"
+      },
+      "links": {
+        "github": "GitHub"
+      }
+    }
+  },
+  "Blog": {
+    "title": "Blog",
+    "description": "Lee nuestros últimos artículos y novedades.",
+    "readMore": "Leer más",
+    "publishedOn": "Publicado el {date}",
+    "categories": "Categorías",
+    "tags": "Etiquetas",
+    "noArticles": "No hay artículos aún",
+    "backToBlog": "Volver al blog",
+    "relatedPosts": "Artículos relacionados",
+    "relatedProducts": "Productos relacionados",
+    "minRead": "{minutes} min de lectura",
+    "by": "Por"
   }
 }

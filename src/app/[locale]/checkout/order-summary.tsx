@@ -6,6 +6,7 @@ import { OrderLine } from './types';
 import { useCheckout } from './checkout-provider';
 import { useSelectedItems } from '@/app/[locale]/cart/selected-items-context';
 import { Price } from '@/components/commerce/price';
+import { discountedTotal } from '@/lib/checkout/totals';
 import { I18N } from '@/i18n/keys';
 import { ShoppingBag, Tag } from 'lucide-react';
 
@@ -27,9 +28,7 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
   );
   
   const selectedLinesSubtotal = displayedLines.reduce((sum: number, line: OrderLine) => sum + (line.linePriceWithTax ?? 0), 0);
-  const discountTotal = order.discounts?.reduce((sum: number, d: { amountWithTax: number }) => sum + (d.amountWithTax ?? 0), 0) ?? 0;
-  
-  const finalTotal = discountTotal < 0 ? selectedLinesSubtotal + (order.shippingWithTax ?? 0) + discountTotal : selectedLinesSubtotal + (order.shippingWithTax ?? 0) - discountTotal;
+  const finalTotal = discountedTotal(selectedLinesSubtotal, order.shippingWithTax ?? 0, order.discounts);
   
   return (
     <div className="sticky top-11 rounded-2xl border border-border bg-card shadow-xl shadow-[#12123F]/10 dark:shadow-white/5 overflow-hidden">
@@ -101,7 +100,7 @@ export default function OrderSummary({ t }: OrderSummaryProps) {
                   {discount.description}
                 </span>
                 <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  −<Price value={discount.amountWithTax} currencyCode={order.currencyCode} />
+                  −<Price value={Math.abs(discount.amountWithTax)} currencyCode={order.currencyCode} />
                 </span>
               </div>
             ),

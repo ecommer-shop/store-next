@@ -261,8 +261,13 @@ export function AddressForm({
       return;
     }
 
+    const fiscalDni = data.dni?.trim() || null;
+    const fiscalDocumentType = data.identityDocumentId?.trim() || null;
+
     await onSubmit({
       ...data,
+      dni: fiscalDni ?? undefined,
+      identityDocumentId: fiscalDocumentType ?? undefined,
       customFields: {
         ...data.customFields,
         ...(hasCoordinates
@@ -272,8 +277,8 @@ export function AddressForm({
             }
           : {}),
         ...(data.matiasCityId ? { matiasCityId: data.matiasCityId } : {}),
-        ...(data.dni ? { dni: data.dni } : {}),
-        ...(data.identityDocumentId ? { identityDocumentId: data.identityDocumentId } : {}),
+        dni: fiscalDni,
+        identityDocumentId: fiscalDocumentType,
       },
     });
   });
@@ -536,16 +541,36 @@ export function AddressForm({
               <FieldError className="text-xs text-red-500 mt-1">{errors.identityDocumentId?.message}</FieldError>
             </TextField>
 
-            <TextField>
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
-                Documento / NIT <span className="text-[#9969F8]">*</span>
-              </Label>
-              <Input
-                {...register('dni', { required: 'Documento / NIT' })}
-                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
-              />
-              <FieldError className="text-xs text-red-500 mt-1">{errors.dni?.message}</FieldError>
-            </TextField>
+            <Controller
+              name="dni"
+              control={control}
+              rules={{
+                required: 'Documento / NIT',
+                validate: (value) => {
+                  const trimmed = value?.trim();
+                  return trimmed ? true : 'Documento / NIT';
+                },
+              }}
+              render={({ field }) => (
+                <TextField>
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1 block">
+                    Documento / NIT <span className="text-[#9969F8]">*</span>
+                  </Label>
+                  <input
+                    {...field}
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    value={field.value || ''}
+                    onChange={(e) => {
+                      field.onChange(e.target.value.trimStart());
+                    }}
+                    className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9969F8]/40 transition"
+                  />
+                  <FieldError className="text-xs text-red-500 mt-1">{errors.dni?.message}</FieldError>
+                </TextField>
+              )}
+            />
           </div>
         </div>
 

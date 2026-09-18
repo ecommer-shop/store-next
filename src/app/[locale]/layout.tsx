@@ -9,8 +9,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { BottomNavWrapper } from "@/components/layout/bottom-nav-wrapper";
+import { Suspense } from "react";
+import { BottomNavSkeleton } from "@/components/shared/skeletons/bottom-nav-skeleton";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/vendure/shared/metadata";
+import { SITE_NAME, SITE_URL, buildCanonicalUrl, noIndexRobots } from "@/lib/vendure/shared/metadata";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
@@ -25,6 +28,7 @@ import { WompiScrollGuard } from "@/components/providers/wompi-scroll-guard";
 import { Providers } from "@/components/providers/providers";
 import Script from 'next/script';
 import { ConsentBanner } from '@/components/providers/consent-banner';
+import { Toast } from '@heroui/react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,46 +56,56 @@ const gilroy = localFont({
   variable: "--font-gilroy",
   display: "swap",
 });
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
-  description:
-    "Shop the best products at Ecommer. Quality products, competitive prices, and fast delivery.",
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const allowIndexing = process.env.ALLOW_INDEXING === "true";
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
     },
-  },
-  icons: {
-    icon: [
-      {
-        url: "/logo-dark.webp",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/logo-light.webp",
-        media: "(prefers-color-scheme: dark)",
-      },
-    ],
-  }
-};
+    description:
+      "Shop the best products at Ecommer. Quality products, competitive prices, and fast delivery.",
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: locale === "es" ? "es_MX" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+    robots: allowIndexing
+      ? {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+          },
+        }
+      : noIndexRobots(),
+    icons: {
+      icon: [
+        {
+          url: "/logo-dark.webp",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/logo-light.webp",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+    },
+  };
+}
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -118,6 +132,8 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
       dynamic
       afterSignOutUrl="/"
       localization={localClerk}
+      signInUrl={buildCanonicalUrl(`/${locale}/sign-in`)}
+      signUpUrl={buildCanonicalUrl(`/${locale}/sign-in`)}
       signInFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       signUpFallbackRedirectUrl={clerkStorefrontFallbackUrl}
       appearance={{
@@ -203,8 +219,11 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
     >
       <html lang={locale} suppressHydrationWarning className="bg-[#121414]">
         <body className={`${gilroy.variable} ${poppins.variable} antialiased overflow-x-hidden`}>
-          <Script id="consent-default" strategy="beforeInteractive">
-              {`
+          <Script 
+            id="consent-default" 
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
 
@@ -231,10 +250,12 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                           analytics_storage: 'granted'
                       });
                   }
-              `}
-          </Script>
+              `
+            }}
+          />
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
           <Providers>
+            <Toast.Provider placement="bottom end" />
             <NextIntlClientProvider
                 locale={locale}
                 messages={messages}
@@ -243,15 +264,17 @@ export default async function LocaleLayout({ children, params }: Props<"/[locale
                 <WompiScrollGuard />
                 <div className="flex flex-col min-h-screen overflow-x-hidden">
                   <Navbar />
-                  <main className="flex-1">
+                  <main className="flex-1 pb-0 md:pb-0">
                     {children}
                   </main>
                   <Footer />
                   <ChatWidget />
+                  <Suspense fallback={<BottomNavSkeleton />}>
+                    <BottomNavWrapper />
+                  </Suspense>
                 </div>
                 <ConsentBanner />
               </NextIntlClientProvider>
-              <Toaster />
           </Providers>
         </body>
       </html>

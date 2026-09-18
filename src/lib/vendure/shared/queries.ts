@@ -4,11 +4,41 @@ import { ActiveCustomerFragment, ProductCardFragment } from './fragments';
 export const GetTopCollectionsQuery = graphql(`
     query GetTopCollections {
         collections(options: { filter: { parentId: { eq: "1" } }, 
-            take: 3 }) {
+            take: 50 }) {
             items {
                 id
                 name
                 slug
+            }
+        }
+    }
+`);
+
+export const GetCollectionsForRoutingQuery = graphql(`
+    query GetCollectionsForRouting($options: CollectionListOptions) {
+        collections(options: $options) {
+            items {
+                id
+                name
+                slug
+            }
+        }
+    }
+`);
+
+
+export const GetFacetsCatalogQuery = graphql(`
+    query GetFacetsCatalog {
+        facets(options: { take: 100 }) {
+            items {
+                id
+                code
+                name
+                values {
+                    id
+                    code
+                    name
+                }
             }
         }
     }
@@ -33,11 +63,21 @@ export const SearchProductsQuery = graphql(`
                 count
                 facetValue {
                     id
+                    code
                     name
                     facet {
                         id
+                        code
                         name
                     }
+                }
+            }
+            collections {
+                count
+                collection {
+                    id
+                    name
+                    slug
                 }
             }
         }
@@ -409,6 +449,7 @@ export const GetCustomerOrdersQuery = graphql(`
                     totalWithTax
                     currencyCode
                     createdAt
+                    orderPlacedAt
                     updatedAt
                     lines {
                         id
@@ -418,6 +459,7 @@ export const GetCustomerOrdersQuery = graphql(`
                             product {
                                 id
                                 name
+                                description
                                 featuredAsset {
                                     id
                                     preview

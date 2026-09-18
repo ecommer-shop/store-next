@@ -28,6 +28,7 @@ import {
     GetWompiTransactionStatusQuery,
     SavedPaymentMethodsQuery,
 } from '@/lib/vendure/shared/queries';
+import { ENVIA_SHIPPING_METHOD_CODE, SELLER_OWN_DELIVERY_METHOD_CODE } from '@/lib/checkout/shipping-methods';
 import { revalidatePath, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
@@ -506,18 +507,77 @@ export async function setShippingAddress(
     revalidatePath('/checkout');
 }
 
+type SetOrderShippingMethodResult = {
+    __typename: string;
+    errorCode?: string;
+    message?: string;
+};
+
+function formatSetOrderShippingMethodError(result: SetOrderShippingMethodResult): string {
+    switch (result.__typename) {
+        case 'IneligibleShippingMethodError':
+            return (
+                result.message ||
+                'El método de envío no está disponible para esta dirección o pedido. ' +
+                'Para domicilio local (Messenger Domis) la ciudad debe ser Popayán; para envío nacional revisa la dirección completa.'
+            );
+        case 'NoActiveOrderError':
+            return 'No hay un pedido activo. Vuelve al carrito e intenta de nuevo.';
+        case 'OrderModificationError':
+            return (
+                result.message ||
+                'El pedido ya no permite cambiar el envío en este paso. Recarga la página o vacía el carrito y vuelve a intentar.'
+            );
+        default:
+            return result.message || 'No se pudo establecer el método de envío seleccionado.';
+    }
+}
+
+async function ensureOrderCanModifyShipping(token: string): Promise<void> {
+    const orderRes = await query(GetActiveOrderQuery, {}, { token, useAuthToken: true });
+    const order = orderRes.data.activeOrder;
+    if (!order) {
+        throw new Error('No hay un pedido activo. Vuelve al carrito e intenta de nuevo.');
+    }
+
+    if (order.state === 'AddingItems' || order.state === 'Draft') {
+        return;
+    }
+
+    if (order.state === 'ArrangingPayment') {
+        const result = await mutate(
+            TransitionOrderToStateMutation,
+            { state: 'AddingItems' },
+            { token, useAuthToken: true },
+        );
+        if (result.data.transitionOrderToState?.__typename !== 'Order') {
+            throw new Error(
+                'El pedido quedó en pago pendiente y no se pudo reiniciar para cambiar el envío. Vacía el carrito y vuelve a intentar.',
+            );
+        }
+        return;
+    }
+
+    throw new Error(
+        `El pedido está en estado «${order.state}» y no permite cambiar el método de envío.`,
+    );
+}
+
 export async function setShippingMethod(shippingMethodId: string) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
     const token = getAuthTokenFromCookies(cookiesStore)!;
+    await ensureOrderCanModifyShipping(token);
+
     const result = await mutate(
         SetOrderShippingMethodMutation,
         { shippingMethodId: [shippingMethodId] },
         { token, useAuthToken: true }
     );
-    
-    if (result.data.setOrderShippingMethod.__typename !== 'Order') {
-        throw new Error('Failed to set shipping method');
+
+    const payload = result.data.setOrderShippingMethod as SetOrderShippingMethodResult;
+    if (payload.__typename !== 'Order') {
+        throw new Error(formatSetOrderShippingMethodError(payload));
     }
 
     revalidatePath('/checkout');
@@ -536,15 +596,24 @@ export async function setDynamicShippingPrice(price: number) {
     revalidatePath('/checkout');
 }
 
+function isExternalDeliverySkipped(shippingLines: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null | undefined): boolean {
+    return shippingLines?.some(
+        (line) => {
+            const code = line?.shippingMethod?.code;
+            return code === ENVIA_SHIPPING_METHOD_CODE || code === SELLER_OWN_DELIVERY_METHOD_CODE;
+        },
+    ) ?? false;
+}
+
 async function reapplyShippingSelection(
     token: string,
     shippingMethodIds?: string[],
     shippingPriceWithTax?: number,
-) {
+): Promise<boolean> {
     const uniqueShippingMethodIds = [...new Set((shippingMethodIds ?? []).filter(Boolean))];
 
     if (uniqueShippingMethodIds.length === 0) {
-        return;
+        return false;
     }
 
     const result = await mutate(
@@ -557,13 +626,20 @@ async function reapplyShippingSelection(
         throw new Error('No se pudo reasignar el metodo de envio antes de finalizar el pedido');
     }
 
-    if (typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
+    const orderData = result.data.setOrderShippingMethod as {
+        shippingLines?: Array<{ shippingMethod?: { code?: string | null } | null } | null> | null;
+    };
+    const skipExternalDelivery = isExternalDeliverySkipped(orderData.shippingLines);
+
+    if (!skipExternalDelivery && typeof shippingPriceWithTax === 'number' && Number.isFinite(shippingPriceWithTax)) {
         await mutate(
             SetOrderDynamicShippingMethod,
             { price: Math.round(shippingPriceWithTax) },
             { token, useAuthToken: true }
         );
     }
+
+    return skipExternalDelivery;
 }
 
 export async function calculateDeliveryCostQuote() {
@@ -606,6 +682,30 @@ export async function calculateAndSetDeliveryCost() {
     return quote;
 }
 
+async function syncCustomerFiscalFields(
+    token: string,
+    address: AddressInput,
+) {
+    const fiscalDni = (address.dni || address.customFields?.dni || '').trim();
+    const identityDocumentId =
+        address.identityDocumentId || address.customFields?.identityDocumentId || '1';
+    if (!fiscalDni) {
+        return;
+    }
+    await mutate(
+        UpdateCustomerMutation,
+        {
+            input: {
+                customFields: {
+                    dni: fiscalDni,
+                    identityDocumentId,
+                },
+            },
+        } as any,
+        { token, useAuthToken: true },
+    );
+}
+
 export async function createCustomerAddress(address: AddressInput) {
     await requireClerkAuth();
     const cookiesStore = await cookies()
@@ -613,6 +713,7 @@ export async function createCustomerAddress(address: AddressInput) {
     if (!token) {
         throw new Error('AUTH_REQUIRED');
     }
+    await syncCustomerFiscalFields(token, address);
     const result = await mutate(
         CreateCustomerAddressMutation,
         { input: normalizeInvoiceAddressInput(address) } as any,
@@ -628,16 +729,17 @@ export async function createCustomerAddress(address: AddressInput) {
 
 function normalizeInvoiceAddressInput(address: AddressInput): AddressInput {
     const { matiasCityId, dni, identityDocumentId, customFields, ...rest } = address;
-    const cityId = matiasCityId || customFields?.matiasCityId;
-    const fiscalDni = dni || customFields?.dni;
-    const fiscalDocumentType = identityDocumentId || customFields?.identityDocumentId;
+    const cityId = matiasCityId || customFields?.matiasCityId || null;
+    const fiscalDni = (dni || customFields?.dni || '').trim() || null;
+    const fiscalDocumentType =
+        (identityDocumentId || customFields?.identityDocumentId || '').trim() || null;
     return {
         ...rest,
         customFields: {
             ...customFields,
-            ...(cityId ? { matiasCityId: cityId } : {}),
-            ...(fiscalDni ? { dni: fiscalDni } : {}),
-            ...(fiscalDocumentType ? { identityDocumentId: fiscalDocumentType } : {}),
+            matiasCityId: cityId,
+            dni: fiscalDni,
+            identityDocumentId: fiscalDocumentType,
         },
     };
 }
@@ -649,6 +751,7 @@ export async function updateCustomerAddress(id: string, address: AddressInput) {
     if (!token) {
         throw new Error('AUTH_REQUIRED');
     }
+    await syncCustomerFiscalFields(token, address);
     const result = await mutate(
         UpdateCustomerAddressMutation,
         { input: { id, ...normalizeInvoiceAddressInput(address) } } as any,
@@ -713,8 +816,9 @@ export async function placeOrder(
         }
     }
 
-    // Reaplicar seleccion de envio + precio dinamico antes de finalizar
-    await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
+    const skipExternalDelivery = await reapplyShippingSelection(token, shippingMethodIds, shippingPriceWithTax);
+
+    const orderForDelivery = await getActiveOrderDeliveryContext(token);
 
     // First, transition the order to ArrangingPayment state
     await transitionToArrangingPayment();
@@ -749,6 +853,18 @@ export async function placeOrder(
     }
 
     const orderCode = result.data.addPaymentToOrder.code;
+
+    if (!skipExternalDelivery) {
+        try {
+            await withTimeout(
+                createExternalDeliveryOrders(orderForDelivery, paymentMethodCode, token),
+                POST_PAYMENT_DELIVERY_TIMEOUT_MS,
+                'La creacion de domicilios externos tardo demasiado y continuara fuera del flujo de pago',
+            );
+        } catch (err) {
+            console.error('Failed to create external delivery order', err);
+        }
+    }
 
     // Update the cart tag to immediately invalidate cached cart data
     // After placing the order, remove items from the active cart

@@ -20,6 +20,7 @@ export const ProductCardFragment = graphql(`
             }
         }
         currencyCode
+        inStock
     }
 `);
 

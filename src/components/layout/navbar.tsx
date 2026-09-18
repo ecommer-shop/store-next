@@ -3,6 +3,12 @@ import Link from "next/link";
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
+import {NavbarLink} from '@/components/layout/navbar/navbar-link';
+import {
+    NavigationMenu,
+    NavigationMenuList,
+    NavigationMenuItem,
+} from '@/components/ui/navigation-menu';
 import {Suspense} from "react";
 import {SearchInput} from '@/components/layout/search-input';
 import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
@@ -50,18 +56,23 @@ export function Navbar() {
                     </Link>
 
                     {/* Collections solo desktop */}
-                    <nav className="hidden md:flex md:items-center md:gap-6">
+                    <NavigationMenu className="hidden md:flex">
+                    <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavbarLink href="/blog">Blog</NavbarLink>
+                    </NavigationMenuItem>
                     <Suspense>
                         <NavbarCollections />
                     </Suspense>
-                    </nav>
+                    </NavigationMenuList>
+                    </NavigationMenu>
                 </div>
 
                 {/* DERECHA */}
                 <div className="flex items-center gap-1 sm:gap-3 flex-1 justify-end min-w-0 pl-2">
 
-                    {/* Search ocupa todo en mobile */}
-                    <div className="flex-1 w-0 sm:flex-none sm:w-[160px] md:w-[220px] lg:w-[280px]">
+                    {/* Search ocupa todo en mobile - Oculto en móvil porque está en bottom nav */}
+                    <div className="hidden md:flex flex-1 w-0 sm:flex-none sm:w-[160px] md:w-[220px] lg:w-[280px]">
                         <Suspense fallback={<SearchInputSkeleton />}>
                         <SearchInput />
                         </Suspense>
@@ -70,13 +81,15 @@ export function Navbar() {
                     {/* CTA buttons: Registrarse + Crea tu tienda (desktop only) */}
                     <NavbarCtaButtons />
 
-                    <div className="flex-shrink-0">
+                    {/* Cart - Oculto en móvil porque está en bottom nav */}
+                    <div className="flex-shrink-0 hidden md:block">
                         <Suspense>
                             <NavbarCart />
                         </Suspense>
                     </div>
 
-                    <div className="flex-shrink-0">
+                    {/* User/Profile - Oculto en móvil porque está en bottom nav */}
+                    <div className="flex-shrink-0 hidden md:block">
                         <Suspense fallback={<NavbarUserSkeleton />}>
                             <NavbarUser />
                         </Suspense>

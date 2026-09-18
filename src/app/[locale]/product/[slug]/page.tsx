@@ -4,7 +4,8 @@ import { query } from '@/lib/vendure/server/api';
 import { GetProductDetailLegacyQuery, GetProductDetailQuery, SearchProductsQuery } from '@/lib/vendure/shared/queries';
 import { ProductImageCarousel } from '@/components/commerce/product-image-carousel';
 import { RelatedProducts } from '@/components/commerce/related-products';
-import { buildSearchInput, getCurrentPage } from '@/lib/vendure/shared/search-helpers';
+import { buildResolvedSearchInput } from '@/lib/vendure/shared/build-resolved-search-input';
+import { getCurrentPage } from '@/lib/vendure/shared/search-helpers';
 import { FacetFilters } from '@/components/commerce/facet-filters/facet-filters';
 import { Accordion, Spinner } from '@heroui/react';
 import { ChevronDownIcon } from 'lucide-react';
@@ -13,7 +14,8 @@ import Image from 'next/image';
 import {
     SITE_NAME,
     truncateDescription,
-    buildCanonicalUrl,
+    buildAlternates,
+    buildLocalizedUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
 import { ProductInfo } from '@/components/commerce/product-info/product-info';
@@ -63,18 +65,17 @@ export async function generateMetadata({
 
     const description = truncateDescription(product.description);
     const ogImage = product.assets?.[0]?.preview;
+    const path = `/product/${product.slug}`;
 
     return {
         title: product.name,
         description: description || `Shop ${product.name} at ${SITE_NAME}`,
-        alternates: {
-            canonical: buildCanonicalUrl(`/product/${product.slug}`),
-        },
+        alternates: buildAlternates(locale, path),
         openGraph: {
             title: product.name,
             description: description || `Shop ${product.name} at ${SITE_NAME}`,
             type: 'website',
-            url: buildCanonicalUrl(`/product/${product.slug}`),
+            url: buildLocalizedUrl(locale, path),
             images: buildOgImages(ogImage, product.name),
         },
         twitter: {
@@ -93,7 +94,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     const page = getCurrentPage(searchParamsResolved);
     const result = await getProductData(slug);
     const productDataPromise = query(SearchProductsQuery, {
-        input: buildSearchInput({ searchParams: searchParamsResolved }),
+        input: await buildResolvedSearchInput({ searchParams: searchParamsResolved }),
     });
 
     const product = result.data.product;

@@ -6,6 +6,8 @@ import { query } from "@/lib/vendure/server/api";
 import { getAuthToken, getAuthTokenFromCookies } from "@/lib/vendure/server/auth";
 import { GetActiveOrderQuery } from "@/lib/vendure/shared/queries";
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
+import { I18N } from "@/i18n/keys";
 
 export async function Cart() {
     const cookieStore = await cookies()
@@ -13,7 +15,21 @@ export async function Cart() {
     const { data } = await query(GetActiveOrderQuery, {}, {
         token,
         useAuthToken: true,
+        tags: ['cart'],
     });
+    const t = await getTranslations('Cart');
+    const promo = I18N.Cart.promotionCode;
+    const promotionLabels = {
+        title: t(promo.title),
+        description: t(promo.description),
+        placeholder: t(promo.placeholder),
+        apply: t(promo.apply),
+        remove: t(promo.remove),
+        errorInvalid: t(promo.error.invalid),
+        errorExpired: t(promo.error.expired),
+        errorLimit: t(promo.error.limit),
+        errorNetwork: t(promo.error.network),
+    };
 
     const activeOrder = data.activeOrder;
 
@@ -62,7 +78,7 @@ export async function Cart() {
               {/* On mobile: summary + promo first, items below */}
               <div className="lg:hidden space-y-3">
                   <OrderSummary activeOrder={activeOrder} />
-                  <PromotionCode activeOrder={activeOrder} />
+                  <PromotionCode couponCodes={activeOrder.couponCodes} labels={promotionLabels} />
               </div>
 
               {/* Items — full width on mobile, 2/3 on desktop */}
@@ -71,7 +87,7 @@ export async function Cart() {
               {/* Sidebar: only visible on desktop */}
               <div className="hidden lg:block lg:col-span-1 space-y-4">
                   <OrderSummary activeOrder={activeOrder} />
-                  <PromotionCode activeOrder={activeOrder} />
+                  <PromotionCode couponCodes={activeOrder.couponCodes} labels={promotionLabels} />
               </div>
           </div>
         </SelectedItemsProvider>

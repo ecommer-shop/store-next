@@ -12,10 +12,12 @@ import { ProductCardFragment } from '@/lib/vendure/shared/fragments';
 import {
     SITE_NAME,
     truncateDescription,
-    buildCanonicalUrl,
+    buildAlternates,
+    buildLocalizedUrl,
     buildOgImages,
 } from '@/lib/vendure/shared/metadata';
 import { getCollectionMetadata, getCollectionProducts } from './actions';
+import { getCollectionsForRouting } from '@/lib/vendure/cached';
 
 type Props = {
     params: Promise<{ locale: string; slug: string }>;
@@ -38,18 +40,17 @@ export async function generateMetadata({
     const description =
         truncateDescription(collection.description) ||
         `Browse our ${collection.name} collection at ${SITE_NAME}`;
+    const path = `/collection/${collection.slug}`;
 
     return {
         title: collection.name,
         description,
-        alternates: {
-            canonical: buildCanonicalUrl(`/collection/${collection.slug}`),
-        },
+        alternates: buildAlternates(locale, path),
         openGraph: {
             title: collection.name,
             description,
             type: 'website',
-            url: buildCanonicalUrl(`/collection/${collection.slug}`),
+            url: buildLocalizedUrl(locale, path),
             images: buildOgImages(collection.featuredAsset?.preview, collection.name),
         },
         twitter: {
@@ -79,7 +80,10 @@ async function CollectionContent({params, searchParams}: Props) {
     const page = getCurrentPage(searchParamsResolved);
 
     const productDataPromise = getCollectionProducts(slug, searchParamsResolved, locale);
-    const collectionMeta = await getCollectionMetadata(slug, locale);
+    const [collectionMeta, collections] = await Promise.all([
+        getCollectionMetadata(slug, locale),
+        getCollectionsForRouting(),
+    ]);
     const collectionName = collectionMeta.data.collection?.name || slug;
 
     // Fetch seller names for page 1 server-side
@@ -109,7 +113,12 @@ async function CollectionContent({params, searchParams}: Props) {
             {/* Filters Sidebar */}
             <aside className="lg:col-span-1">
                 <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-                    <FacetFilters productDataPromise={productDataPromise} activeCollectionSlug={slug} activeCollectionName={collectionName} />
+                    <FacetFilters
+                        productDataPromise={productDataPromise}
+                        activeCollectionSlug={slug}
+                        activeCollectionName={collectionName}
+                        collections={collections}
+                    />
                 </Suspense>
             </aside>
 

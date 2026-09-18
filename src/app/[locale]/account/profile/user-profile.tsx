@@ -61,8 +61,7 @@ export default function UserProfileClient() {
         {/* Clerk UserProfile Component */}
         <div className="rounded-xl overflow-hidden">
           <UserProfile
-            routing="path"
-            path={`/${locale}/account/profile`}
+            routing="hash"
             appearance={{
               baseTheme: resolvedTheme === "dark" ? dark : undefined,
               variables: {

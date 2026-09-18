@@ -6,6 +6,7 @@ import {
     CreateCustomerAddressMutation,
     UpdateCustomerAddressMutation,
     DeleteCustomerAddressMutation,
+    UpdateCustomerMutation,
 } from '@/lib/vendure/shared/mutations';
 import {revalidatePath} from 'next/cache';
 import { CreateAddressPayload, UpdateAddressPayload } from './addresses-client';
@@ -47,11 +48,37 @@ const token = async () => {
     return tokenAuth!
 }
 
+async function syncCustomerFiscalFields(
+    authToken: string,
+    address: CreateAddressPayload | UpdateAddressPayload,
+) {
+    const fiscalDni = (address.dni || address.customFields?.dni || '').trim();
+    const identityDocumentId =
+        address.identityDocumentId || address.customFields?.identityDocumentId || '1';
+    if (!fiscalDni) {
+        return;
+    }
+    await mutate(
+        UpdateCustomerMutation,
+        {
+            input: {
+                customFields: {
+                    dni: fiscalDni,
+                    identityDocumentId,
+                },
+            },
+        } as any,
+        { token: authToken, useAuthToken: true },
+    );
+}
+
 export async function createAddress(address: CreateAddressPayload) {
+    const authToken = await token();
+    await syncCustomerFiscalFields(authToken, address);
     const result = await mutate(
         CreateCustomerAddressMutation,
         {input: normalizeInvoiceAddressInput(address)} as any,
-        {token: (await token()), useAuthToken: true}     
+        {token: authToken, useAuthToken: true}     
     );
 
     if (!result.data.createCustomerAddress) {
@@ -63,12 +90,14 @@ export async function createAddress(address: CreateAddressPayload) {
 }
 
 export async function updateAddress(address: UpdateAddressPayload) {
+    const authToken = await token();
+    await syncCustomerFiscalFields(authToken, address);
     const result = await mutate(
         UpdateCustomerAddressMutation,
         {
             input: normalizeInvoiceAddressInput(address)
         } as any,
-        {token: (await token()), useAuthToken: true}     
+        {token: authToken, useAuthToken: true}     
     );
 
     if (!result.data.updateCustomerAddress) {
@@ -83,16 +112,17 @@ function normalizeInvoiceAddressInput(
     address: CreateAddressPayload | UpdateAddressPayload,
 ) {
     const { matiasCityId, dni, identityDocumentId, customFields, ...rest } = address;
-    const cityId = matiasCityId || customFields?.matiasCityId;
-    const fiscalDni = dni || customFields?.dni;
-    const fiscalDocumentType = identityDocumentId || customFields?.identityDocumentId;
+    const cityId = matiasCityId || customFields?.matiasCityId || null;
+    const fiscalDni = (dni || customFields?.dni || '').trim() || null;
+    const fiscalDocumentType =
+        (identityDocumentId || customFields?.identityDocumentId || '').trim() || null;
     return {
         ...rest,
         customFields: {
             ...customFields,
-            ...(cityId ? { matiasCityId: cityId } : {}),
-            ...(fiscalDni ? { dni: fiscalDni } : {}),
-            ...(fiscalDocumentType ? { identityDocumentId: fiscalDocumentType } : {}),
+            matiasCityId: cityId,
+            dni: fiscalDni,
+            identityDocumentId: fiscalDocumentType,
         },
     };
 }

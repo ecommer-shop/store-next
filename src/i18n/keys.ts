@@ -236,7 +236,13 @@ export const I18N = {
       description: 'promotionCode.description',
       placeholder: 'promotionCode.placeholder',
       apply: 'promotionCode.apply',
-      remove: 'promotionCode.remove'
+      remove: 'promotionCode.remove',
+      error: {
+        invalid: 'promotionCode.error.invalid',
+        expired: 'promotionCode.error.expired',
+        limit: 'promotionCode.error.limit',
+        network: 'promotionCode.error.network'
+      }
     }
   },
   Checkout: {
@@ -285,6 +291,7 @@ export const I18N = {
       selectMethod: 'delivery.selectMethod',
       noMethods: 'delivery.noMethods',
       free: 'delivery.free',
+      loading: 'delivery.loading',
       continuePayment: 'delivery.continuePayment'
     },
     payment: {
@@ -591,107 +598,6 @@ export const I18N = {
       description: 'sellersCta.description',
       button: 'sellersCta.button'
     }
-  },
-
-  About: {
-    title: 'title',
-    description: 'description',
-    history: 'history',
-    mission: 'mission',
-    vision: 'vision',
-    audience: {
-      title: 'audience.title',
-      description: 'audience.description',
-      securePayments: 'audience.securePayments',
-      localDelivery: 'audience.localDelivery',
-      alwaysOpen: 'audience.alwaysOpen',
-      cta: 'audience.cta',
-    },
-    team: {
-      title: 'team.title',
-      leadership: {
-        label: 'team.leadership.label',
-        ceo: 'team.leadership.ceo',
-        accountant: 'team.leadership.accountant',
-        serverLead: 'team.leadership.serverLead',
-        eiaLead: 'team.leadership.eiaLead',
-        lawyer: 'team.leadership.lawyer',
-      },
-      server: {
-        label: 'team.server.label',
-        mary: 'team.server.mary',
-        brayan: 'team.server.brayan',
-        juanFelipe: 'team.server.juanFelipe',
-        william: 'team.server.william',
-        darwin: 'team.server.darwin',
-      },
-      eia: {
-        label: 'team.eia.label',
-        javier: 'team.eia.javier',
-        kevin: 'team.eia.kevin',
-        ivan: 'team.eia.ivan',
-      },
-    },
-    location: {
-      title: 'location.title',
-      text: 'location.text',
-    },
-    differentiators: {
-      title: 'differentiators.title',
-      description: 'differentiators.description',
-      simetria: 'differentiators.simetria',
-      messenger: 'differentiators.messenger',
-      compliance: 'differentiators.compliance',
-      incentives: 'differentiators.incentives',
-    },
-    faq: {
-      title: 'faq.title',
-      q1: {
-        q: 'faq.q1.q',
-        a: 'faq.q1.a',
-      },
-      q2: {
-        q: 'faq.q2.q',
-        a: 'faq.q2.a',
-      },
-      q3: {
-        q: 'faq.q3.q',
-        a: 'faq.q3.a',
-      },
-      q4: {
-        q: 'faq.q4.q',
-        a: 'faq.q4.a',
-      },
-      q5: {
-        q: 'faq.q5.q',
-        a: 'faq.q5.a',
-      },
-    },
-    legal: {
-      label: 'legal.label',
-      rs: 'legal.rs',
-      address: 'legal.address',
-    },
-    contact: {
-      label: 'contact.label',
-      phone: 'contact.phone',
-    },
-    hours: {
-      label: 'hours.label',
-      days: 'hours.days',
-    },
-    documents: {
-      label: 'documents.label',
-      terms: 'documents.terms',
-      warranty: 'documents.warranty',
-      withdrawal: 'documents.withdrawal',
-      paymentReversal: 'documents.paymentReversal',
-    },
-    cta: {
-      title: 'cta.title',
-      register: 'cta.register',
-      discover: 'cta.discover',
-    },
   },
 
   Legal: {
