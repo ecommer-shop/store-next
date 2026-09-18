@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { query } from '@/lib/vendure/server/api';
 import { GetBlogPostBySlugQuery, GetBlogPostsQuery } from '@/lib/vendure/shared/blog';
-import { SITE_NAME, buildCanonicalUrl, buildOgImages } from '@/lib/vendure/shared/metadata';
+import { SITE_NAME, buildAlternates, buildLocalizedUrl, buildOgImages } from '@/lib/vendure/shared/metadata';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -64,15 +64,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!post) return {};
 
+    const path = `/blog/${post.slug}`;
+    const canonical = post.canonicalUrl || buildLocalizedUrl(locale, path);
+
     return {
         title: post.metaTitle || `${post.title} | Blog | ${SITE_NAME}`,
         description: post.metaDescription || post.excerpt || '',
-        alternates: {
-            canonical: post.canonicalUrl || buildCanonicalUrl(`/blog/${post.slug}`),
+        alternates: post.canonicalUrl
+            ? { canonical: post.canonicalUrl }
+            : buildAlternates(locale, path),
+        openGraph: {
+            ...(post.ogImage ? { images: buildOgImages(post.ogImage.preview) } : {}),
+            url: canonical,
+            type: 'article',
         },
-        openGraph: post.ogImage
-            ? { images: buildOgImages(post.ogImage.preview) }
-            : undefined,
     };
 }
 
@@ -106,7 +111,7 @@ function generateStructuredData(post: BlogPostData, locale: string): string {
         },
         mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': buildCanonicalUrl(`/blog/${post.slug}`),
+            '@id': post.canonicalUrl || buildLocalizedUrl(locale, `/blog/${post.slug}`),
         },
     });
 }
