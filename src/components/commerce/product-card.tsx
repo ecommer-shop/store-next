@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { trackSelectItem } from '@/lib/analytics/events';
 import { Store } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { I18N } from '@/i18n/keys';
 
 interface ProductCardProps {
   product: FragmentOf<typeof ProductCardFragment>;
@@ -21,6 +23,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product: productProp, storeName = 'Ecommer', storeChannelCode }: ProductCardProps) {
   const router = useRouter();
+  const t = useTranslations('Commerce');
   const product = readFragment(ProductCardFragment, productProp);
   const previewSrc = normalizeVendureAssetUrl(product.productAsset?.preview) ?? '';
 
@@ -39,6 +42,9 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer', store
 
   const productHref = `/product/${product.slug}`;
   
+  // @ts-expect-error - inStock puede no estar en el tipo aún hasta que se regenere GraphQL
+  const isOutOfStock = product.inStock === false;
+  
   // Si no hay storeChannelCode pero hay storeName (no es "Ecommer"), crear un slug del nombre
   let storeHref: string | undefined = undefined;
   if (storeChannelCode) {
@@ -51,11 +57,19 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer', store
 
   return (
     // div contenedor — no es Link para evitar anidamiento de elementos interactivos
-    <div className="group rounded-xl overflow-hidden border border-gray-100 dark:border-white/10 bg-white dark:bg-[#1a1a3e] shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <div className="group rounded-xl overflow-hidden border border-gray-100 dark:border-white/10 bg-white dark:bg-[#1a1a3e] shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative">
+
+      {/* Badge Sold Out/Agotado */}
+      {isOutOfStock && (
+        <div className="absolute top-2 left-2 z-10 px-3 py-1 rounded-lg text-xs font-bold text-white shadow-lg"
+             style={{ backgroundColor: 'rgba(239, 68, 68, 0.95)' }}>
+          {t(I18N.Commerce.productInfo.OUT_OF_STOCK)}
+        </div>
+      )}
 
       {/* Imagen — clickeable al producto */}
       <Link href={productHref} onClick={handleSelectItem} prefetch={false} className="block">
-        <div className="relative bg-gray-50 dark:bg-[#12123F] aspect-square overflow-hidden">
+        <div className={`relative bg-gray-50 dark:bg-[#12123F] aspect-square overflow-hidden ${isOutOfStock ? 'opacity-60' : ''}`}>
           {previewSrc ? (
             <Image
               alt={product.productName}
@@ -111,18 +125,28 @@ export function ProductCard({ product: productProp, storeName = 'Ecommer', store
         </div>
 
         {/* Botón comprar (solo desktop) */}
-        <button
-          onClick={() => {
-            handleSelectItem();
-            router.push(productHref);
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#22c55e')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#6BB8FF')}
-          className="hidden lg:flex mt-2 w-full items-center justify-center rounded-lg py-2 text-xs font-bold text-white transition-colors duration-200 active:scale-95 cursor-pointer"
-          style={{ backgroundColor: '#6BB8FF' }}
-        >
-          Comprar
-        </button>
+        {isOutOfStock ? (
+          <button
+            disabled
+            className="hidden lg:flex mt-2 w-full items-center justify-center rounded-lg py-2 text-xs font-bold text-white opacity-50 cursor-not-allowed"
+            style={{ backgroundColor: '#9CA3AF' }}
+          >
+            {t(I18N.Commerce.productInfo.OUT_OF_STOCK)}
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleSelectItem();
+              router.push(productHref);
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#22c55e')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#6BB8FF')}
+            className="hidden lg:flex mt-2 w-full items-center justify-center rounded-lg py-2 text-xs font-bold text-white transition-colors duration-200 active:scale-95 cursor-pointer"
+            style={{ backgroundColor: '#6BB8FF' }}
+          >
+            Comprar
+          </button>
+        )}
       </div>
     </div>
   );

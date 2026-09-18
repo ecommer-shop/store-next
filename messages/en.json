@@ -519,7 +519,7 @@
       "addToCart": "Add to Cart",
       "addedToCart": "Added to Cart",
       "selectOptions": "Select Options",
-      "outOfStock": "Out of Stock",
+      "outOfStock": "Sold Out",
       "inStock": "In Stock",
       "storeLabel": "Store",
       "sku": "SKU",
@@ -530,8 +530,17 @@
         "addedDescription": "{product} has been added to your cart",
         "errorTitle": "Error",
         "errorDescription": "Could not add item to cart",
-        "goToCart": "Go to Cart"
-      }
+        "goToCart": "Go to Cart",
+        "shareSuccess": "Product shared",
+        "shareError": "Error sharing product",
+        "copyLinkSuccess": "Link copied to clipboard",
+        "copyLinkError": "Error copying link"
+      },
+      "IN_STOCK": "Available",
+      "LOW_STOCK": "Low stock!",
+      "OUT_OF_STOCK": "Sold Out",
+      "shareProduct": "Share product",
+      "shareText": "Check out this product on Ecommer!"
     },
     "relatedProducts": {
       "title": "Related Products"

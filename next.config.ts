@@ -51,12 +51,12 @@ const nextConfig: NextConfig = {
     experimental: {
         rootParams: true
     },
-    turbopack: {
-        root: projectRoot,
-        resolveAlias: {
-            '@': './src',
-        },
-    },
+    // turbopack: {
+    //     root: projectRoot,
+    //     resolveAlias: {
+    //         '@': './src',
+    //     },
+    // },
     async headers() {
         return [
             {
